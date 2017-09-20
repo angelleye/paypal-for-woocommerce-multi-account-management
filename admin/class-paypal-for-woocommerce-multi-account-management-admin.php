@@ -74,6 +74,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <tbody class="angelleye_micro_account_body">
                 <tr valign="top">
                     <th scope="row" class="titledesc">
+                        <label for="woocommerce_paypal_express_rules">Order total</label>
+                    </th>
+                    <td class="forminp">
+                        <fieldset>
+                            <select class="select" name="microprocessing[woocommerce_paypal_express_rules][]">
+                                <?php
+                                for ($i = 1; $i <= 50; $i++) {
+                                    echo sprintf('<option value="%1$s">Less than or equal to %2$s%3$s</option>', $i, get_woocommerce_currency_symbol(get_woocommerce_currency()), $i);
+                                }
+                                ?>
+                            </select>
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr valign="top">
+                    <th scope="row" class="titledesc">
                         <label for="woocommerce_paypal_express_sandbox_api_username_microprocessing">Sandbox API User Name</label>
                     </th>
                     <td class="forminp">
@@ -165,7 +181,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 } else {
                     $original[$section_key] = $value_array;
                 }
-                if (count($value_array) < 3) {
+                if (count($value_array) < 4) {
                     unset($original[$section_key]);
                 }
             }
@@ -197,6 +213,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         break;
                     case 'woocommerce_paypal_express_api_signature':
                         echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">Live API Signature</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>Live API Signature</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_api_signature][]" id="woocommerce_paypal_express_api_signature_microprocessing" value="%1$s" style="" placeholder="" type="password"></fieldset></td></tr>', $value);
+                        break;
+                    case 'woocommerce_paypal_express_rules':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_rules">Order total</label></th><td class="forminp"><fieldset><select class="select" name="microprocessing[woocommerce_paypal_express_rules][]">');
+                        for ($i = 1; $i <= 50; $i++) {
+                            if( $i == $value ) {
+                                $selected = 'selected';
+                            } else {
+                                $selected = '';
+                            }
+                            echo sprintf('<option value="%1$s" %2$s>Less than or equal to %3$s%4$s</option>', $i, $selected, get_woocommerce_currency_symbol(get_woocommerce_currency()), $i);
+                        }
+                        echo sprintf('</select></fieldset></td></tr>');
                         break;
                 }
             }
