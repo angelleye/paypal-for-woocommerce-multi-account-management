@@ -217,7 +217,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'woocommerce_paypal_express_rules':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_rules">Order total</label></th><td class="forminp"><fieldset><select class="select" name="microprocessing[woocommerce_paypal_express_rules][]">');
                         for ($i = 1; $i <= 50; $i++) {
-                            if( $i == $value ) {
+                            if ($i == $value) {
                                 $selected = 'selected';
                             } else {
                                 $selected = '';
@@ -230,6 +230,43 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             echo '</tbody></table>';
         }
+    }
+
+    public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($gateways) {
+        $cart_total = $this->angelleye_get_total();
+        if ($cart_total > 0) {
+            $microprocessing = $gateways->get_option('microprocessing');
+            foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+                foreach ($microprocessing_value as $key => $value) {
+                    if ($cart_total >= $microprocessing_value['woocommerce_paypal_express_rules']) {
+                        if ($gateways->testmode == true) {
+                            if (!empty($value['woocommerce_paypal_express_sandbox_api_username']) && !empty($value['woocommerce_paypal_express_sandbox_api_password']) && !empty($value['woocommerce_paypal_express_sandbox_api_signature'])) {
+                                $gateways->api_username = $value['woocommerce_paypal_express_sandbox_api_username'];
+                                $gateways->api_password = $value['woocommerce_paypal_express_sandbox_api_password'];
+                                $gateways->api_signature = $value['woocommerce_paypal_express_sandbox_api_signature'];
+                                return;
+                            }
+                        } else {
+                            if (!empty($value['woocommerce_paypal_express_api_username']) && !empty($value['woocommerce_paypal_express_api_password']) && !empty($value['woocommerce_paypal_express_api_signature'])) {
+                                $gateways->api_username = $value['woocommerce_paypal_express_api_username'];
+                                $gateways->api_password = $value['woocommerce_paypal_express_api_password'];
+                                $gateways->api_signature = $value['woocommerce_paypal_express_api_signature'];
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function angelleye_get_total() {
+        if (wc_prices_include_tax()) {
+            $cart_contents_total = wc_price(WC()->cart->cart_contents_total);
+        } else {
+            $cart_contents_total = wc_price(WC()->cart->cart_contents_total + WC()->cart->tax_total);
+        }
+        return $cart_contents_total;
     }
 
 }

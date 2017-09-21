@@ -137,6 +137,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $this->loader->add_action('woocommerce_settings_checkout', $plugin_admin, 'angelleye_multi_account_ui', 99);
         }
         $this->loader->add_filter('woocommerce_settings_api_sanitized_fields_paypal_express', $plugin_admin, 'angelleye_multi_account_save_settings', 11, 1);
+        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 1);
     }
 
     /**
