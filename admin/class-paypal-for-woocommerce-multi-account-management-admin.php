@@ -233,6 +233,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($gateways) {
+        if (is_null(WC()->cart)) {
+            return;
+        }
+        if (WC()->cart->is_empty()) {
+            return false;
+        }
         $cart_total = $this->angelleye_get_total();
         if ($cart_total > 0) {
             $microprocessing = $gateways->get_option('microprocessing');
