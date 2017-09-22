@@ -12,11 +12,11 @@
  */
 class Paypal_For_Woocommerce_Multi_Account_Management_Deactivator {
 
-	/**
-	 * @since    1.0.0
-	 */
-	public static function deactivate() {
-
-	}
+    /**
+     * @since    1.0.0
+     */
+    public static function deactivate() {
+        
+    }
 
 }

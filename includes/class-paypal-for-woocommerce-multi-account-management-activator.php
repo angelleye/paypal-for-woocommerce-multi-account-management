@@ -12,11 +12,11 @@
  */
 class Paypal_For_Woocommerce_Multi_Account_Management_Activator {
 
-	/**
-	 * @since    1.0.0
-	 */
-	public static function activate() {
-
-	}
+    /**
+     * @since    1.0.0
+     */
+    public static function activate() {
+        
+    }
 
 }
