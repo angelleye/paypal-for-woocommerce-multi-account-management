@@ -250,6 +250,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $gateways->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                                 $gateways->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                                 $gateways->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                                WC()->session->set('multi_account_api_username', $gateways->api_username);
                                 return;
                             }
                         } else {
@@ -257,6 +258,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $gateways->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
                                 $gateways->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
                                 $gateways->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                                WC()->session->set('multi_account_api_username', $gateways->api_username);
                                 return;
                             }
                         }
@@ -266,6 +268,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $request->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                                 $request->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                                 $request->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                                WC()->session->set('multi_account_api_username', $request->api_username);
                                 return;
                             }
                         } else {
@@ -273,6 +276,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $request->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
                                 $request->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
                                 $request->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                                WC()->session->set('multi_account_api_username', $request->api_username);
                                 return;
                             }
                         }
@@ -289,6 +293,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $cart_contents_total = WC()->cart->cart_contents_total + WC()->cart->tax_total;
         }
         return $cart_contents_total;
+    }
+
+    public function angelleye_woocommerce_checkout_update_order_meta($order_id, $data) {
+        $multi_account_api_username = WC()->session->get('multi_account_api_username');
+        if( !empty($multi_account_api_username) ) {
+            update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
+        }
     }
 
 }
