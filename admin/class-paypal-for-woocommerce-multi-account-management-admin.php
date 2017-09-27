@@ -78,7 +78,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </th>
                     <td class="forminp">
                         <fieldset>
-                            <legend class="screen-reader-text"><span>Sandbox API User Name</span></legend>
+                            <legend class="screen-reader-text"><span>Sandbox API Username</span></legend>
                             <input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_sandbox_api_username][]" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text">
                         </fieldset>
                     </td>
@@ -107,7 +107,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </tr>
                 <tr style="display: table-row;" valign="top">
                     <th scope="row" class="titledesc">
-                        <label for="woocommerce_paypal_express_api_username_microprocessing">Live API User Name</label>
+                        <label for="woocommerce_paypal_express_api_username_microprocessing">Live API Username</label>
                     </th>
                     <td class="forminp">
                         <fieldset>
