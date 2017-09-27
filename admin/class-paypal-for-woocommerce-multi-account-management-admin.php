@@ -64,9 +64,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_multi_account_ui() {
         ?>
         <div class='angelleye_micro_account_parent'>
-            <h3>Microprocessing Accounts</h3>
+            <h3>MicroPayments Account</h3>
+            <div style="margin-bottom:7px;">Do you have a PayPal MicrPayments account setup for low priced products / orders?  Configure that account here and any order below $12.00 will be processed with this account.</div>
             <div class="paypal_micro_account_section_add_new">
-                <button class="add_micro_account_section button"><?php echo __('Add New Microprocessing Account', 'paypal-ipn-for-wordpress-forwarder'); ?></button>
+                <button class="add_micro_account_section button"><?php echo __('Add MicroPayments Account', 'paypal-ipn-for-wordpress-forwarder'); ?></button>
                 <br><br>
             </div>
         </div>
