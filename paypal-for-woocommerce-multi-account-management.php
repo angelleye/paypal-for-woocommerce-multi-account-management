@@ -9,9 +9,9 @@
  * @package           Paypal_For_Woocommerce_Multi_Account_Management
  *
  * @wordpress-plugin
- * Plugin Name:       PayPal for WooCommerce - Multi Account Management
+ * Plugin Name:       PayPal for WooCommerce Multi-Account Management
  * Plugin URI:        http://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Send WooCommerce order payments to different PayPal accounts based on rules provided.
  * Version:           1.0.0
  * Author:            Angell EYE
  * Author URI:        http://www.angelleye.com/
