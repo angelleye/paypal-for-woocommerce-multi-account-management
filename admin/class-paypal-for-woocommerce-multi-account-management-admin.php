@@ -61,141 +61,203 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array('jquery'), $this->version, true);
     }
 
+    public function angelleye_post_exists($id) {
+        return is_string(get_post_status($id));
+    }
+
+    public function angelleye_display_multi_account_list() {
+        if (empty($_GET['ID'])) {
+            return false;
+        }
+
+        if ($this->angelleye_post_exists($_GET['ID']) == false) {
+            return false;
+        }
+
+        $microprocessing = get_post_meta($_GET['ID']);
+        echo '<br/><div><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
+            <tbody class="angelleye_micro_account_body">';
+        foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+            switch ($microprocessing_key) {
+                case 'woocommerce_paypal_express_testmode':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width500" name="woocommerce_paypal_express_testmode" %1$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %2$s</label><br></fieldset></td></tr>', ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
+                    break;
+                case 'woocommerce_paypal_express_account_name':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_account_name" value="%2$s" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_sandbox_api_username':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_username_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_username" value="%2$s" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_sandbox_api_password':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_password" value="%2$s" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_sandbox_api_signature':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_signature" value="%2$s" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_api_username':
+                    echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_username_microprocessing">%1$s</label><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_api_username" value="%2$s" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('API User Name', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_api_password':
+                    echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_api_password" value="%2$s" id="woocommerce_paypal_express_api_password_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('API Password', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+                case 'woocommerce_paypal_express_api_signature':
+                    echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width500" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    break;
+            }
+        }
+
+        echo sprintf('<tr style="display: table-row;" valign="top">
+                                <th scope="row" class="titledesc">
+                                    <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
+                                    <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="%2$s" />
+                                    %3$s
+                                </th>
+                            </tr>', $_GET['ID'], __('Save changes', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
+        echo '</tbody></table></form></div>';
+    }
+
     public function angelleye_multi_account_ui() {
+
         $this->angelleye_save_multi_account_data();
+        if (empty($_GET['action'])) {
+            if (!empty($_GET['success'])) {
+                echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
+            }
+            if (!empty($_GET['deleted'])) {
+                echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management'));
+            }
+            
+            ?>
+            <br/>
+            <div>
+                <form method="post" id="mainform" action="" enctype="multipart/form-data">
+                    <table class="form-table" id="micro_account_fields" >
+                        <tbody class="angelleye_micro_account_body">
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <label for="woocommerce_paypal_express_testmode_microprocessing">
+                                            <input class="woocommerce_paypal_express_testmode width500" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_account_name_microprocessing"><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_account_name" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_sandbox_api_username_microprocessing"><?php echo __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_username" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_sandbox_api_password_microprocessing"><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_password" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" style="" placeholder="" type="password">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing"><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_sandbox_api_signature" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" style="" placeholder="" type="password">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr style="display: table-row;" valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_api_username_microprocessing"><?php echo __('API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_api_username" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="" type="text">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr style="display: table-row;" valign="top">
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_api_password" id="woocommerce_paypal_express_api_password_microprocessing" style="" placeholder="" type="password">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <legend class="screen-reader-text"><span><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                                        <input class="input-text regular-input width500" name="woocommerce_paypal_express_api_signature" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password">
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr style="display: table-row;" valign="top">
+                                <th scope="row" class="titledesc">
+                                    <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                                    <?php wp_nonce_field('microprocessing_save'); ?>
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <?php
+        } elseif (!empty($_GET['action']) && $_GET['action'] == 'edit') {
+
+            $this->angelleye_display_multi_account_list();
+        }
         ?>
-        <br/>
-        <div style="display: inline; float: left;width: 442px">
-            <form method="post" id="mainform" action="" enctype="multipart/form-data">
-                <table class="form-table" id="micro_account_fields" style="width: 415px;">
-                    <tbody class="angelleye_micro_account_body">
-                        <tr valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <label for="woocommerce_paypal_express_testmode_microprocessing">
-                                        <input class="woocommerce_paypal_express_testmode" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_account_name_microprocessing"><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_account_name_microprocessing" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_sandbox_api_username_microprocessing"><?php echo __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_sandbox_api_username" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_sandbox_api_password_microprocessing"><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_sandbox_api_password" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" style="" placeholder="" type="password">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing"><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_sandbox_api_signature" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" style="" placeholder="" type="password">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr style="display: table-row;" valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_api_username_microprocessing"><?php echo __('API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('API User Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_api_username" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="" type="text">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr style="display: table-row;" valign="top">
-                            <th scope="row" class="titledesc">
-                                <label for="woocommerce_paypal_express_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <legend class="screen-reader-text"><span><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                    <input class="input-text regular-input " name="woocommerce_paypal_express_api_password" id="woocommerce_paypal_express_api_password_microprocessing" style="" placeholder="" type="password">
-                                </fieldset>
-                            </td>
-                        </tr>
-                    <th scope="row" class="titledesc">
-                        <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                    </th>
-                    <td class="forminp">
-                        <fieldset>
-                            <legend class="screen-reader-text"><span><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                            <input class="input-text regular-input " name="woocommerce_paypal_express_api_signature" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password">
-                        </fieldset>
-                    </td>
-                    </tr>
-                    <tr style="display: table-row;" valign="top">
-                        <th scope="row" class="titledesc">
-                            <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
-                            <?php wp_nonce_field('microprocessing_save'); ?>
-                        </th>
-                    </tr>
-                    </tbody>
-                </table>
-            </form>
+        <br/><br/>
+        <div>
+            <?php
+            $this->angelleye_multi_account_list();
+            ?>
         </div>
-        <div style="display: inline; float: left;width: 660px">
-            <table class="wp-list-table widefat fixed striped companies">
-                <thead>
-                    <tr>
-                        <td id="cb" class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox"></td><th scope="col" id="title" class="manage-column column-title column-primary sortable desc"><a href="http://localhost/paypal_for_woo/wp-admin/admin.php?page=paypal-wp-button-manager-option&amp;tab=company&amp;orderby=title&amp;order=asc"><span>Company Name</span><span class="sorting-indicator"></span></a></th><th scope="col" id="paypal_person_name" class="manage-column column-paypal_person_name">Contact Name</th><th scope="col" id="paypal_person_email" class="manage-column column-paypal_person_email">PayPal Account Email</th><th scope="col" id="paypal_mode" class="manage-column column-paypal_mode">PayPal Mode</th>
-                    </tr>
-                </thead>
-                <tbody id="the-list" data-wp-lists="list:company">
-                    <tr class="no-items">
-                        <td class="colspanchange" colspan="5">No items found.</td>
-                    </tr>	
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-2">Select All</label><input id="cb-select-all-2" type="checkbox"></td>
-                        <th scope="col" class="manage-column column-title column-primary sortable desc"><a href="http://localhost/paypal_for_woo/wp-admin/admin.php?page=paypal-wp-button-manager-option&amp;tab=company&amp;orderby=title&amp;order=asc"><span>Company Name</span><span class="sorting-indicator"></span></a></th><th scope="col" class="manage-column column-paypal_person_name">Contact Name</th><th scope="col" class="manage-column column-paypal_person_email">PayPal Account Email</th>
-                        <th scope="col" class="manage-column column-paypal_mode">PayPal Mode</th>	</tr>
-                </tfoot>
-
-            </table>
-        </div>
-        <script type="text/javascript">
-
-
-        </script>
-
         <?php
         $woocommerce_paypal_express_settings = get_option('woocommerce_paypal_express_settings');
         if (!empty($woocommerce_paypal_express_settings['microprocessing'])) {
             $this->angelleye_display_multi_account_list($woocommerce_paypal_express_settings['microprocessing']);
+        }
+    }
+
+    public function angelleye_multi_account_list() {
+        if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
+            $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
+            $table->prepare_items();
+            echo '<form id="account-filter" method="post">';
+            echo sprintf('<input type="hidden" name="page" value="%1$s" />', $_REQUEST['page']);
+            $table->display();
+            echo '</form>';
         }
     }
 
@@ -275,24 +337,44 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name_microprocessing', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature');
-            $my_post = array(
-                'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name_microprocessing']),
-                'post_content' => '',
-                'post_status' => 'publish',
-                'post_author' => get_current_user_id(),
-                'post_type' => 'microprocessing'
-            );
-            $post_id = wp_insert_post($my_post);
+
+
+            $microprocessing_key_array = array('woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature');
+            if (empty($_POST['is_edit'])) {
+                $my_post = array(
+                    'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
+                    'post_content' => '',
+                    'post_status' => 'publish',
+                    'post_author' => get_current_user_id(),
+                    'post_type' => 'microprocessing'
+                );
+                $post_id = wp_insert_post($my_post);
+            } else {
+                $my_post = array(
+                    'ID' => $_POST['is_edit'],
+                    'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
+                    'post_content' => '',
+                );
+                wp_update_post($my_post);
+                $post_id = $_POST['is_edit'];
+            }
+
             foreach ($microprocessing_key_array as $index => $microprocessing_key) {
                 if (!empty($_POST[$microprocessing_key])) {
                     update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                } else {
+                    update_post_meta($post_id, $microprocessing_key, '');
                 }
             }
-            ?><div class=" notice notice-success is-dismissible">
-                <p><?php _e('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-            </div>
+            ?>
             <?php
+            if (!empty($_POST['is_edit'])) {
+                $redirect_url = remove_query_arg(array('action', 'ID'));
+                wp_redirect(add_query_arg('success', true, $redirect_url));
+                exit();
+            } else {
+                sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
+            }
         }
     }
 
@@ -320,36 +402,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $settings['microprocessing'] = $original;
         }
         return $settings;
-    }
-
-    public function angelleye_display_multi_account_list($microprocessing) {
-        foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
-            echo '<br/><table class="form-table">
-            <tbody class="angelleye_micro_account_body">';
-            foreach ($microprocessing_value as $key => $value) {
-                switch ($key) {
-                    case 'woocommerce_paypal_express_sandbox_api_username':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_username_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_sandbox_api_username][]" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" value="%3$s" style="" placeholder="" type="text"></fieldset></td></tr>', __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'), __('Sandbox API User Name', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                    case 'woocommerce_paypal_express_sandbox_api_password':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_sandbox_api_password][]" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" value="%1$s" style="" placeholder="" type="password"></fieldset></td></tr>', __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'), __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                    case 'woocommerce_paypal_express_sandbox_api_signature':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_sandbox_api_signature][]" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" value="%1$s" style="" placeholder="" type="password"></fieldset></td></tr>', __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'), __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                    case 'woocommerce_paypal_express_api_username':
-                        echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_username_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_api_username][]" id="woocommerce_paypal_express_api_username_microprocessing" value="%1$s" style="" placeholder="" type="text"></fieldset></td></tr>', __('Live API User Name', 'paypal-for-woocommerce-multi-account-management'), __('Live API User Name', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                    case 'woocommerce_paypal_express_api_password':
-                        echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_api_password][]" id="woocommerce_paypal_express_api_password_microprocessing" value="%1$s" style="" placeholder="" type="password"></fieldset></td></tr>', __('Live API Password', 'paypal-for-woocommerce-multi-account-management'), __('Live API Password', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                    case 'woocommerce_paypal_express_api_signature':
-                        echo sprintf('<tr style="display: table-row;" valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><legend class="screen-reader-text"><span>%2$s</span></legend><input class="input-text regular-input " name="microprocessing[woocommerce_paypal_express_api_signature][]" id="woocommerce_paypal_express_api_signature_microprocessing" value="%1$s" style="" placeholder="" type="password"></fieldset></td></tr>', __('Live API Signature', 'paypal-for-woocommerce-multi-account-management'), __('Live API Signature', 'paypal-for-woocommerce-multi-account-management'), $value);
-                        break;
-                }
-            }
-            echo '</tbody></table>';
-        }
     }
 
     public function is_angelleye_multi_account_used($order_id) {
