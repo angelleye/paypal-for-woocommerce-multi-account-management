@@ -77,8 +77,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $microprocessing = get_post_meta($_GET['ID']);
         echo '<br/><div><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
             <tbody class="angelleye_micro_account_body">';
+
+
         foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
             switch ($microprocessing_key) {
+                case 'woocommerce_paypal_express_enable':
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">Enable/Disable</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %1$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %2$s</label><br></fieldset></td></tr>', ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
+                    break;
                 case 'woocommerce_paypal_express_testmode':
                     echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" %1$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %2$s</label><br></fieldset></td></tr>', ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
                     break;
@@ -105,7 +110,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     break;
             }
         }
-
+        $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
+        $option_two = '<option value="transaction_amount">Transaction Amount</option>';
+        $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
+        $option_three = '';
+        foreach ($option_three_array as $key => $value) {
+            if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
+                $option_three .= '<option selected value=' . $key . '>' . $value . '</option>';
+            } else {
+                $option_three .= '<option value=' . $key . '>' . $value . '</option>';
+            }
+        }
+        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="100" step="1" value="%4$s" pattern="([01]?[0-9]{1}|2[0-3]{1})"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -134,12 +151,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         <tbody class="angelleye_micro_account_body">
                             <tr valign="top">
                                 <th scope="row" class="titledesc">
+                                    <label for="woocommerce_paypal_express_enable">Enable/Disable</label>
+                                </th>
+                                <td class="forminp">
+                                    <fieldset>
+                                        <label for="woocommerce_paypal_express_enable">
+                                            <input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" id="woocommerce_paypal_express_enable" type="checkbox"><?php echo __('Enable Account', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                                    </fieldset>
+                                </td>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row" class="titledesc">
                                     <label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label>
                                 </th>
                                 <td class="forminp">
                                     <fieldset>
                                         <label for="woocommerce_paypal_express_testmode_microprocessing">
-                                            <input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                                            <input class="woocommerce_paypal_express_testmode" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
                                     </fieldset>
                                 </td>
                             </tr>
@@ -350,7 +378,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
 
 
-            $microprocessing_key_array = array('woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
