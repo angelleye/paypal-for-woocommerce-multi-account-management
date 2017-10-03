@@ -137,12 +137,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
 
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-        if (!empty($_GET['section']) && $_GET['section'] == 'paypal_express') {
-           // $this->loader->add_action('woocommerce_settings_checkout', $plugin_admin, 'angelleye_multi_account_ui', 99);
-        }
-        //$this->loader->add_filter('woocommerce_settings_api_sanitized_fields_paypal_express', $plugin_admin, 'angelleye_multi_account_save_settings', 11, 1);
-        //$this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
-        //$this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
+        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
+        $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
         
