@@ -110,7 +110,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 } else {
                     $account_data[$key]['mode'] = 'Live';
                 }
-                $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_express_account_name_microprocessing'][0]) ? $meta_data['woocommerce_paypal_express_account_name_microprocessing'][0] : '';
+                $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_express_account_name'][0]) ? $meta_data['woocommerce_paypal_express_account_name'][0] : '';
                 if ($account_data[$key]['mode'] == 'Sandbox') {
                     $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_sandbox_api_username'][0]) ? $meta_data['woocommerce_paypal_express_sandbox_api_username'][0] : '';
                 } else {
