@@ -130,7 +130,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_ui() {
-
         $this->angelleye_save_multi_account_data();
         if (empty($_GET['action'])) {
             if (!empty($_GET['success'])) {
@@ -371,8 +370,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-
-
             $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
@@ -392,7 +389,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 wp_update_post($my_post);
                 $post_id = $_POST['is_edit'];
             }
-
             foreach ($microprocessing_key_array as $index => $microprocessing_key) {
                 if (!empty($_POST[$microprocessing_key])) {
                     update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
@@ -446,7 +442,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'meta_query' => array(
-                'relation' => 'AND', /* <-- here */
+                'relation' => 'AND',
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
                     'value' => 'on',
@@ -606,5 +602,4 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $this->angelleye_multi_account_ui();
         }
     }
-
 }
