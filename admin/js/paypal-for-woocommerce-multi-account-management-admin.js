@@ -1,8 +1,11 @@
-jQuery(function ($) {
-    'use strict';
-    $(".add_micro_account_section").click(function (e) {
-        e.preventDefault();
-        var html = '<table class="form-table">' + $('#micro_account_fields').html() + '</table><br/>';
-        $(".paypal_micro_account_section_add_new").after(html);
-    });
-});
+jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function () {
+    var sandbox = jQuery('#woocommerce_paypal_express_sandbox_api_username_microprocessing, #woocommerce_paypal_express_sandbox_api_password_microprocessing, #woocommerce_paypal_express_sandbox_api_signature_microprocessing').closest('tr');
+    var production = jQuery('#woocommerce_paypal_express_api_username_microprocessing, #woocommerce_paypal_express_api_password_microprocessing, #woocommerce_paypal_express_api_signature_microprocessing').closest('tr');
+    if (jQuery(this).is(':checked')) {
+        sandbox.show();
+        production.hide();
+    } else {
+        sandbox.hide();
+        production.show();
+    }
+}).change();
