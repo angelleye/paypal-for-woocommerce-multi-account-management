@@ -409,6 +409,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function is_angelleye_multi_account_used($order_id) {
+        if (sizeof(WC()->session) == 0) {
+            return false;
+        }
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
         if (!empty($multi_account_api_username)) {
             return true;
