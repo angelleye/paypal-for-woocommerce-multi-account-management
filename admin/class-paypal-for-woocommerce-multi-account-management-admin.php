@@ -587,6 +587,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
         if (!empty($multi_account_api_username)) {
             update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
+            unset(WC()->session->multi_account_api_username);
+            WC()->session->get('multi_account_api_username', '');
         }
     }
 
