@@ -78,10 +78,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
             switch ($microprocessing_key) {
                 case 'woocommerce_paypal_express_enable':
-                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">Enable/Disable</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %1$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %2$s</label><br></fieldset></td></tr>', ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %2$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
                     break;
                 case 'woocommerce_paypal_express_testmode':
-                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" %1$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %2$s</label><br></fieldset></td></tr>', ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" %2$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
                     break;
                 case 'woocommerce_paypal_express_account_name':
                     echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_account_name" value="%2$s" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
@@ -146,7 +146,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         <tbody class="angelleye_micro_account_body">
                             <tr valign="top">
                                 <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_enable">Enable/Disable</label>
+                                    <label for="woocommerce_paypal_express_enable"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                                 </th>
                                 <td class="forminp">
                                     <fieldset>
@@ -157,7 +157,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </tr>
                             <tr valign="top">
                                 <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_testmode">PayPal Sandbox</label>
+                                    <label for="woocommerce_paypal_express_testmode"><?php echo __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                                 </th>
                                 <td class="forminp">
                                     <fieldset>
@@ -602,4 +602,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $this->angelleye_multi_account_ui();
         }
     }
+
 }
