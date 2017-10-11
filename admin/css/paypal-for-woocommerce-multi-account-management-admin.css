@@ -11,18 +11,37 @@
     max-width: 60%;
     float: left;
 }
+
 .angelleye_multi_account_right {
-    max-width: 37%;
-    float: right;
+    max-width: 426px;
+    float: left;
     padding: 10px;
     border: 1px solid #d1c6c6;
     border-radius: 15px;
     display: block;
     margin-top: 6px;
+    margin-left: 10px;
+    width: 37%;
 }
-
 #woocommerce_paypal_express_api_condition_value { 
     height: 27px;
     line-height: 1;
     padding-top: 0px;
+}
+
+@media screen and (max-width: 782px) {
+    .angelleye_multi_account_left {
+         max-width: 100% !important;
+          width: 100%;
+          
+    } 
+    .micro_account_fields {
+        max-width: 100% !important;
+        width: 100%;
+    }
+    .angelleye_multi_account_right {
+        max-width: 100% !important;
+        width: 95%;
+        margin-left: 0px;
+    }
 }
