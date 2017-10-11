@@ -73,7 +73,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             return false;
         }
         $microprocessing = get_post_meta($_GET['ID']);
-        echo '<br/><div><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
+        echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
             <tbody class="angelleye_micro_account_body">';
         foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
             switch ($microprocessing_key) {
@@ -127,6 +127,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </th>
                             </tr>', $_GET['ID'], __('Save changes', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
         echo '</tbody></table></form></div>';
+        $this->angelleye_multi_account_tooltip_box();
+    }
+    
+    public function angelleye_multi_account_tooltip_box() {
+        ?>
+        <div class="angelleye_multi_account_right">
+            <p><?php echo __('is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', 'paypal-for-woocommerce-multi-account-management'); ?> </p>
+        </div>
+        <?php
     }
 
     public function angelleye_multi_account_ui() {
@@ -140,7 +149,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             ?>
             <br/>
-            <div>
+            <div class="angelleye_multi_account_left">
                 <form method="post" id="mainform" action="" enctype="multipart/form-data">
                     <table class="form-table" id="micro_account_fields" >
                         <tbody class="angelleye_micro_account_body">
@@ -244,12 +253,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </td>
                             </tr>
                             <tr>
-                                <th></th>
-                                <td>
-                                    <p class="width460"><?php echo __('is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', 'paypal-for-woocommerce-multi-account-management'); ?> </p>
-                                </td>
-                            </tr>
-                            <tr>
                                 <th scope="row" class="titledesc">
                                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                                 </th>
@@ -272,6 +275,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </form>
             </div>
             <?php
+            $this->angelleye_multi_account_tooltip_box();
         } elseif (!empty($_GET['action']) && $_GET['action'] == 'edit') {
             $this->angelleye_display_multi_account_list();
         }

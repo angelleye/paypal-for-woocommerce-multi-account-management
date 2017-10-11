@@ -7,7 +7,22 @@
 .width460 {
     width: 460px;
 }
-td.nopadding {
-    padding: 0px 0px 0px 0px;
-    
+.angelleye_multi_account_left {
+    max-width: 60%;
+    float: left;
+}
+.angelleye_multi_account_right {
+    max-width: 37%;
+    float: right;
+    padding: 10px;
+    border: 1px solid #d1c6c6;
+    border-radius: 15px;
+    display: block;
+    margin-top: 6px;
+}
+
+#woocommerce_paypal_express_api_condition_value { 
+    height: 27px;
+    line-height: 1;
+    padding-top: 0px;
 }
