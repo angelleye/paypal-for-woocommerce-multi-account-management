@@ -27,6 +27,22 @@ if (!defined('WPINC')) {
 
 define('PLUGIN_VERSION', '1.0.0');
 
+ if (!defined('AEU_ZIP_URL')) {
+    define('AEU_ZIP_URL', 'http://downloads.angelleye.com/ae-updater/angelleye-updater/angelleye-updater.zip');
+}
+
+/**
+ * Required functions
+ */
+if (!function_exists('angelleye_queue_update')) {
+    require_once( 'includes/angelleye-functions.php' );
+}
+
+/**
+ * Plugin updates
+ */
+angelleye_queue_update(plugin_basename(__FILE__), '101', 'paypal-for-woocommerce-multi-account-management');
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-paypal-for-woocommerce-multi-account-management-activator.php
