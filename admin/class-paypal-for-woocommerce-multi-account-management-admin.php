@@ -78,7 +78,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
             switch ($microprocessing_key) {
                 case 'woocommerce_paypal_express_enable':
-                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %2$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
+                    echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %2$s id="woocommerce_paypal_express_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
                     break;
                 case 'woocommerce_paypal_express_testmode':
                     echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" %2$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
@@ -123,9 +123,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
                                     <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="%2$s" />
-                                    %3$s
+                                    <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="button-primary button">%3$s</a>
+                                    %4$s
                                 </th>
-                            </tr>', $_GET['ID'], __('Save changes', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
+                            </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
         echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
     }
@@ -266,7 +267,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </tr>
                             <tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
-                                    <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                                    <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                                    <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
                                 </th>
                             </tr>
