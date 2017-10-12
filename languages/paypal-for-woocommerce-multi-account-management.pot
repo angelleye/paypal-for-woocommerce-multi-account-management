@@ -1,0 +1,277 @@
+# Copyright (C) 2017 PayPal for WooCommerce Multi-Account Management
+# This file is distributed under the same license as the PayPal for WooCommerce Multi-Account Management package.
+msgid ""
+msgstr ""
+"Project-Id-Version: PayPal for WooCommerce Multi-Account Management 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-for-woocommerce-multi-account-management\n"
+"POT-Creation-Date: 2017-10-12 08:53:27+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:81
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:159
+msgid "Enable/Disable"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:81
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:164
+msgid "Enable Account"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:84
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:170
+msgid "PayPal Sandbox"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:84
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:175
+msgid "Enable PayPal Sandbox"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:87
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:181
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:185
+msgid "Account Name/Label"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:90
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:192
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:196
+msgid "Sandbox API User Name"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:93
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:203
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:207
+msgid "Sandbox API Password"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:96
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:214
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:218
+msgid "Sandbox API Signature"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:99
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:225
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:229
+msgid "API User Name"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:102
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:236
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:240
+msgid "API Password"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:105
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:247
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:251
+msgid "API Signature"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:109
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:258
+msgid "Trigger Conditions"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:111
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:263
+msgid "Equal to"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:111
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:263
+msgid "Less than"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:111
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:263
+msgid "Greater than"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:129
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:270
+msgid "Save Changes"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:129
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:271
+msgid "Cancel"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:137
+msgid "is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:146
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:418
+msgid "Your settings have been saved."
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:149
+msgid "Account permanently deleted."
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:262
+msgid "Transaction Amount"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:312
+msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:318
+msgid "Sandbox API User Name or Sandbox API Password or Sandbox API Signature empty!"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:333
+msgid "API User Name or API Password or API Signature empty!"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:350
+msgid "PayPal library is not loaded!"
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:378
+msgid "PayPal api credentials are incorrect."
+msgstr ""
+
+#: admin/class-paypal-for-woocommerce-multi-account-management-admin.php:613
+msgid "Multi-Account Management"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:162
+msgid "List View"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:163
+msgid "Excerpt View"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:334
+msgid "No items found."
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:461
+msgid "Select bulk action"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:463
+msgid "Bulk Actions"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:473
+msgid "Apply"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:523
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:1324
+msgid "Show more details"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:586
+msgid "Filter by date"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:588
+msgid "All dates"
+msgstr ""
+
+#. translators: 1: month name, 2: 4-digit year
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:601
+msgid "%1$s %2$d"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:653
+msgid "%s comment"
+msgid_plural "%s comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:654
+msgid "%s approved comment"
+msgid_plural "%s approved comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:655
+msgid "%s pending comment"
+msgid_plural "%s pending comments"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:660
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:672
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:685
+msgid "No comments"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:672
+msgid "No approved comments"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:685
+msgid "No pending comments"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:762
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:1349
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:798
+msgid "First page"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:808
+msgid "Previous page"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:815
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:818
+msgid "Current Page"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:824
+msgctxt "paging"
+msgid "%1$s of %2$s"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:831
+msgid "Next page"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:841
+msgid "Last page"
+msgstr ""
+
+#: includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php:1069
+msgid "Select All"
+msgstr ""
+#. Plugin Name of the plugin/theme
+msgid "PayPal for WooCommerce Multi-Account Management"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Send WooCommerce order payments to different PayPal accounts based on rules provided."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Angell EYE"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.angelleye.com/"
+msgstr ""
