@@ -13,7 +13,7 @@
 }
 
 .angelleye_multi_account_right {
-    max-width: 426px;
+    max-width: 475px;
     float: left;
     padding: 10px;
     border: 1px solid #d1c6c6;
@@ -23,6 +23,12 @@
     margin-left: 10px;
     width: 37%;
 }
+
+.angelleye_pfwma_tips {
+    list-style: circle;
+    margin: 0 0 0 12px;
+}
+
 #woocommerce_paypal_express_api_condition_value { 
     height: 27px;
     line-height: 1;
