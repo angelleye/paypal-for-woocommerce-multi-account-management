@@ -25,7 +25,14 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PLUGIN_VERSION', '1.0.0');
+define('PFWMA_VERSION', '1.0.0');
+
+/**
+ * define plugin basename
+ */
+if (!defined('PFWMA_PLUGIN_BASENAME')) {
+    define('PFWMA_PLUGIN_BASENAME', plugin_basename(__FILE__));
+}
 
  if (!defined('AEU_ZIP_URL')) {
     define('AEU_ZIP_URL', 'http://downloads.angelleye.com/ae-updater/angelleye-updater/angelleye-updater.zip');

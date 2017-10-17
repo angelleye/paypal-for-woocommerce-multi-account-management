@@ -54,8 +54,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      * @since    1.0.0
      */
     public function __construct() {
-        if (defined('PLUGIN_VERSION')) {
-            $this->version = PLUGIN_VERSION;
+        if (defined('PFWMA_VERSION')) {
+            $this->version = PFWMA_VERSION;
         } else {
             $this->version = '1.0.0';
         }
@@ -64,6 +64,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->load_dependencies();
         $this->set_locale();
         $this->define_admin_hooks();
+        $prefix = is_network_admin() ? 'network_admin_' : '';
+        add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
     }
 
     /**
@@ -183,5 +185,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     public function get_version() {
         return $this->version;
     }
+    
+    /**
+     * Return the plugin action links.  This will only be called if the plugin
+     * is active.
+     *
+     * @since 1.0.0
+     * @param array $actions associative array of action names to anchor tags
+     * @return array associative array of plugin action links
+     */
+    public function paypal_for_woocommerce_multi_account_management_action_links($actions, $plugin_file, $plugin_data, $context) {
+        $custom_actions = array(
+            'configure' => sprintf('<a href="%s">%s</a>', admin_url('options-general.php?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
+            'docs' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/ Docs URL', __('Docs', 'paypal-for-woocommerce-multi-account-management')),
+            'support' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/ Support URL', __('Support', 'paypal-for-woocommerce-multi-account-management')),
+            'review' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/ Review URL', __('Write a Review', 'paypal-for-woocommerce-multi-account-management')),
+        );
+
+        // add the links to the front of the actions list
+        return array_merge($custom_actions, $actions);
+    }
+
 
 }
