@@ -118,7 +118,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="100" step="1" value="%4$s" pattern="([01]?[0-9]{1}|2[0-3]{1})"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step=".1" value="%4$s" pattern="([01]?[0-9]{1}|2[0-3]{1})"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -274,7 +274,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <fieldset>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                                        <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="100" step="1" pattern="([01]?[0-9]{1}|2[0-3]{1})">
+                                        <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step=".1" pattern="([01]?[0-9]{1}|2[0-3]{1})">
                                     </fieldset>
                                 </td>
                             </tr>
@@ -497,27 +497,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     foreach ($microprocessing_array as $key => $value) {
                                         $microprocessing[$key] = $value[0];
                                     }
+                                    return $microprocessing;
                                 }
-                                break;
+                                
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                     foreach ($microprocessing_array as $key => $value) {
                                         $microprocessing[$key] = $value[0];
                                     }
+                                    return $microprocessing;
                                 }
-                                break;
+                                
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                     foreach ($microprocessing_array as $key => $value) {
                                         $microprocessing[$key] = $value[0];
                                     }
+                                    return $microprocessing;
                                 }
-                                break;
                         }
                     }
                 }
-                return $microprocessing;
             }
+            return $microprocessing;
         }
     }
 
@@ -602,10 +604,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $order = new WC_Order($order_id);
             $cart_contents_total = $order->get_total();
         } else {
+            if (!defined('WOOCOMMERCE_CART')) {
+                    define('WOOCOMMERCE_CART', true);
+                }
+                WC()->cart->calculate_totals();
+                WC()->cart->calculate_shipping();
+                if (version_compare(WC_VERSION, '3.0', '<')) {
+                    WC()->customer->calculated_shipping(true);
+                } else {
+                    WC()->customer->set_calculated_shipping(true);
+                }
             if (wc_prices_include_tax()) {
-                $cart_contents_total = WC()->cart->cart_contents_total;
+                $cart_contents_total = WC()->cart->total;
             } else {
-                $cart_contents_total = WC()->cart->cart_contents_total + WC()->cart->tax_total;
+                $cart_contents_total = WC()->cart->total;
             }
         }
         return $cart_contents_total;
