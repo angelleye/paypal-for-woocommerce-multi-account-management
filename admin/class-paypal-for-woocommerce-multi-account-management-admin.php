@@ -118,7 +118,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step=".1" value="%4$s" pattern="([01]?[0-9]{1}|2[0-3]{1})"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -274,7 +274,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <fieldset>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                                        <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step=".1" pattern="([01]?[0-9]{1}|2[0-3]{1})">
+                                        <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01">
                                     </fieldset>
                                 </td>
                             </tr>
@@ -494,27 +494,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key => $value) {
-                                        $microprocessing[$key] = $value[0];
+                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                        $microprocessing[$key_sub] = $value_sub[0];
                                     }
                                     return $microprocessing;
                                 }
-                                
+                               break; 
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key => $value) {
-                                        $microprocessing[$key] = $value[0];
+                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                        $microprocessing[$key_sub] = $value_sub[0];
                                     }
                                     return $microprocessing;
                                 }
-                                
+                                break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key => $value) {
-                                        $microprocessing[$key] = $value[0];
+                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                        $microprocessing[$key_sub] = $value_sub[0];
                                     }
                                     return $microprocessing;
                                 }
+                                break;
                         }
                     }
                 }
@@ -643,6 +644,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($gateway == 'paypal_for_wooCommerce_for_multi_account_management') {
             $this->angelleye_multi_account_ui();
         }
+    }
+    
+    public function clear_session_data() {
+        if (sizeof(WC()->session) == 0) {
+            return false;
+        }
+        if (is_null(WC()->cart)) {
+            return;
+        }
+        WC()->session->set( 'multi_account_api_username', '' );
+        WC()->session->__unset('multi_account_api_username');
     }
 
 }
