@@ -130,7 +130,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
     }
-    
+
     public function angelleye_multi_account_tooltip_box() {
         ?>
         <div class="angelleye_multi_account_right">
@@ -437,16 +437,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (sizeof(WC()->session) == 0) {
             return false;
         }
-        $multi_account_api_username = WC()->session->get('multi_account_api_username');
-        if (!empty($multi_account_api_username)) {
-            return true;
-        }
+        
         if ($order_id > 0) {
             $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
             }
         }
+        
+        $multi_account_api_username = WC()->session->get('multi_account_api_username');
+        if (!empty($multi_account_api_username)) {
+            return true;
+        }
+        
         return false;
     }
 
@@ -456,8 +459,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             return $multi_account_api_username;
         }
         if ($order_id > 0) {
-            $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
-            if (!empty($_multi_account_api_username)) {
+            $multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
+            if (!empty($multi_account_api_username)) {
                 return $multi_account_api_username;
             }
         }
@@ -499,7 +502,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     }
                                     return $microprocessing;
                                 }
-                               break; 
+                                break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                     foreach ($microprocessing_array as $key_sub => $value_sub) {
@@ -542,7 +545,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($this->is_angelleye_multi_account_used($order_id)) {
             $_multi_account_api_username = $this->angelleye_get_multi_account_api_user_name($order_id);
             $microprocessing_value = $this->angelleye_get_multi_account_details_by_api_user_name($gateways, $_multi_account_api_username);
-        } else {
+        } elseif (!empty($_GET['pp_action']) && $_GET['pp_action'] == 'set_express_checkout') {
             $microprocessing_value = $this->angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id);
         }
         if (!empty($microprocessing_value)) {
@@ -606,15 +609,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $cart_contents_total = $order->get_total();
         } else {
             if (!defined('WOOCOMMERCE_CART')) {
-                    define('WOOCOMMERCE_CART', true);
-                }
-                WC()->cart->calculate_totals();
-                WC()->cart->calculate_shipping();
-                if (version_compare(WC_VERSION, '3.0', '<')) {
-                    WC()->customer->calculated_shipping(true);
-                } else {
-                    WC()->customer->set_calculated_shipping(true);
-                }
+                define('WOOCOMMERCE_CART', true);
+            }
+            WC()->cart->calculate_totals();
+            WC()->cart->calculate_shipping();
+            if (version_compare(WC_VERSION, '3.0', '<')) {
+                WC()->customer->calculated_shipping(true);
+            } else {
+                WC()->customer->set_calculated_shipping(true);
+            }
             if (wc_prices_include_tax()) {
                 $cart_contents_total = WC()->cart->total;
             } else {
@@ -630,6 +633,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
             unset(WC()->session->multi_account_api_username);
             WC()->session->get('multi_account_api_username', '');
+             WC()->session->__unset('multi_account_api_username');
         }
     }
 
@@ -645,15 +649,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $this->angelleye_multi_account_ui();
         }
     }
-    
-    public function clear_session_data() {
+
+    public function update_session_data() {
         if (sizeof(WC()->session) == 0) {
             return false;
         }
         if (is_null(WC()->cart)) {
             return;
         }
-        WC()->session->set( 'multi_account_api_username', '' );
+        $paypal_express_checkout = WC()->session->get('paypal_express_checkout');
+        if (!isset($paypal_express_checkout)) {
+            WC()->session->set('multi_account_api_username', '');
+            WC()->session->__unset('multi_account_api_username');
+        }
+    }
+
+    public function remove_session_data() {
+        if (sizeof(WC()->session) == 0) {
+            return false;
+        }
+        if (is_null(WC()->cart)) {
+            return;
+        }
+        WC()->session->set('multi_account_api_username', '');
         WC()->session->__unset('multi_account_api_username');
     }
 

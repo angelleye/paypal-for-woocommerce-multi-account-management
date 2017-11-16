@@ -144,9 +144,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
         
-        $this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_admin, 'clear_session_data' );
-        $this->loader->add_action( 'woocommerce_after_cart_item_quantity_update', $plugin_admin, 'clear_session_data' );
-        $this->loader->add_action( 'woocommerce_add_to_cart', $plugin_admin, 'clear_session_data' );
+       $this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_admin, 'update_session_data', 999 );
+       $this->loader->add_action( 'woocommerce_after_cart_item_quantity_update', $plugin_admin, 'update_session_data', 999 );
+       $this->loader->add_action( 'woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999 );
+        $this->loader->add_action( 'woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999 );
+        
 
     }
 
