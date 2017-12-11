@@ -434,17 +434,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function is_angelleye_multi_account_used($order_id) {
-        if (sizeof(WC()->session) == 0) {
-            return false;
-        }
-        
         if ($order_id > 0) {
             $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
             }
         }
-        
+        if (sizeof(WC()->session) == 0) {
+            return false;
+        }
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
         if (!empty($multi_account_api_username)) {
             return true;
@@ -454,15 +452,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_multi_account_api_user_name($order_id) {
-        $multi_account_api_username = WC()->session->get('multi_account_api_username');
-        if (!empty($multi_account_api_username)) {
-            return $multi_account_api_username;
-        }
         if ($order_id > 0) {
             $multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
             if (!empty($multi_account_api_username)) {
                 return $multi_account_api_username;
             }
+        }
+        $multi_account_api_username = WC()->session->get('multi_account_api_username');
+        if (!empty($multi_account_api_username)) {
+            return $multi_account_api_username;
         }
         return false;
     }
