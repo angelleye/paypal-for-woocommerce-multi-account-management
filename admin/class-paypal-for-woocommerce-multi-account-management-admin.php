@@ -347,7 +347,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
                     $merchant_account_id = $PayPalResult['PAL'];
                 }
-            } else {
+            } else {                
+                if(!empty($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] == '10002'){ ?>
+                    <div class="notice notice-error is-dismissible">
+                            <p><?php _e('The credentials you have entered are not valid. Please try again.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                        </div>
+                <?php 
+                return false;
+                }                
                 if (!empty($PayPalResult['L_LONGMESSAGE0'])) {
                     ?><div class="notice notice-error is-dismissible">
                         <p><?php _e($PayPalResult['L_LONGMESSAGE0'], 'paypal-for-woocommerce-multi-account-management'); ?></p>
