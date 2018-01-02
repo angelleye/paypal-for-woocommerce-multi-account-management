@@ -75,8 +75,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'cb' => '<input type="checkbox" />',
             'title' => __('Account Name','paypal-for-woocommerce-multi-account-management'),
             'api_user_name' => __('API User Name','paypal-for-woocommerce-multi-account-management'),
-            'mode' => __('Sandbox/Live','paypal-for-woocommerce-multi-account-management'),
             'trigger_condition' => __('Trigger Condition','paypal-for-woocommerce-multi-account-management'),
+            'mode' => __('Sandbox/Live','paypal-for-woocommerce-multi-account-management'),
             'status' => __('Status','paypal-for-woocommerce-multi-account-management'),
         );
         return $columns;
