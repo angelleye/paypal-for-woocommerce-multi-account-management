@@ -57,7 +57,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         if (defined('PFWMA_VERSION')) {
             $this->version = PFWMA_VERSION;
         } else {
-            $this->version = '1.0.1';
+            $this->version = '1.0.2';
         }
         $this->plugin_name = 'paypal-for-woocommerce-multi-account-management';
 
