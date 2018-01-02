@@ -375,7 +375,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             } else {                
                 if(!empty($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] == '10002'){ ?>
                     <div class="notice notice-error is-dismissible">
-                            <p><?php _e('The credentials you have entered are not valid. Please try again.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                            <p><?php _e('The API credentials you have entered are not valid. Please double check your values and try again.  Note that sandbox and live credentials will be different, so make sure you are populating those accordingly.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         </div>
                 <?php 
                 return false;

@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.0.2 - 01.02.2018 =
+* Tweak - Adds better error details if you try to add an account with incorrect API credentials. ([#9](https://bitbucket.org/angelleye/paypal-for-woocommerce-multi-account-management/issues/9/accounts-are-not-getting-added-correctly))
+
 = 1.0.1 - 11.16.2017 =
 * Fix - Minor bug fixes.
 
