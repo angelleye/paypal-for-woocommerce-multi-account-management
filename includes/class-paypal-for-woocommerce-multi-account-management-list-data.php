@@ -18,6 +18,36 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             case 'api_user_name':
             case 'mode':
                 return $item[$column_name];
+            case 'trigger_condition':                
+                $condition_field = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_field',true);
+                $condition_sign = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_sign',true);
+                $condition_value = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_value',true);
+                if($condition_field == 'transaction_amount'){
+                    $field = __('Transaction Amount','paypal-for-woocommerce-multi-account-management');
+                }
+                else{ $field = ''; }
+                if($condition_sign == 'lessthan'){
+                    $sign = '<';
+                }
+                else if($condition_sign == 'greaterthan'){
+                    $sign = '>';
+                }
+                else if($condition_sign == 'equalto'){
+                    $sign = '=';
+                }
+                else{
+                    $sign = '';
+                }                
+                return "{$field} {$sign} {$condition_value}";
+               case 'status':             
+                   $status = get_post_meta($item['ID'],'woocommerce_paypal_express_enable',true);
+                   if($status == 'on'){
+                       return __('Enabled','paypal-for-woocommerce-multi-account-management');
+                   }
+                   else{
+                       return __('Disabled','paypal-for-woocommerce-multi-account-management');
+                   }
+                
             default:
                 return print_r($item, true);
         }
@@ -43,9 +73,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />',
-            'title' => 'Account Name',
-            'api_user_name' => 'API User Name',
-            'mode' => 'Sandbox/Live'
+            'title' => __('Account Name','paypal-for-woocommerce-multi-account-management'),
+            'api_user_name' => __('API User Name','paypal-for-woocommerce-multi-account-management'),
+            'mode' => __('Sandbox/Live','paypal-for-woocommerce-multi-account-management'),
+            'trigger_condition' => __('Trigger Condition','paypal-for-woocommerce-multi-account-management'),
+            'status' => __('Status','paypal-for-woocommerce-multi-account-management'),
         );
         return $columns;
     }
@@ -61,7 +93,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
 
     function get_bulk_actions() {
         $actions = array(
-            'delete' => 'Delete'
+            'delete' => __('Delete','paypal-for-woocommerce-multi-account-management')
         );
         return $actions;
     }
