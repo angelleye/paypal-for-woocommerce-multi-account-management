@@ -25,7 +25,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $condition_role = get_post_meta($item['ID'],'woocommerce_paypal_express_api_user_role',true);
                 $role='';
                 if($condition_role){
-                    $role = '<p class="description">'.sprintf('When role is %s', $condition_role).'</p>';
+                    if($condition_role == 'all'){
+                        $role = '<p class="description">'.sprintf('For %s user roles', $condition_role).'</p>';
+                    }
+                    else{
+                        $role = '<p class="description">'.sprintf('When role is %s', $condition_role).'</p>';
+                    }                        
                 }
                 if($condition_field == 'transaction_amount'){
                     $field = __('Transaction Amount','paypal-for-woocommerce-multi-account-management');

@@ -502,6 +502,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
+        global $user_ID;
+        $current_user_roles = array();
+        if ( is_user_logged_in() ) {
+            $user = new WP_User( $user_ID );
+            if ( !empty( $user->roles ) && is_array( $user->roles ) ) {
+                    $current_user_roles = $user->roles;
+                    $current_user_roles[] ='all';
+            }
+        }
+        
         $microprocessing = array();
         $order_total = $this->angelleye_get_total($order_id);
         $args = array(
@@ -527,6 +537,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
+                    if(isset($microprocessing_array['woocommerce_paypal_express_api_user_role'][0]) && in_array($microprocessing_array['woocommerce_paypal_express_api_user_role'][0], $current_user_roles)){
+                        //Do nothing
+                    }
+                    else{                       
+                        return $microprocessing;
+                    }                    
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
