@@ -72,6 +72,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($this->angelleye_post_exists($_GET['ID']) == false) {
             return false;
         }
+        $selected_role = '';
         $microprocessing = get_post_meta($_GET['ID']);
         echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
             <tbody class="angelleye_micro_account_body">';
@@ -104,12 +105,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 case 'woocommerce_paypal_express_api_signature':
                     echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                     break;
+                case 'woocommerce_paypal_express_api_user_role':
+                    $selected_role = $microprocessing_value[0];
+                    break;
             }
-        }
+        }        
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
         $option_two = '<option value="transaction_amount">Transaction Amount</option>';
         $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
-        $option_three = '';
+        $option_three = '';                
         foreach ($option_three_array as $key => $value) {
             if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
                 $option_three .= '<option selected value=' . $key . '>' . $value . '</option>';
@@ -117,8 +121,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $option_three .= '<option value=' . $key . '>' . $value . '</option>';
             }
         }
-        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four);
+        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';                   
+        $option_five = '<p class="description">'.__('Select User Role','paypal-for-woocommerce-multi-account-management').'</p>';
+        $option_five .= '<select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
+        $option_five .= '<option value="all">'.__('All','paypal-for-woocommerce-multi-account-management').'</option>';
+            $editable_roles = array_reverse( get_editable_roles() );
+            foreach ( $editable_roles as $role => $details ) {
+                $name = translate_user_role($details['name'] );
+                if ( $selected_role == $role ) {
+			$option_five .= "<option selected='selected' value='" . esc_attr( $role ) . "'>$name</option>";
+		} else {
+			$option_five .= "<option value='" . esc_attr( $role ) . "'>$name</option>";
+		}
+            }
+        $option_five .= '</select>';        
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s<br><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four,$option_five);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -271,7 +288,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                                 </th>
                                 <td class="forminp">
-                                    <fieldset>
+                                    <fieldset>                                        
+                                        <p class="description"><?php _e('Select User Role','paypal-for-woocommerce-multi-account-management');?></p>
+                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">                                                
+                                            <option value="all"><?php _e('All','paypal-for-woocommerce-multi-account-management');?></option>
+                                        <?php
+                                            $editable_roles = array_reverse( get_editable_roles() );
+                                            foreach ( $editable_roles as $role => $details ) {
+                                                $name = translate_user_role($details['name'] );
+                                                echo "\n\t<option value='" . esc_attr( $role ) . "'>$name</option>";
+                                            }
+                                        ?>
+                                        </select>
+                                        <p class="description"></p>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01">
@@ -402,7 +431,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value','woocommerce_paypal_express_api_user_role');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
