@@ -156,8 +156,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <li><?php echo __('Add your PayPal account details and configure your Trigger Condition for the account.  Click Save Changes to save the account.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
                 <li><?php echo __('To modify an account, click the Edit link from the list below, make your adjustments, and then click Save Changes to apply.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
                 <li><?php echo __('You may add as many accounts as you like with trigger conditions set so that money goes the account you want based on the order amount.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
-                <li>You may obtain your live account credentials using <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run">this link</a>.</li>
-                <li>Sandbox accounts/credentials can be obtained within your <a href="https://developer.paypal.com">PayPal developer account</a>.  </li>
+                <li><?php echo __('You may obtain your live account credentials using','paypal-for-woocommerce-multi-account-management');?> <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run"><?php echo __('this link','paypal-for-woocommerce-multi-account-management'); ?></a>.</li>
+                <li><?php echo __('Sandbox accounts/credentials can be obtained within your','paypal-for-woocommerce-multi-account-management');?> <a href="https://developer.paypal.com"><?php echo __('PayPal developer account','paypal-for-woocommerce-multi-account-management');?></a>.</li>
             </ul>
             <h3><?php echo __('Considerations', 'paypal-for-woocommerce-multi-account-management'); ?></h3>
             <ul class="angelleye_pfwma_tips">

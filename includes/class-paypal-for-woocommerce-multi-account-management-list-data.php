@@ -22,6 +22,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $condition_field = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_field',true);
                 $condition_sign = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_sign',true);
                 $condition_value = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_value',true);
+                $condition_role = get_post_meta($item['ID'],'woocommerce_paypal_express_api_user_role',true);
+                $role='';
+                if($condition_role){
+                    $role = '<p class="description">'.sprintf('When role is %s', $condition_role).'</p>';
+                }
                 if($condition_field == 'transaction_amount'){
                     $field = __('Transaction Amount','paypal-for-woocommerce-multi-account-management');
                 }
@@ -38,7 +43,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 else{
                     $sign = '';
                 }                
-                return "{$field} {$sign} {$condition_value}";
+                return "{$field} {$sign} ".  get_woocommerce_currency_symbol()."{$condition_value} {$role}";
                case 'status':             
                    $status = get_post_meta($item['ID'],'woocommerce_paypal_express_enable',true);
                    if($status == 'on'){
