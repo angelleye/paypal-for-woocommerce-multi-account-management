@@ -23,6 +23,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $condition_sign = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_sign',true);
                 $condition_value = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_value',true);
                 $condition_role = get_post_meta($item['ID'],'woocommerce_paypal_express_api_user_role',true);
+                
+                $product_ids = get_post_meta($item['ID'],'woocommerce_paypal_express_api_product_ids',true);                                   
                 $role='';
                 if($condition_role){
                     if($condition_role == 'all'){
@@ -47,8 +49,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 }
                 else{
                     $sign = '';
+                }
+                
+                add_thickbox();
+                $product_text = '';
+                if(!empty($product_ids)){                                                           
+                    $products = explode(',',$product_ids);
+                    $product_text .='<a href="#TB_inline?width=600&height=550&inlineId=modal-window-'.esc_attr( $item['ID'] ).'" class="thickbox" title="Products added in Trigger Condition">Products</a>';
+                    $product_text .='<div id="modal-window-'.esc_attr( $item['ID'] ).'" style="display:none;">';
+                    foreach ( $products as $product_id ) {
+                        $product = wc_get_product( $product_id );
+                        if ( is_object( $product ) ) {                               
+                               $product_text .="<p>".wp_kses_post( $product->get_formatted_name() )."</p>";
+                        }
+                    }
+                    $product_text .="</div>";
                 }                
-                return "{$field} {$sign} ".  get_woocommerce_currency_symbol()."{$condition_value} {$role}";
+                return "{$field} {$sign} ". wc_price($condition_value)." {$role} {$product_text}";
                case 'status':             
                    $status = get_post_meta($item['ID'],'woocommerce_paypal_express_enable',true);
                    if($status == 'on'){

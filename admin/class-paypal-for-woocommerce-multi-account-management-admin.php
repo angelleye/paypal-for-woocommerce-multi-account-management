@@ -140,8 +140,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         $option_five .= '</select>';   
         $product_ids = array();
-        if(isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])){            
-            $product_ids = explode(',',$microprocessing['woocommerce_paypal_express_api_product_ids'][0]);            
+        if(isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])){
+            $product_ids = explode(',',$microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
         }
         $option_six = '<p class="description">'.__( 'Products', 'woocommerce' ).'</p>';
         $option_six .= '<select class="aewp-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="'.esc_attr__( 'Search for a product&hellip;', 'woocommerce' ).'">';
