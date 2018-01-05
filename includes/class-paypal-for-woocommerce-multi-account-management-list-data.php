@@ -60,7 +60,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     foreach ( $products as $product_id ) {
                         $product = wc_get_product( $product_id );
                         if ( is_object( $product ) ) {                               
-                               $product_text .="<p>".wp_kses_post( $product->get_formatted_name() )."</p>";
+                               $product_text .='<p><a href="'.$product->get_permalink().'" target="_blank">'.wp_kses_post( $product->get_formatted_name() )."</a></p>";
                         }
                     }
                     $product_text .="</div>";
