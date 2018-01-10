@@ -371,7 +371,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
     }
 
-    public function angelleye_save_multi_account_data() {        
+    public function angelleye_save_multi_account_data() {
+        $PayPalConfig = array();
         if (!empty($_POST['microprocessing_save'])) {
             if (empty($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'microprocessing_save')) {
                 die(__('Action failed. Please refresh the page and retry.', 'paypal-for-woocommerce-multi-account-management'));
@@ -528,6 +529,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
+        $user_role_condition = false;
+        $product_condition = false;
+        $order_total_condition = false;
+        /* Userrole - start */
         global $user_ID;
         $current_user_roles = array();
         if ( is_user_logged_in() ) {
@@ -537,6 +542,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $current_user_roles[] ='all';
             }
         }
+        /* Userrole - start */
+        
+        /* Get product id from Order items - start */
+        $cart_product_id = array();
+        foreach( WC()->cart->get_cart() as $cart_item ){
+            if($cart_item['data']->get_type() == 'variation')
+                $cart_product_id[] = $cart_item['variation_id'];
+            else{
+                $cart_product_id[] = $cart_item['product_id'];
+            }
+        }
+        /* Get product id from Order items - end */
         
         $microprocessing = array();
         $order_total = $this->angelleye_get_total($order_id);
@@ -562,43 +579,75 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
+                    echo "<br>".$value->ID;
                     $microprocessing_array = get_post_meta($value->ID);
                     if(isset($microprocessing_array['woocommerce_paypal_express_api_user_role'][0]) && in_array($microprocessing_array['woocommerce_paypal_express_api_user_role'][0], $current_user_roles)){
-                        //Do nothing
+                        //Do nothing                        
+                        echo "<br>user role condition true";
+                        $user_role_condition = true;
                     }
-                    else{                       
-                        return $microprocessing;
-                    }                    
+                    else{
+                        $user_role_condition = false;
+                    }
+                    
+                    if(isset($microprocessing_array['woocommerce_paypal_express_api_product_ids'][0])){
+                        $product_id_saved = explode(',', $microprocessing_array['woocommerce_paypal_express_api_product_ids'][0]);
+                        if(in_array($product_id_saved, $cart_product_id)){
+                            $product_condition = true;
+                            echo "<br>product condition true";
+                        }
+                        else{
+                            $product_condition = false;
+                        }
+                    }
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
-                                    }
-                                    return $microprocessing;
+                                    $order_total_condition = true;
+                                    echo '<br>equal to condition true';
+//                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+//                                        $microprocessing[$key_sub] = $value_sub[0];
+//                                    }
+//                                    return $microprocessing;
                                 }
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
-                                    }
-                                    return $microprocessing;
+                                    $order_total_condition = true;
+                                    echo '<br>less than condition true';
+//                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+//                                        $microprocessing[$key_sub] = $value_sub[0];
+//                                    }
+//                                    return $microprocessing;
                                 }
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
-                                    }
-                                    return $microprocessing;
+                                    $order_total_condition = true;
+                                    echo '<br>greater than condition true';
+//                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+//                                        $microprocessing[$key_sub] = $value_sub[0];
+//                                    }
+//                                    return $microprocessing;
                                 }
                                 break;
                         }
                     }
+                }        
+                if($user_role_condition == true && $product_condition == true && $order_total_condition == true){
+                    foreach ($microprocessing_array as $key_sub => $value_sub) {
+                        $microprocessing[$key_sub] = $value_sub[0];
+                    }
+                    return $microprocessing;
+                    //echo '<br>change_api_credentials is true';
                 }
-            }
+                else{
+                    //echo "<br>change_api_credentials is false";
+                }
+                //exit;
+            }  
+            //exit;
             return $microprocessing;
         }
     }
