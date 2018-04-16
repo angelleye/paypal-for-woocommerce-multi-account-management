@@ -109,11 +109,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $selected_role = $microprocessing_value[0];
                     break;
             }
-        }        
+        }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
         $option_two = '<option value="transaction_amount">Transaction Amount</option>';
         $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
-        $option_three = '';                
+        $option_three = '';
         foreach ($option_three_array as $key => $value) {
             if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
                 $option_three .= '<option selected value=' . $key . '>' . $value . '</option>';
@@ -121,21 +121,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $option_three .= '<option value=' . $key . '>' . $value . '</option>';
             }
         }
-        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';                   
-        $option_five = '<p class="description">'.__('Select User Role','paypal-for-woocommerce-multi-account-management').'</p>';
+        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
+        $option_five = '<p class="description">' . __('Select User Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_five .= '<select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
-        $option_five .= '<option value="all">'.__('All','paypal-for-woocommerce-multi-account-management').'</option>';
-            $editable_roles = array_reverse( get_editable_roles() );
-            foreach ( $editable_roles as $role => $details ) {
-                $name = translate_user_role($details['name'] );
-                if ( $selected_role == $role ) {
-			$option_five .= "<option selected='selected' value='" . esc_attr( $role ) . "'>$name</option>";
-		} else {
-			$option_five .= "<option value='" . esc_attr( $role ) . "'>$name</option>";
-		}
+        $option_five .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
+        $editable_roles = array_reverse(get_editable_roles());
+        foreach ($editable_roles as $role => $details) {
+            $name = translate_user_role($details['name']);
+            if ($selected_role == $role) {
+                $option_five .= "<option selected='selected' value='" . esc_attr($role) . "'>$name</option>";
+            } else {
+                $option_five .= "<option value='" . esc_attr($role) . "'>$name</option>";
             }
-        $option_five .= '</select>';        
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s<br><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four,$option_five);
+        }
+        $option_five .= '</select>';
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s<br><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_five);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -156,8 +156,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <li><?php echo __('Add your PayPal account details and configure your Trigger Condition for the account.  Click Save Changes to save the account.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
                 <li><?php echo __('To modify an account, click the Edit link from the list below, make your adjustments, and then click Save Changes to apply.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
                 <li><?php echo __('You may add as many accounts as you like with trigger conditions set so that money goes the account you want based on the order amount.', 'paypal-for-woocommerce-multi-account-management'); ?></li>
-                <li><?php echo __('You may obtain your live account credentials using','paypal-for-woocommerce-multi-account-management');?> <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run"><?php echo __('this link','paypal-for-woocommerce-multi-account-management'); ?></a>.</li>
-                <li><?php echo __('Sandbox accounts/credentials can be obtained within your','paypal-for-woocommerce-multi-account-management');?> <a href="https://developer.paypal.com"><?php echo __('PayPal developer account','paypal-for-woocommerce-multi-account-management');?></a>.</li>
+                <li><?php echo __('You may obtain your live account credentials using', 'paypal-for-woocommerce-multi-account-management'); ?> <a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=_login-api-run"><?php echo __('this link', 'paypal-for-woocommerce-multi-account-management'); ?></a>.</li>
+                <li><?php echo __('Sandbox accounts/credentials can be obtained within your', 'paypal-for-woocommerce-multi-account-management'); ?> <a href="https://developer.paypal.com"><?php echo __('PayPal developer account', 'paypal-for-woocommerce-multi-account-management'); ?></a>.</li>
             </ul>
             <h3><?php echo __('Considerations', 'paypal-for-woocommerce-multi-account-management'); ?></h3>
             <ul class="angelleye_pfwma_tips">
@@ -289,16 +289,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </th>
                                 <td class="forminp">
                                     <fieldset>                                        
-                                        <p class="description"><?php _e('Select User Role','paypal-for-woocommerce-multi-account-management');?></p>
+                                        <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">                                                
-                                            <option value="all"><?php _e('All','paypal-for-woocommerce-multi-account-management');?></option>
-                                        <?php
-                                            $editable_roles = array_reverse( get_editable_roles() );
-                                            foreach ( $editable_roles as $role => $details ) {
-                                                $name = translate_user_role($details['name'] );
-                                                echo "\n\t<option value='" . esc_attr( $role ) . "'>$name</option>";
+                                            <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
+                                            <?php
+                                            $editable_roles = array_reverse(get_editable_roles());
+                                            foreach ($editable_roles as $role => $details) {
+                                                $name = translate_user_role($details['name']);
+                                                echo "\n\t<option value='" . esc_attr($role) . "'>$name</option>";
                                             }
-                                        ?>
+                                            ?>
                                         </select>
                                         <p class="description"></p>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -401,14 +401,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
                     $merchant_account_id = $PayPalResult['PAL'];
                 }
-            } else {                
-                if(!empty($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] == '10002'){ ?>
+            } else {
+                if (!empty($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] == '10002') {
+                    ?>
                     <div class="notice notice-error is-dismissible">
-                            <p><?php _e('The API credentials you have entered are not valid. Please double check your values and try again.  Note that sandbox and live credentials will be different, so make sure you are populating those accordingly.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                        </div>
-                <?php 
-                return false;
-                }                
+                        <p><?php _e('The API credentials you have entered are not valid. Please double check your values and try again.  Note that sandbox and live credentials will be different, so make sure you are populating those accordingly.', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    </div>
+                    <?php
+                    return false;
+                }
                 if (!empty($PayPalResult['L_LONGMESSAGE0'])) {
                     ?><div class="notice notice-error is-dismissible">
                         <p><?php _e($PayPalResult['L_LONGMESSAGE0'], 'paypal-for-woocommerce-multi-account-management'); ?></p>
@@ -431,7 +432,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value','woocommerce_paypal_express_api_user_role');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -483,7 +484,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (!empty($multi_account_api_username)) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -504,14 +505,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
         global $user_ID;
         $current_user_roles = array();
-        if ( is_user_logged_in() ) {
-            $user = new WP_User( $user_ID );
-            if ( !empty( $user->roles ) && is_array( $user->roles ) ) {
-                    $current_user_roles = $user->roles;
-                    $current_user_roles[] ='all';
+        if (is_user_logged_in()) {
+            $user = new WP_User($user_ID);
+            if (!empty($user->roles) && is_array($user->roles)) {
+                $current_user_roles = $user->roles;
+                $current_user_roles[] = 'all';
             }
         }
-        
         $microprocessing = array();
         $order_total = $this->angelleye_get_total($order_id);
         $args = array(
@@ -537,38 +537,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
-                    if(isset($microprocessing_array['woocommerce_paypal_express_api_user_role'][0]) && in_array($microprocessing_array['woocommerce_paypal_express_api_user_role'][0], $current_user_roles)){
-                        //Do nothing
-                    }
-                    else{                       
-                        return $microprocessing;
-                    }                    
-                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
-                        switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
-                            case 'equalto':
-                                if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
+                    if (isset($microprocessing_array['woocommerce_paypal_express_api_user_role'][0]) && in_array($microprocessing_array['woocommerce_paypal_express_api_user_role'][0], $current_user_roles)) {
+                        if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
+                            switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
+                                case 'equalto':
+                                    if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                        foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                            $microprocessing[$key_sub] = $value_sub[0];
+                                        }
+                                        return $microprocessing;
                                     }
-                                    return $microprocessing;
-                                }
-                                break;
-                            case 'lessthan':
-                                if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
+                                    break;
+                                case 'lessthan':
+                                    if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                        foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                            $microprocessing[$key_sub] = $value_sub[0];
+                                        }
+                                        return $microprocessing;
                                     }
-                                    return $microprocessing;
-                                }
-                                break;
-                            case 'greaterthan':
-                                if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $microprocessing[$key_sub] = $value_sub[0];
+                                    break;
+                                case 'greaterthan':
+                                    if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                        foreach ($microprocessing_array as $key_sub => $value_sub) {
+                                            $microprocessing[$key_sub] = $value_sub[0];
+                                        }
+                                        return $microprocessing;
                                     }
-                                    return $microprocessing;
-                                }
-                                break;
+                                    break;
+                            }
                         }
                     }
                 }
@@ -683,7 +679,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
             unset(WC()->session->multi_account_api_username);
             WC()->session->get('multi_account_api_username', '');
-             WC()->session->__unset('multi_account_api_username');
+            WC()->session->__unset('multi_account_api_username');
         }
     }
 
