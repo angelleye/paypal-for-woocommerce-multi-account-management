@@ -476,7 +476,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 return true;
             }
         }
-        if (sizeof(WC()->session) == 0) {
+        if (!class_exists('WooCommerce') || WC()->session == null) {
             return false;
         }
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
@@ -701,11 +701,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function update_session_data() {
-        if (sizeof(WC()->session) == 0) {
+        if (!class_exists('WooCommerce') || WC()->session == null) {
             return false;
-        }
-        if (is_null(WC()->cart)) {
-            return;
         }
         $paypal_express_checkout = WC()->session->get('paypal_express_checkout');
         if (!isset($paypal_express_checkout)) {
@@ -715,11 +712,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function remove_session_data() {
-        if (sizeof(WC()->session) == 0) {
+        if (!class_exists('WooCommerce') || WC()->session == null) {
             return false;
-        }
-        if (is_null(WC()->cart)) {
-            return;
         }
         WC()->session->set('multi_account_api_username', '');
         WC()->session->__unset('multi_account_api_username');
