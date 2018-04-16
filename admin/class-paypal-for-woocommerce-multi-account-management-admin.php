@@ -29,6 +29,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
      * @var      string    $version    The current version of this plugin.
      */
     private $version;
+    public $final_associate_account;
 
     /**
      * Initialize the class and set its properties.
@@ -41,6 +42,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+        $this->final_associate_account = array();
     }
 
     /**
@@ -512,7 +514,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $current_user_roles[] = 'all';
             }
         }
-        $microprocessing = array();
+        $this->final_associate_account = array();
         $order_total = $this->angelleye_get_total($order_id);
         $args = array(
             'post_type' => 'microprocessing',
@@ -533,6 +535,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
+        $loop = 0;
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
@@ -543,25 +546,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 case 'equalto':
                                     if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                         foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                            $microprocessing[$key_sub] = $value_sub[0];
+                                            $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
                                         }
-                                        return $microprocessing;
+                                        $loop = $loop + 1;
                                     }
                                     break;
                                 case 'lessthan':
                                     if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                         foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                            $microprocessing[$key_sub] = $value_sub[0];
+                                            $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
                                         }
-                                        return $microprocessing;
+                                        $loop = $loop + 1;
                                     }
                                     break;
                                 case 'greaterthan':
                                     if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
                                         foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                            $microprocessing[$key_sub] = $value_sub[0];
+                                            $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
                                         }
-                                        return $microprocessing;
+                                        $loop = $loop + 1;
                                     }
                                     break;
                             }
@@ -569,7 +572,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            return $microprocessing;
+            if (count($this->final_associate_account) == 1) {
+                return $this->final_associate_account[0];
+            } elseif (count($this->final_associate_account) == 0) {
+                return $this->final_associate_account;
+            } else {
+                return $this->angelleye_get_closest_amount($this->final_associate_account, $order_total);
+            }
+        }
+    }
+
+    public function angelleye_get_closest_amount($array, $value) {
+        $size = count($array);
+        $index_key = 0;
+        if ($size > 0) {
+            $diff = abs($array[0]['woocommerce_paypal_express_api_condition_value'] - $value);
+            $ret = $array[0]['woocommerce_paypal_express_api_condition_value'];
+            $index_key = 0;
+            for ($i = 1; $i < $size; $i++) {
+                $temp = abs($array[$i]['woocommerce_paypal_express_api_condition_value'] - $value);
+                if ($temp < $diff) {
+                    $diff = $temp;
+                    $ret = $array[$i]['woocommerce_paypal_express_api_condition_value'];
+                    $index_key = $i;
+                }
+            }
+            return $array[$index_key];
+        } else {
+            return array();
         }
     }
 
