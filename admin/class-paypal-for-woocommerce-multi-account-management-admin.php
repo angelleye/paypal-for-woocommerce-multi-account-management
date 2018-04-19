@@ -137,6 +137,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_five .= '</select>';
+        $product_ids = array();
+        if(isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])){            
+            $product_ids = explode(',',$microprocessing['woocommerce_paypal_express_api_product_ids'][0]);            
+        }
+        $option_six = '<p class="description">'.__( 'Products', 'woocommerce' ).'</p>';
+        $option_six .= '<select class="aewp-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="'.esc_attr__( 'Search for a product&hellip;', 'woocommerce' ).'">';
+        if(!empty($product_ids)){
+            foreach ( $product_ids as $product_id ) {
+                $product = wc_get_product( $product_id );
+                if ( is_object( $product ) ) {
+                        $option_six.= '<option value="' . esc_attr( $product_id ) . '"' . selected( true, true, false ) . '>' . wp_kses_post( $product->get_formatted_name() ) . '</option>';
+                }
+            }
+        }
+        
+        $option_six .='</select><p class="description"></p>';
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s<select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four,$option_five,$option_six);
         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s<br><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_five);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
@@ -302,6 +319,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             }
                                             ?>
                                         </select>
+                                         <p class="description"><?php _e( 'Products', 'woocommerce' ); ?></p>
+                                        <select class="wc-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="woocommerce_json_search_products_and_variations">
+                                        </select>
                                         <p class="description"></p>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -309,6 +329,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     </fieldset>
                                 </td>
                             </tr>
+                            
                             <tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
@@ -589,7 +610,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $diff = abs($array[0]['woocommerce_paypal_express_api_condition_value'] - $value);
             $ret = $array[0]['woocommerce_paypal_express_api_condition_value'];
             $index_key = 0;
-            for ($i = 1; $i < $size; $i++) {
+            for ($i = 1; $i < $size; $i) {
                 $temp = abs($array[$i]['woocommerce_paypal_express_api_condition_value'] - $value);
                 if ($temp < $diff) {
                     $diff = $temp;
@@ -722,6 +743,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_general_settings_tab_content() {
         $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_products';
         if ($gateway == 'paypal_for_wooCommerce_for_multi_account_management') {
+            wp_enqueue_style( 'woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION );
+            wp_enqueue_script( 'selectWoo' );
+			wp_enqueue_style( 'select2' );
+wp_enqueue_script( 'wc-enhanced-select' );
             $this->angelleye_multi_account_ui();
         }
     }
