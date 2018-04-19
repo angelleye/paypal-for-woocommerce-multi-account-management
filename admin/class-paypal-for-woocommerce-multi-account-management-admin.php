@@ -139,10 +139,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_five .= '</select>';
         $product_ids = array();
         if(isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])){            
-            $product_ids = explode(',',$microprocessing['woocommerce_paypal_express_api_product_ids'][0]);            
+            $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);            
         }
         $option_six = '<p class="description">'.__( 'Products', 'woocommerce' ).'</p>';
-        $option_six .= '<select class="aewp-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="'.esc_attr__( 'Search for a product&hellip;', 'woocommerce' ).'">';
+        $option_six .= '<select class="wc-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="'.esc_attr__( 'Search for a product&hellip;', 'woocommerce' ).'">';
         if(!empty($product_ids)){
             foreach ( $product_ids as $product_id ) {
                 $product = wc_get_product( $product_id );
@@ -154,7 +154,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         
         $option_six .='</select><p class="description"></p>';
         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s<select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four,$option_five,$option_six);
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s<br><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s"></fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_five);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -455,7 +454,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -475,11 +474,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $post_id = $_POST['is_edit'];
             }
             foreach ($microprocessing_key_array as $index => $microprocessing_key) {
-                if (!empty($_POST[$microprocessing_key])) {
-                    update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                if( $microprocessing_key == 'woocommerce_paypal_express_api_product_ids' ) {
+                    $product_ids = isset( $_POST['woocommerce_paypal_express_api_product_ids'] ) ? array_map( 'intval', (array) $_POST['woocommerce_paypal_express_api_product_ids'] ) : array();
+                    update_post_meta($post_id, $microprocessing_key, $product_ids);
                 } else {
-                    update_post_meta($post_id, $microprocessing_key, '');
+                    if (!empty($_POST[$microprocessing_key])) {
+                        update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                    } else {
+                        update_post_meta($post_id, $microprocessing_key, '');
+                    }
                 }
+                
+                
             }
             ?>
             <?php
