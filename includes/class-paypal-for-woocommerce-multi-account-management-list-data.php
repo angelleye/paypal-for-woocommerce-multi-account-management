@@ -54,13 +54,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 add_thickbox();
                 $product_text = '';
                 if(!empty($product_ids)){                                                           
-                    $products = explode(',',$product_ids);
+                    $products = $product_ids;
                     $product_text .='<a href="#TB_inline?width=600&height=550&inlineId=modal-window-'.esc_attr( $item['ID'] ).'" class="thickbox" title="Products added in Trigger Condition">Products</a>';
                     $product_text .='<div id="modal-window-'.esc_attr( $item['ID'] ).'" style="display:none;">';
-                    foreach ( $products as $product_id ) {
-                        $product = wc_get_product( $product_id );
-                        if ( is_object( $product ) ) {                               
-                               $product_text .='<p><a href="'.$product->get_permalink().'" target="_blank">'.wp_kses_post( $product->get_formatted_name() )."</a></p>";
+                    if( !empty($products) ) {
+                        foreach ( $products as $product_id ) {
+                            $product = wc_get_product( $product_id );
+                            if ( is_object( $product ) ) {                               
+                                   $product_text .='<p><a href="'.$product->get_permalink().'" target="_blank">'.wp_kses_post( $product->get_formatted_name() )."</a></p>";
+                            }
                         }
                     }
                     $product_text .="</div>";
