@@ -18,13 +18,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             case 'api_user_name':
             case 'mode':
                 return $item[$column_name];
-            case 'trigger_condition':                
+            case 'trigger_condition':
                 $condition_field = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_field',true);
                 $condition_sign = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_sign',true);
                 $condition_value = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_value',true);
                 $condition_role = get_post_meta($item['ID'],'woocommerce_paypal_express_api_user_role',true);
-                
-                $product_ids = get_post_meta($item['ID'],'woocommerce_paypal_express_api_product_ids',true);                                   
+
+                $product_ids = get_post_meta($item['ID'],'woocommerce_paypal_express_api_product_ids',true);
                 $role='';
                 if($condition_role){
                     if($condition_role == 'all'){
@@ -32,7 +32,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     }
                     else{
                         $role = '<p class="description">'.sprintf('When role is %s', $condition_role).'</p>';
-                    }                        
+                    }
                 }
                 if($condition_field == 'transaction_amount'){
                     $field = __('Transaction Amount','paypal-for-woocommerce-multi-account-management');
@@ -50,25 +50,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 else{
                     $sign = '';
                 }
-                
+
                 add_thickbox();
                 $product_text = '';
-                if(!empty($product_ids)){                                                           
+                if(!empty($product_ids)){
                     $products = $product_ids;
                     $product_text .='<a href="#TB_inline?width=600&height=550&inlineId=modal-window-'.esc_attr( $item['ID'] ).'" class="thickbox" title="Products added in Trigger Condition">Products</a>';
                     $product_text .='<div id="modal-window-'.esc_attr( $item['ID'] ).'" style="display:none;">';
                     if( !empty($products) ) {
                         foreach ( $products as $product_id ) {
                             $product = wc_get_product( $product_id );
-                            if ( is_object( $product ) ) {                               
+                            if ( is_object( $product ) ) {
                                    $product_text .='<p><a href="'.$product->get_permalink().'" target="_blank">'.wp_kses_post( $product->get_formatted_name() )."</a></p>";
                             }
                         }
                     }
                     $product_text .="</div>";
-                }                
+                }
                 return "{$field} {$sign} ". wc_price($condition_value)." {$role} {$product_text}";
-               case 'status':             
+               case 'status':
                    $status = get_post_meta($item['ID'],'woocommerce_paypal_express_enable',true);
                    if($status == 'on'){
                        return __('Enabled','paypal-for-woocommerce-multi-account-management');
@@ -76,7 +76,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                    else{
                        return __('Disabled','paypal-for-woocommerce-multi-account-management');
                    }
-                
+
             default:
                 return print_r($item, true);
         }
@@ -144,7 +144,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
                 exit();
             }
-            
+
         }
     }
 

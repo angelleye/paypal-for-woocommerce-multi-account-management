@@ -99,8 +99,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-i18n.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-list-data.php';
-        
-        
+
+
 
         /**
          * The class responsible for defining all actions that occur in the admin area.
@@ -143,13 +143,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
-        
-       $this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_admin, 'update_session_data', 999 );
-       $this->loader->add_action( 'woocommerce_after_cart_item_quantity_update', $plugin_admin, 'update_session_data', 999 );
-       $this->loader->add_action( 'woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999 );
-        $this->loader->add_action( 'woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999 );
-        
 
+        $this->loader->add_action('woocommerce_cart_item_removed', $plugin_admin, 'update_session_data', 999);
+        $this->loader->add_action('woocommerce_after_cart_item_quantity_update', $plugin_admin, 'update_session_data', 999);
+        $this->loader->add_action('woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999);
+        $this->loader->add_action('woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999);
     }
 
     /**
@@ -191,7 +189,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     public function get_version() {
         return $this->version;
     }
-    
+
     /**
      * Return the plugin action links.  This will only be called if the plugin
      * is active.
@@ -211,6 +209,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         // add the links to the front of the actions list
         return array_merge($custom_actions, $actions);
     }
-
 
 }

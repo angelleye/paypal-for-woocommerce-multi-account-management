@@ -339,9 +339,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                                 </th>
                                 <td class="forminp">
-                                    <fieldset>                                        
+                                    <fieldset>
                                         <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">                                                
+                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
                                             <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                                             <?php
                                             $editable_roles = array_reverse(get_editable_roles());
@@ -376,7 +376,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                                 }
                                             }
                                             ?>
-                                        </select> 
+                                        </select>
                                         <?php ?>
                                         <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                                         <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
