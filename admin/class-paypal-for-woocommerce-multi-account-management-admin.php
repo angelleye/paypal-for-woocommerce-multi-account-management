@@ -334,6 +334,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     </fieldset>
                                 </td>
                             </tr>
+
                             <tr>
                                 <th scope="row" class="titledesc">
                                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -843,6 +844,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         WC()->session->set('multi_account_api_username', '');
         WC()->session->__unset('multi_account_api_username');
+    }
+
+    public function angelleye_get_product_tas_by_product_cat() {
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'product_cat' => 'clothing',
+            'fields' => 'ids'
+        );
+        $loop = new WP_Query($args);
+        $all_tags = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $terms = get_the_terms($value, 'product_tag');
+                if (!empty($terms)) {
+                    foreach ($terms as $terms_key => $terms_value) {
+                        $all_tags[$terms_value->term_id] = $terms_value->name;
+                    }
+                }
+            }
+        }
     }
 
 }
