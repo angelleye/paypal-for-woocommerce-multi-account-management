@@ -60,6 +60,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
      * @since    1.0.0
      */
     public function enqueue_scripts() {
+        $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
+        wp_register_script('jquery-blockui', WC()->plugin_url() . '/assets/js/jquery-blockui/jquery.blockUI' . $suffix . '.js', array('jquery'), '2.70', true);
+        wp_enqueue_script('jquery-blockui');
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array('jquery'), $this->version, true);
     }
 
@@ -174,7 +177,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_nine .= '</select>';
         $option_six = '<p class="description">' . __('Products', 'woocommerce') . '</p>';
-        $option_six .= '<select class="wc-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Search for a product&hellip;', 'woocommerce') . '">';
+        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Search for a product&hellip;', 'woocommerce') . '">';
         if (!empty($product_ids)) {
             foreach ($product_ids as $product_id) {
                 $product = wc_get_product($product_id);
@@ -393,7 +396,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             ?>
                                         </select>
                                         <p class="description"><?php _e('Products', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select class="wc-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Search for a product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
+                                        <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Search for a product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
                                         </select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -847,8 +850,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_product_tas_by_product_cat() {
-
-
         $args = array(
             'post_type' => 'product',
             'posts_per_page' => -1,
@@ -873,13 +874,41 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         }
-        if (!empty($all_tags)) {
-            wp_send_json_success(
-                    array(
-                        'all_tags' => $all_tags,
-                    )
-            );
+        wp_send_json_success(
+                array(
+                    'all_tags' => $all_tags,
+                )
+        );
+    }
+
+    public function angelleye_get_product_by_product_tags() {
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_tag',
+                    'terms' => $_POST['tag_list'],
+                    'operator' => 'IN',
+                )
+            )
+        );
+        $loop = new WP_Query($args);
+        $all_products = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $product_title = get_the_title($value);
+                if (!empty($product_title)) {
+                    $all_products[$value] = $product_title;
+                }
+            }
         }
+        wp_send_json_success(
+                array(
+                    'all_products' => $all_products,
+                )
+        );
     }
 
 }

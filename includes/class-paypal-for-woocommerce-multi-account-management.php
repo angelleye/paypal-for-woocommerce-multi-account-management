@@ -149,6 +149,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999);
         $this->loader->add_action('woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999);
         $this->loader->add_action('wp_ajax_angelleye_get_product_tas_by_product_cat', $plugin_admin, 'angelleye_get_product_tas_by_product_cat', 10);
+        $this->loader->add_action('wp_ajax_angelleye_get_product_by_product_tags', $plugin_admin, 'angelleye_get_product_by_product_tags', 10);
+        
     }
 
     /**
