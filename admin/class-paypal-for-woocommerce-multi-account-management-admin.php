@@ -847,11 +847,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_product_tas_by_product_cat() {
+
+
         $args = array(
             'post_type' => 'product',
             'posts_per_page' => -1,
-            'product_cat' => 'clothing',
-            'fields' => 'ids'
+            'fields' => 'ids',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $_POST['categories_list'],
+                    'operator' => 'IN',
+                )
+            )
         );
         $loop = new WP_Query($args);
         $all_tags = array();
@@ -864,6 +872,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
+        }
+        if (!empty($all_tags)) {
+            wp_send_json_success(
+                    array(
+                        'all_tags' => $all_tags,
+                    )
+            );
         }
     }
 
