@@ -11,7 +11,7 @@ jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function (
 }).change();
 
 jQuery('#product_categories').change(function () {
-    jQuery("#micro_account_fields").block({message: null, overlayCSS: {background: "#fff", opacity: .6}});
+    jQuery(".angelleye_multi_account_left").block({message: null, overlayCSS: {background: "#fff", opacity: .6}});
     jQuery.ajax({
         type: 'POST',
         url: ajaxurl,
@@ -21,10 +21,11 @@ jQuery('#product_categories').change(function () {
         },
         dataType: 'json',
         success: function (response) {
-            jQuery("#micro_account_fields").unblock();
+            jQuery(".angelleye_multi_account_left").unblock();
             if (response.success) {
-                jQuery('#product_tags').empty();
                 if (response.data.all_tags) {
+                    jQuery('#product_tags').empty();
+                    jQuery('#product_list').empty();
                     jQuery.each(response.data.all_tags, function (key, value) {
                         jQuery('#product_tags').append(jQuery("<option></option>").attr("value", key).text(value));
                     });
@@ -32,15 +33,16 @@ jQuery('#product_categories').change(function () {
             }
         }
     }).fail(function (response) {
-        jQuery("#micro_account_fields").unblock();
+        jQuery(".angelleye_multi_account_left").unblock();
         window.console.log(response);
     });
 
 
 
-}).change();
+});
 
 jQuery('#product_tags').change(function () {
+    jQuery(".angelleye_multi_account_left").block({message: null, overlayCSS: {background: "#fff", opacity: .6}});
     jQuery.ajax({
         type: 'POST',
         url: ajaxurl,
@@ -50,6 +52,7 @@ jQuery('#product_tags').change(function () {
         },
         dataType: 'json',
         success: function (response) {
+            jQuery(".angelleye_multi_account_left").unblock();
             if (response.success) {
                 if (response.data.all_products) {
                     jQuery('#product_list').empty();
@@ -60,6 +63,7 @@ jQuery('#product_tags').change(function () {
             }
         }
     }).fail(function (response) {
+        jQuery(".angelleye_multi_account_left").unblock();
         window.console.log(response);
     });
 });

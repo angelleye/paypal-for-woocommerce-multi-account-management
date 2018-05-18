@@ -113,6 +113,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 case 'woocommerce_paypal_express_api_user_role':
                     $selected_role = $microprocessing_value[0];
                     break;
+                case 'product_categories':
+                    $product_categories = maybe_unserialize($microprocessing_value[0]);
+                    break;
+                case 'product_tags':
+                    $product_tags = maybe_unserialize($microprocessing_value[0]);
+                    break;
+                case 'buyer_countries':
+                    $buyer_countries = maybe_unserialize($microprocessing_value[0]);
+                    break;
             }
         }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
@@ -152,27 +161,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $countries = WC()->countries->get_countries();
         if ($countries) {
             foreach ($countries as $country_key => $country_full_name) {
-                $option_seven .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
+                $option_seven .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $buyer_countries) . '>' . esc_html($country_full_name) . '</option>';
             }
         }
         $option_seven .= '</select>';
         $option_eight = '<p class="description"> ' . __('Product categories', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
-        $category_ids = array();
+       
         $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
         if ($categories) {
             foreach ($categories as $cat) {
-                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
+                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($cat->name) . '</option>';
             }
         }
         $option_eight .= '</select>';
         $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'woocommerce') . '">';
-        $category_ids = array();
         $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
         if ($tags) {
             foreach ($tags as $tag) {
-                $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
+                $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
             }
         }
         $option_nine .= '</select>';
@@ -529,7 +537,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -554,7 +562,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     update_post_meta($post_id, $microprocessing_key, $product_ids);
                 } else {
                     if (!empty($_POST[$microprocessing_key])) {
-                        update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                        update_post_meta($post_id, $microprocessing_key, is_array($_POST[$microprocessing_key]) ? $_POST[$microprocessing_key] : trim($_POST[$microprocessing_key]));
                     } else {
                         update_post_meta($post_id, $microprocessing_key, '');
                     }
