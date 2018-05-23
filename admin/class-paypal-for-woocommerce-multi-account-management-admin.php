@@ -664,6 +664,72 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
+        // exclude multi account record base on first four condition
+        $passed_rules = array();
+        if ($total_posts > 0) {
+            foreach ($result as $key => $value) {
+                if (!empty($value->ID)) {
+                    // Base Country
+                    $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
+                    if (!empty($buyer_countries)) {
+                        foreach ($buyer_countries as $buyer_countries_key => $buyer_countries_value) {
+                            $billing_country = WC()->customer->get_billing_country();
+                            if ($billing_country = $buyer_countries_value) {
+                                $passed_rules['buyer_countries'] = true;
+                            }
+                        }
+                    } else {
+                        $passed_rules['buyer_countries'] = true;
+                    }
+                    if (empty($passed_rules['buyer_countries'])) {
+                        unset($result[$key]);
+                        break;
+                    }
+                    // User Role
+                    $woocommerce_paypal_express_api_user_role = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user_role', true);
+                    if (!empty($woocommerce_paypal_express_api_user_role)) {
+                        if (is_user_logged_in()) {
+                            if (in_array($woocommerce_paypal_express_api_user_role, (array) $user->roles, true)) {
+                                $passed_rules['woocommerce_paypal_express_api_user_role'] = true;
+                            } else {
+                                unset($result[$key]);
+                                break;
+                            }
+                        } else {
+                            unset($result[$key]);
+                            break;
+                        }
+                    } else {
+                        unset($result[$key]);
+                        break;
+                    }
+                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                        $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
+                        $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                        // Categories
+                        $woo_product_categories = wp_get_post_terms($product_id,'product_cat',array('fields'=>'ids'));
+                        $product_categories = get_post_meta($value->ID, 'product_categories', true);
+                        if (!array_intersect($product_categories, $woo_product_categories)) {
+                            unset($result[$key]);
+                            break;
+                        } 
+                        // Tags
+                        $woo_product_tag = wp_get_post_terms($product_id,'product_tag',array('fields'=>'ids'));
+                        $product_tags = get_post_meta($value->ID, 'product_tags', true);
+                        if (!array_intersect($product_tags, $woo_product_tag)) {
+                            unset($result[$key]);
+                            break;
+                        } 
+                        $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                        if (!array_intersect($product_id, $product_ids)) {
+                            unset($result[$key]);
+                            break;
+                        } 
+                    }
+                }
+            }
+        }
+        $total_posts = $query->found_posts;
         $loop = 0;
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
