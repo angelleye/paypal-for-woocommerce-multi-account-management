@@ -159,7 +159,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $this->process_bulk_action();
         $args = array(
             'post_type' => 'microprocessing',
-            'post_status' => 'any'
+            'post_status' => 'any',
+            'order' => 'DESC',
+            'orderby'  => 'woocommerce_priority',
+            'meta_key' => 'woocommerce_priority',
         );
         $posts = get_posts($args);
         if (!empty($posts)) {
@@ -190,7 +193,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             return ($order === 'asc') ? $result : -$result;
         }
 
-        usort($data, 'usort_reorder');
+        //usort($data, 'usort_reorder');
         $current_page = $this->get_pagenum();
         $total_items = count($data);
         $data = array_slice($data, (($current_page - 1) * $per_page), $per_page);
