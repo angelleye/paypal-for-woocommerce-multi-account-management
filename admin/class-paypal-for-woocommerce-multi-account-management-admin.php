@@ -161,7 +161,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $option_ten .= "<option value='" . $x . "'>$x</option>";
             }
         }
-         $option_ten .= '</select>';
+        $option_ten .= '</select>';
         $product_ids = array();
         if (isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])) {
             $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
@@ -641,7 +641,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'order' => 'DESC',
-            'orderby'  => 'woocommerce_priority',
+            'orderby' => 'woocommerce_priority',
             'meta_key' => 'woocommerce_priority',
             'meta_query' => array(
                 'relation' => 'AND',
@@ -659,7 +659,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'key' => 'woocommerce_priority',
                     'compare' => 'EXISTS'
                 )
-                
             )
         );
         $query = new WP_Query();
@@ -710,7 +709,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 return $this->angelleye_get_closest_amount($this->final_associate_account, $order_total);
             }
         }
-        
     }
 
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
@@ -831,7 +829,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $_multi_account_api_username = $this->angelleye_get_multi_account_api_user_name($order_id);
             $microprocessing_value = $this->angelleye_get_multi_account_details_by_api_user_name($gateways, $_multi_account_api_username);
         } elseif (!empty($_GET['pp_action']) && $_GET['pp_action'] == 'set_express_checkout') {
-            if (version_compare(PFWMA_VERSION, '1.0.2', '>')) { 
+            if (version_compare(PFWMA_VERSION, '1.0.2', '>')) {
                 $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id);
             } else {
                 $microprocessing_value = $this->angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id);

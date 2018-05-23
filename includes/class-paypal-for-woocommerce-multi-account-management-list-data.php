@@ -19,63 +19,59 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             case 'mode':
                 return $item[$column_name];
             case 'trigger_condition':
-                $condition_field = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_field',true);
-                $condition_sign = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_sign',true);
-                $condition_value = get_post_meta($item['ID'],'woocommerce_paypal_express_api_condition_value',true);
-                $condition_role = get_post_meta($item['ID'],'woocommerce_paypal_express_api_user_role',true);
+                $condition_field = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_field', true);
+                $condition_sign = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_sign', true);
+                $condition_value = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_value', true);
+                $condition_role = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user_role', true);
 
-                $product_ids = get_post_meta($item['ID'],'woocommerce_paypal_express_api_product_ids',true);
-                $role='';
-                if($condition_role){
-                    if($condition_role == 'all'){
-                        $role = '<p class="description">'.sprintf('For %s user roles', $condition_role).'</p>';
-                    }
-                    else{
-                        $role = '<p class="description">'.sprintf('When role is %s', $condition_role).'</p>';
+                $product_ids = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_product_ids', true);
+                $role = '';
+                if ($condition_role) {
+                    if ($condition_role == 'all') {
+                        $role = '<p class="description">' . sprintf('For %s user roles', $condition_role) . '</p>';
+                    } else {
+                        $role = '<p class="description">' . sprintf('When role is %s', $condition_role) . '</p>';
                     }
                 }
-                if($condition_field == 'transaction_amount'){
-                    $field = __('Transaction Amount','paypal-for-woocommerce-multi-account-management');
+                if ($condition_field == 'transaction_amount') {
+                    $field = __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management');
+                } else {
+                    $field = '';
                 }
-                else{ $field = ''; }
-                if($condition_sign == 'lessthan'){
+                if ($condition_sign == 'lessthan') {
                     $sign = '<';
-                }
-                else if($condition_sign == 'greaterthan'){
+                } else if ($condition_sign == 'greaterthan') {
                     $sign = '>';
-                }
-                else if($condition_sign == 'equalto'){
+                } else if ($condition_sign == 'equalto') {
                     $sign = '=';
-                }
-                else{
+                } else {
                     $sign = '';
                 }
 
                 add_thickbox();
                 $product_text = '';
-                if(!empty($product_ids)){
+                if (!empty($product_ids)) {
                     $products = $product_ids;
-                    $product_text .='<a href="#TB_inline?width=600&height=550&inlineId=modal-window-'.esc_attr( $item['ID'] ).'" class="thickbox" title="Products added in Trigger Condition">Products</a>';
-                    $product_text .='<div id="modal-window-'.esc_attr( $item['ID'] ).'" style="display:none;">';
-                    if( !empty($products) ) {
-                        foreach ( $products as $product_id ) {
-                            $product = wc_get_product( $product_id );
-                            if ( is_object( $product ) ) {
-                                   $product_text .='<p><a href="'.$product->get_permalink().'" target="_blank">'.wp_kses_post( $product->get_formatted_name() )."</a></p>";
+                    $product_text .= '<a href="#TB_inline?width=600&height=550&inlineId=modal-window-' . esc_attr($item['ID']) . '" class="thickbox" title="Products added in Trigger Condition">Products</a>';
+                    $product_text .= '<div id="modal-window-' . esc_attr($item['ID']) . '" style="display:none;">';
+                    if (!empty($products)) {
+                        foreach ($products as $product_id) {
+                            $product = wc_get_product($product_id);
+                            if (is_object($product)) {
+                                $product_text .= '<p><a href="' . $product->get_permalink() . '" target="_blank">' . wp_kses_post($product->get_formatted_name()) . "</a></p>";
                             }
                         }
                     }
-                    $product_text .="</div>";
+                    $product_text .= "</div>";
                 }
-                return "{$field} {$sign} ". wc_price($condition_value)." {$role} {$product_text}";
-               case 'status':
-                   $status = get_post_meta($item['ID'],'woocommerce_paypal_express_enable',true);
-                   if($status == 'on'){
-                       return __('Enabled','paypal-for-woocommerce-multi-account-management');
-                   }
-                   else{
-                       return __('Disabled','paypal-for-woocommerce-multi-account-management');
-                   }
+                return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$product_text}";
+            case 'status':
+                $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
+                if ($status == 'on') {
+                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                } else {
+                    return __('Disabled', 'paypal-for-woocommerce-multi-account-management');
+                }
 
             default:
                 return print_r($item, true);
@@ -83,11 +79,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     }
 
     function column_title($item) {
-        $edit_params = array( 'page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
-        $delete_params = array( 'page' => $_REQUEST['page'], 'action' => 'delete', 'ID' => $item['ID']);
+        $edit_params = array('page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
+        $delete_params = array('page' => $_REQUEST['page'], 'action' => 'delete', 'ID' => $item['ID']);
         $actions = array(
-            'edit' => sprintf('<a href="%s">Edit</a>', esc_url( add_query_arg( $edit_params ) )),
-            'delete' => sprintf('<a href="%s">Delete</a>', esc_url( add_query_arg( $delete_params ) )),
+            'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params))),
+            'delete' => sprintf('<a href="%s">Delete</a>', esc_url(add_query_arg($delete_params))),
         );
         return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
@@ -102,11 +98,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     function get_columns() {
         $columns = array(
             'cb' => '<input type="checkbox" />',
-            'title' => __('Account Name','paypal-for-woocommerce-multi-account-management'),
-            'api_user_name' => __('API User Name','paypal-for-woocommerce-multi-account-management'),
-            'trigger_condition' => __('Trigger Condition','paypal-for-woocommerce-multi-account-management'),
-            'mode' => __('Sandbox/Live','paypal-for-woocommerce-multi-account-management'),
-            'status' => __('Status','paypal-for-woocommerce-multi-account-management'),
+            'title' => __('Account Name', 'paypal-for-woocommerce-multi-account-management'),
+            'api_user_name' => __('API User Name', 'paypal-for-woocommerce-multi-account-management'),
+            'trigger_condition' => __('Trigger Condition', 'paypal-for-woocommerce-multi-account-management'),
+            'mode' => __('Sandbox/Live', 'paypal-for-woocommerce-multi-account-management'),
+            'status' => __('Status', 'paypal-for-woocommerce-multi-account-management'),
         );
         return $columns;
     }
@@ -122,14 +118,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
 
     function get_bulk_actions() {
         $actions = array(
-            'delete' => __('Delete','paypal-for-woocommerce-multi-account-management')
+            'delete' => __('Delete', 'paypal-for-woocommerce-multi-account-management')
         );
         return $actions;
     }
 
     function process_bulk_action() {
         if ('delete' === $this->current_action()) {
-            if( !empty($_POST['account']) ) {
+            if (!empty($_POST['account'])) {
                 $account = $_POST['account'];
                 foreach ($account as $key => $value) {
                     wp_delete_post($value, true);
@@ -138,13 +134,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
                 exit();
             }
-            if( !empty($_GET['action']) && 'delete' == $_GET['action'] && !empty($_GET['ID'])) {
+            if (!empty($_GET['action']) && 'delete' == $_GET['action'] && !empty($_GET['ID'])) {
                 wp_delete_post($_GET['ID'], true);
                 $redirect_url = remove_query_arg(array('action', 'ID'));
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
                 exit();
             }
-
         }
     }
 
@@ -161,7 +156,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'post_type' => 'microprocessing',
             'post_status' => 'any',
             'order' => 'DESC',
-            'orderby'  => 'woocommerce_priority',
+            'orderby' => 'woocommerce_priority',
             'meta_key' => 'woocommerce_priority',
         );
         $posts = get_posts($args);

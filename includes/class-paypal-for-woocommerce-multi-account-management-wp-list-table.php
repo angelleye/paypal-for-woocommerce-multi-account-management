@@ -1171,7 +1171,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_WP_List_Table {
      * @param string $which
      */
     protected function extra_tablenav($which) {
-        
+
     }
 
     /**
@@ -1221,7 +1221,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_WP_List_Table {
      * @param string $column_name
      */
     protected function column_default($item, $column_name) {
-        
+
     }
 
     /**
@@ -1229,7 +1229,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_WP_List_Table {
      * @param object $item
      */
     protected function column_cb($item) {
-        
+
     }
 
     /**
