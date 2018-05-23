@@ -153,11 +153,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])) {
             $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
         }
-
-
         $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "woocommerce") . '">';
-        $category_ids = array();
         $countries = WC()->countries->get_countries();
         if ($countries) {
             foreach ($countries as $country_key => $country_full_name) {
@@ -167,7 +164,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_seven .= '</select>';
         $option_eight = '<p class="description"> ' . __('Product categories', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
-       
         $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
         if ($categories) {
             foreach ($categories as $cat) {
@@ -205,8 +201,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </th>
                             </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
         echo '</tbody></table></form></div>';
-
-
         $this->angelleye_multi_account_tooltip_box();
     }
 
@@ -345,7 +339,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     </fieldset>
                                 </td>
                             </tr>
-
                             <tr>
                                 <th scope="row" class="titledesc">
                                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -395,7 +388,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             <?php
                                             $category_ids = array();
                                             $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
-
                                             if ($tags) {
                                                 foreach ($tags as $tag) {
                                                     echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
@@ -612,6 +604,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         return false;
     }
 
+    public function angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id) {
+        
+    }
+
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
         global $user_ID;
         $current_user_roles = array();
@@ -730,7 +726,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $_multi_account_api_username = $this->angelleye_get_multi_account_api_user_name($order_id);
             $microprocessing_value = $this->angelleye_get_multi_account_details_by_api_user_name($gateways, $_multi_account_api_username);
         } elseif (!empty($_GET['pp_action']) && $_GET['pp_action'] == 'set_express_checkout') {
-            $microprocessing_value = $this->angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id);
+            if (version_compare(PFWMA_VERSION, '1.0.2', '>')) { 
+                $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id);
+            } else {
+                $microprocessing_value = $this->angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id);
+            }
         }
         if (!empty($microprocessing_value)) {
             if ($gateways->testmode == true) {
