@@ -154,11 +154,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $this->process_bulk_action();
         $args = array(
             'post_type' => 'microprocessing',
-            'post_status' => 'any',
-            'order' => 'DESC',
-            'orderby' => 'woocommerce_priority',
-            'meta_key' => 'woocommerce_priority',
-        );
+            'order' => 'DESC',            
+            'orderby'   => 'order_clause',
+            'meta_query' => array(
+                 'order_clause' => array(
+                      'key' => 'woocommerce_priority',
+                      'type' => 'NUMERIC' // unless the field is not a number
+          )));
         $posts = get_posts($args);
         if (!empty($posts)) {
             foreach ($posts as $key => $value) {

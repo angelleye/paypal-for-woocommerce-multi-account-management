@@ -641,9 +641,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'order' => 'DESC',
-            'orderby' => 'woocommerce_priority',
+            'orderby' => 'order_clause',
             'meta_key' => 'woocommerce_priority',
             'meta_query' => array(
+                'order_clause' => array(
+                    'key' => 'woocommerce_priority',
+                    'type' => 'NUMERIC' // unless the field is not a number
+                ),
                 'relation' => 'AND',
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
