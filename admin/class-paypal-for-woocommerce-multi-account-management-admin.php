@@ -725,7 +725,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             break;
                         } 
                         $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
-                        if (!array_intersect($product_id, $product_ids)) {
+                        if (!array_intersect((array)$product_id, $product_ids)) {
                             unset($result[$key]);
                             break;
                         } 
