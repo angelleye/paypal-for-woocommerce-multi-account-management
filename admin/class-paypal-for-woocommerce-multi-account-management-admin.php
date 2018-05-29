@@ -194,7 +194,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_nine .= '</select>';
         $option_six = '<p class="description">' . __('Products', 'woocommerce') . '</p>';
-        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Search for a product&hellip;', 'woocommerce') . '">';
+        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'woocommerce') . '">';
         if (!empty($product_ids)) {
             foreach ($product_ids as $product_id) {
                 $product = wc_get_product($product_id);
@@ -418,7 +418,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             ?>
                                         </select>
                                         <p class="description"><?php _e('Products', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Search for a product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
+                                        <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
+                                            <?php 
+                                               $args = array(
+                                                'post_type' => 'product',
+                                                'posts_per_page' => -1,
+                                                'fields' => 'ids',
+                                                'post_status'    => 'publish',
+
+                                            );
+                                            $loop = new WP_Query($args);
+                                            if (!empty($loop->posts)) {
+                                                foreach ($loop->posts as $key => $value) {
+                                                    echo '<option value="' . $value . '">' . get_the_title($value) . '</option>';
+                                                }
+                                            }
+                                            ?>
                                         </select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                                         <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -680,6 +695,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             $billing_country = WC()->customer->get_billing_country();
                             if ($billing_country = $buyer_countries_value) {
                                 $passed_rules['buyer_countries'] = true;
+                                break;
                             }
                         }
                     } else {
@@ -713,22 +729,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         // Categories
                         $woo_product_categories = wp_get_post_terms($product_id,'product_cat',array('fields'=>'ids'));
                         $product_categories = get_post_meta($value->ID, 'product_categories', true);
-                        if (!array_intersect($product_categories, $woo_product_categories)) {
-                            unset($result[$key]);
-                            break;
-                        } 
+                        if( !empty($product_categories) ) {
+                            if (!array_intersect($product_categories, $woo_product_categories)) {
+                                unset($result[$key]);
+                                break;
+                            } 
+                        }
                         // Tags
                         $woo_product_tag = wp_get_post_terms($product_id,'product_tag',array('fields'=>'ids'));
                         $product_tags = get_post_meta($value->ID, 'product_tags', true);
-                        if (!array_intersect($product_tags, $woo_product_tag)) {
-                            unset($result[$key]);
-                            break;
-                        } 
+                        if( !empty($product_tags) ) {
+                            if (!array_intersect($product_tags, $woo_product_tag)) {
+                                unset($result[$key]);
+                                break;
+                            } 
+                        }
                         $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
-                        if (!array_intersect((array)$product_id, $product_ids)) {
-                            unset($result[$key]);
-                            break;
-                        } 
+                        if( !empty($product_ids) ) {
+                            if (!array_intersect((array)$product_id, $product_ids)) {
+                                unset($result[$key]);
+                                break;
+                            } 
+                        }
                     }
                 }
             }
@@ -1030,11 +1052,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         WC()->session->__unset('multi_account_api_username');
     }
 
-    public function angelleye_get_product_tas_by_product_cat() {
+    public function angelleye_get_product_tag_by_product_cat() {
         $args = array(
             'post_type' => 'product',
             'posts_per_page' => -1,
             'fields' => 'ids',
+            'post_status'    => 'publish',
             'tax_query' => array(
                 array(
                     'taxonomy' => 'product_cat',
@@ -1045,12 +1068,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         );
         $loop = new WP_Query($args);
         $all_tags = array();
+        $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
+                $all_products[$value] = get_the_title($value);
                 $terms = get_the_terms($value, 'product_tag');
                 if (!empty($terms)) {
                     foreach ($terms as $terms_key => $terms_value) {
-                        $all_tags[$terms_value->term_id] = $terms_value->name;
+                        if($terms_value->count > 0) {
+                            $all_tags[$terms_value->term_id] = $terms_value->name;
+                        }
                     }
                 }
             }
@@ -1058,6 +1085,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_send_json_success(
                 array(
                     'all_tags' => $all_tags,
+                    'all_products' => $all_products
                 )
         );
     }
@@ -1067,14 +1095,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             'post_type' => 'product',
             'posts_per_page' => -1,
             'fields' => 'ids',
-            'tax_query' => array(
-                array(
+            'post_status'    => 'publish',
+        );
+        
+        if( !empty($_POST['tag_list']) || !empty($_POST['categories_list'])) {
+            $args['tax_query'] = array();
+            if( !empty($_POST['tag_list']) ) {
+                 $args['tax_query'][] = array(
                     'taxonomy' => 'product_tag',
                     'terms' => $_POST['tag_list'],
+                    'operator' => 'IN'
+                );
+            }
+            if(!empty($_POST['categories_list'])) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $_POST['categories_list'],
                     'operator' => 'IN',
-                )
-            )
-        );
+                );
+            }
+        }
         $loop = new WP_Query($args);
         $all_products = array();
         if (!empty($loop->posts)) {
