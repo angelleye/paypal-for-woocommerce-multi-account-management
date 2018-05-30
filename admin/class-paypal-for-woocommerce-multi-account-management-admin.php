@@ -709,7 +709,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $woocommerce_paypal_express_api_user_role = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user_role', true);
                     if (!empty($woocommerce_paypal_express_api_user_role)) {
                         if (is_user_logged_in()) {
-                            if (in_array($woocommerce_paypal_express_api_user_role, (array) $user->roles, true)) {
+                            if (in_array($woocommerce_paypal_express_api_user_role, (array) $user->roles, true) || $woocommerce_paypal_express_api_user_role == 'all') {
                                 $passed_rules['woocommerce_paypal_express_api_user_role'] = true;
                             } else {
                                 unset($result[$key]);
