@@ -692,10 +692,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
                         foreach ($buyer_countries as $buyer_countries_key => $buyer_countries_value) {
-                            $billing_country = WC()->customer->get_billing_country();
-                            if ($billing_country = $buyer_countries_value) {
-                                $passed_rules['buyer_countries'] = true;
-                                break;
+                            $post_data = WC()->session->get('post_data');
+                            if( empty($post_data) ) {
+                                if (!empty($post_data['billing_country']) && $post_data['billing_country'] == $buyer_countries_value) {
+                                    $passed_rules['buyer_countries'] = true;
+                                    break;
+                                }
+                            } else {
+                                $billing_country = WC()->customer->get_billing_country();
+                                if ($billing_country == $buyer_countries_value) {
+                                    $passed_rules['buyer_countries'] = true;
+                                    break;
+                                }
                             }
                         }
                     } else {
