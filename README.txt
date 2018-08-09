@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 1.1.0 - xx.xx.2018 =
 * [PFWMA-8] - Feature - Adds User Role based condition triggers.
+* [PFWMA-10] - Feature - Adds product based condition triggers.
 * [PFWMA-7] - Fix - Resolves a PHP warning related to countable array data.
 
 = 1.0.2 - 01.02.2018 =
