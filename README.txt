@@ -29,8 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.0.3 - xx.xx.2018 =
-[PFWMA-7] - Resolves a PHP warning related to countable array data.
+= 1.1.0 - xx.xx.2018 =
+* [PFWMA-8] - Feature - Adds User Role based condition triggers.
+* [PFWMA-7] - Fix - Resolves a PHP warning related to countable array data.
 
 = 1.0.2 - 01.02.2018 =
 * Tweak - Adds better error details if you try to add an account with incorrect API credentials. ([#9](https://bitbucket.org/angelleye/paypal-for-woocommerce-multi-account-management/issues/9/accounts-are-not-getting-added-correctly))
