@@ -25,7 +25,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PFWMA_VERSION', '1.0.2');
+define('PFWMA_VERSION', '1.0.3');
 
 /**
  * define plugin basename
