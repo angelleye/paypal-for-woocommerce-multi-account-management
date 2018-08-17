@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
-Tested up to: 4.8
-Stable tag: 1.0.2
+Tested up to: 4.9.8
+Stable tag: 1.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,10 +29,11 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.1.0 - xx.xx.2018 =
-* [PFWMA-8] - Feature - Adds User Role based condition triggers.
-* [PFWMA-10] - Feature - Adds product based condition triggers.
-* [PFWMA-7] - Fix - Resolves a PHP warning related to countable array data.
+= 1.1.0 - 08.16.2018 =
+* Feature - Adds User Role based condition triggers. [PFWMA-8]
+* Feature - Adds product based condition triggers. [PFWMA-10]
+* Fix - Resolves a problem where the rules would not trigger correctly based on specific scenarios. [PFWMA-3][PFWMA-9]
+* Fix - Resolves a PHP warning related to countable array data. [PFWMA-7]
 
 = 1.0.2 - 01.02.2018 =
 * Tweak - Adds better error details if you try to add an account with incorrect API credentials. ([#9](https://bitbucket.org/angelleye/paypal-for-woocommerce-multi-account-management/issues/9/accounts-are-not-getting-added-correctly))
