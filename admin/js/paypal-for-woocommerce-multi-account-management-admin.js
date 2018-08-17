@@ -10,6 +10,32 @@ jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function (
     }
 }).change();
 
+        
+jQuery('#woocommerce_paypal_pro_payflow_testmode_microprocessing').change(function () {
+    var sandbox = jQuery('#woocommerce_paypal_pro_payflow_sandbox_paypal_partner_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing').closest('tr');
+    var production = jQuery('#woocommerce_paypal_pro_payflow_paypal_partner_microprocessing, #woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing, #woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing, #woocommerce_paypal_pro_payflow_api_password_microprocessing').closest('tr');
+    if (jQuery(this).is(':checked')) {
+        sandbox.show();
+        production.hide();
+    } else {
+        sandbox.hide();
+        production.show();
+    }
+}).change();
+
+jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
+    if( $(this).val() === 'paypal_pro_payflow' ) {
+        jQuery('.angelleye_multi_account_paypal_pro_payflow_field').show();
+        jQuery('.angelleye_multi_account_paypal_express_field').hide();
+    } else {
+        jQuery('.angelleye_multi_account_paypal_express_field').show();
+        jQuery('.angelleye_multi_account_paypal_pro_payflow_field').hide();
+    }
+}).change();
+
+
+
+
 jQuery('#product_categories').change(function () {
     jQuery('#product_tags').empty();
     jQuery('#product_list').empty();

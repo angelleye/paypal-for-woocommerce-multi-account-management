@@ -253,194 +253,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <form method="post" id="mainform" action="" enctype="multipart/form-data">
                     <table class="form-table" id="micro_account_fields" >
                         <tbody class="angelleye_micro_account_body">
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_enable"><?php echo __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <label for="woocommerce_paypal_express_enable">
-                                            <input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" id="woocommerce_paypal_express_enable" type="checkbox"><?php echo __('Enable Account', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_testmode"><?php echo __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <label for="woocommerce_paypal_express_testmode_microprocessing">
-                                            <input class="woocommerce_paypal_express_testmode" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_account_name_microprocessing"><?php echo __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_account_name" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_sandbox_api_username_microprocessing"><?php echo __('Sandbox API Username', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API Username', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_username" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_sandbox_api_password_microprocessing"><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_password" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" style="" placeholder="" type="password">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing"><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_signature" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" style="" placeholder="" type="password">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr style="display: table-row;" valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_api_username_microprocessing"><?php echo __('API Username', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('API Username', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_username" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="" type="text">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr style="display: table-row;" valign="top">
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_password" id="woocommerce_paypal_express_api_password_microprocessing" style="" placeholder="" type="password">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <legend class="screen-reader-text"><span><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                                        <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password">
-                                    </fieldset>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="titledesc">
-                                    <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                                </th>
-                                <td class="forminp">
-                                    <fieldset>
-                                        <p class="description"><?php _e('Select Priority', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select class="smart_forwarding_field" name="woocommerce_priority">
-                                            <?php
-                                            for ($x = 0; $x <= 100; $x++) {
-                                                echo "The number is: $x <br>";
-                                                echo "\n\t<option value='" . $x . "'>$x</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                        <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
-                                            <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
-                                            <?php
-                                            $editable_roles = array_reverse(get_editable_roles());
-                                            foreach ($editable_roles as $role => $details) {
-                                                $name = translate_user_role($details['name']);
-                                                echo "\n\t<option value='" . esc_attr($role) . "'>$name</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                        <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('All countries', 'woocommerce'); ?>">
-                                            <?php
-                                            $category_ids = array();
-                                            $countries = WC()->countries->get_countries();
-
-                                            if ($countries) {
-                                                foreach ($countries as $country_key => $country_full_name) {
-                                                    echo '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                        <p class="description"><?php _e('Product categories', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
-                                            <?php
-                                            $category_ids = array();
-                                            $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
-
-                                            if ($categories) {
-                                                foreach ($categories as $cat) {
-                                                    echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                        <?php ?>
-                                        <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
-                                            <?php
-                                            $category_ids = array();
-                                            $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
-                                            if ($tags) {
-                                                foreach ($tags as $tag) {
-                                                    echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                        <p class="description"><?php _e('Products', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                                        <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
-                                            <?php 
-                                               $args = array(
-                                                'post_type' => 'product',
-                                                'posts_per_page' => -1,
-                                                'fields' => 'ids',
-                                                'post_status'    => 'publish',
-
-                                            );
-                                            $loop = new WP_Query($args);
-                                            if (!empty($loop->posts)) {
-                                                foreach ($loop->posts as $key => $value) {
-                                                    echo '<option value="' . $value . '">' . get_the_title($value) . '</option>';
-                                                }
-                                            }
-                                            ?>
-                                        </select>
-                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                                        <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                                        <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01">
-                                    </fieldset>
-                                </td>
-                            </tr>
+                            <?php echo $this->angelleye_multi_account_choose_payment_gateway(); ?>
+                            <?php echo $this->angelleye_multi_account_api_field_ui() ?>
+                            <?php echo $this->angelleye_multi_account_paypal_pro_payflow_api_field_ui(); ?>
+                            <?php echo $this->angelleye_multi_account_condition_ui(); ?>
                             <tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
@@ -1138,6 +954,355 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'all_products' => $all_products,
                 )
         );
+    }
+    
+    public function angelleye_multi_account_api_field_ui() {
+        ?>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_enable"><?php echo __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <label for="woocommerce_paypal_express_enable">
+                        <input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" id="woocommerce_paypal_express_enable" type="checkbox"><?php echo __('Enable Account', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_testmode"><?php echo __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <label for="woocommerce_paypal_express_testmode_microprocessing">
+                        <input class="woocommerce_paypal_express_testmode" name="woocommerce_paypal_express_testmode" id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_account_name_microprocessing"><?php echo __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_account_name" id="woocommerce_paypal_express_account_name_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_sandbox_api_username_microprocessing"><?php echo __('Sandbox API Username', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API Username', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_username" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_sandbox_api_password_microprocessing"><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_password" id="woocommerce_paypal_express_sandbox_api_password_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_sandbox_api_signature_microprocessing"><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Sandbox API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_signature" id="woocommerce_paypal_express_sandbox_api_signature_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr style="display: table-row;" valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_api_username_microprocessing"><?php echo __('API Username', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('API Username', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_username" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr style="display: table-row;" valign="top" class="angelleye_multi_account_paypal_express_field"> 
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_password" id="woocommerce_paypal_express_api_password_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <?php
+    }
+
+    public function angelleye_multi_account_choose_payment_gateway() {
+        ?>
+        <tr>
+            <th><?php _e('Select Payment Gateway', 'paypal-for-woocommerce-multi-account-management'); ?></th>
+            <td>
+                
+        <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">
+            <?php
+            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''));
+            foreach ($gateway_list as $key => $details) {
+                echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
+            }
+            ?>
+        </select>
+            </td>
+            
+        </tr>
+        
+        <?php
+    }
+
+
+    public function angelleye_multi_account_paypal_pro_payflow_api_field_ui() {
+        ?>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_enable"><?php echo __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <label for="woocommerce_paypal_pro_payflow_enable">
+                        <input class="woocommerce_paypal_pro_payflow_enable" name="woocommerce_paypal_pro_payflow_enable" id="woocommerce_paypal_pro_payflow_enable" type="checkbox"><?php echo __('Enable Account', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_testmode"><?php echo __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <label for="woocommerce_paypal_pro_payflow_testmode_microprocessing">
+                        <input class="woocommerce_paypal_pro_payflow_testmode" name="woocommerce_paypal_pro_payflow_testmode" id="woocommerce_paypal_pro_payflow_testmode_microprocessing" type="checkbox"><?php echo __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_account_name_microprocessing"><?php echo __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Account Name/Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_account_name" id="woocommerce_paypal_pro_payflow_account_name_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_sandbox_paypal_partner_microprocessing"><?php echo __('Partner', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Partner', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner" id="woocommerce_paypal_pro_payflow_sandbox_paypal_partner_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing"><?php echo __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing"><?php echo __('User (optional)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('User (optional)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing"><?php echo __('Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_password" id="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_paypal_partner_microprocessing"><?php echo __('Partner', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Partner', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_partner" id="woocommerce_paypal_pro_payflow_paypal_partner_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing"><?php echo __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_vendor" id="woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing"><?php echo __('User (optional)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('User (optional)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_user" id="woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing" style="" placeholder="" type="text">
+                </fieldset>
+            </td>
+        </tr>
+        <tr valign="top" class="angelleye_multi_account_paypal_pro_payflow_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_pro_payflow_api_password_microprocessing"><?php echo __('Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_password" id="woocommerce_paypal_pro_payflow_api_password_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        
+        <?php
+    }
+
+    
+    public function angelleye_multi_account_condition_ui() {
+        ?>
+        <tr>
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <p class="description"><?php _e('Select Priority', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select class="smart_forwarding_field" name="woocommerce_priority">
+                        <?php
+                        for ($x = 0; $x <= 100; $x++) {
+                            echo "The number is: $x <br>";
+                            echo "\n\t<option value='" . $x . "'>$x</option>";
+                        }
+                        ?>
+                    </select>
+                    <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
+                        <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
+                        <?php
+                        $editable_roles = array_reverse(get_editable_roles());
+                        foreach ($editable_roles as $role => $details) {
+                            $name = translate_user_role($details['name']);
+                            echo "\n\t<option value='" . esc_attr($role) . "'>$name</option>";
+                        }
+                        ?>
+                    </select>
+                    <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('All countries', 'woocommerce'); ?>">
+                        <?php
+                        $category_ids = array();
+                        $countries = WC()->countries->get_countries();
+
+                        if ($countries) {
+                            foreach ($countries as $country_key => $country_full_name) {
+                                echo '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <p class="description"><?php _e('Product categories', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
+                        <?php
+                        $category_ids = array();
+                        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
+
+                        if ($categories) {
+                            foreach ($categories as $cat) {
+                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php ?>
+                    <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
+                        <?php
+                        $category_ids = array();
+                        $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
+                        if ($tags) {
+                            foreach ($tags as $tag) {
+                                echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <p class="description"><?php _e('Products', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
+                        <?php 
+                           $args = array(
+                            'post_type' => 'product',
+                            'posts_per_page' => -1,
+                            'fields' => 'ids',
+                            'post_status'    => 'publish',
+
+                        );
+                        $loop = new WP_Query($args);
+                        if (!empty($loop->posts)) {
+                            foreach ($loop->posts as $key => $value) {
+                                echo '<option value="' . $value . '">' . get_the_title($value) . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
+                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
+                    <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01">
+                </fieldset>
+            </td>
+        </tr>
+        <?php
     }
 
 }
