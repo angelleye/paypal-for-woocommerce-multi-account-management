@@ -10,11 +10,9 @@ function angelleye_multi_account_paypal_express_hide_show_field() {
     var sandbox_ec = jQuery('#woocommerce_paypal_express_sandbox_api_username_microprocessing, #woocommerce_paypal_express_sandbox_api_password_microprocessing, #woocommerce_paypal_express_sandbox_api_signature_microprocessing').closest('tr');
     var production_ec = jQuery('#woocommerce_paypal_express_api_username_microprocessing, #woocommerce_paypal_express_api_password_microprocessing, #woocommerce_paypal_express_api_signature_microprocessing').closest('tr');
     if (jQuery('#woocommerce_paypal_express_testmode_microprocessing').is(':checked')) {
-        console.log(16);
         sandbox_ec.show();
         production_ec.hide();
     } else {
-        console.log(20);
         sandbox_ec.hide();
         production_ec.show();
     }
@@ -23,11 +21,9 @@ function angelleye_multi_account_paypal_payfow_hide_show_field() {
     var sandbox_pf = jQuery('#woocommerce_paypal_pro_payflow_sandbox_paypal_partner_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing').closest('tr');
     var production_pf = jQuery('#woocommerce_paypal_pro_payflow_paypal_partner_microprocessing, #woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing, #woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing, #woocommerce_paypal_pro_payflow_api_password_microprocessing').closest('tr');
     if (jQuery('#woocommerce_paypal_pro_payflow_testmode_microprocessing').is(':checked')) {
-        console.log(30);
         sandbox_pf.show();
         production_pf.hide();
     } else {
-        console.log(34);
         sandbox_pf.hide();
         production_pf.show();
     }
@@ -35,11 +31,9 @@ function angelleye_multi_account_paypal_payfow_hide_show_field() {
 
 function angelleye_multi_account_choose_payment_hide_show_field() {
     if( jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_pro_payflow' ) {
-        console.log(42);
         jQuery('.angelleye_multi_account_paypal_pro_payflow_field').show();
         jQuery('.angelleye_multi_account_paypal_express_field').hide();
     } else {
-        console.log(46);
         jQuery('.angelleye_multi_account_paypal_express_field').show();
         jQuery('.angelleye_multi_account_paypal_pro_payflow_field').hide();
     }

@@ -93,8 +93,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $gateway_option_Selected = "<option value='$gateway_key'>$gateway_value</option>";
                     echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
                 }
+            } 
+        } else {
+                $gateway_option_Selected = "<option value='paypal_express'>PayPal Express Checkout</option>";
+                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
             }
-        }
                 
         if( $this->gateway_key == 'paypal_express' ) {
         
@@ -259,8 +262,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_ui() {
-        $this->angelleye_save_multi_account_data_paypal_pro_payflow();
-        $this->angelleye_save_multi_account_data();
+        if( !empty($_POST['angelleye_multi_account_choose_payment_gateway']) && $_POST['angelleye_multi_account_choose_payment_gateway'] == 'paypal_pro_payflow') {
+            $this->angelleye_save_multi_account_data_paypal_pro_payflow();
+        }
+        if( !empty($_POST['angelleye_multi_account_choose_payment_gateway']) && $_POST['angelleye_multi_account_choose_payment_gateway'] == 'paypal_express') {
+            $this->angelleye_save_multi_account_data();
+        }
+        
         if (empty($_GET['action'])) {
             if (!empty($_GET['success'])) {
                 echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
@@ -476,7 +484,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         'APIUsername' => $APIUsername,
                         'APIPassword' => $APIPassword,
                         'APIVendor' => $APIVendor,
-                        'APIPartner' => APIPartner
+                        'APIPartner' => $APIPartner
                     );
                 }
             } else {
@@ -504,7 +512,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         'APIUsername' => $APIUsername,
                         'APIPassword' => $APIPassword,
                         'APIVendor' => $APIVendor,
-                        'APIPartner' => APIPartner
+                        'APIPartner' => $APIPartner
                     );
                 }
             }
@@ -520,16 +528,58 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     die();
                 }
             }
+            if (!class_exists('Angelleye_PayPal_PayFlow')) {
+                require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.payflow.class.php' );
+            }
             $PayPal = new Angelleye_PayPal_PayFlow($PayPalConfig);
         } catch (Exception $ex) {
             
         }
-            $PayPal = new Angelleye_PayPal($PayPalConfig);
-            $PayPalResult = $PayPal->GetPalDetails();
-            if (isset($PayPalResult['ACK']) && $PayPalResult['ACK'] == 'Success') {
-                if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
-                    $merchant_account_id = $PayPalResult['PAL'];
-                }
+            
+            $customer_id = get_current_user_id();
+            $secure_token_id = uniqid(substr(sanitize_text_field( wp_unslash($_SERVER['HTTP_HOST'])), 0, 9), true);
+            $billtofirstname = (get_user_meta($customer_id, 'billing_first_name', true)) ? get_user_meta($customer_id, 'billing_first_name', true) : get_user_meta($customer_id, 'shipping_first_name', true);
+                $billtolastname = (get_user_meta($customer_id, 'billing_last_name', true)) ? get_user_meta($customer_id, 'billing_last_name', true) : get_user_meta($customer_id, 'shipping_last_name', true);
+                $billtostate = (get_user_meta($customer_id, 'billing_state', true)) ? get_user_meta($customer_id, 'billing_state', true) : get_user_meta($customer_id, 'shipping_state', true);
+                $billtocountry = (get_user_meta($customer_id, 'billing_country', true)) ? get_user_meta($customer_id, 'billing_country', true) : get_user_meta($customer_id, 'shipping_country', true);
+                $billtozip = (get_user_meta($customer_id, 'billing_postcode', true)) ? get_user_meta($customer_id, 'billing_postcode', true) : get_user_meta($customer_id, 'shipping_postcode', true);
+                $PayPalRequestData = array(
+                    'tender' => 'C',
+                    'trxtype' => 'A',
+                    'acct' => '',
+                    'expdate' => '',
+                    'amt' => '0.00',
+                    'currency' => get_woocommerce_currency(),
+                    'cvv2' => '',
+                    'orderid' => '',
+                    'orderdesc' => '',
+                    'billtoemail' => '',
+                    'billtophonenum' => '',
+                    'billtofirstname' => $billtofirstname,
+                    'billtomiddlename' => '',
+                    'billtolastname' => $billtolastname,
+                    'billtostreet' => '',
+                    'billtocity' => '',
+                    'billtostate' => $billtostate,
+                    'billtozip' => $billtozip,
+                    'billtocountry' => $billtocountry,
+                    'custref' => '',
+                    'custcode' => '',
+                    'custip' => AngellEYE_Utility::get_user_ip(),
+                    'invnum' => '',
+                    'ponum' => '',
+                    'starttime' => '',
+                    'endtime' => '',
+                    'securetoken' => '',
+                    'partialauth' => '',
+                    'authcode' => '',
+                    'SECURETOKENID' => $secure_token_id,
+                    'CREATESECURETOKEN' => 'Y',
+                );
+                $PayPalResult = $PayPal->ProcessTransaction($PayPalRequestData);
+                
+            if (isset($PayPalResult['RESULT']) && $PayPalResult['RESULT'] == 0  ) {
+                
             } else {
                 if (!empty($PayPalResult['L_ERRORCODE0']) && $PayPalResult['L_ERRORCODE0'] == '10002') {
                     ?>
