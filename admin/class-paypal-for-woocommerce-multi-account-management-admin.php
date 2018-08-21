@@ -148,7 +148,58 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         } else {
-            
+            foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+                switch ($microprocessing_key) {
+                    case 'woocommerce_paypal_pro_payflow_enable':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_pro_payflow_enable"><input class="woocommerce_paypal_pro_payflow_enable" name="woocommerce_paypal_pro_payflow_enable" %2$s id="woocommerce_paypal_pro_payflow_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_testmode':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_testmode">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_pro_payflow_testmode_microprocessing"><input class="woocommerce_paypal_pro_payflow_testmode width460" name="woocommerce_paypal_pro_payflow_testmode" %2$s id="woocommerce_paypal_pro_payflow_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_account_name':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_account_name" value="%2$s" id="woocommerce_paypal_pro_payflow_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner" value="%2$s" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Partner', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor" value="%2$s" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_user':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user" value="%2$s" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('User (optional)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_sandbox_api_password':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_password" value="%2$s" id="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('Password', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_api_paypal_partner':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_api_paypal_partner_microprocessing">%1$s</label><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_partner" value="%2$s" id="woocommerce_paypal_pro_payflow_api_paypal_partner_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Partner', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_api_paypal_vendor':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_vendor" value="%2$s" id="woocommerce_paypal_pro_payflow_api_paypal_vendor_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_api_paypal_user':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_paypal_user" value="%2$s" id="woocommerce_paypal_pro_payflow_api_paypal_user_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('User (optional)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_pro_payflow_api_password':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_api_password_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_api_password" value="%2$s" id="woocommerce_paypal_pro_payflow_api_password_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('Password', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_express_api_user_role':
+                        $selected_role = $microprocessing_value[0];
+                        break;
+                    case 'product_categories':
+                        $product_categories = maybe_unserialize($microprocessing_value[0]);
+                        break;
+                    case 'product_tags':
+                        $product_tags = maybe_unserialize($microprocessing_value[0]);
+                        break;
+                    case 'buyer_countries':
+                        $buyer_countries = maybe_unserialize($microprocessing_value[0]);
+                        break;
+                    case 'woocommerce_priority':
+                        $woocommerce_priority = $microprocessing_value[0];
+                        break;
+                }
+            }
         }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
         $option_two = '<option value="transaction_amount">Transaction Amount</option>';
@@ -477,7 +528,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     } else {
                         $APIPartner = 'PayPal';
                     }
-                    $APIPassword = wc_clean(trim($_POST['woocommerce_paypal_pro_payflow_sandbox_api_password']));
+                    $APIPassword = wc_clean(trim($_POST['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor']));
                     $APIVendor = wc_clean(trim($_POST['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor']));
                     $PayPalConfig = array(
                         'Sandbox' => true,
@@ -611,7 +662,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_pro_payflow_enable', 'woocommerce_paypal_pro_payflow_testmode', 'woocommerce_paypal_pro_payflow_account_name', 'woocommerce_paypal_pro_payflow_sandbox_api_username', 'woocommerce_paypal_pro_payflow_sandbox_api_password', 'woocommerce_paypal_pro_payflow_sandbox_api_signature', 'woocommerce_paypal_pro_payflow_api_username', 'woocommerce_paypal_pro_payflow_api_password', 'woocommerce_paypal_pro_payflow_api_signature', 'woocommerce_paypal_pro_payflow_api_condition_field', 'woocommerce_paypal_pro_payflow_api_condition_sign', 'woocommerce_paypal_pro_payflow_api_condition_value', 'woocommerce_paypal_pro_payflow_api_user_role', 'woocommerce_paypal_pro_payflow_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway');
+            $microprocessing_key_array = array('woocommerce_paypal_pro_payflow_enable', 'woocommerce_paypal_pro_payflow_testmode', 'woocommerce_paypal_pro_payflow_account_name', 'woocommerce_paypal_pro_payflow_api_paypal_partner', 'woocommerce_paypal_pro_payflow_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_api_paypal_user', 'woocommerce_paypal_pro_payflow_api_password', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_user', 'woocommerce_paypal_pro_payflow_sandbox_api_password', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_pro_payflow_account_name']),
@@ -1365,7 +1416,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('Vendor (Merchant Login)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing" style="" placeholder="" type="text">
                 </fieldset>
             </td>
         </tr>
@@ -1376,7 +1427,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('User (optional)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user" id="woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing" style="" placeholder="" type="text">
                 </fieldset>
             </td>
         </tr>
@@ -1387,7 +1438,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('Password', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_password" id="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing" style="" placeholder="" type="text">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_pro_payflow_sandbox_api_password" id="woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing" style="" placeholder="" type="password">
                 </fieldset>
             </td>
         </tr>
