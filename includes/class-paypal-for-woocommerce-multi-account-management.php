@@ -139,6 +139,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
         $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
+        $this->loader->add_action('before_save_payment_token', $plugin_admin, 'angelleye_woocommerce_payment_successful_result', 11, 1);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
         $this->loader->add_action('woocommerce_cart_item_removed', $plugin_admin, 'update_session_data', 999);
