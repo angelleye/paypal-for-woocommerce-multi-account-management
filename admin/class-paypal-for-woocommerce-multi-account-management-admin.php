@@ -750,33 +750,64 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $this->final_associate_account = array();
         $order_total = $this->angelleye_get_total($order_id);
-        $args = array(
-            'post_type' => 'microprocessing',
-            'order' => 'DESC',
-            'orderby' => 'order_clause',
-            'meta_key' => 'woocommerce_priority',
-            'meta_query' => array(
-                'order_clause' => array(
-                    'key' => 'woocommerce_priority',
-                    'type' => 'NUMERIC' // unless the field is not a number
-                ),
-                'relation' => 'AND',
-                array(
-                    'key' => 'woocommerce_paypal_express_enable',
-                    'value' => 'on',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'woocommerce_paypal_express_testmode',
-                    'value' => ($gateways->testmode == true) ? 'on' : '',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'woocommerce_priority',
-                    'compare' => 'EXISTS'
+        if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+            $args = array(
+                'post_type' => 'microprocessing',
+                'order' => 'DESC',
+                'orderby' => 'order_clause',
+                'meta_key' => 'woocommerce_priority',
+                'meta_query' => array(
+                    'order_clause' => array(
+                        'key' => 'woocommerce_priority',
+                        'type' => 'NUMERIC' // unless the field is not a number
+                    ),
+                    'relation' => 'AND',
+                    array(
+                        'key' => 'woocommerce_paypal_pro_payflow_enable',
+                        'value' => 'on',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_paypal_pro_payflow_testmode',
+                        'value' => ($gateways->testmode == true) ? 'on' : '',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_priority',
+                        'compare' => 'EXISTS'
+                    )
                 )
-            )
-        );
+            );
+        } elseif(!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
+            $args = array(
+                'post_type' => 'microprocessing',
+                'order' => 'DESC',
+                'orderby' => 'order_clause',
+                'meta_key' => 'woocommerce_priority',
+                'meta_query' => array(
+                    'order_clause' => array(
+                        'key' => 'woocommerce_priority',
+                        'type' => 'NUMERIC' // unless the field is not a number
+                    ),
+                    'relation' => 'AND',
+                    array(
+                        'key' => 'woocommerce_paypal_express_enable',
+                        'value' => 'on',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_paypal_express_testmode',
+                        'value' => ($gateways->testmode == true) ? 'on' : '',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_priority',
+                        'compare' => 'EXISTS'
+                    )
+                )
+            );
+        }
+        
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
@@ -920,22 +951,41 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $this->final_associate_account = array();
         $order_total = $this->angelleye_get_total($order_id);
-        $args = array(
-            'post_type' => 'microprocessing',
-            'meta_query' => array(
-                'relation' => 'AND',
-                array(
-                    'key' => 'woocommerce_paypal_express_enable',
-                    'value' => 'on',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'woocommerce_paypal_express_testmode',
-                    'value' => ($gateways->testmode == true) ? 'on' : '',
-                    'compare' => 'LIKE'
+        if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+            $args = array(
+                'post_type' => 'microprocessing',
+                'meta_query' => array(
+                    'relation' => 'AND',
+                    array(
+                        'key' => 'woocommerce_paypal_pro_payflow_enable',
+                        'value' => 'on',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_paypal_pro_payflow_testmode',
+                        'value' => ($gateways->testmode == true) ? 'on' : '',
+                        'compare' => 'LIKE'
+                    )
                 )
-            )
-        );
+            );
+        } elseif(!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
+            $args = array(
+                'post_type' => 'microprocessing',
+                'meta_query' => array(
+                    'relation' => 'AND',
+                    array(
+                        'key' => 'woocommerce_paypal_express_enable',
+                        'value' => 'on',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'woocommerce_paypal_express_testmode',
+                        'value' => ($gateways->testmode == true) ? 'on' : '',
+                        'compare' => 'LIKE'
+                    )
+                )
+            );
+        }
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
@@ -1034,21 +1084,44 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         if (!empty($microprocessing_value)) {
             if ($gateways->testmode == true) {
-                if (!empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'])) {
-                    $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
-                    $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
-                    $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
-                    WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
-                    return;
+                if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+                    if (!empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'])) {
+                        $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
+                        $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
+                        $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
+                        return;
+                    }
+                } elseif(!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
+                    if (!empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'])) {
+                        $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
+                        $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
+                        $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
+                        return;
+                    }
                 }
+                
+                
             } else {
-                if (!empty($microprocessing_value['woocommerce_paypal_express_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_api_signature'])) {
-                    $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
-                    $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
-                    $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
-                    WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
-                    return;
+                if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+                    if (!empty($microprocessing_value['woocommerce_paypal_express_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_api_signature'])) {
+                        $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
+                        $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
+                        $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
+                        return;
+                    }
+                } elseif(!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
+                    if (!empty($microprocessing_value['woocommerce_paypal_express_api_username']) && !empty($microprocessing_value['woocommerce_paypal_express_api_password']) && !empty($microprocessing_value['woocommerce_paypal_express_api_signature'])) {
+                        $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
+                        $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
+                        $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
+                        return;
+                    }
                 }
+                
             }
         }
     }
