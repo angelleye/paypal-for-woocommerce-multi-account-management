@@ -1854,7 +1854,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $gateways->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
                     $gateways->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
                     WC()->session->set('multi_account_api_username', $gateways->paypal_user);
-                    return;
+                    return false;
                 }
             } else {
                 if (!empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_user']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_password']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'])) {
@@ -1863,10 +1863,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $gateways->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor'];
                     $gateways->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
                     WC()->session->set('multi_account_api_username', $gateways->paypal_user);
-                    return;
+                    return false;
                 }
             }
-            return false;
+            
+        } else {
+            return true;
         }
     }
     
