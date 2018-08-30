@@ -909,15 +909,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     break;
                                }
                            } else {
-                                $post_data = WC()->session->get('post_data');
-                                if( empty($post_data) ) {
-                                    if (!empty($post_data['billing_country']) && $post_data['billing_country'] == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                        break;
+                                $post_checkout_data = WC()->session->get('post_data');
+                                if( empty($post_checkout_data) ) {
+                                    $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_billing_country();
+                                    if( empty($billing_country) ) {
+                                        $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_shipping_country();
+                                    }
+                                    if( !empty($billing_country) ) {
+                                        if ($billing_country == $buyer_countries_value) {
+                                            $passed_rules['buyer_countries'] = true;
+                                            break;
+                                        }
                                     }
                                 } else {
-                                    $billing_country = WC()->customer->get_billing_country();
-                                    if ($billing_country == $buyer_countries_value) {
+                                    if (!empty($post_checkout_data['billing_country']) && $post_checkout_data['billing_country'] == $buyer_countries_value) {
                                         $passed_rules['buyer_countries'] = true;
                                         break;
                                     }
