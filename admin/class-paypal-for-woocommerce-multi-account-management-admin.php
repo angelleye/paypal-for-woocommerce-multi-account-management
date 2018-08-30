@@ -207,7 +207,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $currency_code = empty($microprocessing_value[0]) ? '' : $microprocessing_value[0];
                         break;
                     case 'store_countries': 
-                        $store_countries = maybe_unserialize($microprocessing_value[0]);
+                        $store_countries = !empty(maybe_unserialize($microprocessing_value[0])) ? maybe_unserialize($microprocessing_value[0]) : '';
                 }
             }
         }
