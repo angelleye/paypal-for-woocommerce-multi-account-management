@@ -262,6 +262,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_fourteen = '<p class="description">' . __('Store country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "woocommerce") . '">';
         if ($countries) {
+            $store_countries = !empty($store_countries) ? $store_countries : '';
             $option_fourteen .= '<option value="">All countries</option>';
             foreach ($countries as $country_key => $country_full_name) {
                 $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
