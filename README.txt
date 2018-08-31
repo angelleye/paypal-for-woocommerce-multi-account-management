@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
 Tested up to: 4.9.8
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,7 +29,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.1.1 - xx.xx.2018 =
+= 1.1.1 - 08.31.2018 =
 * Feature - Adds Card Type, Currency Code, and Buyer Country based condition triggers. [PFWMA-4][PFWMA-11]
 * Feature - Adds PayFlow Compatibility. [PFWMA-13]
 * Tweak - Adjusts layout of condition trigger builder. [PFWMA-5]
