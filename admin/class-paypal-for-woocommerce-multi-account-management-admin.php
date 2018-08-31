@@ -960,16 +960,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 unset($passed_rules);
                                 continue;
                             }
-                        } else {
-                            unset($result[$key]);
-                            unset($passed_rules);
-                            continue;
-                        }
-                    } else {
-                        unset($result[$key]);
-                        unset($passed_rules);
-                        continue;
-                    }
+                        } 
+                    } 
                     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                         $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
                         $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
@@ -1012,7 +1004,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
-                    if (!isset($microprocessing_array['woocommerce_paypal_express_api_user_role'][0]) || in_array($microprocessing_array['woocommerce_paypal_express_api_user_role'][0], $current_user_roles)) {
                         if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                             switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                                 case 'equalto':
@@ -1041,7 +1032,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     break;
                             }
                         }
-                    }
+                    
                 }
             }
             if (count($this->final_associate_account) == 1) {
