@@ -30,6 +30,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 == Changelog ==
 
 = 1.1.1 - xx.xx.2018 =
+* Feature - Adds Card Type and Currency Code condition triggers. [PFWMA-4]
 * Tweak - Adjusts layout of condition trigger builder. [PFWMA-5]
 * Fix - Resolves an issue where some original condition triggers no longer worked after new condition triggers were added in last update. [PFWMA-21]
 
