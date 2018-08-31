@@ -877,7 +877,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             $card_value = $this->card_type_from_account_number($card_number);
                             if($card_value != $card_type) {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);
+                                continue;
                             }
                         }
                         // Currency Code
@@ -886,7 +887,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             $store_currency = get_woocommerce_currency();
                             if($store_currency != $currency_code) {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);                                         
+                                continue;
                             }
                         }
                     }
@@ -900,7 +902,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
                                     if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
                                          $passed_rules['buyer_countries'] = true;
-                                         break;
                                     }
                                }
                            } elseif( !empty ($order_id) && $order_id > 0) {
@@ -908,7 +909,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
                                if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
                                     $passed_rules['buyer_countries'] = true;
-                                    break;
                                }
                            } else {
                                 $post_checkout_data = WC()->session->get('post_data');
@@ -920,13 +920,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     if( !empty($billing_country) ) {
                                         if ($billing_country == $buyer_countries_value) {
                                             $passed_rules['buyer_countries'] = true;
-                                            break;
                                         }
                                     }
                                 } else {
                                     if (!empty($post_checkout_data['billing_country']) && $post_checkout_data['billing_country'] == $buyer_countries_value) {
                                         $passed_rules['buyer_countries'] = true;
-                                        break;
                                     }
                                 }
                            }
@@ -937,7 +935,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                     if (empty($passed_rules['buyer_countries'])) {
                         unset($result[$key]);
-                        break;
+                        unset($passed_rules);
+                        continue;
                     }
                     
                     
@@ -945,7 +944,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if( !empty($store_countries) ) {
                         if(WC()->countries->get_base_country() != $store_countries) {
                             unset($result[$key]);
-                            break;
+                            unset($passed_rules);
+                            continue;
                         }
                     }
                     
@@ -957,15 +957,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $passed_rules['woocommerce_paypal_express_api_user_role'] = true;
                             } else {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);
+                                continue;
                             }
                         } else {
                             unset($result[$key]);
-                            break;
+                            unset($passed_rules);
+                            continue;
                         }
                     } else {
                         unset($result[$key]);
-                        break;
+                        unset($passed_rules);
+                        continue;
                     }
                     foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                         $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
@@ -976,7 +979,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         if( !empty($product_categories) ) {
                             if (!array_intersect($product_categories, $woo_product_categories)) {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);
+                                continue;
                             } 
                         }
                         // Tags
@@ -985,14 +989,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         if( !empty($product_tags) ) {
                             if (!array_intersect($product_tags, $woo_product_tag)) {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);
+                                continue;
                             } 
                         }
                         $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
                         if( !empty($product_ids) ) {
                             if (!array_intersect((array)$product_id, $product_ids)) {
                                 unset($result[$key]);
-                                break;
+                                unset($passed_rules);
+                                continue;
                             } 
                         }
                     }
@@ -1002,7 +1008,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $total_posts = $query->found_posts;
         $loop = 0;
-        if ($total_posts > 0) {
+        if (count($result) > 0) {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
