@@ -864,9 +864,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $result = $query->query($args);
         $total_posts = $query->found_posts;
         // exclude multi account record base on first four condition
-        $passed_rules = array();
+        
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
+                $passed_rules = array();
                 if (!empty($value->ID)) {
                     // Card Type
                     if( $gateway_setting->id == 'paypal_pro_payflow' ) {
@@ -996,6 +997,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                     }
                 }
+                unset($passed_rules);
             }
         }
         $total_posts = $query->found_posts;
