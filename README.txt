@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 1.1.1 - xx.xx.2018 =
 * Tweak - Adjusts layout of condition trigger builder. [PFWMA-5]
+* Fix - Resolves an issue where some original condition triggers no longer worked after new condition triggers were added in last update. [PFWMA-21]
 
 = 1.1.0 - 08.16.2018 =
 * Feature - Adds User Role based condition triggers. [PFWMA-8]
