@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 1.1.1 - xx.xx.2018 =
 * Feature - Adds Card Type, Currency Code, and Buyer Country based condition triggers. [PFWMA-4][PFWMA-11]
+* Feature - Adds PayFlow Compatibility. [PFWMA-13]
 * Tweak - Adjusts layout of condition trigger builder. [PFWMA-5]
 * Fix - Resolves an issue where some original condition triggers no longer worked after new condition triggers were added in last update. [PFWMA-21]
 
