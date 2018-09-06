@@ -92,9 +92,9 @@ function run_paypal_for_woocommerce_multi_account_management() {
     $plugin->run();
 }
 
-add_action('plugins_loaded', 'load_angelleye_woo_paypal_here');
+add_action('plugins_loaded', 'load_angelleye_woo_paypal_for_woo_multi_account');
 
-function load_angelleye_woo_paypal_here() {
+function load_angelleye_woo_paypal_for_woo_multi_account() {
     try {
         if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
             run_paypal_for_woocommerce_multi_account_management();
