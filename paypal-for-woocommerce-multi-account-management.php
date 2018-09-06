@@ -12,7 +12,7 @@
  * Plugin Name:       PayPal for WooCommerce Multi-Account Management
  * Plugin URI:        http://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management/
  * Description:       Send WooCommerce order payments to different PayPal accounts based on rules provided.
- * Version:           1.1.1
+ * Version:           1.1.0
  * Author:            Angell EYE
  * Author URI:        http://www.angelleye.com/
  * License:           GPLv3 or later
@@ -25,7 +25,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PFWMA_VERSION', '1.1.1');
+define('PFWMA_VERSION', '1.1.0');
 
 /**
  * define plugin basename
@@ -34,7 +34,7 @@ if (!defined('PFWMA_PLUGIN_BASENAME')) {
     define('PFWMA_PLUGIN_BASENAME', plugin_basename(__FILE__));
 }
 
- if (!defined('AEU_ZIP_URL')) {
+if (!defined('AEU_ZIP_URL')) {
     define('AEU_ZIP_URL', 'http://downloads.angelleye.com/ae-updater/angelleye-updater/angelleye-updater.zip');
 }
 
@@ -92,4 +92,23 @@ function run_paypal_for_woocommerce_multi_account_management() {
     $plugin->run();
 }
 
-run_paypal_for_woocommerce_multi_account_management();
+add_action('plugins_loaded', 'load_angelleye_woo_paypal_here');
+
+function load_angelleye_woo_paypal_here() {
+    try {
+        if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
+            run_paypal_for_woocommerce_multi_account_management();
+        } else {
+            if ( ! function_exists( 'WC' ) ) {
+                throw new Exception( __( 'PayPal for WooCommerce Multi-Account Management requires WooCommerce plugin to be activated', 'woocommerce-gateway-paypal-express-checkout' ), 2);
+            }
+            if ( ! class_exists('AngellEYE_Gateway_Paypal') ) {
+                throw new Exception( __( 'PayPal for WooCommerce Multi-Account Management requires PayPal for WooCommerce plugin to be activated', 'woocommerce-gateway-paypal-express-checkout' ), 2 );
+            }
+        }
+    } catch (Exception $ex) {
+        $class = 'notice notice-error';
+        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $ex->getMessage() ) ); 
+    }
+    
+}
