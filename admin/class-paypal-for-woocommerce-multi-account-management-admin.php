@@ -147,6 +147,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         break;
                     case 'store_countries': 
                         $store_countries = maybe_unserialize($microprocessing_value[0]);
+                        break;
+                    case 'currency_code':
+                        $currency_code = empty($microprocessing_value[0]) ? '' : $microprocessing_value[0];
+                        break;
                 }
             }
         } else {
@@ -297,6 +301,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         }
+        $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+        $option_thirteen .= '<select class="currency_code" name="currency_code">';
+        $option_thirteen .= "<option value=''>All</option>";
+        $currency_code_options = get_woocommerce_currencies();
+        foreach ( $currency_code_options as $code => $name ) {
+           $currency_code_options[ $code ] = $name . ' (' . get_woocommerce_currency_symbol( $code ) . ')';
+        }
+        foreach ($currency_code_options as $currency_code_key => $currency_code_value) {
+            if ( isset( $currency_code ) && $currency_code == $currency_code_key) {
+                $option_thirteen .= "<option selected='selected' value='" . $currency_code_key . "'>$currency_code_value</option>";
+            } else {
+                $option_thirteen .= "<option value='" . $currency_code_key . "'>$currency_code_value</option>";
+            }
+        }
+        $option_thirteen .= '</select>';
         if( $this->gateway_key == 'paypal_pro_payflow' ) {
             $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_twelve .= '<select class="card_type" name="card_type">';
@@ -310,23 +329,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
             $option_twelve .= '</select>';
-            $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-            $option_thirteen .= '<select class="currency_code" name="currency_code">';
-            $option_thirteen .= "<option value=''>All</option>";
-            $currency_code_options = get_woocommerce_currencies();
-            foreach ( $currency_code_options as $code => $name ) {
-               $currency_code_options[ $code ] = $name . ' (' . get_woocommerce_currency_symbol( $code ) . ')';
-            }
-            foreach ($currency_code_options as $currency_code_key => $currency_code_value) {
-                if ($currency_code == $currency_code_key) {
-                    $option_thirteen .= "<option selected='selected' value='" . $currency_code_key . "'>$currency_code_value</option>";
-                } else {
-                    $option_thirteen .= "<option value='" . $currency_code_key . "'>$currency_code_value</option>";
-                }
-            }
-            $option_thirteen .= '</select>';
+            
         } else {
-            $option_thirteen = '';
             $option_twelve = '';
         }
         $option_six .= '</select><p class="description"></p>';
@@ -514,7 +518,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'currency_code');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -881,15 +885,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 continue;
                             }
                         }
-                        // Currency Code
-                        $currency_code = get_post_meta($value->ID, 'currency_code', true);
-                        if (!empty($currency_code)) {
-                            $store_currency = get_woocommerce_currency();
-                            if($store_currency != $currency_code) {
-                                unset($result[$key]);
-                                unset($passed_rules);                                         
-                                continue;
-                            }
+                        
+                    }
+                    // Currency Code
+                    $currency_code = get_post_meta($value->ID, 'currency_code', true);
+                    if (!empty($currency_code)) {
+                        $store_currency = get_woocommerce_currency();
+                        if($store_currency != $currency_code) {
+                            unset($result[$key]);
+                            unset($passed_rules);                                         
+                            continue;
                         }
                     }
                     // Base Country
@@ -1854,7 +1859,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                        <p class="description"><?php _e('Currency Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    </div>
+                     <p class="description"><?php _e('Currency Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select class="currency_code" name="currency_code">
                             <option value=""><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                             <?php
@@ -1867,7 +1873,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    </div>
                 </fieldset>
             </td>
         </tr>
