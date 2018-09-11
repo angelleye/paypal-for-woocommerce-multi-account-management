@@ -1859,7 +1859,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                        <p class="description"><?php _e('Currency Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    </div>
+                     <p class="description"><?php _e('Currency Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select class="currency_code" name="currency_code">
                             <option value=""><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                             <?php
@@ -1872,7 +1873,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    </div>
                 </fieldset>
             </td>
         </tr>
