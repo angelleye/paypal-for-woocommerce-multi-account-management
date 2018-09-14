@@ -60,10 +60,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $this->version = '1.1.1';
         }
         $this->plugin_name = 'paypal-for-woocommerce-multi-account-management';
-
         $this->load_dependencies();
-        $this->set_locale();
-        $this->define_admin_hooks();
+        if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
+            
+            $this->set_locale();
+            $this->define_admin_hooks();
+        }
         $prefix = is_network_admin() ? 'network_admin_' : '';
         add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
     }

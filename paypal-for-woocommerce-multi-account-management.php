@@ -93,22 +93,49 @@ function run_paypal_for_woocommerce_multi_account_management() {
 }
 
 add_action('plugins_loaded', 'load_angelleye_woo_paypal_for_woo_multi_account');
+add_action('admin_notices', 'admin_notices_required_plugin');
+
+function admin_notices_required_plugin() {
+    if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
+        
+    } else {
+        if (!function_exists('WC')) {
+            $slug = 'woocommerce';
+            $install_url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . $slug), 'install-plugin_' . $slug);
+            $activate_url = 'plugins.php?action=activate&plugin=' . urlencode('woocommerce/woocommerce.php') . '&plugin_status=all&paged=1&s&_wpnonce=' . urlencode(wp_create_nonce('activate-plugin_woocommerce/woocommerce.php'));
+            $message = '<a href="' . esc_url($install_url) . '">Install the WooCommerce plugin</a>.';
+            $is_downloaded = false;
+            $plugins = array_keys(get_plugins());
+            foreach ($plugins as $plugin) {
+                if (strpos($plugin, 'woocommerce.php') !== false) {
+                    $is_downloaded = true;
+                    $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the WooCommerce plugin</a>.';
+                }
+            }
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$sPayPal for WooCommerce Multi-Account Management is inactive. %2$s The %3$sWooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="http://wordpress.org/extend/plugins/woocommerce/">', '</a>', $message) . '</p></div>';
+        }
+        if (!class_exists('AngellEYE_Gateway_Paypal')) {
+            $slug = 'paypal-for-woocommerce';
+            $install_url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . $slug), 'install-plugin_' . $slug);
+            $activate_url = 'plugins.php?action=activate&plugin=' . urlencode('paypal-for-woocommerce/paypal-for-woocommerce.php') . '&plugin_status=all&paged=1&s&_wpnonce=' . urlencode(wp_create_nonce('activate-plugin_paypal-for-woocommerce/paypal-for-woocommerce.php'));
+            $message = '<a href="' . esc_url($install_url) . '">Install the PayPal for WooCommerce plugin</a>.';
+            $is_downloaded = false;
+            $plugins = array_keys(get_plugins());
+            foreach ($plugins as $plugin) {
+                if (strpos($plugin, 'paypal-for-woocommerce.php') !== false) {
+                    $is_downloaded = true;
+                    $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the PayPal for WooCommerce plugin</a>.';
+                }
+            }
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is inactive. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://wordpress.org/plugins/paypal-for-woocommerce/">', '</a>', $message) . '</p></div>';
+        }
+    }
+}
 
 function load_angelleye_woo_paypal_for_woo_multi_account() {
     try {
-        if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
-            run_paypal_for_woocommerce_multi_account_management();
-        } else {
-            if ( ! function_exists( 'WC' ) ) {
-                throw new Exception( __( 'PayPal for WooCommerce Multi-Account Management requires WooCommerce plugin to be activated', 'woocommerce-gateway-paypal-express-checkout' ), 2);
-            }
-            if ( ! class_exists('AngellEYE_Gateway_Paypal') ) {
-                throw new Exception( __( 'PayPal for WooCommerce Multi-Account Management requires PayPal for WooCommerce plugin to be activated', 'woocommerce-gateway-paypal-express-checkout' ), 2 );
-            }
-        }
+        run_paypal_for_woocommerce_multi_account_management();
     } catch (Exception $ex) {
-        $class = 'notice notice-error';
-        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $ex->getMessage() ) ); 
+        
     }
-    
 }
