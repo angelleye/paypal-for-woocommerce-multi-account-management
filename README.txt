@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.1.2 - xx.xx.2018 =
+* Fix - Resolves a problem where live API credentials were not displaying correctly after setup. [PFWMA-23]
+
 = 1.1.1 - 08.31.2018 =
 * Feature - Adds Card Type, Currency Code, and Buyer Country based condition triggers. [PFWMA-4][PFWMA-11]
 * Feature - Adds PayFlow Compatibility. [PFWMA-13]
