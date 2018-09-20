@@ -112,7 +112,7 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$sPayPal for WooCommerce Multi-Account Management is inactive. %2$s The %3$sWooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="http://wordpress.org/extend/plugins/woocommerce/">', '</a>', $message) . '</p></div>';
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$sPayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$sWooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="http://wordpress.org/extend/plugins/woocommerce/">', '</a>', $message) . '</p></div>';
         }
         if (!class_exists('AngellEYE_Gateway_Paypal')) {
             $slug = 'paypal-for-woocommerce';
@@ -127,7 +127,7 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the PayPal for WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is inactive. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://wordpress.org/plugins/paypal-for-woocommerce/">', '</a>', $message) . '</p></div>';
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://wordpress.org/plugins/paypal-for-woocommerce/">', '</a>', $message) . '</p></div>';
         }
     }
 }
