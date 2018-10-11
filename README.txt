@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 1.1.2 - xx.xx.2018 =
 * Tweak - Adds rules from PayFlow that were not included in Express Checkout. [PFWMA-25]
+* Tweak - Removes the Card Type option from Express Checkout, which is not applicable.  [PFWMA-26]
 * Fix - Resolves a problem where live API credentials were not displaying correctly after setup. [PFWMA-23]
 * Fix - Resolves PHP errors with some admin notices about required plugins. [PFWMA-6]
 
