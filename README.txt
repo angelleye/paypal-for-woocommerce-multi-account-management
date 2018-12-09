@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
-Tested up to: 4.9.8
-Stable tag: 1.1.2
+Tested up to: 5.0.0
+Stable tag: 1.1.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,10 +29,13 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.1.3 - 12.08.2018 =
+* Fix - Resolves PHP errors on some sites when activating the plugin. [PFWMA-30]
+
 = 1.1.2 - 10.11.2018 =
 * Tweak - Adds rules from PayFlow that were not included in Express Checkout. [PFWMA-25]
 * Tweak - Removes the Card Type option from Express Checkout, which is not applicable.  [PFWMA-26]
-* Fix - Resolves a problem where live API credentials were not displaying correctly after setup. [PFWMA-23]
+* Fix - Resolves a problem where live API git credentials were not displaying correctly after setup. [PFWMA-23]
 * Fix - Resolves PHP errors with some admin notices about required plugins. [PFWMA-6]
 
 = 1.1.1 - 08.31.2018 =
