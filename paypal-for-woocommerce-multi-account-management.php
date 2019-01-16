@@ -20,7 +20,7 @@
  * Text Domain:       paypal-for-woocommerce-multi-account-management
  * Domain Path:       /languages
  * Requires at least: 3.8
- * Tested up to: 5.0.2
+ * Tested up to: 5.0.3
  * WC requires at least: 3.0.0
  * WC tested up to: 3.5.3
  */
