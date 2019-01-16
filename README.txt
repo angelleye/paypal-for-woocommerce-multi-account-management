@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.1.3.1 - 01.16.2019 =
+* Tweak - Updates WooCommerce tested version to show compatibility. [PFWMA-31]
+
 = 1.1.3 - 12.08.2018 =
 * Fix - Resolves PHP errors on some sites when activating the plugin. [PFWMA-30]
 
