@@ -131,7 +131,7 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the PayPal for WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://wordpress.org/plugins/paypal-for-woocommerce/">', '</a>', $message) . '</p></div>';
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice">', '</a>', $message) . '</p></div>';
         }
     }
 }
