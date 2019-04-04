@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.2.0 - xx.xx.2019 =
+* Tweak - Updates AE Updater install URL. [PFWMA-37]
+
 = 1.1.3.1 - 01.16.2019 =
 * Tweak - Updates WooCommerce tested version to show compatibility. [PFWMA-31]
 
