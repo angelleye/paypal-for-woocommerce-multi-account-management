@@ -115,7 +115,9 @@ jQuery('#product_tags').change(function () {
 });
 
 jQuery(function () {
-    jQuery('[id^=angelleye_notification]').slice(1).remove();
+    jQuery('[id^=angelleye_notification]').each(function (i) {
+        jQuery('[id="' + this.id + '"]').slice(1).remove();
+    });
     var el_notice = jQuery(".angelleye-notice");
     el_notice.fadeIn(750);
     jQuery(".angelleye-notice-dismiss").click(function(e){
