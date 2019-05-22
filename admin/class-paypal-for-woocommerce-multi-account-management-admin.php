@@ -267,7 +267,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "woocommerce") . '">';
         if ($countries) {
             $store_countries = !empty($store_countries) ? $store_countries : '';
-            $option_fourteen .= '<option value="">All countries</option>';
+            $option_fourteen .= '<option value="0">All countries</option>';
             foreach ($countries as $country_key => $country_full_name) {
                 $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
             }
@@ -546,7 +546,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if (!empty($_POST[$microprocessing_key])) {
                         update_post_meta($post_id, $microprocessing_key, is_array($_POST[$microprocessing_key]) ? $_POST[$microprocessing_key] : trim($_POST[$microprocessing_key]));
                     } else {
-                        update_post_meta($post_id, $microprocessing_key, '');
+                        if($microprocessing_key == 'woocommerce_paypal_express_api_condition_value') {
+                            update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                        } else {
+                            update_post_meta($post_id, $microprocessing_key, '');
+                        }
+                        
                     }
                 }
             }
@@ -748,7 +753,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if (!empty($_POST[$microprocessing_key])) {
                         update_post_meta($post_id, $microprocessing_key, is_array($_POST[$microprocessing_key]) ? $_POST[$microprocessing_key] : trim($_POST[$microprocessing_key]));
                     } else {
-                        update_post_meta($post_id, $microprocessing_key, '');
+                        if($microprocessing_key == 'woocommerce_paypal_express_api_condition_value') {
+                            update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                        } else {
+                            update_post_meta($post_id, $microprocessing_key, '');
+                        }
                     }
                 }
             }
@@ -1784,7 +1793,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         <?php
                         $category_ids = array();
                         $countries = WC()->countries->get_countries();
-                        echo '<option value="">All countries</option>';
+                        echo '<option value="0">All countries</option>';
                         if ($countries) {
                             foreach ($countries as $country_key => $country_full_name) {
                                 echo '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
