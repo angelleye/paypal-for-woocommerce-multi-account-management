@@ -27,12 +27,30 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $product_ids = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_product_ids', true);
                 $role = '';
                 if ($condition_role) {
-                    if ($condition_role == 'all') {
-                        $role = '<p class="description">' . sprintf('For %s user roles', $condition_role) . '</p>';
-                    } else {
+                    if ($condition_role != 'all') {
                         $role = '<p class="description">' . sprintf('When role is %s', $condition_role) . '</p>';
-                    }
+                    } 
                 }
+                $other_condition = '';
+                $buyer_countries = get_post_meta($item['ID'], 'buyer_countries', true);
+                if ($buyer_countries) {
+                    if ($buyer_countries != 'all') {
+                        $other_condition = '<p class="description">' . sprintf('When Buyer country is %s', implode(',', $buyer_countries)) . '</p>';
+                    } 
+                }
+                $store_countries = get_post_meta($item['ID'], 'store_countries', true);
+                if ($store_countries) {
+                    if ($store_countries != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Store country is %s', $store_countries) . '</p>';
+                    } 
+                }
+                $currency_code = get_post_meta($item['ID'], 'currency_code', true);
+                if ($currency_code) {
+                    if ($currency_code != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Currency Code is %s', $currency_code) . '</p>';
+                    } 
+                }
+                
                 if ($condition_field == 'transaction_amount') {
                     $field = __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management');
                 } else {
@@ -64,7 +82,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     }
                     $product_text .= "</div>";
                 }
-                return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$product_text}";
+                return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$other_condition} {$product_text}";
             case 'status':
                 $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
                 $status_pf = get_post_meta($item['ID'], 'woocommerce_paypal_pro_payflow_enable', true);
