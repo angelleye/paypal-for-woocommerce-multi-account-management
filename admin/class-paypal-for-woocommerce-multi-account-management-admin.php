@@ -799,6 +799,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id) {
         global $user_ID;
         $current_user_roles = array();
+        if(!isset($gateways->testmode)) {
+            return;
+        }
         if (is_user_logged_in()) {
             $user = new WP_User($user_ID);
             if (!empty($user->roles) && is_array($user->roles)) {
@@ -1173,7 +1176,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             $gateway_setting = $request;
         }
-
+        if( !isset($gateways) || !isset($gateways->testmode)) {
+            return false;
+        }
         if ($order_id == null) {
             if (is_null(WC()->cart)) {
                 return;
