@@ -293,11 +293,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_nine .= '</select>';
         $option_six = '<p class="description">' . __('Products', 'woocommerce') . '</p>';
         $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'woocommerce') . '">';
-        if (!empty($product_ids)) {
-            foreach ($product_ids as $product_id) {
-                $product = wc_get_product($product_id);
+        $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
+        if (!empty($product_list)) {
+            foreach ($product_list as $product_list_id => $product_list_name) {
+                $product = wc_get_product($product_list_id);
                 if (is_object($product)) {
-                    $option_six .= '<option value="' . esc_attr($product_id) . '"' . selected(true, true, false) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+                    $option_six .= '<option value="' . esc_attr($product_list_id) . '"' . wc_selected($product_list_id, $product_ids) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
                 }
             }
         }
@@ -1922,25 +1923,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
     }
 
-    public function card_type_from_account_number($account_number) {
-        $types = array(
-            'visa' => '/^4/',
-            'mastercard' => '/^5[1-5]/',
-            'amex' => '/^3[47]/',
-            'discover' => '/^(6011|65|64[4-9]|622)/',
-            'diners' => '/^(36|38|30[0-5])/',
-            'jcb' => '/^35/',
-            'maestro' => '/^(5018|5020|5038|6304|6759|676[1-3])/',
-            'laser' => '/^(6706|6771|6709)/',
-        );
-        foreach ($types as $type => $pattern) {
-            if (1 === preg_match($pattern, $account_number)) {
-                return $type;
-            }
-        }
-        return null;
-    }
-    
     public function angelleye_paypal_for_woocommerce_multi_account_display_push_notification() {
         global $current_user;
         $user_id = $current_user->ID;
@@ -2005,6 +1987,64 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             add_user_meta($user_id, wc_clean($_POST['data']), 'true', true);
             wp_send_json_success();
         }
+    }
+    
+    public function card_type_from_account_number($account_number) {
+        $types = array(
+            'visa' => '/^4/',
+            'mastercard' => '/^5[1-5]/',
+            'amex' => '/^3[47]/',
+            'discover' => '/^(6011|65|64[4-9]|622)/',
+            'diners' => '/^(36|38|30[0-5])/',
+            'jcb' => '/^35/',
+            'maestro' => '/^(5018|5020|5038|6304|6759|676[1-3])/',
+            'laser' => '/^(6706|6771|6709)/',
+        );
+        foreach ($types as $type => $pattern) {
+            if (1 === preg_match($pattern, $account_number)) {
+                return $type;
+            }
+        }
+        return null;
+    }
+    
+    public function angelleye_get_list_product_using_tag_cat($tag_list, $categories_list) {
+        $all_products = array();
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+        );
+
+        if (!empty($tag_list) || !empty($categories_list)) {
+            $args['tax_query'] = array();
+            if (!empty($tag_list)) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_tag',
+                    'terms' => $tag_list,
+                    'operator' => 'IN'
+                );
+            }
+            if (!empty($categories_list)) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $categories_list,
+                    'operator' => 'IN',
+                );
+            }
+        }
+        $loop = new WP_Query($args);
+        $all_products = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $product_title = get_the_title($value);
+                if (!empty($product_title)) {
+                    $all_products[$value] = $product_title;
+                }
+            }
+        }
+        return $all_products;
     }
 
 }
