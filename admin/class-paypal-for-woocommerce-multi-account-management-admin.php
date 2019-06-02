@@ -267,7 +267,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "woocommerce") . '">';
         if ($countries) {
             $store_countries = !empty($store_countries) ? $store_countries : '';
-            $option_fourteen .= '<option value="">All countries</option>';
+            $option_fourteen .= '<option value="0">All countries</option>';
             foreach ($countries as $country_key => $country_full_name) {
                 $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
             }
@@ -333,7 +333,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $option_twelve = '';
         }
         $option_six .= '</select><p class="description"></p>';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -546,7 +546,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if (!empty($_POST[$microprocessing_key])) {
                         update_post_meta($post_id, $microprocessing_key, is_array($_POST[$microprocessing_key]) ? $_POST[$microprocessing_key] : trim($_POST[$microprocessing_key]));
                     } else {
-                        update_post_meta($post_id, $microprocessing_key, '');
+                        if($microprocessing_key == 'woocommerce_paypal_express_api_condition_value') {
+                            update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                        } else {
+                            update_post_meta($post_id, $microprocessing_key, '');
+                        }
+                        
                     }
                 }
             }
@@ -748,7 +753,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if (!empty($_POST[$microprocessing_key])) {
                         update_post_meta($post_id, $microprocessing_key, is_array($_POST[$microprocessing_key]) ? $_POST[$microprocessing_key] : trim($_POST[$microprocessing_key]));
                     } else {
-                        update_post_meta($post_id, $microprocessing_key, '');
+                        if($microprocessing_key == 'woocommerce_paypal_express_api_condition_value') {
+                            update_post_meta($post_id, $microprocessing_key, trim($_POST[$microprocessing_key]));
+                        } else {
+                            update_post_meta($post_id, $microprocessing_key, '');
+                        }
                     }
                 }
             }
@@ -1784,7 +1793,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         <?php
                         $category_ids = array();
                         $countries = WC()->countries->get_countries();
-                        echo '<option value="">All countries</option>';
+                        echo '<option value="0">All countries</option>';
                         if ($countries) {
                             foreach ($countries as $country_key => $country_full_name) {
                                 echo '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
@@ -1837,8 +1846,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </select>
                     <p class="description"><?php _e('Transaction', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
-                    <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="1" max="1000" step="0.01">
+                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
+                    <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="0">
                     <div class="angelleye_multi_account_paypal_pro_payflow_field">
                         <p class="description"><?php _e('Card Type', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select class="card_type" name="card_type">
