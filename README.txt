@@ -30,6 +30,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 == Changelog ==
 
 = 1.2.0 - xx.xx.2019 =
+* Feature - Adds AE notification system. [PFWMA-39]
 * Tweak - Updates AE Updater install URL. [PFWMA-37]
 * Tweak - Adjusts link from admin notice about PFW requirement. [PFWMA-2]
 
