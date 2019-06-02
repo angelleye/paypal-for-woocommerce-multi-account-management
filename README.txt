@@ -34,6 +34,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 * Tweak - Adjustments to rule builder default values. [PFWMA-42]
 * Tweak - Updates AE Updater install URL. [PFWMA-37]
 * Tweak - Adjusts link from admin notice about PFW requirement. [PFWMA-2]
+* Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38]
 
 = 1.1.3.1 - 01.16.2019 =
 * Tweak - Updates WooCommerce tested version to show compatibility. [PFWMA-31]
