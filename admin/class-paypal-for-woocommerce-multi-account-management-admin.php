@@ -1333,15 +1333,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 )
             );
         }
-        $query = new WP_Query();
-        $result = $query->query($args);
-        $total_posts = $query->found_posts;
-        if ($total_posts > 0) {
-            foreach ($result as $key => $value) {
-                if (!empty($value->ID)) {
-                    $microprocessing_array = get_post_meta($value->ID);
-                    foreach ($microprocessing_array as $key => $value) {
-                        $microprocessing[$key] = $value[0];
+        if( !empty($args) ) {
+            $query = new WP_Query();
+            $result = $query->query($args);
+            $total_posts = $query->found_posts;
+            if ($total_posts > 0) {
+                foreach ($result as $key => $value) {
+                    if (!empty($value->ID)) {
+                        $microprocessing_array = get_post_meta($value->ID);
+                        foreach ($microprocessing_array as $key => $value) {
+                            $microprocessing[$key] = $value[0];
+                        }
                     }
                 }
             }
