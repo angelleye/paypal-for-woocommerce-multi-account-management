@@ -152,6 +152,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('wp_ajax_angelleye_get_product_by_product_tags', $plugin_admin, 'angelleye_get_product_by_product_tags', 10);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $plugin_admin, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
+        $this->loader->add_action('wp_ajax_angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', 10);
+        $this->loader->add_action('admin_notices', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_display_push_notification', 10);
         
     }
 
