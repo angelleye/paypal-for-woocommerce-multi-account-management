@@ -1022,7 +1022,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
-                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
+                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
@@ -1252,8 +1252,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow($gateways, $request = null, $order_id = null) {
         if ($request == null) {
             $gateway_setting = $gateways;
-        } else {
-            $gateway_setting = $request;
+        } elseif($gateways == null) {
+            $gateways = $request;
+            $gateway_setting = $gateways;
         }
 
         if ($order_id == null) {
