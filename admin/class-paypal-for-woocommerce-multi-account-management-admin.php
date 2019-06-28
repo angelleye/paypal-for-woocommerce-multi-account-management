@@ -1500,6 +1500,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_api_field_ui() {
+        $require_ssl = '';
+        if ( !is_ssl() ) {
+            $require_ssl = __('This image requires an SSL host.  Please upload your image to <a target="_blank" href="http://www.sslpic.com">www.sslpic.com</a> and enter the image URL here.', 'paypal-for-woocommerce-multi-account-management');
+        }
         ?>
         <tr valign="top" class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc">
@@ -1597,6 +1601,66 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('API Signature', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
                     <input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password">
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_brand_name_microprocessing"><?php echo __('Brand Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Brand Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_brand_name" id="woocommerce_paypal_express_brand_name_microprocessing" style="" placeholder="" type="password">
+                    <?php echo __('This controls what users see as the brand / company name on PayPal review pages.', 'paypal-for-woocommerce'); ?>
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_checkout_logo_microprocessing"><?php echo __('PayPal Checkout Logo (190x60px)', 'paypal-for-woocommerce-multi-account-management'); echo wc_help_tip(__('This controls what users see as the brand / company name on PayPal review pages.', 'paypal-for-woocommerce')) ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('PayPal Checkout Logo (190x60px)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo" id="woocommerce_paypal_express_checkout_logo_microprocessing" style="" placeholder="" type="password">
+                    <?php echo __('This controls what users see as the logo on PayPal review pages. ', 'paypal-for-woocommerce') . $require_ssl; ?>
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing"><?php echo __('PayPal Checkout Banner (750x90px)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('PayPal Checkout Banner (750x90px)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo_hdrimg" id="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing" style="" placeholder="" type="password">
+                    <?php echo __('This controls what users see as the header banner on PayPal review pages. ', 'paypal-for-woocommerce') . $require_ssl; ?>
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_customer_service_number_microprocessing"><?php echo __('Customer Service Number', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Customer Service Number', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_customer_service_number" id="woocommerce_paypal_express_customer_service_number_microprocessing" style="" placeholder="" type="password">
+                    <?php echo __('This controls what users see for your customer service phone number on PayPal review pages.', 'paypal-for-woocommerce'); ?>
+                </fieldset>
+            </td>
+        </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_softdescriptor_microprocessing"><?php echo __('Credit Card Statement Name', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Credit Card Statement Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_softdescriptor" id="woocommerce_paypal_express_softdescriptor_microprocessing" style="" placeholder="" type="password">
+                    <?php echo __('The value entered here will be displayed on the buyer\'s credit card statement.', 'paypal-for-woocommerce'); ?>
                 </fieldset>
             </td>
         </tr>
