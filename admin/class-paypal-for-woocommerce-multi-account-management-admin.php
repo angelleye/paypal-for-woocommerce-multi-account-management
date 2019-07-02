@@ -981,38 +981,74 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                         }
                     }
-                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                        $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
-                        $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
-                        // Categories
-                        $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
-                        $product_categories = get_post_meta($value->ID, 'product_categories', true);
-                        if (!empty($product_categories)) {
-                            if (!array_intersect($product_categories, $woo_product_categories)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                    if (is_null(WC()->cart) && WC()->cart->is_empty()) {
+                         foreach ($order->get_items() as $cart_item_key => $values) {
+                            $product = $order->get_product_from_item($values);
+                            $product_id = $product->get_id();
+                            // Categories
+                            $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                            $product_categories = get_post_meta($value->ID, 'product_categories', true);
+                            if (!empty($product_categories)) {
+                                if (!array_intersect($product_categories, $woo_product_categories)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
-                        }
-                        // Tags
-                        $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
-                        $product_tags = get_post_meta($value->ID, 'product_tags', true);
-                        if (!empty($product_tags)) {
-                            if (!array_intersect($product_tags, $woo_product_tag)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                            // Tags
+                            $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
+                            $product_tags = get_post_meta($value->ID, 'product_tags', true);
+                            if (!empty($product_tags)) {
+                                if (!array_intersect($product_tags, $woo_product_tag)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
-                        }
-                        $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
-                        if (!empty($product_ids)) {
-                            if (!array_intersect((array) $product_id, $product_ids)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                            $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                            if (!empty($product_ids)) {
+                                if (!array_intersect((array) $product_id, $product_ids)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                         }
+                    } else {
+                          foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                            $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                            // Categories
+                            $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                            $product_categories = get_post_meta($value->ID, 'product_categories', true);
+                            if (!empty($product_categories)) {
+                                if (!array_intersect($product_categories, $woo_product_categories)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                            // Tags
+                            $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
+                            $product_tags = get_post_meta($value->ID, 'product_tags', true);
+                            if (!empty($product_tags)) {
+                                if (!array_intersect($product_tags, $woo_product_tag)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                            $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                            if (!empty($product_ids)) {
+                                if (!array_intersect((array) $product_id, $product_ids)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
                         }
                     }
+                
+                  
                 }
                 unset($passed_rules);
             }
