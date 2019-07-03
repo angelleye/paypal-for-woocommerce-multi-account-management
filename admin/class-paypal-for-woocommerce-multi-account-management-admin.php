@@ -778,9 +778,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
-            } else {
-                return false;
-            }
+            } 
+            
         }
         if (!class_exists('WooCommerce') || WC()->session == null) {
             return false;
@@ -981,38 +980,74 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                         }
                     }
-                    foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-                        $_product = apply_filters('woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key);
-                        $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
-                        // Categories
-                        $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
-                        $product_categories = get_post_meta($value->ID, 'product_categories', true);
-                        if (!empty($product_categories)) {
-                            if (!array_intersect($product_categories, $woo_product_categories)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                    if (is_null(WC()->cart) && WC()->cart->is_empty()) {
+                         foreach ($order->get_items() as $cart_item_key => $values) {
+                            $product = $order->get_product_from_item($values);
+                            $product_id = $product->get_id();
+                            // Categories
+                            $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                            $product_categories = get_post_meta($value->ID, 'product_categories', true);
+                            if (!empty($product_categories)) {
+                                if (!array_intersect($product_categories, $woo_product_categories)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
-                        }
-                        // Tags
-                        $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
-                        $product_tags = get_post_meta($value->ID, 'product_tags', true);
-                        if (!empty($product_tags)) {
-                            if (!array_intersect($product_tags, $woo_product_tag)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                            // Tags
+                            $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
+                            $product_tags = get_post_meta($value->ID, 'product_tags', true);
+                            if (!empty($product_tags)) {
+                                if (!array_intersect($product_tags, $woo_product_tag)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
-                        }
-                        $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
-                        if (!empty($product_ids)) {
-                            if (!array_intersect((array) $product_id, $product_ids)) {
-                                unset($result[$key]);
-                                unset($passed_rules);
-                                continue;
+                            $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                            if (!empty($product_ids)) {
+                                if (!array_intersect((array) $product_id, $product_ids)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                         }
+                    } else {
+                          foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                            $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                            // Categories
+                            $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                            $product_categories = get_post_meta($value->ID, 'product_categories', true);
+                            if (!empty($product_categories)) {
+                                if (!array_intersect($product_categories, $woo_product_categories)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                            // Tags
+                            $woo_product_tag = wp_get_post_terms($product_id, 'product_tag', array('fields' => 'ids'));
+                            $product_tags = get_post_meta($value->ID, 'product_tags', true);
+                            if (!empty($product_tags)) {
+                                if (!array_intersect($product_tags, $woo_product_tag)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                            }
+                            $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                            if (!empty($product_ids)) {
+                                if (!array_intersect((array) $product_id, $product_ids)) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
                             }
                         }
                     }
+                
+                  
                 }
                 unset($passed_rules);
             }
@@ -1216,6 +1251,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $gateway_setting->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password'];
                         $gateway_setting->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
                         $gateway_setting->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                        if(isset($request->paypal_user)) {
+                            $request->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'];
+                            $request->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password'];
+                            $request->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
+                            $request->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                        }
                         if (class_exists('WooCommerce') && WC()->session ) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->paypal_user);
                         }
@@ -1226,6 +1267,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        if(isset($request->api_username)) {
+                            $request->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
+                            $request->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
+                            $request->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        }
                         if (class_exists('WooCommerce') && WC()->session ) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
                         }
@@ -1238,6 +1284,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        if(isset($request->paypal_user)) {
+                            $request->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_user'];
+                            $request->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_api_password'];
+                            $request->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor'];
+                            $request->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                        }
                         if (class_exists('WooCommerce') && WC()->session ) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
                         }
@@ -1248,6 +1300,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        if(isset($request->api_username)) {
+                            $request->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
+                            $request->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
+                            $request->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        }
                         if (class_exists('WooCommerce') && WC()->session ) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
                         }
@@ -1261,8 +1318,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow($gateways, $request = null, $order_id = null) {
         if ($request == null) {
             $gateway_setting = $gateways;
+        } elseif($gateways == null) {
+            $gateways = $request;
+            $gateway_setting = $gateways;
         } else {
-            $gateway_setting = $request;
+            $gateway_setting = $gateways;
         }
 
         if ($order_id == null) {
@@ -1290,6 +1350,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $gateway_setting->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password'];
                     $gateway_setting->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
                     $gateway_setting->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                    if(isset($request->paypal_user)) {
+                        $request->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'];
+                        $request->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password'];
+                        $request->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
+                        $request->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                    }
                     if (class_exists('WooCommerce') && WC()->session ) {
                         WC()->session->set('multi_account_api_username', $gateway_setting->paypal_user);
                     }
@@ -1301,6 +1367,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $gateway_setting->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_api_password'];
                     $gateway_setting->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor'];
                     $gateway_setting->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                    if(isset($request->paypal_user)) {
+                        $request->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_user'];
+                        $request->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_api_password'];
+                        $request->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor'];
+                        $request->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
+                    }
                     if (class_exists('WooCommerce') && WC()->session ) {
                         WC()->session->set('multi_account_api_username', $gateway_setting->paypal_user);
                     }
