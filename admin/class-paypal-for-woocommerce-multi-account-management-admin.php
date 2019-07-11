@@ -1944,10 +1944,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_multi_account_display_push_notification() {
         global $current_user;
         $user_id = $current_user->ID;
-        if (false === ( $response = get_transient('angelleye_push_notification_result') )) {
+        if (false === ( $response = get_transient('angelleye_multi_account_push_notification_result') )) {
             $response = $this->angelleye_get_push_notifications();
             if(is_object($response)) {
-                set_transient('angelleye_push_notification_result', $response, 12 * HOUR_IN_SECONDS);
+                set_transient('angelleye_multi_account_push_notification_result', $response, 12 * HOUR_IN_SECONDS);
             }
         }
         if (is_object($response)) {
