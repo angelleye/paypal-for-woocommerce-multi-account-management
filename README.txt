@@ -37,6 +37,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 * Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38]
 * Fix - Resolves a bad link in the plugin action links. [PFWMA-44]
 * Fix - Resolves an issue with account edit mode. ([PFWMA-9](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/6))
+* Tweak - Adjusts link for Activate and Download for PFW. ([PFWMA-40](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/8))
 
 = 1.1.3.1 - 01.16.2019 =
 * Tweak - Updates WooCommerce tested version to show compatibility. [PFWMA-31]
