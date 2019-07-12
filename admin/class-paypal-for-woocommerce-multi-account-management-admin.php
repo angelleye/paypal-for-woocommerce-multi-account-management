@@ -779,9 +779,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
-            } else {
-                return false;
-            }
+            } 
+            
         }
         if (!class_exists('WooCommerce') || WC()->session == null) {
             return false;
@@ -2136,6 +2135,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (!empty($_POST['action']) && $_POST['action'] == 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice') {
             add_user_meta($user_id, wc_clean($_POST['data']), 'true', true);
             wp_send_json_success();
+        }
+    }
+    
+    public function angelleye_set_multi_account($token_id, $order_id) {
+        if( !empty($token_id) ) {
+            $_multi_account_api_username = get_metadata('payment_token', $token_id, '_multi_account_api_username');
+            if(!empty($_multi_account_api_username)) {
+                if (!class_exists('WooCommerce') || WC()->session == null) {
+                    update_post_meta($order_id, '_multi_account_api_username', $_multi_account_api_username);
+                } else {
+                    WC()->session->set('multi_account_api_username', $_multi_account_api_username);
+                }
+            }
         }
     }
 
