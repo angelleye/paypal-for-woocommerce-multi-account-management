@@ -293,11 +293,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_nine .= '</select>';
         $option_six = '<p class="description">' . __('Products', 'woocommerce') . '</p>';
         $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'woocommerce') . '">';
-        if (!empty($product_ids)) {
-            foreach ($product_ids as $product_id) {
-                $product = wc_get_product($product_id);
+        $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
+        if (!empty($product_list)) {
+            foreach ($product_list as $product_list_id => $product_list_name) {
+                $product = wc_get_product($product_list_id);
                 if (is_object($product)) {
-                    $option_six .= '<option value="' . esc_attr($product_id) . '"' . selected(true, true, false) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+                    $option_six .= '<option value="' . esc_attr($product_list_id) . '"' . wc_selected($product_list_id, $product_ids) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
                 }
             }
         }
@@ -1893,6 +1894,45 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             WC()->session->get('multi_account_api_username', '');
             WC()->session->__unset('multi_account_api_username');
         }
+    }
+
+    public function angelleye_get_list_product_using_tag_cat($tag_list, $categories_list) {
+        $all_products = array();
+        $args = array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+        );
+
+        if (!empty($tag_list) || !empty($categories_list)) {
+            $args['tax_query'] = array();
+            if (!empty($tag_list)) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_tag',
+                    'terms' => $tag_list,
+                    'operator' => 'IN'
+                );
+            }
+            if (!empty($categories_list)) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $categories_list,
+                    'operator' => 'IN',
+                );
+            }
+        }
+        $loop = new WP_Query($args);
+        $all_products = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $product_title = get_the_title($value);
+                if (!empty($product_title)) {
+                    $all_products[$value] = $product_title;
+                }
+            }
+        }
+        return $all_products;
     }
 
     public function angelleye_paypal_pro_payflow_amex_ca_usd($bool, $gateways) {
