@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
-Tested up to: 5.0.3
-Stable tag: 1.1.3.1
+Tested up to: 5.2.2
+Stable tag: 1.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,7 +29,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.2.0 - xx.xx.2019 =
+= 1.2.0 - 07.17.2019 =
 * Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38]
 * Fix - Resolves a bad link in the plugin action links. [PFWMA-44]
 * Fix - Resolves an issue with account edit mode. ([PFWMA-9](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/6))
