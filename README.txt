@@ -35,7 +35,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 * Fix - Resolves an issue with account edit mode. ([PFWMA-9](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/6))
 * Fix - Resolves PHP Error with Subscription Renewal. ([PFWMA-52](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/10))
 * Fix - Resolves PHP Error with Payflow Authorization. ([PFWMA-54](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/11))
-* Fix - Resolves an issue with Express Checkout tokenization payment. ([PFWMA-54](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/11))
+* Fix - Resolves an issue with Express Checkout tokenization payment. ([PFWMA-55](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/12))
 * Tweak - Adjustments to rule builder default values. [PFWMA-42] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/4))
 * Tweak - Updates AE Updater install URL. [PFWMA-37](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/2))
 * Tweak - Adjusts link for Activate and Download for PFW. ([PFWMA-40](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/8))
