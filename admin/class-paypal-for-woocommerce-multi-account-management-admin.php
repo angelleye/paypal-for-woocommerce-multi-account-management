@@ -2150,5 +2150,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
     }
+    
+    public function angelleye_add_screen_option() {
+        $angelleye_multi_account_item_per_page_default = 10;
+        $screen = get_current_screen();
+        $current_user_id = get_current_user_id();
+        $angelleye_multi_account_item_per_page_value = get_user_meta($current_user_id, 'angelleye_multi_account_item_per_page', true);
+        if($angelleye_multi_account_item_per_page_value) {
+            $angelleye_multi_account_item_per_page_default = $angelleye_multi_account_item_per_page_value;
+        }
+        
+        if(is_object($screen) && !empty($screen->id) && $screen->id == "settings_page_paypal-for-woocommerce" && !empty($_GET['gateway']) && 'paypal_for_wooCommerce_for_multi_account_management' == $_GET['gateway']) {
+            $args = array(
+                'label' => __('Number of items per page', 'pippin'),
+                'default' => $angelleye_multi_account_item_per_page_default,
+                'option' => 'angelleye_multi_account_item_per_page'
+            );
+            add_screen_option( 'per_page', $args );
+        }
+    }
+    
+    public function angelleye_set_screen_option($bool, $option, $value) {
+        if($option == "angelleye_multi_account_item_per_page") {
+            $current_user_id = get_current_user_id();
+            update_user_meta($current_user_id, 'angelleye_multi_account_item_per_page', $value);
+        }
+        return $bool;
+    }
 
 }

@@ -166,7 +166,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
 
     function prepare_items() {
         global $wpdb;
-        $per_page = 5;
+         $current_user_id = get_current_user_id();
+        $angelleye_multi_account_item_per_page_default = 10;
+        $angelleye_multi_account_item_per_page_value = get_user_meta($current_user_id, 'angelleye_multi_account_item_per_page', true);
+        if($angelleye_multi_account_item_per_page_value == false) {
+            $angelleye_multi_account_item_per_page_value = $angelleye_multi_account_item_per_page_default;
+        }
+        $per_page = $angelleye_multi_account_item_per_page_value;
         $account_data = array();
         $columns = $this->get_columns();
         $hidden = array();
