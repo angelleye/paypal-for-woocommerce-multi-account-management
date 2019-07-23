@@ -181,6 +181,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $this->process_bulk_action();
         $args = array(
             'post_type' => 'microprocessing',
+            'numberposts' => -1,
             'order' => 'DESC',            
         );
         if ( isset( $_REQUEST['orderby'] ) ) {
