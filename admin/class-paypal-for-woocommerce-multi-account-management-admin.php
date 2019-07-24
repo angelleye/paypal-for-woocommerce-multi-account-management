@@ -1059,7 +1059,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($result as $key => $value) {
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
-                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
+                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
@@ -1420,6 +1420,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 )
             );
         }
+        if( !empty($args) ) {
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
@@ -1432,6 +1433,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
+        }
         }
         return $microprocessing;
     }
@@ -1982,6 +1984,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
     }
 
+
     public function angelleye_get_list_product_using_tag_cat($tag_list, $categories_list) {
         $all_products = array();
         $args = array(
@@ -2021,6 +2024,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         return $all_products;
     }
 
+
     public function angelleye_paypal_pro_payflow_amex_ca_usd($bool, $gateways) {
         $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest(null, $gateways, null);
         if (count($microprocessing_value) >= 1) {
@@ -2048,6 +2052,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
     }
 
+
     public function card_type_from_account_number($account_number) {
         $types = array(
             'visa' => '/^4/',
@@ -2067,6 +2072,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         return null;
     }
     
+
     public function angelleye_paypal_for_woocommerce_multi_account_display_push_notification() {
         global $current_user;
         $user_id = $current_user->ID;
@@ -2136,6 +2142,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             add_user_meta($user_id, wc_clean($_POST['data']), 'true', true);
             wp_send_json_success();
         }
+
     }
     
     public function angelleye_set_multi_account($token_id, $order_id) {
@@ -2177,5 +2184,4 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         return $bool;
     }
-
 }
