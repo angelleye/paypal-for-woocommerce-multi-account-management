@@ -166,7 +166,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
 
     function prepare_items() {
         global $wpdb;
-        $per_page = 5;
+         $current_user_id = get_current_user_id();
+        $angelleye_multi_account_item_per_page_default = 10;
+        $angelleye_multi_account_item_per_page_value = get_user_meta($current_user_id, 'angelleye_multi_account_item_per_page', true);
+        if($angelleye_multi_account_item_per_page_value == false) {
+            $angelleye_multi_account_item_per_page_value = $angelleye_multi_account_item_per_page_default;
+        }
+        $per_page = $angelleye_multi_account_item_per_page_value;
         $account_data = array();
         $columns = $this->get_columns();
         $hidden = array();
@@ -175,13 +181,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $this->process_bulk_action();
         $args = array(
             'post_type' => 'microprocessing',
+            'numberposts' => -1,
             'order' => 'DESC',            
-            'orderby'   => 'order_clause',
-            'meta_query' => array(
-                 'order_clause' => array(
-                      'key' => 'woocommerce_priority',
-                      'type' => 'NUMERIC' // unless the field is not a number
-          )));
+        );
+        if ( isset( $_REQUEST['orderby'] ) ) {
+            $args['orderby'] = $_REQUEST['orderby'];
+        }
+        if ( isset( $_REQUEST['order'] ) ) {
+                $args['order'] = $_REQUEST['order'];
+        }
         $posts = get_posts($args);
         if (!empty($posts)) {
             foreach ($posts as $key => $value) {
