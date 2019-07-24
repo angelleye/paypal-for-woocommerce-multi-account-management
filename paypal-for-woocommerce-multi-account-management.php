@@ -12,7 +12,7 @@
  * Plugin Name:       PayPal for WooCommerce Multi-Account Management
  * Plugin URI:        https://www.angelleye.com/product/paypal-woocommerce-multi-account-management/
  * Description:       Send WooCommerce order payments to different PayPal accounts based on rules provided.
- * Version:           1.1.3.1
+ * Version:           1.1.4
  * Author:            Angell EYE
  * Author URI:        http://www.angelleye.com/
  * License:           GPLv3 or later
@@ -20,16 +20,16 @@
  * Text Domain:       paypal-for-woocommerce-multi-account-management
  * Domain Path:       /languages
  * Requires at least: 3.8
- * Tested up to: 5.0.3
+ * Tested up to: 5.2.2
  * WC requires at least: 3.0.0
- * WC tested up to: 3.5.3
+ * WC tested up to: 3.6.5
  */
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
     die;
 }
 
-define('PFWMA_VERSION', '1.1.3.1');
+define('PFWMA_VERSION', '1.2.0');
 
 /**
  * define plugin basename
@@ -120,11 +120,11 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$sPayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$sWooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="http://wordpress.org/extend/plugins/woocommerce/">', '</a>', $message) . '</p></div>';
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$sPayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$sWooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'paypal-for-woocommerce-multi-account-management'), '<strong>', '</strong>', '<a href="http://wordpress.org/extend/plugins/woocommerce/">', '</a>', $message) . '</p></div>';
         }
         if (!class_exists('AngellEYE_Gateway_Paypal')) {
             $slug = 'paypal-for-woocommerce';
-            $install_url = wp_nonce_url(self_admin_url('update.php?action=install-plugin&plugin=' . $slug), 'install-plugin_' . $slug);
+            $install_url = 'https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice';
             $activate_url = 'plugins.php?action=activate&plugin=' . urlencode('paypal-for-woocommerce/paypal-for-woocommerce.php') . '&plugin_status=all&paged=1&s&_wpnonce=' . urlencode(wp_create_nonce('activate-plugin_paypal-for-woocommerce/paypal-for-woocommerce.php'));
             $message = '<a href="' . esc_url($install_url) . '">Install the PayPal for WooCommerce plugin</a>.';
             $is_downloaded = false;
@@ -135,7 +135,7 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the PayPal for WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'woocommerce-gateway-paypal-express-checkout'), '<strong>', '</strong>', '<a href="https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice">', '</a>', $message) . '</p></div>';
+            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'paypal-for-woocommerce-multi-account-management'), '<strong>', '</strong>', '<a href="https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice">', '</a>', $message) . '</p></div>';
         }
     }
 }

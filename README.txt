@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
-Tested up to: 5.0.3
-Stable tag: 1.1.3.1
+Tested up to: 5.2.2
+Stable tag: 1.1.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,13 +29,16 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.2.0 - xx.xx.2019 =
-* Feature - Adds AE notification system. [PFWMA-39]
-* Tweak - Adjustments to rule builder default values. [PFWMA-42]
-* Tweak - Updates AE Updater install URL. [PFWMA-37]
-* Tweak - Adjusts link from admin notice about PFW requirement. [PFWMA-2]
-* Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38]
-* Fix - Resolves a bad link in the plugin action links. [PFWMA-44]
+= 1.1.4 - 07.19.2019 =
+* Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/5))
+* Fix - Resolves a bad link in the plugin action links. [PFWMA-44] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/7))
+* Fix - Resolves an issue with account edit mode. ([PFWMA-9](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/6))
+* Fix - Resolves PHP Error with Subscription Renewal. ([PFWMA-52](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/10))
+* Fix - Resolves PHP Error with Payflow Authorization. ([PFWMA-54](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/11))
+* Fix - Resolves an issue with Express Checkout tokenization payment. ([PFWMA-55](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/12))
+* Tweak - Adjustments to rule builder default values. [PFWMA-42] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/4))
+* Tweak - Updates AE Updater install URL. [PFWMA-37](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/2))
+* Tweak - Adjusts link for Activate and Download for PFW. ([PFWMA-40](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/8))
 
 = 1.1.3.1 - 01.16.2019 =
 * Tweak - Updates WooCommerce tested version to show compatibility. [PFWMA-31]
