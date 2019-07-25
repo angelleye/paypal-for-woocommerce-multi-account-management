@@ -130,6 +130,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'woocommerce_paypal_express_api_signature':
                         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
+                    case 'woocommerce_paypal_express_brand_name':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_brand_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_brand_name" value="%2$s" id="woocommerce_paypal_express_brand_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Brand Name', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                     case 'woocommerce_paypal_express_checkout_logo':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_checkout_logo_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo" value="%2$s" id="woocommerce_paypal_express_checkout_logo_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('PayPal Checkout Logo (190x60px)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'woocommerce_paypal_express_checkout_logo_hdrimg':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo_hdrimg" value="%2$s" id="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('PayPal Checkout Logo (190x60px)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                     case 'woocommerce_paypal_express_customer_service_number':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_customer_service_number_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_customer_service_number" value="%2$s" id="woocommerce_paypal_express_customer_service_number_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Customer Service Number', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                     case 'woocommerce_paypal_express_softdescriptor':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_softdescriptor_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_softdescriptor" value="%2$s" id="woocommerce_paypal_express_softdescriptor_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Credit Card Statement Name', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
                     case 'woocommerce_paypal_express_api_user_role':
                         $selected_role = $microprocessing_value[0];
                         break;
@@ -520,7 +535,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'currency_code');
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'currency_code', 'woocommerce_paypal_express_brand_name', 'woocommerce_paypal_express_checkout_logo', 'woocommerce_paypal_express_checkout_logo_hdrimg', 'woocommerce_paypal_express_customer_service_number', 'woocommerce_paypal_express_softdescriptor');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -727,7 +742,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = array('woocommerce_paypal_pro_payflow_enable', 'woocommerce_paypal_pro_payflow_testmode', 'woocommerce_paypal_pro_payflow_account_name', 'woocommerce_paypal_pro_payflow_api_paypal_partner', 'woocommerce_paypal_pro_payflow_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_api_paypal_user', 'woocommerce_paypal_pro_payflow_api_password', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_user', 'woocommerce_paypal_pro_payflow_sandbox_api_password', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'card_type', 'currency_code', 'store_countries', 'woocommerce_paypal_express_brand_name', 'woocommerce_paypal_express_checkout_logo', 'woocommerce_paypal_express_customer_service_number', 'woocommerce_paypal_express_softdescriptor');
+            $microprocessing_key_array = array('woocommerce_paypal_pro_payflow_enable', 'woocommerce_paypal_pro_payflow_testmode', 'woocommerce_paypal_pro_payflow_account_name', 'woocommerce_paypal_pro_payflow_api_paypal_partner', 'woocommerce_paypal_pro_payflow_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_api_paypal_user', 'woocommerce_paypal_pro_payflow_api_password', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor', 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_user', 'woocommerce_paypal_pro_payflow_sandbox_api_password', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'card_type', 'currency_code', 'store_countries');
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_pro_payflow_account_name']),
@@ -1268,10 +1283,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        $gateway_setting->brand_name = $microprocessing_value['woocommerce_paypal_express_brand_name'];
+                        $gateway_setting->checkout_logo = $microprocessing_value['woocommerce_paypal_express_checkout_logo'];
+                        $gateway_setting->checkout_logo_hdrimg = $microprocessing_value['woocommerce_paypal_express_checkout_logo_hdrimg'];
+                        $gateway_setting->customer_service_number = $microprocessing_value['woocommerce_paypal_express_customer_service_number'];
+                        $gateway_setting->softdescriptor = $microprocessing_value['woocommerce_paypal_express_softdescriptor'];
                         if(isset($request->api_username)) {
                             $request->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                             $request->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                             $request->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                            $request->brand_name = $microprocessing_value['woocommerce_paypal_express_brand_name'];
+                            $request->checkout_logo = $microprocessing_value['woocommerce_paypal_express_checkout_logo'];
+                            $request->checkout_logo_hdrimg = $microprocessing_value['woocommerce_paypal_express_checkout_logo_hdrimg'];
+                            $request->customer_service_number = $microprocessing_value['woocommerce_paypal_express_customer_service_number'];
+                            $request->softdescriptor = $microprocessing_value['woocommerce_paypal_express_softdescriptor'];
+                            
                         }
                         if (class_exists('WooCommerce') && WC()->session ) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
@@ -1700,7 +1726,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('Brand Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_brand_name" id="woocommerce_paypal_express_brand_name_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_brand_name" id="woocommerce_paypal_express_brand_name_microprocessing" style="" placeholder="" type="text">
                     <?php echo __('This controls what users see as the brand / company name on PayPal review pages.', 'paypal-for-woocommerce'); ?>
                 </fieldset>
             </td>
@@ -1712,7 +1738,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('PayPal Checkout Logo (190x60px)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo" id="woocommerce_paypal_express_checkout_logo_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo" id="woocommerce_paypal_express_checkout_logo_microprocessing" style="" placeholder="" type="text">
                     <?php echo __('This controls what users see as the logo on PayPal review pages. ', 'paypal-for-woocommerce') . $require_ssl; ?>
                 </fieldset>
             </td>
@@ -1724,7 +1750,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('PayPal Checkout Banner (750x90px)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo_hdrimg" id="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_checkout_logo_hdrimg" id="woocommerce_paypal_express_checkout_logo_hdrimg_microprocessing" style="" placeholder="" type="text">
                     <?php echo __('This controls what users see as the header banner on PayPal review pages. ', 'paypal-for-woocommerce') . $require_ssl; ?>
                 </fieldset>
             </td>
@@ -1736,7 +1762,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('Customer Service Number', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_customer_service_number" id="woocommerce_paypal_express_customer_service_number_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_customer_service_number" id="woocommerce_paypal_express_customer_service_number_microprocessing" style="" placeholder="" type="text">
                     <?php echo __('This controls what users see for your customer service phone number on PayPal review pages.', 'paypal-for-woocommerce'); ?>
                 </fieldset>
             </td>
@@ -1748,7 +1774,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('Credit Card Statement Name', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_softdescriptor" id="woocommerce_paypal_express_softdescriptor_microprocessing" style="" placeholder="" type="password">
+                    <input class="input-text regular-input width460" name="woocommerce_paypal_express_softdescriptor" id="woocommerce_paypal_express_softdescriptor_microprocessing" style="" placeholder="" type="text">
                     <?php echo __('The value entered here will be displayed on the buyer\'s credit card statement.', 'paypal-for-woocommerce'); ?>
                 </fieldset>
             </td>
