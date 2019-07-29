@@ -108,6 +108,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
          * The class responsible for defining all actions that occur in the admin area.
          */
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-payflow.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }
