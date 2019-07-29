@@ -587,32 +587,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         return $cart_contents_total;
     }
 
-    public function angelleye_paypal_pro_payflow_amex_ca_usd($bool, $gateways) {
-        $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest(null, $gateways, null);
-        if (count($microprocessing_value) >= 1) {
-            if ($gateways->testmode == true) {
-                if (!empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'] && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner']))) {
-                    $gateways->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'];
-                    $gateways->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_password'];
-                    $gateways->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor'];
-                    $gateways->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
-                    WC()->session->set('multi_account_api_username', $gateways->paypal_user);
-                    return false;
-                }
-            } else {
-                if (!empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_user']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_password']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor']) && !empty($microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'])) {
-                    $gateways->paypal_user = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_user'];
-                    $gateways->paypal_password = $microprocessing_value['woocommerce_paypal_pro_payflow_api_password'];
-                    $gateways->paypal_vendor = $microprocessing_value['woocommerce_paypal_pro_payflow_api_paypal_vendor'];
-                    $gateways->paypal_partner = $microprocessing_value['woocommerce_paypal_pro_payflow_sandbox_api_paypal_partner'];
-                    WC()->session->set('multi_account_api_username', $gateways->paypal_user);
-                    return false;
-                }
-            }
-        } else {
-            return true;
-        }
-    }
+    
 
     public function card_type_from_account_number($account_number) {
         $types = array(

@@ -141,7 +141,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $plugin_admin = new Paypal_For_Woocommerce_Multi_Account_Management_Admin($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
-        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
         $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
         $this->loader->add_action('before_save_payment_token', $plugin_admin, 'angelleye_woocommerce_payment_successful_result', 11, 1);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
@@ -152,13 +151,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999);
         $this->loader->add_action('wp_ajax_angelleye_get_product_tag_by_product_cat', $plugin_admin, 'angelleye_get_product_tag_by_product_cat', 10);
         $this->loader->add_action('wp_ajax_angelleye_get_product_by_product_tags', $plugin_admin, 'angelleye_get_product_by_product_tags', 10);
-        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
-        $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $plugin_admin, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
         $this->loader->add_action('wp_ajax_angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', 10);
         $this->loader->add_action('admin_notices', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_display_push_notification', 10);
         $this->loader->add_action('angelleye_set_multi_account', $plugin_admin, 'angelleye_set_multi_account', 10, 2);
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
+        $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $plugin_admin, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
+        
+        $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
+        $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
+        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
+        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
         
     }
 
