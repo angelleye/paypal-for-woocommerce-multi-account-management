@@ -140,15 +140,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
                         foreach ($buyer_countries as $buyer_countries_key => $buyer_countries_value) {
-                            if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
-                                if (!empty($order_id) && $order_id > 0) {
-                                    $order = wc_get_order($order_id);
-                                    $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
-                                    if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                    }
-                                }
-                            } elseif (!empty($order_id) && $order_id > 0) {
+                            if (!empty($order_id) && $order_id > 0) {
                                 $order = wc_get_order($order_id);
                                 $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
                                 if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
@@ -234,14 +226,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         }
                     } else {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
-                            foreach (isset(WC()->cart) && WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                            $cart_loop_pass = 0;
+                            $cart_loop_not_pass = 0;
+                            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
                                 $product_categories = get_post_meta($value->ID, 'product_categories', true);
                                 if (!empty($product_categories)) {
                                     if (!array_intersect($product_categories, $woo_product_categories)) {
-                                        unset($result[$key]);
-                                        unset($passed_rules);
+                                        //unset($result[$key]);
+                                        //unset($passed_rules);
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
                                 }
@@ -249,20 +244,30 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_tags = get_post_meta($value->ID, 'product_tags', true);
                                 if (!empty($product_tags)) {
                                     if (!array_intersect($product_tags, $woo_product_tag)) {
-                                        unset($result[$key]);
-                                        unset($passed_rules);
+                                        //unset($result[$key]);
+                                        //unset($passed_rules);
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
                                 }
                                 $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
                                 if (!empty($product_ids)) {
                                     if (!array_intersect((array) $product_id, $product_ids)) {
-                                        unset($result[$key]);
-                                        unset($passed_rules);
+                                       // unset($result[$key]);
+                                       // unset($passed_rules);
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
                                 }
+                                $cart_loop_pass = $cart_loop_pass + 1;
                             }
+                            if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+                                if($cart_loop_pass == 0) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                }
+                            }
+                            
                         }
                     }
                 }
@@ -402,7 +407,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $diff = abs($array[0]['woocommerce_paypal_express_api_condition_value'] - $value);
             $ret = $array[0]['woocommerce_paypal_express_api_condition_value'];
             $index_key = 0;
-            for ($i = 1; $i < $size; $i) {
+            for ($i = 1; $i < $size; $i++) {
                 $temp = abs($array[$i]['woocommerce_paypal_express_api_condition_value'] - $value);
                 if ($temp < $diff) {
                     $diff = $temp;

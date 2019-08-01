@@ -167,29 +167,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                         $passed_rules['buyer_countries'] = true;
                                     }
                                 }
-                            } elseif (!empty($order_id) && $order_id > 0) {
-                                $order = wc_get_order($order_id);
-                                $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
-                                if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
-                                    $passed_rules['buyer_countries'] = true;
-                                }
-                            } else {
-                                $post_checkout_data = WC()->session->get('post_data');
-                                if (empty($post_checkout_data)) {
-                                    $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_billing_country();
-                                    if (empty($billing_country)) {
-                                        $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_shipping_country();
-                                    }
-                                    if (!empty($billing_country)) {
-                                        if ($billing_country == $buyer_countries_value) {
-                                            $passed_rules['buyer_countries'] = true;
-                                        }
-                                    }
-                                } else {
-                                    if (!empty($post_checkout_data['billing_country']) && $post_checkout_data['billing_country'] == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                    }
-                                }
                             }
                         }
                     } else {
