@@ -161,7 +161,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
-        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 3);
+        $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
         
     }
 
