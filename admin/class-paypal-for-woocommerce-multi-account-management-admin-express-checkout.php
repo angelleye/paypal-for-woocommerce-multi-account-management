@@ -421,11 +421,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
     }
 
-    public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($gateways, $request = null, $order_id = null) {
-        if ($request == null) {
+    public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($gateways, $current = null, $order_id = null, $request) {
+        if ($current == null) {
             $gateway_setting = $gateways;
         } else {
-            $gateway_setting = $request;
+            $gateway_setting = $current;
         }
         if (!isset($gateways) || !isset($gateways->testmode)) {
             return false;
@@ -455,10 +455,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
-                        if (isset($request->api_username)) {
-                            $request->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
-                            $request->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
-                            $request->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
+                        if (isset($current->api_username)) {
+                            $current->api_username = $microprocessing_value['woocommerce_paypal_express_sandbox_api_username'];
+                            $current->api_password = $microprocessing_value['woocommerce_paypal_express_sandbox_api_password'];
+                            $current->api_signature = $microprocessing_value['woocommerce_paypal_express_sandbox_api_signature'];
                         }
                         if (class_exists('WooCommerce') && WC()->session) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
@@ -472,10 +472,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $gateway_setting->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
                         $gateway_setting->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
                         $gateway_setting->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
-                        if (isset($request->api_username)) {
-                            $request->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
-                            $request->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
-                            $request->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
+                        if (isset($current->api_username)) {
+                            $current->api_username = $microprocessing_value['woocommerce_paypal_express_api_username'];
+                            $current->api_password = $microprocessing_value['woocommerce_paypal_express_api_password'];
+                            $current->api_signature = $microprocessing_value['woocommerce_paypal_express_api_signature'];
                         }
                         if (class_exists('WooCommerce') && WC()->session) {
                             WC()->session->set('multi_account_api_username', $gateway_setting->api_username);
