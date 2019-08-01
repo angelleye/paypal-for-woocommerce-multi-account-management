@@ -77,7 +77,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return false;
     }
 
-    public function angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id) {
+    public function angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id, $request) {
         global $user_ID;
         $current_user_roles = array();
         if (!isset($gateways->testmode)) {
@@ -128,6 +128,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             foreach ($result as $key => $value) {
                 $passed_rules = array();
                 if (!empty($value->ID)) {
+                    $microprocessing_array = get_post_meta($value->ID);
+                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
+                        switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
+                            case 'equalto':
+                                if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                                break;
+                            case 'lessthan':
+                                if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                                break;
+                            case 'greaterthan':
+                                if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    unset($result[$key]);
+                                    unset($passed_rules);
+                                    continue;
+                                }
+                                break;
+                        }
+                    }
                     $currency_code = get_post_meta($value->ID, 'currency_code', true);
                     if (!empty($currency_code)) {
                         $store_currency = get_woocommerce_currency();
@@ -274,50 +300,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 unset($passed_rules);
             }
         }
-        $total_posts = $query->found_posts;
-        $loop = 0;
-        if (count($result) > 0) {
-            foreach ($result as $key => $value) {
-                if (!empty($value->ID)) {
-                    $microprocessing_array = get_post_meta($value->ID);
-                    if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
-                        switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
-                            case 'equalto':
-                                if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
-                                    }
-                                    $loop = $loop + 1;
-                                }
-                                break;
-                            case 'lessthan':
-                                if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
-                                    }
-                                    $loop = $loop + 1;
-                                }
-                                break;
-                            case 'greaterthan':
-                                if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    foreach ($microprocessing_array as $key_sub => $value_sub) {
-                                        $this->final_associate_account[$loop][$key_sub] = $value_sub[0];
-                                    }
-                                    $loop = $loop + 1;
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-            if (count($this->final_associate_account) == 1) {
-                return $this->final_associate_account[0];
-            } elseif (count($this->final_associate_account) == 0) {
-                return $this->final_associate_account;
-            } else {
-                return $this->angelleye_get_closest_amount($this->final_associate_account, $order_total);
-            }
-        }
+        return $request;
     }
 
     public function angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id) {
@@ -422,6 +405,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($gateways, $current = null, $order_id = null, $request = null) {
+        if(empty($request)) {
+            return;
+        }
         if ($current == null) {
             $gateway_setting = $gateways;
         } else {
@@ -443,7 +429,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $microprocessing_value = $this->angelleye_get_multi_account_details_by_api_user_name($gateway_setting, $_multi_account_api_username);
         } elseif (!empty($_GET['pp_action']) && $_GET['pp_action'] == 'set_express_checkout') {
             if (version_compare(PFWMA_VERSION, '1.0.2', '>')) {
-                $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id);
+                $microprocessing_value = $this->angelleye_get_multi_account_by_order_total_latest($gateways, $gateway_setting, $order_id, $request);
             } else {
                 $microprocessing_value = $this->angelleye_get_multi_account_by_order_total($gateways, $gateway_setting, $order_id);
             }
