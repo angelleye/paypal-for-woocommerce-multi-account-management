@@ -133,6 +133,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    continue;
+                                } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
                                     continue;
@@ -140,6 +142,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    continue;
+                                } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
                                     continue;
@@ -147,6 +151,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
+                                    continue;
+                                } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
                                     continue;
