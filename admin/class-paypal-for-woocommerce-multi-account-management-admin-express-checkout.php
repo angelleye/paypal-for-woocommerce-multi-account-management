@@ -95,43 +95,49 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 $passed_rules = array();
+                $cart_loop_pass = 0;
+                $cart_loop_not_pass = 0;
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
+                                    continue;
                                 }
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
+                                    continue;
                                 }
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
+                                    continue;
                                 }
                                 break;
                         }
+                    }
+                    if (!isset($result[$key])) {
+                        break;
                     }
                     $currency_code = get_post_meta($value->ID, 'currency_code', true);
                     if (!empty($currency_code)) {
                         $store_currency = get_woocommerce_currency();
                         if ($store_currency != $currency_code) {
-                            unset($result[$key]);
-                            unset($passed_rules);
-                            continue;
+                            break;
                         }
                     }
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
@@ -166,15 +172,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $passed_rules['buyer_countries'] = true;
                     }
                     if (empty($passed_rules['buyer_countries'])) {
-                        unset($result[$key]);
-                        unset($passed_rules);
                         continue;
                     }
                     $store_countries = get_post_meta($value->ID, 'store_countries', true);
                     if (!empty($store_countries)) {
                         if (WC()->countries->get_base_country() != $store_countries) {
-                            unset($result[$key]);
-                            unset($passed_rules);
                             continue;
                         }
                     }
@@ -198,8 +200,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $product_categories = get_post_meta($value->ID, 'product_categories', true);
                             if (!empty($product_categories)) {
                                 if (!array_intersect($product_categories, $woo_product_categories)) {
-                                    unset($result[$key]);
-                                    unset($passed_rules);
+                                    $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                     continue;
                                 }
                             }
@@ -207,31 +208,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $product_tags = get_post_meta($value->ID, 'product_tags', true);
                             if (!empty($product_tags)) {
                                 if (!array_intersect($product_tags, $woo_product_tag)) {
-                                    unset($result[$key]);
-                                    unset($passed_rules);
+                                    $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                     continue;
                                 }
                             }
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
                             if (!empty($product_ids)) {
                                 if (!array_intersect((array) $product_id, $product_ids)) {
-                                    unset($result[$key]);
-                                    unset($passed_rules);
+                                    $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                     continue;
                                 }
                             }
+                            $cart_loop_pass = $cart_loop_pass + 1;
                         }
                     } else {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
-                            $cart_loop_pass = 0;
-                            $cart_loop_not_pass = 0;
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
                                 $product_categories = get_post_meta($value->ID, 'product_categories', true);
                                 if (!empty($product_categories)) {
                                     if (!array_intersect($product_categories, $woo_product_categories)) {
-
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
@@ -240,7 +237,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_tags = get_post_meta($value->ID, 'product_tags', true);
                                 if (!empty($product_tags)) {
                                     if (!array_intersect($product_tags, $woo_product_tag)) {
-
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
@@ -248,23 +244,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
                                 if (!empty($product_ids)) {
                                     if (!array_intersect((array) $product_id, $product_ids)) {
-
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
                                 }
                                 $cart_loop_pass = $cart_loop_pass + 1;
                             }
-                            if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
-                                if ($cart_loop_pass == 0) {
-                                    unset($result[$key]);
-                                    unset($passed_rules);
-                                } else {
-                                    if (sizeof(WC()->cart->get_cart()) == 1) {
-                                        //$request['Payments']
-                                    }
-                                }
-                            }
+                        }
+                    }
+                    if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0 && $cart_loop_pass > 0) {
+                        if (sizeof(WC()->cart->get_cart()) == 1) {
+                            //$request['Payments']
                         }
                     }
                 }
