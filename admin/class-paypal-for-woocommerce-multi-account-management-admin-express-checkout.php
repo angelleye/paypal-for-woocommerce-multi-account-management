@@ -103,7 +103,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -112,7 +112,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -121,7 +121,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -131,13 +131,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         }
                     }
                     if (!isset($result[$key])) {
-                        break;
+                        continue;
                     }
                     $currency_code = get_post_meta($value->ID, 'currency_code', true);
                     if (!empty($currency_code)) {
                         $store_currency = get_woocommerce_currency();
                         if ($store_currency != $currency_code) {
-                            break;
+                            continue;
                         }
                     }
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
@@ -260,6 +260,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
                 unset($passed_rules);
             }
+            if (count($result) > 0) {
+                return $this->angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id);
+            }
         }
         return $request;
     }
@@ -349,6 +352,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
         }
         return $cart_contents_total;
+    }
+
+    public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+        if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+            
+        } else {
+            if (isset(WC()->cart) && WC()->cart->is_empty()) {
+                if (!empty($order_id) && $order_id > 0) {
+                    $order = wc_get_order($order_id);
+                    foreach ($order->get_items() as $cart_item_key => $values) {
+                        
+                    }
+                }
+            }
+        }
+        return $request;
     }
 
 }
