@@ -206,9 +206,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_express_account_name'][0]) ? $meta_data['woocommerce_paypal_express_account_name'][0] : '';
                     if ($account_data[$key]['mode'] == 'Sandbox') {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_sandbox_api_username'][0]) ? $meta_data['woocommerce_paypal_express_sandbox_api_username'][0] : '';
+                        if(empty($account_data[$key]['api_user_name'])) {
+                            $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_api_username'][0]) ? $meta_data['woocommerce_paypal_express_api_username'][0] : '';
+                        }
                     } else {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_api_username'][0]) ? $meta_data['woocommerce_paypal_express_api_username'][0] : '';
+                        if(empty($account_data[$key]['api_user_name'])) {
+                            $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_api_username'][0]) ? $meta_data['woocommerce_paypal_express_api_username'][0] : '';
+                        }
                     }
+                    
+                    
                 } else {
                     if (!empty($meta_data['woocommerce_paypal_pro_payflow_testmode']) && $meta_data['woocommerce_paypal_pro_payflow_testmode'][0] == 'on') {
                         $account_data[$key]['mode'] = 'Sandbox';

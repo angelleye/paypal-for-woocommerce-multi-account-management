@@ -7,8 +7,8 @@ jQuery('#woocommerce_paypal_pro_payflow_testmode_microprocessing').change(functi
     angelleye_multi_account_paypal_payfow_hide_show_field();
 }).change();
 function angelleye_multi_account_paypal_express_hide_show_field() {
-    var sandbox_ec = jQuery('#woocommerce_paypal_express_sandbox_api_username_microprocessing, #woocommerce_paypal_express_sandbox_api_password_microprocessing, #woocommerce_paypal_express_sandbox_api_signature_microprocessing').closest('tr');
-    var production_ec = jQuery('#woocommerce_paypal_express_api_username_microprocessing, #woocommerce_paypal_express_api_password_microprocessing, #woocommerce_paypal_express_api_signature_microprocessing').closest('tr');
+    var sandbox_ec = jQuery('#woocommerce_paypal_express_sandbox_email_microprocessing, #woocommerce_paypal_express_sandbox_api_username_microprocessing, #woocommerce_paypal_express_sandbox_api_password_microprocessing, #woocommerce_paypal_express_sandbox_api_signature_microprocessing').closest('tr');
+    var production_ec = jQuery('#woocommerce_paypal_express_api_email_microprocessing, #woocommerce_paypal_express_api_username_microprocessing, #woocommerce_paypal_express_api_password_microprocessing, #woocommerce_paypal_express_api_signature_microprocessing').closest('tr');
     if (jQuery('#woocommerce_paypal_express_testmode_microprocessing').is(':checked')) {
         sandbox_ec.show();
         production_ec.hide();
