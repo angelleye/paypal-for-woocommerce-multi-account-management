@@ -107,7 +107,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
-                                    continue;
                                 }
                                 break;
                             case 'lessthan':
@@ -116,7 +115,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
-                                    continue;
                                 }
                                 break;
                             case 'greaterthan':
@@ -125,7 +123,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
-                                    continue;
                                 }
                                 break;
                         }
