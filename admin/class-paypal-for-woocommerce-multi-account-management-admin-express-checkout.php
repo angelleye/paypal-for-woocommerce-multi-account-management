@@ -521,6 +521,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
         }
+        if (!empty($new_payments)) {
+            $request['Payments'] = $new_payments;
+        } else {
+            $request['Payments'] = $old_payments;
+        }
         return $request;
     }
 
