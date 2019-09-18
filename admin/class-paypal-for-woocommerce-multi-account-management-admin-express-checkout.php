@@ -31,6 +31,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     private $version;
     public $final_associate_account;
     public $gateway_key;
+    public $map_item_with_account;
 
     /**
      * Initialize the class and set its properties.
@@ -43,6 +44,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
         $this->final_associate_account = array();
+        $this->map_item_with_account = array();
     }
 
     public function angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request) {
@@ -216,6 +218,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
+                            $this->map_item_with_account[$cart_item_key] = $value->ID;
                             $cart_loop_pass = $cart_loop_pass + 1;
                         }
                     } else {
@@ -246,18 +249,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                 }
                                 $cart_loop_pass = $cart_loop_pass + 1;
+                                $this->map_item_with_account[$cart_item_key] = $value->ID;
                             }
-                        }
-                    }
-                    if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0 && $cart_loop_pass > 0) {
-                        if (sizeof(WC()->cart->get_cart()) == 1) {
-                            //$request['Payments']
                         }
                     }
                 }
                 unset($passed_rules);
             }
-            if (count($result) > 0) {
+            if ((isset($result) && count($result)) > 0 && (isset($this->map_item_with_account) && count($this->map_item_with_account))) {
                 return $this->angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id);
             }
         }
@@ -352,14 +351,31 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+        if (!empty($request['Payments'])) {
+            $old_payments = $request['Payments'];
+            unset($request['Payments']);
+        } else {
+            $old_payments = array();
+        }
+        $new_payments = array();
         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
-            
+            foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
+                    
+                } else {
+                    
+                }
+            }
         } else {
             if (isset(WC()->cart) && WC()->cart->is_empty()) {
                 if (!empty($order_id) && $order_id > 0) {
                     $order = wc_get_order($order_id);
                     foreach ($order->get_items() as $cart_item_key => $values) {
-                        
+                        if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
+                            
+                        } else {
+                            
+                        }
                     }
                 }
             }
