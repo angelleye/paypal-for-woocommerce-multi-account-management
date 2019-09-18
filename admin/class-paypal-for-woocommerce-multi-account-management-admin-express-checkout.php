@@ -351,19 +351,90 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+        $new_payments = array();
         if (!empty($request['Payments'])) {
             $old_payments = $request['Payments'];
             unset($request['Payments']);
         } else {
             $old_payments = array();
         }
-        $new_payments = array();
+
         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                 if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
-                    
+                    $Payment = array(
+                        'amt' => '10.00',
+                        'currencycode' => '',
+                        'itemamt' => '7.00',
+                        'shippingamt' => '3.00',
+                        'shipdiscamt' => '',
+                        'taxamt' => '',
+                        'desc' => 'Payment #1',
+                        'custom' => '',
+                        'invnum' => '',
+                        'notifyurl' => '',
+                        'shiptoname' => '',
+                        'shiptostreet' => '',
+                        'shiptostreet2' => '',
+                        'shiptocity' => '',
+                        'shiptostate' => '',
+                        'shiptozip' => '',
+                        'shiptocountrycode' => '',
+                        'shiptophonenum' => '',
+                        'notetext' => '',
+                        'paymentaction' => 'Sale',
+                        'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
+                    );
+
+                    $PaymentOrderItems = array();
+                    $Item = array(
+                        'name' => 'Payment #1 Widget',
+                        'desc' => 'Payment #1 Widget',
+                        'amt' => '7.00',
+                        'number' => '',
+                        'qty' => '1',
+                        'taxamt' => '',
+                    );
+                    array_push($PaymentOrderItems, $Item);
+                    $Payment['order_items'] = $PaymentOrderItems;
+                    array_push($new_payments, $Payment);
                 } else {
-                    
+                    $Payment = array(
+                        'amt' => '10.00',
+                        'currencycode' => '',
+                        'itemamt' => '7.00',
+                        'shippingamt' => '3.00',
+                        'shipdiscamt' => '',
+                        'taxamt' => '',
+                        'desc' => 'Payment #1',
+                        'custom' => '',
+                        'invnum' => '',
+                        'notifyurl' => '',
+                        'shiptoname' => '',
+                        'shiptostreet' => '',
+                        'shiptostreet2' => '',
+                        'shiptocity' => '',
+                        'shiptostate' => '',
+                        'shiptozip' => '',
+                        'shiptocountrycode' => '',
+                        'shiptophonenum' => '',
+                        'notetext' => '',
+                        'paymentaction' => 'Sale',
+                        'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
+                    );
+
+                    $PaymentOrderItems = array();
+                    $Item = array(
+                        'name' => 'Payment #1 Widget',
+                        'desc' => 'Payment #1 Widget',
+                        'amt' => '7.00',
+                        'number' => '',
+                        'qty' => '1',
+                        'taxamt' => '',
+                    );
+                    array_push($PaymentOrderItems, $Item);
+                    $Payment['order_items'] = $PaymentOrderItems;
+                    array_push($new_payments, $Payment);
                 }
             }
         } else {
@@ -372,9 +443,79 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     $order = wc_get_order($order_id);
                     foreach ($order->get_items() as $cart_item_key => $values) {
                         if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
-                            
+                            $Payment = array(
+                                'amt' => '10.00',
+                                'currencycode' => '',
+                                'itemamt' => '7.00',
+                                'shippingamt' => '3.00',
+                                'shipdiscamt' => '',
+                                'taxamt' => '',
+                                'desc' => 'Payment #1',
+                                'custom' => '',
+                                'invnum' => '',
+                                'notifyurl' => '',
+                                'shiptoname' => '',
+                                'shiptostreet' => '',
+                                'shiptostreet2' => '',
+                                'shiptocity' => '',
+                                'shiptostate' => '',
+                                'shiptozip' => '',
+                                'shiptocountrycode' => '',
+                                'shiptophonenum' => '',
+                                'notetext' => '',
+                                'paymentaction' => 'Sale',
+                                'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
+                            );
+
+                            $PaymentOrderItems = array();
+                            $Item = array(
+                                'name' => 'Payment #1 Widget',
+                                'desc' => 'Payment #1 Widget',
+                                'amt' => '7.00',
+                                'number' => '',
+                                'qty' => '1',
+                                'taxamt' => '',
+                            );
+                            array_push($PaymentOrderItems, $Item);
+                            $Payment['order_items'] = $PaymentOrderItems;
+                            array_push($new_payments, $Payment);
                         } else {
-                            
+                            $Payment = array(
+                                'amt' => '10.00',
+                                'currencycode' => '',
+                                'itemamt' => '7.00',
+                                'shippingamt' => '3.00',
+                                'shipdiscamt' => '',
+                                'taxamt' => '',
+                                'desc' => 'Payment #1',
+                                'custom' => '',
+                                'invnum' => '',
+                                'notifyurl' => '',
+                                'shiptoname' => '',
+                                'shiptostreet' => '',
+                                'shiptostreet2' => '',
+                                'shiptocity' => '',
+                                'shiptostate' => '',
+                                'shiptozip' => '',
+                                'shiptocountrycode' => '',
+                                'shiptophonenum' => '',
+                                'notetext' => '',
+                                'paymentaction' => 'Sale',
+                                'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
+                            );
+
+                            $PaymentOrderItems = array();
+                            $Item = array(
+                                'name' => 'Payment #1 Widget',
+                                'desc' => 'Payment #1 Widget',
+                                'amt' => '7.00',
+                                'number' => '',
+                                'qty' => '1',
+                                'taxamt' => '',
+                            );
+                            array_push($PaymentOrderItems, $Item);
+                            $Payment['order_items'] = $PaymentOrderItems;
+                            array_push($new_payments, $Payment);
                         }
                     }
                 }
