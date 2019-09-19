@@ -32,8 +32,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $final_associate_account;
     public $gateway_key;
     public $map_item_with_account;
-    public $is_taxable;
-    public $needs_shipping;
+    public $angelleye_is_taxable;
+    public $angelleye_needs_shipping;
 
     /**
      * Initialize the class and set its properties.
@@ -381,10 +381,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } else {
             $old_payments = array();
         }
-
+        $this->angelleye_is_taxable = 0;
+        $this->angelleye_needs_shipping = 0;
         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                 if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
+                    $multi_account_info = $this->map_item_with_account[$cart_item_key];
                     $Payment = array(
                         'amt' => '10.00',
                         'currencycode' => '',
@@ -408,7 +410,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'paymentaction' => 'Sale',
                         'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                     );
-
                     $PaymentOrderItems = array();
                     $Item = array(
                         'name' => 'Payment #1 Widget',
@@ -445,7 +446,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'paymentaction' => 'Sale',
                         'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                     );
-
                     $PaymentOrderItems = array();
                     $Item = array(
                         'name' => 'Payment #1 Widget',
@@ -550,6 +550,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $request['Payments'] = $old_payments;
         }
         return $request;
+    }
+
+    public function angelleye_get_email_address() {
+        
     }
 
 }
