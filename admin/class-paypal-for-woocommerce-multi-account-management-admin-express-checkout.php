@@ -252,7 +252,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $product = wc_get_product($product_id);
-                                $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+                                if (empty($this->map_item_with_account[$cart_item_key]['multi_account_id'])) {
+                                    $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+                                }
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
@@ -290,12 +292,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                         $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
                                         $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0];
+                                    } else {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $this->angelleye_get_email_address_for_multi($value->ID, $microprocessing_array, $gateways);
                                     }
                                 } else {
                                     if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
                                         $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_email'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_merchant_id'][0])) {
                                         $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_merchant_id'][0];
+                                    } else {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $this->angelleye_get_email_address_for_multi($value->ID, $microprocessing_array, $gateways);
                                     }
                                 }
                                 $cart_loop_pass = $cart_loop_pass + 1;
@@ -425,6 +431,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                 if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
+                    $multi_account_info = $this->map_item_with_account[$cart_item_key];
+                    if (isset($multi_account_info['email'])) {
+                        $sellerpaypalaccountid = $multi_account_info['email'];
+                    } else {
+                        $this->angelleye_get_email_address($this->map_item_with_account[$cart_item_key], $gateways);
+                    }
                     $PaymentOrderItems = array();
                     $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
                     $Item = array(
@@ -469,41 +481,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     );
                     array_push($new_payments, $Payment);
                     $loop = $loop + 1;
-                } else {
-                    $PaymentOrderItems = array();
-                    $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
-                    $Item = array(
-                        'name' => $line_item['name'],
-                        'desc' => $line_item['desc'],
-                        'amt' => $line_item['amt'],
-                        'number' => $line_item['number'],
-                        'qty' => $line_item['qty']
-                    );
-                    array_push($PaymentOrderItems, $Item);
-                    $Payment['order_items'] = $PaymentOrderItems;
-                    $Payment = array(
-                        'amt' => '10.00',
-                        'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                        'itemamt' => $line_item['amt'],
-                        'shippingamt' => '3.00',
-                        'taxamt' => isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00',
-                        'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-                        'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
-                        'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-                        'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-                        'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-                        'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-                        'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-                        'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-                        'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-                        'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-                        'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-                        'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
-                        'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
-                        'sellerpaypalaccountid' => 'angelleyeindia@gmail.com',
-                    );
-                    array_push($new_payments, $Payment);
-                    $loop = $loop + 1;
                 }
             }
         } else {
@@ -512,6 +489,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     $order = wc_get_order($order_id);
                     foreach ($order->get_items() as $cart_item_key => $values) {
                         if (array_key_exists($cart_item_key, $this->map_item_with_account)) {
+                            $multi_account_info = $this->map_item_with_account[$cart_item_key];
+                            if (isset($multi_account_info['email'])) {
+                                $sellerpaypalaccountid = $multi_account_info['email'];
+                            } else {
+                                $this->angelleye_get_email_address($this->map_item_with_account[$cart_item_key], $gateways);
+                            }
                             $PaymentOrderItems = array();
                             $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
                             $Item = array(
@@ -522,47 +505,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 'qty' => $line_item['qty']
                             );
                             array_push($PaymentOrderItems, $Item);
+                            if (!empty($this->discount_array)) {
+                                $Item = array(
+                                    'name' => 'Discount',
+                                    'desc' => 'Discount Amount',
+                                    'amt' => isset($this->discount_array[$loop]) ? $this->discount_array[$loop] : '0.00',
+                                    'number' => '',
+                                    'qty' => 1
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                            }
                             $Payment['order_items'] = $PaymentOrderItems;
                             $Payment = array(
                                 'amt' => '10.00',
                                 'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
                                 'itemamt' => $line_item['amt'],
-                                'shippingamt' => '3.00',
-                                'taxamt' => isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00',
-                                'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-                                'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
-                                'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-                                'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-                                'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-                                'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-                                'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-                                'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-                                'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-                                'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-                                'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-                                'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
-                                'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
-                                'sellerpaypalaccountid' => 'angelleyeindia@gmail.com',
-                            );
-                            array_push($new_payments, $Payment);
-                            $loop = $loop + 1;
-                        } else {
-                            $PaymentOrderItems = array();
-                            $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
-                            $Item = array(
-                                'name' => $line_item['name'],
-                                'desc' => $line_item['desc'],
-                                'amt' => $line_item['amt'],
-                                'number' => $line_item['number'],
-                                'qty' => $line_item['qty']
-                            );
-                            array_push($PaymentOrderItems, $Item);
-                            $Payment['order_items'] = $PaymentOrderItems;
-                            $Payment = array(
-                                'amt' => '10.00',
-                                'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                                'itemamt' => $line_item['amt'],
-                                'shippingamt' => '3.00',
+                                'shippingamt' => isset($this->shipping_array[$loop]) ? $this->shipping_array[$loop] : '0.00',
                                 'taxamt' => isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00',
                                 'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
                                 'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
@@ -594,7 +552,67 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return $request;
     }
 
-    public function angelleye_get_email_address() {
+    public function angelleye_get_email_address($map_item_with_account_array, $gateways) {
+        if (!empty($map_item_with_account_array['multi_account_id'])) {
+            if ($map_item_with_account_array['multi_account_id'] == 'default') {
+                $PayPalConfig = array(
+                    'Sandbox' => $gateways->testmode,
+                    'APIUsername' => $gateways->api_username,
+                    'APIPassword' => $gateways->api_password,
+                    'APISignature' => $gateways->api_signature
+                );
+                if (!class_exists('Angelleye_PayPal_WC')) {
+                    require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
+                }
+                $PayPal = new Angelleye_PayPal_WC($PayPalConfig);
+                $PayPalResult = $PayPal->GetPalDetails();
+                if (isset($PayPalResult['ACK']) && $PayPalResult['ACK'] == 'Success') {
+                    if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
+                        $merchant_account_id = $PayPalResult['PAL'];
+                        return $merchant_account_id;
+                    }
+                }
+            }
+        }
+    }
+
+    public function angelleye_get_email_address_for_multi($account_id, $microprocessing_array, $gateways) {
+        if ($gateways->testmode) {
+            $PayPalConfig = array(
+                'Sandbox' => $gateways->testmode,
+                'APIUsername' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0],
+                'APIPassword' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0],
+                'APISignature' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0]
+            );
+        } else {
+            $PayPalConfig = array(
+                'Sandbox' => $gateways->testmode,
+                'APIUsername' => $microprocessing_array['woocommerce_paypal_express_api_username'][0],
+                'APIPassword' => $microprocessing_array['woocommerce_paypal_express_api_signature'][0],
+                'APISignature' => $microprocessing_array['woocommerce_paypal_express_api_password'][0]
+            );
+        }
+
+        if (!class_exists('Angelleye_PayPal_WC')) {
+            require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
+        }
+        $PayPal = new Angelleye_PayPal_WC($PayPalConfig);
+        $PayPalResult = $PayPal->GetPalDetails();
+        if (isset($PayPalResult['ACK']) && $PayPalResult['ACK'] == 'Success') {
+            if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
+                $merchant_account_id = $PayPalResult['PAL'];
+                if ($gateways->testmode) {
+                    update_post_meta($account_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
+                } else {
+                    update_post_meta($account_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
+                }
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function angelleye_get_GetPalDetails() {
         
     }
 
@@ -661,14 +679,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $partition_array[$angelleye_is_taxable] = $partition_array[$angelleye_is_taxable] + $Difference;
         }
         return $partition_array;
-    }
-
-    public function angelleye_get_shipping_array() {
-        
-    }
-
-    public function angelleye_get_discount_array() {
-        
     }
 
 }
