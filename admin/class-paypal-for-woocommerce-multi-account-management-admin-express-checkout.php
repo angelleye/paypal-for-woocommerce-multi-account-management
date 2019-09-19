@@ -253,7 +253,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
-
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
@@ -410,13 +409,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
         $this->angelleye_is_taxable;
         $this->angelleye_needs_shipping;
-
-
         $this->taxamt = round(WC()->cart->tax_total + WC()->cart->shipping_tax_total, $this->decimals);
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
-
-
         if (isset($this->taxamt) && $this->taxamt > 0) {
             $this->tax_array = $this->angelleye_get_tax_array($this->taxamt, $this->angelleye_is_taxable);
         }
@@ -440,12 +435,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'qty' => $line_item['qty']
                     );
                     array_push($PaymentOrderItems, $Item);
+                    if (!empty($this->discount_array)) {
+                        $Item = array(
+                            'name' => 'Discount',
+                            'desc' => 'Discount Amount',
+                            'amt' => isset($this->discount_array[$loop]) ? $this->discount_array[$loop] : '0.00',
+                            'number' => '',
+                            'qty' => 1
+                        );
+                        array_push($PaymentOrderItems, $Item);
+                    }
                     $Payment['order_items'] = $PaymentOrderItems;
                     $Payment = array(
                         'amt' => '10.00',
                         'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
                         'itemamt' => $line_item['amt'],
-                        'shippingamt' => '3.00',
+                        'shippingamt' => isset($this->shipping_array[$loop]) ? $this->shipping_array[$loop] : '0.00',
                         'taxamt' => isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00',
                         'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
                         'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
