@@ -240,6 +240,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
@@ -272,6 +273,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                 }
                                 $this->map_item_with_account[$cart_item_key]['multi_account_id'] = $value->ID;
+                                if ($gateways->testmode == true) {
+                                    if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
+                                    } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0];
+                                    }
+                                } else {
+                                    if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_email'][0];
+                                    } elseif (isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_merchant_id'][0])) {
+                                        $this->map_item_with_account[$cart_item_key]['email'] = $microprocessing_array['woocommerce_paypal_express_merchant_id'][0];
+                                    }
+                                }
                                 $cart_loop_pass = $cart_loop_pass + 1;
                             }
                         }
@@ -392,22 +406,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'currencycode' => '',
                         'itemamt' => '7.00',
                         'shippingamt' => '3.00',
-                        'shipdiscamt' => '',
                         'taxamt' => '',
-                        'desc' => 'Payment #1',
-                        'custom' => '',
-                        'invnum' => '',
-                        'notifyurl' => '',
-                        'shiptoname' => '',
-                        'shiptostreet' => '',
-                        'shiptostreet2' => '',
-                        'shiptocity' => '',
-                        'shiptostate' => '',
-                        'shiptozip' => '',
-                        'shiptocountrycode' => '',
-                        'shiptophonenum' => '',
-                        'notetext' => '',
-                        'paymentaction' => 'Sale',
+                        'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
+                        'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
+                        'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
+                        'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
+                        'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
+                        'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
+                        'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
+                        'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
+                        'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
+                        'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
+                        'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
+                        'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                        'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
                         'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                     );
                     $PaymentOrderItems = array();
@@ -428,22 +440,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'currencycode' => '',
                         'itemamt' => '7.00',
                         'shippingamt' => '3.00',
-                        'shipdiscamt' => '',
                         'taxamt' => '',
-                        'desc' => 'Payment #1',
-                        'custom' => '',
-                        'invnum' => '',
-                        'notifyurl' => '',
-                        'shiptoname' => '',
-                        'shiptostreet' => '',
-                        'shiptostreet2' => '',
-                        'shiptocity' => '',
-                        'shiptostate' => '',
-                        'shiptozip' => '',
-                        'shiptocountrycode' => '',
-                        'shiptophonenum' => '',
-                        'notetext' => '',
-                        'paymentaction' => 'Sale',
+                        'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
+                        'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
+                        'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
+                        'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
+                        'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
+                        'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
+                        'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
+                        'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
+                        'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
+                        'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
+                        'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
+                        'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                        'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
                         'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                     );
                     $PaymentOrderItems = array();
@@ -471,22 +481,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 'currencycode' => '',
                                 'itemamt' => '7.00',
                                 'shippingamt' => '3.00',
-                                'shipdiscamt' => '',
                                 'taxamt' => '',
-                                'desc' => 'Payment #1',
-                                'custom' => '',
-                                'invnum' => '',
-                                'notifyurl' => '',
-                                'shiptoname' => '',
-                                'shiptostreet' => '',
-                                'shiptostreet2' => '',
-                                'shiptocity' => '',
-                                'shiptostate' => '',
-                                'shiptozip' => '',
-                                'shiptocountrycode' => '',
-                                'shiptophonenum' => '',
-                                'notetext' => '',
-                                'paymentaction' => 'Sale',
+                                'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
+                                'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
+                                'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
+                                'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
+                                'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
+                                'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
+                                'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
+                                'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
+                                'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
+                                'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
+                                'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
+                                'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                                'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
                                 'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                             );
 
@@ -508,22 +516,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 'currencycode' => '',
                                 'itemamt' => '7.00',
                                 'shippingamt' => '3.00',
-                                'shipdiscamt' => '',
                                 'taxamt' => '',
-                                'desc' => 'Payment #1',
-                                'custom' => '',
-                                'invnum' => '',
-                                'notifyurl' => '',
-                                'shiptoname' => '',
-                                'shiptostreet' => '',
-                                'shiptostreet2' => '',
-                                'shiptocity' => '',
-                                'shiptostate' => '',
-                                'shiptozip' => '',
-                                'shiptocountrycode' => '',
-                                'shiptophonenum' => '',
-                                'notetext' => '',
-                                'paymentaction' => 'Sale',
+                                'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
+                                'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
+                                'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
+                                'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
+                                'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
+                                'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
+                                'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
+                                'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
+                                'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
+                                'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
+                                'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
+                                'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                                'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
                                 'sellerpaypalaccountid' => 'paypal-facilitator@angelleye.com',
                             );
 
