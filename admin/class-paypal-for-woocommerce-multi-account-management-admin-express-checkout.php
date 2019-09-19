@@ -32,6 +32,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $final_associate_account;
     public $gateway_key;
     public $map_item_with_account;
+    public $is_taxable;
+    public $needs_shipping;
 
     /**
      * Initialize the class and set its properties.
@@ -45,6 +47,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->version = $version;
         $this->final_associate_account = array();
         $this->map_item_with_account = array();
+        $this->angelleye_is_taxable = 0;
+        $this->angelleye_needs_shipping = 0;
     }
 
     public function angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request) {
@@ -195,6 +199,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         foreach ($order->get_items() as $cart_item_key => $values) {
                             $product = $order->get_product_from_item($values);
                             $product_id = $product->get_id();
+                            $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+                            if ($product->is_taxable()) {
+                                $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
+                                $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                            }
+                            if ($product->needs_shipping()) {
+                                $this->map_item_with_account[$cart_item_key]['needs_shipping'] = true;
+                                $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                            }
                             $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
                             $product_categories = get_post_meta($value->ID, 'product_categories', true);
                             if (!empty($product_categories)) {
@@ -218,13 +231,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
-                            $this->map_item_with_account[$cart_item_key] = $value->ID;
+                            $this->map_item_with_account[$cart_item_key]['multi_account_id'] = $value->ID;
                             $cart_loop_pass = $cart_loop_pass + 1;
                         }
                     } else {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                                $product = wc_get_product($product_id);
+                                $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+                                if ($product->is_taxable()) {
+                                    $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
+                                    $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                }
+                                if ($product->needs_shipping()) {
+                                    $this->map_item_with_account[$cart_item_key]['needs_shipping'] = true;
+                                    $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                }
                                 $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
                                 $product_categories = get_post_meta($value->ID, 'product_categories', true);
                                 if (!empty($product_categories)) {
@@ -248,8 +271,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                         continue;
                                     }
                                 }
+                                $this->map_item_with_account[$cart_item_key]['multi_account_id'] = $value->ID;
                                 $cart_loop_pass = $cart_loop_pass + 1;
-                                $this->map_item_with_account[$cart_item_key] = $value->ID;
                             }
                         }
                     }
