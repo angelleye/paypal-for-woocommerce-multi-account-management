@@ -258,6 +258,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                                 if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
                                     $this->map_item_with_account[$product_id]['is_api_set'] = true;
+                                } else {
+                                    $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                 }
                             } else {
                                 if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
@@ -269,6 +271,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                                 if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
                                     $this->map_item_with_account[$product_id]['is_api_set'] = true;
+                                } else {
+                                    $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                 }
                             }
                             $cart_loop_pass = $cart_loop_pass + 1;
@@ -324,6 +328,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                     if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
                                         $this->map_item_with_account[$product_id]['is_api_set'] = true;
+                                    } else {
+                                        $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                     }
                                 } else {
                                     if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
@@ -335,6 +341,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                     if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
                                         $this->map_item_with_account[$product_id]['is_api_set'] = true;
+                                    } else {
+                                        $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                     }
                                 }
                                 $cart_loop_pass = $cart_loop_pass + 1;
