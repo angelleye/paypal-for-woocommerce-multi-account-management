@@ -501,7 +501,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
                         'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
                         'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
-                        'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
+                        'paymentaction' => 'Sale',
                         'sellerpaypalaccountid' => $sellerpaypalaccountid,
                         'paymentrequestid' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '' . $cart_item_key
                     );
@@ -567,7 +567,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
                             'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
                             'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
-                            'paymentaction' => isset($old_payments[0]['paymentaction']) ? $old_payments[0]['paymentaction'] : '',
+                            'paymentaction' => 'Sale',
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
                             'paymentrequestid' => uniqid(rand(), true)
                         );
