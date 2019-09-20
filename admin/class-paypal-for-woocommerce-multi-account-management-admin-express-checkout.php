@@ -215,6 +215,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $product = $order->get_product_from_item($values);
                             $product_id = $product->get_id();
                             $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
+                            $this->map_item_with_account[$cart_item_key]['product_id'] = $product_id;
                             if ($product->is_taxable()) {
                                 $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
                                 $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
@@ -274,6 +275,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if (empty($this->map_item_with_account[$cart_item_key]['multi_account_id'])) {
                                     $this->map_item_with_account[$cart_item_key]['multi_account_id'] = 'default';
                                 }
+                                $this->map_item_with_account[$cart_item_key]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$cart_item_key]['is_taxable'] = true;
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
