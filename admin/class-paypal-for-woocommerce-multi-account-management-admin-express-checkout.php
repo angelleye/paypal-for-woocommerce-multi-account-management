@@ -908,4 +908,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return false;
     }
 
+    public function own_angelleye_express_checkout_order_data($paypal_response, $order_id) {
+        $order = wc_get_order($order_id);
+        for ($payment = 0; $payment <= 10; $payment++) {
+            if (!empty($paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID'])) {
+                $order->add_order_note(sprintf(__('PayPal Express payment Transaction ID: %s', 'paypal-for-woocommerce'), isset($paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID']) ? $paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID'] : ''));
+            } else {
+                break;
+            }
+        }
+    }
+
 }
