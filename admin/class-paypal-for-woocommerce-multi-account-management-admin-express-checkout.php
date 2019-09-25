@@ -622,6 +622,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $shippingamt = isset($this->shipping_array[$loop]) ? $this->shipping_array[$loop] : '0.00';
                             $taxamt = isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00';
                             $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
+                            $custom_param = '';
                             if (isset($old_payments[0]['custom'])) {
                                 $custom_param = json_decode($old_payments[0]['custom'], true);
                                 $custom_param['order_item_id'] = $cart_item_key;
@@ -938,14 +939,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_SECUREMERCHANTACCOUNTID'])) {
                         if ($paypal_response['PAYMENTINFO_' . $transaction_map . '_SECUREMERCHANTACCOUNTID'] == $ec_parallel_data['sellerpaypalaccountid']) {
                             $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], transaction_id, $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
+                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
                         }
                     }
                 } else {
                     if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_SELLERPAYPALACCOUNTID'])) {
                         if ($paypal_response['PAYMENTINFO_' . $transaction_map . '_SELLERPAYPALACCOUNTID'] == $ec_parallel_data['sellerpaypalaccountid']) {
                             $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], transaction_id, $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
+                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
                         }
                     }
                 }
