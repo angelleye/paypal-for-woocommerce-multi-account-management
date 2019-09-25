@@ -79,6 +79,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($this->angelleye_post_exists($_GET['ID']) == false) {
             return false;
         }
+        $require_ssl = '';
+        if ( !is_ssl() ) {
+            $require_ssl = __('This image requires an SSL host.  Please upload your image to <a target="_blank" href="http://www.sslpic.com">www.sslpic.com</a> and enter the image URL here.', 'paypal-for-woocommerce-multi-account-management');
+        }
         $selected_role = '';
         $microprocessing = get_post_meta($_GET['ID']);
         echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
