@@ -554,10 +554,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            if (isset($_POST['woocommerce_paypal_express_testmode']) && 'on' == $_POST['woocommerce_paypal_express_testmode']) {
-                update_post_meta($post_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
-            } else {
-                update_post_meta($post_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
+            if( !empty($merchant_account_id)) {
+                if (isset($_POST['woocommerce_paypal_express_testmode']) && 'on' == $_POST['woocommerce_paypal_express_testmode']) {
+                    update_post_meta($post_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
+                } else {
+                    update_post_meta($post_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
+                }
             }
             ?>
             <?php
