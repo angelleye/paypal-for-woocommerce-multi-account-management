@@ -43,6 +43,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $shippingamt;
     public $paypal;
     public $paypal_response;
+    public $final_grand_total;
+    public $final_order_grand_total;
+    public $is_calculation_mismatch;
 
     /**
      * Initialize the class and set its properties.
@@ -67,6 +70,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
     public function angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request) {
         global $user_ID;
+        if (empty($order_id)) {
+            $this->is_calculation_mismatch = isset($gateway_setting->cart_param['is_calculation_mismatch']) ? $gateway_setting->cart_param['is_calculation_mismatch'] : false;
+        } else {
+            $this->is_calculation_mismatch = isset($gateway_setting->order_param['is_calculation_mismatch']) ? $gateway_setting->order_param['is_calculation_mismatch'] : false;
+        }
         $current_user_roles = array();
         if (!isset($gateways->testmode)) {
             return;
@@ -458,6 +466,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+
         $new_payments = array();
         $default_new_payments = array();
         $default_new_payments_line_item = array();
@@ -486,6 +495,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $default_taxamt = 0;
         $default_pal_id = '';
         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0 && empty($order_id)) {
+            $cart_amt_total = WC()->cart->get_totals();
+            $this->final_order_grand_total = $cart_amt_total['total'];
             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                 $item_total = 0;
                 $final_total = 0;
@@ -523,6 +534,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $shippingamt = isset($this->shipping_array[$loop]) ? $this->shipping_array[$loop] : '0.00';
                         $taxamt = isset($this->tax_array[$loop]) ? $this->tax_array[$loop] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
+                        $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
                             'amt' => $final_total,
                             'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
@@ -589,6 +601,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } else {
             if (!empty($order_id) && $order_id > 0) {
                 $order = wc_get_order($order_id);
+                $this->final_order_grand_total = $order->get_total();
                 foreach ($order->get_items() as $cart_item_key => $cart_item) {
                     $product = $order->get_product_from_item($cart_item);
                     $product_id = $product->get_id();
@@ -637,6 +650,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $custom_param['order_item_id'] = $cart_item_key;
                                 $custom_param = json_encode($custom_param);
                             }
+                            $this->final_grand_total = $this->final_grand_total + $final_total;
                             $Payment = array(
                                 'amt' => $final_total,
                                 'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
@@ -726,8 +740,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 'sellerpaypalaccountid' => $default_pal_id,
                 'paymentrequestid' => uniqid(rand(), true)
             );
+            $this->final_grand_total = $this->final_grand_total + $default_final_total;
             $new_default_payment['order_items'] = $default_new_payments_line_item;
             array_push($new_payments, $new_default_payment);
+        }
+        if ($this->final_grand_total != $this->final_order_grand_total) {
+            $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
+            if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
+                if (isset($new_payments[0]['amt']) && $new_payments[0]['amt'] > 1) {
+                    $new_payments[0]['amt'] = $new_payments[0]['amt'] + $Difference;
+                    unset($new_payments[0]['itemamt']);
+                    unset($new_payments[0]['order_items']);
+                    unset($new_payments[0]['shippingamt']);
+                    unset($new_payments[0]['taxamt']);
+                }
+            }
         }
         if (!empty($new_payments)) {
             $request['Payments'] = $new_payments;
