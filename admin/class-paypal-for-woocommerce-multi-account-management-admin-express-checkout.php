@@ -1159,8 +1159,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
     }
     
-    public function own_woocommerce_order_item_add_action_buttons() {
-        echo "<br><span style='color: red;'>". MULTI_ACCOUNT_REFUND_NOTICE . "</span>";
+    public function own_woocommerce_order_item_add_action_buttons($order) {
+        $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
+        $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
+        if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
+            echo "<br><span style='color: red;'>". MULTI_ACCOUNT_REFUND_NOTICE . "</span>";
+        }
     }
     
     public function own_woocommerce_order_fully_refunded($order_id, $refund_id) {
