@@ -1163,7 +1163,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
         $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
         if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
-            echo "<br><span style='color: red;'>". MULTI_ACCOUNT_REFUND_NOTICE . "</span>";
+            echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', MULTI_ACCOUNT_REFUND_NOTICE, MULTI_ACCOUNT_REFUND_NOTICE);
+            //echo "<br><span class='description'><span class='woocommerce-help-tip' data-tip=" . MULTI_ACCOUNT_REFUND_NOTICE . "></span>" . MULTI_ACCOUNT_REFUND_NOTICE . "</span>";
         }
     }
     

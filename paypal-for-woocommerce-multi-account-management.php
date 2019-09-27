@@ -47,7 +47,7 @@ if (!defined('PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL')) {
 }
 
 if (!defined('MULTI_ACCOUNT_REFUND_NOTICE')) {
-    define('MULTI_ACCOUNT_REFUND_NOTICE', __('express express parallel payment with partially refund will not work', 'paypal-for-woocommerce-multi-account-management'));
+    define('MULTI_ACCOUNT_REFUND_NOTICE', __('Partial refunds are not available for parallel payments orders.', 'paypal-for-woocommerce-multi-account-management'));
 }
 
 
