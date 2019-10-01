@@ -402,6 +402,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if (!empty($_GET['pp_action']) && ( $_GET['pp_action'] == 'set_express_checkout' || $_GET['pp_action'] == 'do_express_checkout_payment')) {
             return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
         }
+        return $request;
     }
 
     public function angelleye_get_multi_account_details_by_api_user_name($gateway_setting, $_multi_account_api_username) {
