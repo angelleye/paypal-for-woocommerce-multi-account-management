@@ -827,12 +827,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_paypal_for_woocommerce_general_settings_tab() {
         $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_products';
+        if(!class_exists('AngellEYE_Gateway_Paypal')) {
+            $gateway = 'paypal_for_wooCommerce_for_multi_account_management';
+        }
         ?>
         <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
     }
 
     public function angelleye_paypal_for_woocommerce_general_settings_tab_content() {
         $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_products';
+        if(!class_exists('AngellEYE_Gateway_Paypal')) {
+            $gateway = 'paypal_for_wooCommerce_for_multi_account_management';
+        }
         if ($gateway == 'paypal_for_wooCommerce_for_multi_account_management') {
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
             wp_enqueue_script('selectWoo');
