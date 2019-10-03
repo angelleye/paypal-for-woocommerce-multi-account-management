@@ -43,6 +43,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      * @var      string    $version    The current version of the plugin.
      */
     protected $version;
+    
+    protected $plugin_screen_hook_suffix = null;
 
     /**
      * Define the core functionality of the plugin.
@@ -62,9 +64,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->plugin_name = 'paypal-for-woocommerce-multi-account-management';
         $this->load_dependencies();
         if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
-            
             $this->set_locale();
             $this->define_admin_hooks();
+        } elseif (function_exists('WC')) {
+            $this->define_admin_hooks();
+            $this->define_paypal_admin_hooks();
         }
         $prefix = is_network_admin() ? 'network_admin_' : '';
         add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
@@ -171,6 +175,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_order_refunded', $express_checkout, 'own_woocommerce_order_fully_refunded', 10, 2);
         
     }
+    
+    private function define_paypal_admin_hooks() {
+        add_action( 'admin_menu', array( $this, 'angelleye_admin_menu_own' ) );
+    }
 
     /**
      * Run the loader to execute all of the hooks with WordPress.
@@ -229,5 +237,40 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         );
         return array_merge($custom_actions, $actions);
     }
+    
+    public function angelleye_admin_menu_own() {
+        $this->plugin_screen_hook_suffix = add_submenu_page(
+			'options-general.php', 
+			__( 'PayPal for WooCommerce Multi-Account Management - Settings', 'paypal-for-woocommerce' ),
+			__( 'Multi Account Management', 'paypal-for-woocommerce' ),
+			'manage_options',
+			'paypal-for-woocommerce',
+			array( $this, 'display_plugin_admin_page'));	
+    }
+    
+     public function display_plugin_admin_page(){
+            // WooCommerce product categories
+            $taxonomy     = 'product_cat';
+            $orderby      = 'name';
+            $show_count   = 0;      // 1 for yes, 0 for no
+            $pad_counts   = 0;      // 1 for yes, 0 for no
+            $hierarchical = 1;      // 1 for yes, 0 for no
+            $title        = '';
+            $empty        = 0;
+
+            $args = array(
+            'taxonomy'     => $taxonomy,
+            'orderby'      => $orderby,
+            'show_count'   => $show_count,
+            'pad_counts'   => $pad_counts,
+            'hierarchical' => $hierarchical,
+            'title_li'     => $title,
+            'hide_empty'   => $empty
+            );
+
+            $product_cats = get_categories( $args );
+            require_once plugin_dir_path(dirname(__FILE__)) . 'template/admin.php';
+            
+        }
 
 }
