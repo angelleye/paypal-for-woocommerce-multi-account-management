@@ -2,10 +2,13 @@
 jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function () {
     angelleye_multi_account_paypal_express_hide_show_field();
 }).change();
-
+jQuery('#woocommerce_paypal_testmode_microprocessing').change(function () {
+    angelleye_multi_account_paypal_hide_show_field();
+}).change();
 jQuery('#woocommerce_paypal_pro_payflow_testmode_microprocessing').change(function () {
     angelleye_multi_account_paypal_payfow_hide_show_field();
 }).change();
+
 function angelleye_multi_account_paypal_express_hide_show_field() {
     var sandbox_ec = jQuery('#woocommerce_paypal_express_sandbox_email_microprocessing, #woocommerce_paypal_express_sandbox_api_username_microprocessing, #woocommerce_paypal_express_sandbox_api_password_microprocessing, #woocommerce_paypal_express_sandbox_api_signature_microprocessing').closest('tr');
     var production_ec = jQuery('#woocommerce_paypal_express_email_microprocessing, #woocommerce_paypal_express_api_username_microprocessing, #woocommerce_paypal_express_api_password_microprocessing, #woocommerce_paypal_express_api_signature_microprocessing').closest('tr');
@@ -18,7 +21,15 @@ function angelleye_multi_account_paypal_express_hide_show_field() {
     }
 }
 function angelleye_multi_account_paypal_hide_show_field() {
-    
+    var sandbox_pal = jQuery('#woocommerce_paypal_sandbox_email_microprocessing, #woocommerce_paypal_sandbox_api_username_microprocessing, #woocommerce_paypal_sandbox_api_password_microprocessing, #woocommerce_paypal_sandbox_api_signature_microprocessing').closest('tr');
+    var production_pal = jQuery('#woocommerce_paypal_email_microprocessing, #woocommerce_paypal_api_username_microprocessing, #woocommerce_paypal_api_password_microprocessing, #woocommerce_paypal_api_signature_microprocessing').closest('tr');
+    if (jQuery('#woocommerce_paypal_testmode_microprocessing').is(':checked')) {
+        sandbox_pal.show();
+        production_pal.hide();
+    } else {
+        sandbox_pal.hide();
+        production_pal.show();
+    }
 }
 function angelleye_multi_account_paypal_payfow_hide_show_field() {
     var sandbox_pf = jQuery('#woocommerce_paypal_pro_payflow_sandbox_paypal_partner_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_vendor_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_paypal_user_microprocessing, #woocommerce_paypal_pro_payflow_sandbox_api_password_microprocessing').closest('tr');
