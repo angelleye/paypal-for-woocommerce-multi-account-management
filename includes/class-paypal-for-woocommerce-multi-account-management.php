@@ -114,6 +114,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }
@@ -164,6 +165,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
+        $paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_woocommerce_express_checkout_set_express_checkout_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
         $this->loader->add_filter('angelleye_woocommerce_express_checkout_do_express_checkout_payment_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
@@ -173,6 +175,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_parallel_payment_handle', 10, 3);
         $this->loader->add_action('woocommerce_order_item_add_action_buttons', $express_checkout, 'own_woocommerce_order_item_add_action_buttons', 10, 1);
         $this->loader->add_action('woocommerce_order_refunded', $express_checkout, 'own_woocommerce_order_fully_refunded', 10, 2);
+        $this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
         
     }
     
