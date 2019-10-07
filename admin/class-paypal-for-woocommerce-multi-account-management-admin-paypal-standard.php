@@ -23,6 +23,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
         $this->version = $version;
         $this->key = 'paypal';
         $this->map_item_with_account = array();
+        add_filter('woocommerce_payment_gateways', array($this, 'angelleye_add_paypal_gateway'), 1000);
+    }
+
+    public function angelleye_add_paypal_gateway($methods) {
+        foreach ($methods as $key => $method) {
+            if (in_array($method, array('WC_Gateway_Paypal'))) {
+                unset($methods[$key]);
+                $methods[] = 'WC_Gateway_Paypal_Multi_Account_Management';
+                break;
+            }
+        }
+
+        return $methods;
     }
 
     public function angelleye_woocommerce_paypal_args($request, $order) {
@@ -181,6 +194,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                                     } else {
                                         $this->final_associate_account[$value->ID]['is_api_set'] = false;
                                     }
+                                    $this->final_associate_account[$value->ID]['is_sandbox'] = ($this->gateway->testmode == true) ? 'on' : 'off';
                                     $this->final_associate_account[$value->ID]['multi_account_id'] = $value->ID;
                                 }
                                 break;
@@ -196,6 +210,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                                     } else {
                                         $this->final_associate_account[$value->ID]['is_api_set'] = false;
                                     }
+                                    $this->final_associate_account[$value->ID]['is_sandbox'] = ($this->gateway->testmode == true) ? 'on' : 'off';
                                     $this->final_associate_account[$value->ID]['multi_account_id'] = $value->ID;
                                 }
                                 break;
@@ -211,6 +226,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                                     } else {
                                         $this->final_associate_account[$value->ID]['is_api_set'] = false;
                                     }
+                                    $this->final_associate_account[$value->ID]['is_sandbox'] = ($this->gateway->testmode == true) ? 'on' : 'off';
                                     $this->final_associate_account[$value->ID]['multi_account_id'] = $value->ID;
                                 }
                                 break;
@@ -247,49 +263,102 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
 
     public function angelleye_paypal_multi_account_map_data($request, $order_id, $final_associate_account) {
         foreach ($final_associate_account as $key => $value) {
-            update_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', $value);
-            if(!empty($value['email'])) {
+            if (!empty($value['email'])) {
                 $request['business'] = $value['email'];
+                update_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', $value);
                 return $request;
             }
             break;
         }
     }
 
-    public function angelleye_woocommerce_paypal_refund_request($request, $order, $amount, $reason) {
-        $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
-        $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', true);
-        if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
-            if (!empty($angelleye_multi_account_ec_parallel_data_map['is_api_set']) && $angelleye_multi_account_ec_parallel_data_map['is_api_set'] == false) {
-                return new WP_Error('invalid_refund', __('You can not refund this order, as the credentials are not present for the order', ''));
-            }
-        }
-        return $request;
-    }
-
 }
 
-class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard_Refund extends WC_Gateway_Paypal {
+class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
 
     private static $instance;
 
     public static function get_instance() {
         if (!isset(self::$instance)) {
             self::$instance = new self();
-}
+        }
         return self::$instance;
     }
 
     public function __construct() {
+
+        add_filter('woocommerce_payment_gateway_supports', array($this, 'own_woocommerce_payment_gateway_supports'), 99, 3);
+        add_filter('woocommerce_paypal_refund_request', array($this, 'angelleye_woocommerce_paypal_refund_request'), 10, 4);
         parent::__construct();
     }
 
+    public function angelleye_woocommerce_paypal_refund_request($request, $order, $amount, $reason) {
+        $request['TRANSACTIONID'] = $order->get_transaction_id();
+        $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
+        $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', true);
+        if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
+            if (empty($angelleye_multi_account_ec_parallel_data_map['is_api_set']) || $angelleye_multi_account_ec_parallel_data_map['is_api_set'] == false) {
+                return new WP_Error('invalid_refund', __('You can not refund this order, as the credentials are not present for the order', ''));
+            } else {
+                 return $this->angelleye_set_api_details_refund($request, $angelleye_multi_account_ec_parallel_data_map);
+            }
+        } 
+        return $request;
+    }
+
+    public function angelleye_set_api_details_refund($request, $microprocessing_array) {
+        $microprocessing_array = get_post_meta($microprocessing_array['multi_account_id']);
+        if (!empty($microprocessing_array['woocommerce_paypal_testmode']) && $microprocessing_array['woocommerce_paypal_testmode'][0] == 'on') {
+            $testmode = true;
+        } else {
+            $testmode = false;
+        }
+        if ($testmode) {
+            $request['SIGNATURE'] = $microprocessing_array['woocommerce_paypal_sandbox_api_signature'][0];
+            $request['USER'] = $microprocessing_array['woocommerce_paypal_sandbox_api_username'][0];
+            $request['PWD'] = $microprocessing_array['woocommerce_paypal_sandbox_api_password'][0];
+        } else {
+            $request['USER'] = $microprocessing_array['woocommerce_paypal_api_username'][0];
+            $request['SIGNATURE'] = $microprocessing_array['woocommerce_paypal_api_signature'][0];
+            $request['PWD'] = $microprocessing_array['woocommerce_paypal_api_password'][0];
+        }
+        return $request;
+    }
+
     public function can_refund_order($order) {
-        parent::can_refund_order($order);
-        $abc = 'test';
-        return true;
+        $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
+        $angelleye_multi_account_paypal_data_map = get_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', true);
+        if (!empty($angelleye_multi_account_paypal_data_map)) {
+            if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && $angelleye_multi_account_paypal_data_map['is_api_set'] == true)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return parent::can_refund_order($order);
+        }
+        return parent::can_refund_order($order);
+    }
+
+    public function own_woocommerce_payment_gateway_supports($bool, $feature, $current) {
+        global $post;
+        if ($feature === 'refunds' && $bool === true && $current->id === 'paypal') {
+            if (!empty($post->ID)) {
+                $angelleye_multi_account_paypal_data_map = get_post_meta($post->ID, '_angelleye_multi_account_paypal_data_map', true);
+                if (!empty($angelleye_multi_account_paypal_data_map)) {
+                    if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && $angelleye_multi_account_paypal_data_map['is_api_set'] == true)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return $bool;
+                }
+            }
+        }
+        return $bool;
     }
 
 }
 
-Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard_Refund::get_instance();
+WC_Gateway_Paypal_Multi_Account_Management::get_instance();
