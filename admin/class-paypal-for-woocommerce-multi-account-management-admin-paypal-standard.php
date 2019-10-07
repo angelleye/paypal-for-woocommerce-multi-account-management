@@ -239,6 +239,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                 return $request;
             }
         }
+        return $request;
     }
 
     public function get_wc_gateway() {
