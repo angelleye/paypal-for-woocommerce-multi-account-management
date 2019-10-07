@@ -267,7 +267,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                 update_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', $value);
                 return $request;
             }
-            break;
         }
         return $request;
     }
