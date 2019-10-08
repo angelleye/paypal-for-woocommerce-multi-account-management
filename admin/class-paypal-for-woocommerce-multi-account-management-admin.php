@@ -95,7 +95,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (!empty($gateway_list[$gateway_key])) {
                     $gateway_value = $gateway_list[$gateway_key];
                     $gateway_option_Selected = "<option value='$gateway_key'>$gateway_value</option>";
-                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" disabled="true" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
                 }
             }
         } else {
@@ -1136,7 +1136,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $angelleye_hidden = '';
         } else {
             $gateway_list = array('paypal' => __('PayPal Standard', ''));
-            $angelleye_hidden = 'disabled="true"';
+            $angelleye_hidden = '';
         }
         ?>
         <tr>
