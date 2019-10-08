@@ -1144,7 +1144,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
                 <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">
                     <?php
-                    $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
+                    if( class_exists('AngellEYE_Gateway_Paypal') ) {
+                        $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
+                    } else {
+                        $gateway_list = array('paypal' => __('PayPal Standard', ''));
+                    }
                     foreach ($gateway_list as $key => $details) {
                         echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
                     }
