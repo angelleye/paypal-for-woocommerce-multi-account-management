@@ -150,8 +150,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'angelleye_remove_admin_css', 999);
         $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
         $this->loader->add_action('before_save_payment_token', $plugin_admin, 'angelleye_woocommerce_payment_successful_result', 11, 1);
-        $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
-        $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
+        //$this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
+        //$this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab_content', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab_content', 10);
         $this->loader->add_action('woocommerce_cart_item_removed', $plugin_admin, 'update_session_data', 999);
         $this->loader->add_action('woocommerce_after_cart_item_quantity_update', $plugin_admin, 'update_session_data', 999);
         $this->loader->add_action('woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999);
