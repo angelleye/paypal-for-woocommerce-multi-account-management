@@ -43,9 +43,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      * @var      string    $version    The current version of the plugin.
      */
     protected $version;
-    
     protected $plugin_screen_hook_suffix = null;
-    
     public $plugin_admin;
 
     /**
@@ -70,12 +68,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $this->define_admin_hooks();
         } elseif (function_exists('WC')) {
             $this->define_admin_hooks();
-            $this->define_paypal_admin_hooks();
         }
         $prefix = is_network_admin() ? 'network_admin_' : '';
         add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
-        add_filter( 'woocommerce_settings_tabs_array', array( $this, 'angelleye_woocommerce_settings_tabs_array' ), 50, 1);
-        add_action( 'woocommerce_settings_tabs_multi_account_management', array( $this, 'display_plugin_admin_page') );
+        add_filter('woocommerce_settings_tabs_array', array($this, 'angelleye_woocommerce_settings_tabs_array'), 50, 1);
+        add_action('woocommerce_settings_tabs_multi_account_management', array($this, 'display_plugin_admin_page'));
     }
 
     /**
@@ -167,7 +164,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $plugin_admin, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
-        
+
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
         $paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
@@ -181,13 +178,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_order_item_add_action_buttons', $express_checkout, 'own_woocommerce_order_item_add_action_buttons', 10, 1);
         $this->loader->add_action('woocommerce_order_refunded', $express_checkout, 'own_woocommerce_order_fully_refunded', 10, 2);
         $this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
-        
-        
-    }
-    
-    private function define_paypal_admin_hooks() {
-        add_action( 'admin_menu', array( $this, 'angelleye_admin_menu_own' ) );
-        
     }
 
     /**
@@ -247,46 +237,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         );
         return array_merge($custom_actions, $actions);
     }
-    
-    public function angelleye_admin_menu_own() {
-        $this->plugin_screen_hook_suffix = add_submenu_page(
-			'options-general.php', 
-			__( 'PayPal for WooCommerce Multi-Account Management - Settings', 'paypal-for-woocommerce' ),
-			__( 'Multi Account Management', 'paypal-for-woocommerce' ),
-			'manage_options',
-			'paypal-for-woocommerce',
-			array( $this, 'display_plugin_admin_page'));	
-    }
-    
-     public function display_plugin_admin_page(){
-         wp_dequeue_style( 'woocommerce_admin_styles');
-            // WooCommerce product categories
-            $taxonomy     = 'product_cat';
-            $orderby      = 'name';
-            $show_count   = 0;      // 1 for yes, 0 for no
-            $pad_counts   = 0;      // 1 for yes, 0 for no
-            $hierarchical = 1;      // 1 for yes, 0 for no
-            $title        = '';
-            $empty        = 0;
 
-            $args = array(
-            'taxonomy'     => $taxonomy,
-            'orderby'      => $orderby,
-            'show_count'   => $show_count,
-            'pad_counts'   => $pad_counts,
+    public function display_plugin_admin_page() {
+        wp_dequeue_style('woocommerce_admin_styles');
+        // WooCommerce product categories
+        $taxonomy = 'product_cat';
+        $orderby = 'name';
+        $show_count = 0;      // 1 for yes, 0 for no
+        $pad_counts = 0;      // 1 for yes, 0 for no
+        $hierarchical = 1;      // 1 for yes, 0 for no
+        $title = '';
+        $empty = 0;
+
+        $args = array(
+            'taxonomy' => $taxonomy,
+            'orderby' => $orderby,
+            'show_count' => $show_count,
+            'pad_counts' => $pad_counts,
             'hierarchical' => $hierarchical,
-            'title_li'     => $title,
-            'hide_empty'   => $empty
-            );
+            'title_li' => $title,
+            'hide_empty' => $empty
+        );
 
-            $product_cats = get_categories( $args );
-            $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
-            
-        }
-        
-        public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {
-                    $settings_tabs['multi_account_management'] = __( 'PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management' );
-                    return $settings_tabs;
-        }
+        $product_cats = get_categories($args);
+        $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
+    }
+
+    public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {
+        $settings_tabs['multi_account_management'] = __('PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management');
+        return $settings_tabs;
+    }
 
 }
