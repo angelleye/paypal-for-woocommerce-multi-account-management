@@ -53,6 +53,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
      */
     public function enqueue_styles() {
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/paypal-for-woocommerce-multi-account-management-admin.css', array(), $this->version, 'all');
+        
     }
 
     /**
@@ -898,17 +899,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_paypal_for_woocommerce_general_settings_tab_content() {
-        $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_products';
-        if (!class_exists('AngellEYE_Gateway_Paypal')) {
-            $gateway = 'paypal_for_wooCommerce_for_multi_account_management';
-        }
-        if ($gateway == 'paypal_for_wooCommerce_for_multi_account_management') {
-            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-            wp_enqueue_script('selectWoo');
-            wp_enqueue_style('select2');
-            wp_enqueue_script('wc-enhanced-select');
-            $this->angelleye_multi_account_ui();
-        }
+        wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+        wp_enqueue_script('selectWoo');
+        wp_enqueue_style('select2');
+        wp_enqueue_script('wc-enhanced-select');
+        $this->angelleye_multi_account_ui();
     }
 
     public function update_session_data() {
@@ -1144,7 +1139,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
                 <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">
                     <?php
-                    if( class_exists('AngellEYE_Gateway_Paypal') ) {
+                    if (class_exists('AngellEYE_Gateway_Paypal')) {
                         $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
                     } else {
                         $gateway_list = array('paypal' => __('PayPal Standard', ''));
@@ -1811,6 +1806,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
             }
         }
+    }
+    
+    public function angelleye_remove_admin_css() {
+        if(!empty($_GET['tab']) && $_GET['tab'] == 'multi_account_management') {
+             wp_dequeue_style( 'woocommerce_admin_styles');
+        }
+        //admin_enqueue_scripts
     }
 
 }

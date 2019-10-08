@@ -45,6 +45,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     protected $version;
     
     protected $plugin_screen_hook_suffix = null;
+    
+    public $plugin_admin;
 
     /**
      * Define the core functionality of the plugin.
@@ -72,6 +74,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         }
         $prefix = is_network_admin() ? 'network_admin_' : '';
         add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
+        add_filter( 'woocommerce_settings_tabs_array', array( $this, 'angelleye_woocommerce_settings_tabs_array' ), 50, 1);
+        add_action( 'woocommerce_settings_tabs_multi_account_management', array( $this, 'display_plugin_admin_page') );
     }
 
     /**
@@ -143,9 +147,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      * @access   private
      */
     private function define_admin_hooks() {
-        $plugin_admin = new Paypal_For_Woocommerce_Multi_Account_Management_Admin($this->get_plugin_name(), $this->get_version());
+        $this->plugin_admin = $plugin_admin = new Paypal_For_Woocommerce_Multi_Account_Management_Admin($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_styles');
         $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts');
+        $this->loader->add_action('admin_enqueue_scripts', $plugin_admin, 'angelleye_remove_admin_css', 999);
         $this->loader->add_action('woocommerce_checkout_update_order_meta', $plugin_admin, 'angelleye_woocommerce_checkout_update_order_meta', 11, 2);
         $this->loader->add_action('before_save_payment_token', $plugin_admin, 'angelleye_woocommerce_payment_successful_result', 11, 1);
         $this->loader->add_action('angelleye_paypal_for_woocommerce_general_settings_tab', $plugin_admin, 'angelleye_paypal_for_woocommerce_general_settings_tab', 10);
@@ -182,6 +187,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     
     private function define_paypal_admin_hooks() {
         add_action( 'admin_menu', array( $this, 'angelleye_admin_menu_own' ) );
+        
     }
 
     /**
@@ -253,6 +259,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     }
     
      public function display_plugin_admin_page(){
+         wp_dequeue_style( 'woocommerce_admin_styles');
             // WooCommerce product categories
             $taxonomy     = 'product_cat';
             $orderby      = 'name';
@@ -273,8 +280,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             );
 
             $product_cats = get_categories( $args );
-            require_once plugin_dir_path(dirname(__FILE__)) . 'template/admin.php';
+            $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
             
+        }
+        
+        public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {
+                    $settings_tabs['multi_account_management'] = __( 'PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management' );
+                    return $settings_tabs;
         }
 
 }

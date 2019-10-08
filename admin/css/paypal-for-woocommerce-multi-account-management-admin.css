@@ -30,9 +30,9 @@
 }
 
 #woocommerce_paypal_express_api_condition_value { 
-    height: 27px;
+    height: 31px;
     line-height: 1;
-    padding-top: 0px;
+    width: 80px;
 }
 
 .notice.notice-success.angelleye-notice {
@@ -108,6 +108,10 @@
     color: #C5C5C5;
     -webkit-font-smoothing: antialiased;
 }
+select.smart_forwarding_field {
+    width: auto !important;
+}
+
 
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
