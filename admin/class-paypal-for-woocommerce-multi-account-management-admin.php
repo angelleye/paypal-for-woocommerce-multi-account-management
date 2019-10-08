@@ -1136,14 +1136,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $angelleye_hidden = '';
         } else {
             $gateway_list = array('paypal' => __('PayPal Standard', ''));
-            $angelleye_hidden = 'angelleye_hidden';
+            $angelleye_hidden = 'disabled="true"';
         }
         ?>
-        <tr class="<?php echo $angelleye_hidden; ?>">
+        <tr>
             <th><?php _e('Select Payment Gateway', 'paypal-for-woocommerce-multi-account-management'); ?></th>
             <td>
 
-                <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">
+                <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway" <?php echo $angelleye_hidden; ?>>
                     <?php
                     foreach ($gateway_list as $key => $details) {
                         echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
@@ -1808,12 +1808,4 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
     }
-
-    public function angelleye_remove_admin_css() {
-        if (!empty($_GET['tab']) && $_GET['tab'] == 'multi_account_management') {
-            wp_dequeue_style('woocommerce_admin_styles');
-        }
-        //admin_enqueue_scripts
-    }
-
 }
