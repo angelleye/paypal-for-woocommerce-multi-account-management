@@ -111,7 +111,9 @@
 select.smart_forwarding_field {
     width: auto !important;
 }
-
+.angelleye_hidden {
+    display: none;
+}
 
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {

@@ -53,7 +53,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
      */
     public function enqueue_styles() {
         wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/paypal-for-woocommerce-multi-account-management-admin.css', array(), $this->version, 'all');
-        
     }
 
     /**
@@ -96,7 +95,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (!empty($gateway_list[$gateway_key])) {
                     $gateway_value = $gateway_list[$gateway_key];
                     $gateway_option_Selected = "<option value='$gateway_key'>$gateway_value</option>";
-                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" disabled="true" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
                 }
             }
         } else {
@@ -1106,7 +1105,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
-        <tr valign="top" class="angelleye_multi_account_paypal_express_field"> 
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc">
                 <label for="woocommerce_paypal_express_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
@@ -1132,18 +1131,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_choose_payment_gateway() {
+        if (class_exists('AngellEYE_Gateway_Paypal')) {
+            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
+            $angelleye_hidden = '';
+        } else {
+            $gateway_list = array('paypal' => __('PayPal Standard', ''));
+            $angelleye_hidden = 'angelleye_hidden';
+        }
         ?>
-        <tr>
+        <tr class="<?php echo $angelleye_hidden; ?>">
             <th><?php _e('Select Payment Gateway', 'paypal-for-woocommerce-multi-account-management'); ?></th>
             <td>
 
                 <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">
                     <?php
-                    if (class_exists('AngellEYE_Gateway_Paypal')) {
-                        $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
-                    } else {
-                        $gateway_list = array('paypal' => __('PayPal Standard', ''));
-                    }
                     foreach ($gateway_list as $key => $details) {
                         echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
                     }
@@ -1724,7 +1725,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
-        <tr valign="top" class="angelleye_multi_account_paypal_field"> 
+        <tr valign="top" class="angelleye_multi_account_paypal_field">
             <th scope="row" class="titledesc">
                 <label for="woocommerce_paypal_api_password_microprocessing"><?php echo __('API Password', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
@@ -1807,10 +1808,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
     }
-    
+
     public function angelleye_remove_admin_css() {
-        if(!empty($_GET['tab']) && $_GET['tab'] == 'multi_account_management') {
-             wp_dequeue_style( 'woocommerce_admin_styles');
+        if (!empty($_GET['tab']) && $_GET['tab'] == 'multi_account_management') {
+            wp_dequeue_style('woocommerce_admin_styles');
         }
         //admin_enqueue_scripts
     }
