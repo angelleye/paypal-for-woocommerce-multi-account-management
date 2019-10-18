@@ -79,6 +79,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($this->angelleye_post_exists($_GET['ID']) == false) {
             return false;
         }
+        $require_ssl = '';
+        if ( !is_ssl() ) {
+            $require_ssl = __('This image requires an SSL host.  Please upload your image to <a target="_blank" href="http://www.sslpic.com">www.sslpic.com</a> and enter the image URL here.', 'paypal-for-woocommerce-multi-account-management');
+        }
         $selected_role = '';
         $microprocessing = get_post_meta($_GET['ID']);
         echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
@@ -554,10 +558,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            if (isset($_POST['woocommerce_paypal_express_testmode']) && 'on' == $_POST['woocommerce_paypal_express_testmode']) {
-                update_post_meta($post_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
-            } else {
-                update_post_meta($post_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
+            if( !empty($merchant_account_id)) {
+                if (isset($_POST['woocommerce_paypal_express_testmode']) && 'on' == $_POST['woocommerce_paypal_express_testmode']) {
+                    update_post_meta($post_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
+                } else {
+                    update_post_meta($post_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
+                }
             }
             ?>
             <?php
@@ -822,7 +828,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_general_settings_tab() {
         $gateway = isset($_GET['gateway']) ? $_GET['gateway'] : 'paypal_payment_gateway_products';
         ?>
-        <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce'); ?></a> <?php
+        <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
     }
 
     public function angelleye_paypal_for_woocommerce_general_settings_tab_content() {
