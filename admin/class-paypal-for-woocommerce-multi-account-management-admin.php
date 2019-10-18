@@ -341,10 +341,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
             }
         }
+        
         $option_fourteen .= '</select>';
         $option_eight = '<p class="description"> ' . __('Product categories', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
-        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
+        $categories = get_terms(apply_filters('angelleye_get_product_categories', 
+                                    array('product_cat')), array(
+					'hide_empty' => '0',
+					'orderby'    => 'name',
+				));
         if ($categories) {
             foreach ($categories as $cat) {
                 $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($cat->name) . '</option>';
@@ -1342,8 +1347,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
-
+                        $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), 
+                                            array(
+                                                'hide_empty' => '0',
+                                                'orderby'    => 'name',
+                                            ));
                         if ($categories) {
                             foreach ($categories as $cat) {
                                 echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
