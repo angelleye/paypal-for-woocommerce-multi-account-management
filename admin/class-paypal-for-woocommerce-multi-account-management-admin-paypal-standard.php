@@ -143,7 +143,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                         $product = $order->get_product_from_item($values);
                         $product_id = $product->get_id();
 
-                        $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                        $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                         $product_categories = get_post_meta($value->ID, 'product_categories', true);
                         if (!empty($product_categories)) {
                             if (!array_intersect($product_categories, $woo_product_categories)) {
