@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 1.1.5 - **.**.2019 =
+* Feature - Adds Express Checkout - Parallel Payments Compatibility. [PFWMA-13] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/17))
+
 = 1.1.4 - 07.19.2019 =
 * Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/5))
 * Fix - Resolves a bad link in the plugin action links. [PFWMA-44] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/7))
