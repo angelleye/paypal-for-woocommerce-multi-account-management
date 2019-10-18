@@ -408,7 +408,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
                                     <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="%2$s" />
-                                    <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="button-primary button">%3$s</a>
+                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
                                     %4$s
                                 </th>
                             </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
@@ -469,7 +469,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
-                                    <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
                                 </th>
                             </tr>
@@ -894,7 +894,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $gateway = 'paypal_for_wooCommerce_for_multi_account_management';
         }
         ?>
-        <a href="?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+        <a href="?page=wc-settings&tab=multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
     }
 
     public function angelleye_paypal_for_woocommerce_general_settings_tab_content() {
