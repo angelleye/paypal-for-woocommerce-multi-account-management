@@ -1067,6 +1067,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         }
                     }
                 }
+                $order = wc_get_order($order_id);
+                foreach ($order->get_refunds() as $refund) {
+                    foreach ($refund->get_items('line_item') as $cart_item_key => $refunded_item) {
+                        wc_delete_order_item($cart_item_key);
+                    }
+                }
                 update_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', $angelleye_multi_account_ec_parallel_data_map);
                 update_post_meta($order_id, '_multi_account_refund_amount', $this->final_refund_amt);
                 return true;
@@ -1177,11 +1183,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
     public function own_woocommerce_order_fully_refunded($order_id, $refund_id) {
         if (!empty($order_id)) {
-            $_multi_account_refund_amount = get_post_meta($order_id, '_multi_account_refund_amount', true);
-            if (!empty($_multi_account_refund_amount)) {
-                update_post_meta($refund_id, '_refund_amount', $_multi_account_refund_amount);
+            $order = wc_get_order($order_id);
+            $refund = wc_get_order($refund_id);
+            if ( $order->has_status( wc_get_is_paid_statuses() ) ) {
+                if($order->get_total() == $refund->get_amount()) {
+                    do_action( 'woocommerce_order_fully_refunded', $order_id, $refund_id );
+                    $parent_status = apply_filters( 'woocommerce_order_fully_refunded_status', 'refunded', $order_id, $refund_id );
+                    if ( $parent_status ) {
+                            $order->update_status( $parent_status );
+                    }
+                }
             }
         }
     }
-
+    
+    public function own_woocommerce_create_refund($refund, $args) {
+        $order_id = $refund->get_parent_id();
+        if( !empty($order_id)) {
+            $order = wc_get_order($order_id);
+            $payment_method = version_compare(WC_VERSION, '3.0', '<') ? $order->payment_method : $order->get_payment_method();
+            $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
+            if (!empty($angelleye_multi_account_ec_parallel_data_map) && $payment_method == 'paypal_express') {
+                $refund->set_amount( $order->get_total() );
+                $args['amount'] = $order->get_total();
+                unset($args['line_items']);
+            }
+            remove_action( 'woocommerce_order_partially_refunded', array( 'WC_Emails', 'send_transactional_email' ) );
+        }
+    }
 }
