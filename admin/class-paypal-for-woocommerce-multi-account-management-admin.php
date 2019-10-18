@@ -1342,7 +1342,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $categories = get_terms(array('product_cat', 'mep_org', 'mep_cat'), 'orderby=name&hide_empty=0');
+                        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
 
                         if ($categories) {
                             foreach ($categories as $cat) {
