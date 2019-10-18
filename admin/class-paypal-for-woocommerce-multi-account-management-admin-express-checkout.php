@@ -399,7 +399,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 return false;
             }
         }
-        if (!empty($_GET['pp_action']) && ( $_GET['pp_action'] == 'set_express_checkout' || $_GET['pp_action'] == 'do_express_checkout_payment')) {
+        $payment_action = array('set_express_checkout', 'get_express_checkout_details', 'do_express_checkout_payment');
+        if (!empty($_GET['pp_action']) && ( in_array($_GET['pp_action'], $payment_action))) {
             return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
         }
         return $request;
