@@ -140,14 +140,14 @@ function admin_notices_required_plugin() {
                     $message = '<a href="' . esc_url(admin_url($activate_url)) . '"> Activate the PayPal for WooCommerce plugin</a>.';
                 }
             }
-            echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'paypal-for-woocommerce-multi-account-management'), '<strong>', '</strong>', '<a href="https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice">', '</a>', $message) . '</p></div>';
+            //echo "<div class='notice notice-error'><p>" . sprintf(__('%1$s PayPal for WooCommerce Multi-Account Management is not functional. %2$s The %3$s PayPal for WooCommerce%4$s plugin must be active for PayPal for WooCommerce Multi-Account Management to work. Please %5$s', 'paypal-for-woocommerce-multi-account-management'), '<strong>', '</strong>', '<a href="https://www.angelleye.com/product/woocommerce-paypal-plugin/?utm_source=pfwma&utm_medium=admin_notice">', '</a>', $message) . '</p></div>';
         }
     }
 }
 
 function load_angelleye_woo_paypal_for_woo_multi_account() {
     try {
-        if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
+        if (function_exists('WC')) {
             run_paypal_for_woocommerce_multi_account_management();
         }
         
