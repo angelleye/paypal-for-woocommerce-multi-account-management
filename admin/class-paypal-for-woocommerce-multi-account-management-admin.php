@@ -87,7 +87,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $microprocessing = get_post_meta($_GET['ID']);
         echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
         <tbody class="angelleye_micro_account_body">';
-        $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
+        $gateway_list = array();
+        if (class_exists('AngellEYE_Gateway_Paypal')) {
+            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''));
+        } else {
+            //$gateway_list = array('paypal' => __('PayPal Standard', ''));
+        }
         if (!empty($microprocessing['angelleye_multi_account_choose_payment_gateway'])) {
             $gateway_key_index = $microprocessing['angelleye_multi_account_choose_payment_gateway'];
             if (!empty($gateway_key_index[0])) {
@@ -1131,11 +1136,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_choose_payment_gateway() {
+        $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
-            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'paypal' => __('PayPal Standard', ''));
+            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''));
             $angelleye_hidden = '';
         } else {
-            $gateway_list = array('paypal' => __('PayPal Standard', ''));
+            //$gateway_list = array('paypal' => __('PayPal Standard', ''));
             $angelleye_hidden = '';
         }
         ?>
