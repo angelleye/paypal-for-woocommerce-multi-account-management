@@ -115,7 +115,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
-        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
+        //require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }
@@ -166,7 +166,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
 
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
-        $paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
+        //$paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_woocommerce_express_checkout_set_express_checkout_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
         $this->loader->add_filter('angelleye_woocommerce_express_checkout_do_express_checkout_payment_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
@@ -176,8 +176,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_parallel_payment_handle', 10, 3);
         $this->loader->add_action('woocommerce_order_item_add_action_buttons', $express_checkout, 'own_woocommerce_order_item_add_action_buttons', 10, 1);
         $this->loader->add_action('woocommerce_order_refunded', $express_checkout, 'own_woocommerce_order_fully_refunded', 10, 2);
+        //$this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
         $this->loader->add_action('woocommerce_create_refund', $express_checkout, 'own_woocommerce_create_refund', 10, 2);
-        $this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
+ 
 
     }
 
@@ -231,7 +232,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      */
     public function paypal_for_woocommerce_multi_account_management_action_links($actions, $plugin_file, $plugin_data, $context) {
         $custom_actions = array(
-            'configure' => sprintf('<a href="%s">%s</a>', admin_url('options-general.php?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
+            'configure' => sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=wc-settings&tab=multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
             'docs' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/category/docs/paypal-for-woocommerce-multi-account-management-documentation/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=docs_link&utm_campaign=plugin', __('Docs', 'paypal-for-woocommerce-multi-account-management')),
             'support' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/support/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=support_link&utm_campaign=plugin', __('Support', 'paypal-for-woocommerce-multi-account-management')),
             'review' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management?utm_source=paypal-for-woocommerce-multi-account&utm_medium=review_link&utm_campaign=plugin', __('Write a Review', 'paypal-for-woocommerce-multi-account-management')),
