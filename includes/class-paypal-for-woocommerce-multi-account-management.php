@@ -231,7 +231,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      */
     public function paypal_for_woocommerce_multi_account_management_action_links($actions, $plugin_file, $plugin_data, $context) {
         $custom_actions = array(
-            'configure' => sprintf('<a href="%s">%s</a>', admin_url('options-general.php?page=paypal-for-woocommerce&tab=general_settings&gateway=paypal_for_wooCommerce_for_multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
+            'configure' => sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=wc-settings&tab=multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
             'docs' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/category/docs/paypal-for-woocommerce-multi-account-management-documentation/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=docs_link&utm_campaign=plugin', __('Docs', 'paypal-for-woocommerce-multi-account-management')),
             'support' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/support/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=support_link&utm_campaign=plugin', __('Support', 'paypal-for-woocommerce-multi-account-management')),
             'review' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management?utm_source=paypal-for-woocommerce-multi-account&utm_medium=review_link&utm_campaign=plugin', __('Write a Review', 'paypal-for-woocommerce-multi-account-management')),
