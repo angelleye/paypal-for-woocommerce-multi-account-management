@@ -220,10 +220,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             }
                         }
                     }
-                    if (!empty($order_id) && apply_filters('angelleye_multi_account_force_to_use_order_data', true)) {
+                    if (!empty($order_id)) {
                         $order = wc_get_order($order_id);
                         foreach ($order->get_items() as $cart_item_key => $values) {
                             $product = $order->get_product_from_item($values);
+                            $product_exists = is_object( $product );
+                            if($product_exists == false) {
+                                $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
+                                if(!empty($product_id)) {
+                                    $product = wc_get_product($product_id);
+                                } else {
+                                    continue;
+                                }
+                            } 
                             $product_id = $product->get_id();
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
@@ -497,11 +506,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $default_shippingamt = 0;
         $default_taxamt = 0;
         $default_pal_id = '';
-        if (!empty($order_id) && $order_id > 0 && apply_filters('angelleye_multi_account_force_to_use_order_data', true)) {
+        if (!empty($order_id)) {
             $order = wc_get_order($order_id);
             $this->final_order_grand_total = $order->get_total();
             foreach ($order->get_items() as $cart_item_key => $cart_item) {
                 $product = $order->get_product_from_item($cart_item);
+                $product_exists = is_object( $product );
+                if($product_exists == false) {
+                    $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
+                    if(!empty($product_id)) {
+                        $product = wc_get_product($product_id);
+                    } else {
+                        continue;
+                    }
+                }  
                 $product_id = $product->get_id();
                 $item_total = 0;
                 $final_total = 0;
@@ -856,10 +874,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $product = $values['data'];
             $name = $product->get_name();
         }
+        $desc = '';
         $name = AngellEYE_Gateway_Paypal::clean_product_title($name);
         if (is_object($product)) {
             if ($product->is_type('variation') && is_a($product, 'WC_Product_Variation')) {
-                $desc = '';
                 if (version_compare(WC_VERSION, '3.0', '<')) {
                     $attributes = $product->get_variation_attributes();
                     if (!empty($attributes) && is_array($attributes)) {
