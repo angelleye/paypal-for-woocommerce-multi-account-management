@@ -357,7 +357,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 				));
         if ($categories) {
             foreach ($categories as $cat) {
-                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($cat->name) . '</option>';
+                $category_lable = '';
+                $taxonomy_obj = get_taxonomy( $cat->taxonomy );
+                if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
+                    $category_lable = $cat->name . ' ( ' . $taxonomy_obj->label . ' ) ';
+                } else {
+                    $category_lable = $cat->name;
+                }
+                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($category_lable) . '</option>';
             }
         }
         $option_eight .= '</select>';
@@ -1360,7 +1367,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             ));
                         if ($categories) {
                             foreach ($categories as $cat) {
-                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
+                                $category_lable = '';
+                                $taxonomy_obj = get_taxonomy( $cat->taxonomy );
+                                if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
+                                    $category_lable = $cat->name . ' ( ' . $taxonomy_obj->label . ' ) ';
+                                } else {
+                                    $category_lable = $cat->name;
+                                }
+                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($category_lable) . '</option>';
                             }
                         }
                         ?>
