@@ -360,7 +360,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $category_lable = '';
                 $taxonomy_obj = get_taxonomy( $cat->taxonomy );
                 if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
-                    $category_lable = $cat->name . ' ( ' . $taxonomy_obj->label . ' ) ';
+                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
                 } else {
                     $category_lable = $cat->name;
                 }
@@ -1370,7 +1370,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 $category_lable = '';
                                 $taxonomy_obj = get_taxonomy( $cat->taxonomy );
                                 if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
-                                    $category_lable = $cat->name . ' ( ' . $taxonomy_obj->label . ' ) ';
+                                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
                                 } else {
                                     $category_lable = $cat->name;
                                 }
