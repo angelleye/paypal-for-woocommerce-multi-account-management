@@ -1058,7 +1058,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public function own_angelleye_is_express_checkout_parallel_payment_handle($bool, $order_id, $gateway) {
         try {
             $processed_transaction_id = array();
-            $refund_error_message_pre = __('You can not refund this order, as the credentials are not present for the items', '');
+            $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', '');
             $refund_error_message_after = array();
             $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
             foreach ($angelleye_multi_account_ec_parallel_data_map as $key => $value) {
