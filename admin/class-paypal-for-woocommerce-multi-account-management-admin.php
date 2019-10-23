@@ -346,13 +346,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
             }
         }
+        
         $option_fourteen .= '</select>';
-        $option_eight = '<p class="description"> ' . __('Product categories', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+        $option_eight = '<p class="description"> ' . apply_filters('angelleye_multi_account_display_category_label',__('Product categories', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
-        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
+        $categories = get_terms(apply_filters('angelleye_get_product_categories', 
+                                    array('product_cat')), array(
+					'hide_empty' => '0',
+					'orderby'    => 'name',
+				));
         if ($categories) {
             foreach ($categories as $cat) {
-                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($cat->name) . '</option>';
+                $category_lable = '';
+                $taxonomy_obj = get_taxonomy( $cat->taxonomy );
+                if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
+                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
+                } else {
+                    $category_lable = $cat->name;
+                }
+                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($category_lable) . '</option>';
             }
         }
         $option_eight .= '</select>';
@@ -365,7 +377,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_nine .= '</select>';
-        $option_six = '<p class="description">' . __('Products', 'woocommerce') . '</p>';
+        $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'woocommerce')) . '</p>';
         $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'woocommerce') . '">';
         $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
         if (!empty($product_list)) {
@@ -931,7 +943,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_get_product_tag_by_product_cat() {
         $args = array(
-            'post_type' => 'product',
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,
             'fields' => 'ids',
             'post_status' => 'publish',
@@ -943,7 +955,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 )
             )
         );
-        $loop = new WP_Query($args);
+        $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
         $all_tags = array();
         $all_products = array();
         if (!empty($loop->posts)) {
@@ -969,12 +981,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_get_product_by_product_tags() {
         $args = array(
-            'post_type' => 'product',
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,
             'fields' => 'ids',
             'post_status' => 'publish',
         );
-
         if (!empty($_POST['tag_list']) || !empty($_POST['categories_list'])) {
             $args['tax_query'] = array();
             if (!empty($_POST['tag_list'])) {
@@ -992,7 +1003,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 );
             }
         }
-        $loop = new WP_Query($args);
+        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
         $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
@@ -1345,15 +1356,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Product categories', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
                     <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $categories = get_terms('product_cat', 'orderby=name&hide_empty=0');
-
+                        $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), 
+                                            array(
+                                                'hide_empty' => '0',
+                                                'orderby'    => 'name',
+                                            ));
                         if ($categories) {
                             foreach ($categories as $cat) {
-                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($cat->name) . '</option>';
+                                $category_lable = '';
+                                $taxonomy_obj = get_taxonomy( $cat->taxonomy );
+                                if(isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
+                                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
+                                } else {
+                                    $category_lable = $cat->name;
+                                }
+                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($category_lable) . '</option>';
                             }
                         }
                         ?>
@@ -1363,7 +1384,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
+                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=0');
                         if ($tags) {
                             foreach ($tags as $tag) {
                                 echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
@@ -1371,11 +1392,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Products', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
                     <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
                         <?php
                         $args = array(
-                            'post_type' => 'product',
+                            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
                             'posts_per_page' => -1,
                             'fields' => 'ids',
                             'post_status' => 'publish',
@@ -1435,9 +1456,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_list_product_using_tag_cat($tag_list, $categories_list) {
+        $_POST['tag_list'] = $tag_list;
+        $_POST['categories_list'] = $categories_list;
         $all_products = array();
         $args = array(
-            'post_type' => 'product',
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,
             'fields' => 'ids',
             'post_status' => 'publish',
@@ -1460,7 +1483,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 );
             }
         }
-        $loop = new WP_Query($args);
+        
+        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
         $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
@@ -1814,4 +1838,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
     }
+
 }

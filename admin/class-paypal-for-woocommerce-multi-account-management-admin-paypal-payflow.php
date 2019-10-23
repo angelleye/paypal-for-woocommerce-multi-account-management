@@ -204,9 +204,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     if (isset(WC()->cart) && WC()->cart->is_empty()) {
                         foreach ($order->get_items() as $cart_item_key => $values) {
                             $product = $order->get_product_from_item($values);
+                            $product_exists = is_object( $product );
+                            if($product_exists == false) {
+                                $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
+                                if(!empty($product_id)) {
+                                    $product = wc_get_product($product_id);
+                                } else {
+                                    continue;
+                                }
+                            } 
                             $product_id = $product->get_id();
                             // Categories
-                            $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                            $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                             $product_categories = get_post_meta($value->ID, 'product_categories', true);
                             if (!empty($product_categories)) {
                                 if (!array_intersect($product_categories, $woo_product_categories)) {
@@ -239,7 +248,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 // Categories
-                                $woo_product_categories = wp_get_post_terms($product_id, 'product_cat', array('fields' => 'ids'));
+                                $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                                 $product_categories = get_post_meta($value->ID, 'product_categories', true);
                                 if (!empty($product_categories)) {
                                     if (!array_intersect($product_categories, $woo_product_categories)) {
