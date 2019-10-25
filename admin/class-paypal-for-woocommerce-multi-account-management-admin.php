@@ -770,7 +770,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'billtocountry' => $billtocountry,
                 'custref' => '',
                 'custcode' => '',
-                'custip' => AngellEYE_Utility::get_user_ip(),
+                'custip' => WC_Geolocation::get_ip_address(),
                 'invnum' => '',
                 'ponum' => '',
                 'starttime' => '',
