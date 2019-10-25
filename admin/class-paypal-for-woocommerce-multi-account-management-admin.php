@@ -109,7 +109,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
 
         if ($this->gateway_key == 'paypal_express') {
-
+            $microprocessing_new = array();
+            $microprocessing_key_array = array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_email', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_email', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'currency_code');
+            foreach ($microprocessing_key_array as $key => $value) {
+                $microprocessing_new[$value] = isset($microprocessing[$value]) ? $microprocessing[$value] : array();
+                
+            }
+            $microprocessing = $microprocessing_new;
             foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
                 switch ($microprocessing_key) {
                     case 'woocommerce_paypal_express_enable':
@@ -267,16 +273,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $selected_role = $microprocessing_value[0];
                         break;
                     case 'product_categories':
-                        $product_categories = maybe_unserialize($microprocessing_value[0]);
+                        $product_categories = !empty(maybe_unserialize($microprocessing_value[0])) ? maybe_unserialize($microprocessing_value[0]) : '';
                         break;
                     case 'product_tags':
                         $product_tags = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'buyer_countries':
-                        $buyer_countries = maybe_unserialize($microprocessing_value[0]);
+                        $buyer_countries = !empty(maybe_unserialize($microprocessing_value[0])) ? maybe_unserialize($microprocessing_value[0]) : '';
                         break;
                     case 'woocommerce_priority':
-                        $woocommerce_priority = $microprocessing_value[0];
+                        $woocommerce_priority = !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '';
                         break;
                     case 'card_type':
                         $card_type = empty($microprocessing_value[0]) ? '' : $microprocessing_value[0];
@@ -317,7 +323,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_ten .= '<select class="smart_forwarding_field" name="woocommerce_priority">';
         for ($x = 0; $x <= 100; $x++) {
-            if ($woocommerce_priority == $x) {
+            if (isset($woocommerce_priority) && $woocommerce_priority == $x) {
                 $option_ten .= "<option selected='selected' value='" . $x . "'>$x</option>";
             } else {
                 $option_ten .= "<option value='" . $x . "'>$x</option>";
@@ -331,6 +337,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "woocommerce") . '">';
         $countries = WC()->countries->get_countries();
+        if(isset($buyer_countries)) {
+            $buyer_countries = array();
+        }
         if ($countries) {
             foreach ($countries as $country_key => $country_full_name) {
                 $option_seven .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $buyer_countries) . '>' . esc_html($country_full_name) . '</option>';
@@ -355,6 +364,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 					'hide_empty' => '0',
 					'orderby'    => 'name',
 				));
+        if(!isset($product_categories)) {
+            $product_categories = array();
+        }
         if ($categories) {
             foreach ($categories as $cat) {
                 $category_lable = '';
@@ -375,6 +387,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             foreach ($tags as $tag) {
                 $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
             }
+        }
+        if(!isset($product_categories)) {
+            $product_categories = array();
         }
         $option_nine .= '</select>';
         $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'woocommerce')) . '</p>';
