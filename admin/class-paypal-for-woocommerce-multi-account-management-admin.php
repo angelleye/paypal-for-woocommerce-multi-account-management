@@ -1057,7 +1057,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <tr valign="top" class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc">
-                <label for="woocommerce_paypal_express_sandbox_email"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                <label for="woocommerce_paypal_express_sandbox_email_microprocessing"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
             <td class="forminp">
                 <fieldset>
