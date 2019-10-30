@@ -488,8 +488,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } else {
             $old_payments = array();
         }
-        if( !empty($request['customerservicenumber']) ) {
-            unset($request['customerservicenumber']);
+        if( !empty($request['SECFields']['customerservicenumber']) ) {
+            unset($request['SECFields']['customerservicenumber']);
         }
         $this->taxamt = round(WC()->cart->get_total_tax(), $this->decimals);
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
