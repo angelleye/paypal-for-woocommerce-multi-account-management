@@ -38,6 +38,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 * Tweak - Adjustments to Settings. [PFWMA-75](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/25))
 * Fix - Resolves an issue where Parallel Payments not working when skip final review is disable in express checkout. ([PFWMA-66] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/20))
 * Fix - Resolves an issue IP address function and use default woocommerce function. ([PFWMA-73] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/24))
+* Fix - Resolves Settings - PHP Notices. ([PFWMA-76](https://github.com/angelleye/paypal-woocommerce/pull/26))
 
 = 1.1.4 - 07.19.2019 =
 * Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/5))
