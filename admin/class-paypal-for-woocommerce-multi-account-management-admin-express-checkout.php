@@ -859,6 +859,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 } else {
                     update_post_meta($account_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
                 }
+                return $merchant_account_id;
             }
         } else {
             return false;
