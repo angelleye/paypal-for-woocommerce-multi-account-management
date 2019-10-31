@@ -40,6 +40,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 * Fix - Resolves an issue IP address function and use default woocommerce function. ([PFWMA-73] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/24))
 * Fix - Resolves Settings - PHP Notices. ([PFWMA-76](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/26))
 * Fix - Resolves conflict with Express Checkout - Conflict with previously created accounts. ([PFWMA-77](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/27))
+* Fix - Resolves conflict with Parallel Payments - Customer Service Phone Number. ([PFWMA-78](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/28))
 
 = 1.1.4 - 07.19.2019 =
 * Fix - Resolves a PHP notice showing up in email receipts with some orders. [PFWMA-38] (https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/5))
