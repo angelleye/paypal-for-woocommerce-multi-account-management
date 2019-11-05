@@ -323,10 +323,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_ten .= '<select class="smart_forwarding_field" name="woocommerce_priority">';
         for ($x = 0; $x <= 100; $x++) {
-            if (isset($woocommerce_priority) && $woocommerce_priority == $x) {
-                $option_ten .= "<option selected='selected' value='" . $x . "'>$x</option>";
+            if($x == 0) {
+                $woocommerce_priority_text = $x .' - Lowest';
+            } elseif($x == 100) {
+                $woocommerce_priority_text = $x .' - Highest';
             } else {
-                $option_ten .= "<option value='" . $x . "'>$x</option>";
+                $woocommerce_priority_text = $x;
+            }
+            if (isset($woocommerce_priority) && $woocommerce_priority == $x) {
+                $option_ten .= "<option selected='selected' value='" . $x . "'>$woocommerce_priority_text</option>";
+            } else {
+                $option_ten .= "<option value='" . $x . "'>$woocommerce_priority_text</option>";
             }
         }
         $option_ten .= '</select>';
@@ -1329,8 +1336,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select class="smart_forwarding_field" name="woocommerce_priority">
                         <?php
                         for ($x = 0; $x <= 100; $x++) {
-                            echo "The number is: $x <br>";
-                            echo "\n\t<option value='" . $x . "'>$x</option>";
+                            if($x == 0) {
+                                $woocommerce_priority_text = $x .' - Lowest';
+                            } elseif($x == 100) {
+                                $woocommerce_priority_text = $x .' - Highest';
+                            } else {
+                                $woocommerce_priority_text = $x;
+                            }
+                            echo "\n\t<option value='" . $x . "'>$woocommerce_priority_text</option>";
                         }
                         ?>
                     </select>
