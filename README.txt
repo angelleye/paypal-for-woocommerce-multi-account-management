@@ -29,7 +29,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.1.5 - 10.31.2019 =
+= 1.1.5 - 11.05.2019 =
 * Feature - Adds new hooks for WooCommerce Event Manager Pro compatibility. ([PFWMA-69](https://github.com/angelleye/paypal-woocommerce/pull/23))
 * Feature - Adds Express Checkout Parallel Payments. ([PFWMA-13](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/17)) ([PFWMA-66](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/20)) ([PFWMA-77](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/27)) ([PFWMA-78](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/28))
 * Tweak - Adjustments to multi-account UI. ([PFWMA-63](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/19))
