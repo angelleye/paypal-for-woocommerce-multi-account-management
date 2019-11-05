@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
 Tested up to: 5.2.4
-Stable tag: 1.1.5
+Stable tag: 2.0.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,7 +29,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 1.1.5 - 11.05.2019 =
+= 2.0.0 - 11.05.2019 =
 * Feature - Adds new hooks for WooCommerce Event Manager Pro compatibility. ([PFWMA-69](https://github.com/angelleye/paypal-woocommerce/pull/23))
 * Feature - Adds Express Checkout Parallel Payments. ([PFWMA-13](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/17)) ([PFWMA-66](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/20)) ([PFWMA-77](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/27)) ([PFWMA-78](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/28))
 * Tweak - Adjustments to multi-account UI. ([PFWMA-63](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/19))
