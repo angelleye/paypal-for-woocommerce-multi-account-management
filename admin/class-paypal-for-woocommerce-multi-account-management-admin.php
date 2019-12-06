@@ -974,7 +974,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'taxonomy' => 'product_cat',
                     'terms' => $_POST['categories_list'],
                     'operator' => 'IN',
+                ),
+                array(
+                    'taxonomy' => 'product_type',
+                    'field' => 'slug',
+                    'terms' => array('grouped', 'external'),
+                    'operator' => 'NOT IN',
                 )
+                
             )
         );
         $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
@@ -1024,6 +1031,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'operator' => 'IN',
                 );
             }
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_type',
+                'field' => 'slug',
+                'terms' => array('grouped', 'external'),
+                'operator' => 'NOT IN',
+            );
         }
         $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
         $all_products = array();
@@ -1510,6 +1523,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'operator' => 'IN',
                 );
             }
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_type',
+                'field' => 'slug',
+                'terms' => array('grouped', 'external'),
+                'operator' => 'NOT IN',
+            );
         }
         
         $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
