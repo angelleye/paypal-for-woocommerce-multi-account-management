@@ -150,8 +150,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                                 continue;
                             }
                         } 
-                        $product_id = $product->get_id();
-
+                        $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
                         $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                         $product_categories = get_post_meta($value->ID, 'product_categories', true);
                         if (!empty($product_categories)) {

@@ -233,7 +233,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             } 
-                            $product_id = $product->get_id();
+                            $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
@@ -522,8 +522,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     } else {
                         continue;
                     }
-                }  
-                $product_id = $product->get_id();
+                } 
+                $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
                 $item_total = 0;
                 $final_total = 0;
                 if (array_key_exists($product_id, $this->map_item_with_account)) {
