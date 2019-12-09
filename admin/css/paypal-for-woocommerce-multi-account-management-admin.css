@@ -111,6 +111,10 @@
 select.smart_forwarding_field {
     width: auto !important;
 }
+.updater-dismissible {
+    padding-right: 38px;
+    position: relative;
+}
 
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
