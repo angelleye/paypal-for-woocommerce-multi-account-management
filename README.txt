@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 2.0.2 - 12.09.2019 =
 * Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](paypal-for-woocommerce-multi-account-management/pull/30))
+* Fix - Resolves an issue with woocommerce variable product. ([PFWMA-90](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/31))
 
 = 2.0.1 - 11.20.2019 =
 * Verification - WooCommerce 3.8 and WordPress 5.3 compatibility.
