@@ -344,7 +344,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "woocommerce") . '">';
         $countries = WC()->countries->get_countries();
-        if(isset($buyer_countries)) {
+        if(!isset($buyer_countries)) {
             $buyer_countries = array();
         }
         if ($countries) {
