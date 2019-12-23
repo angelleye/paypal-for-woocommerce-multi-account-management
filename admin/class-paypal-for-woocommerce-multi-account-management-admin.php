@@ -970,11 +970,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             'fields' => 'ids',
             'post_status' => 'publish',
             'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_cat',
-                    'terms' => $_POST['categories_list'],
-                    'operator' => 'IN',
-                ),
+                
                 array(
                     'taxonomy' => 'product_type',
                     'field' => 'slug',
@@ -984,6 +980,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 
             )
         );
+        
+        if( !empty($_POST['categories_list'])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_cat',
+                'terms' => $_POST['categories_list'],
+                'operator' => 'IN',
+            );
+        }
         $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
         $all_tags = array();
         $all_products = array();
