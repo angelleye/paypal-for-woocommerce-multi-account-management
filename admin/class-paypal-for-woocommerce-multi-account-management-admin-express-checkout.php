@@ -223,6 +223,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (!empty($order_id)) {
                         $order = wc_get_order($order_id);
                         foreach ($order->get_items() as $cart_item_key => $values) {
+                            $line_item = $values->get_data();
                             $product = $order->get_product_from_item($values);
                             $product_exists = is_object( $product );
                             if($product_exists == false) {
@@ -238,6 +239,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
                                 $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
                             } else {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
@@ -248,6 +250,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             } else {
                                 $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                             }
+                            if($order->get_total_discount() > 0) {
+                                if($line_item['subtotal'] != $line_item['total']) {
+                                    $this->map_item_with_account[$product_id]['is_discountable'] = true;
+                                    $this->map_item_with_account[$product_id]['discount'] = AngellEYE_Gateway_Paypal::number_format($line_item['subtotal'] - $line_item['total']);
+                                } else {
+                                    $this->map_item_with_account[$product_id]['is_discountable'] = false;
+                                }
+                            } 
                             if (isset($this->map_item_with_account[$product_id]['multi_account_id']) && $this->map_item_with_account[$product_id]['multi_account_id'] != 'default') {
                                 continue;
                             }
@@ -316,6 +326,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                    $this->map_item_with_account[$product_id]['tax'] = $cart_item['line_subtotal_tax'];
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
@@ -325,6 +336,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
                                 } else {
                                     $this->map_item_with_account[$product_id]['needs_shipping'] = false;
+                                }
+                                if(WC()->cart->get_cart_discount_total() > 0) {
+                                    if($cart_item['line_subtotal'] != $cart_item['line_total']) {
+                                        $this->map_item_with_account[$product_id]['is_discountable'] = true;
+                                        $this->map_item_with_account[$product_id]['discount'] = AngellEYE_Gateway_Paypal::number_format($cart_item['line_subtotal'] - $cart_item['line_total']);
+                                    } else {
+                                        $this->map_item_with_account[$product_id]['is_discountable'] = false;
+                                    }
                                 }
                                 if (isset($this->map_item_with_account[$product_id]['multi_account_id']) && $this->map_item_with_account[$product_id]['multi_account_id'] != 'default') {
                                     continue;
