@@ -239,10 +239,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             if ($product->is_taxable()) {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = true;
                                 $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                            } else {
+                                $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
                             if ($product->needs_shipping()) {
                                 $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                 $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                            } else {
+                                $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                             }
                             if (isset($this->map_item_with_account[$product_id]['multi_account_id']) && $this->map_item_with_account[$product_id]['multi_account_id'] != 'default') {
                                 continue;
@@ -313,10 +317,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if ($product->is_taxable()) {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = true;
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                } else {
+                                    $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
                                 if ($product->needs_shipping()) {
                                     $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                     $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                } else {
+                                    $this->map_item_with_account[$product_id]['needs_shipping'] = false;
                                 }
                                 if (isset($this->map_item_with_account[$product_id]['multi_account_id']) && $this->map_item_with_account[$product_id]['multi_account_id'] != 'default') {
                                     continue;
