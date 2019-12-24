@@ -128,6 +128,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $cart_loop_not_pass = 0;
                 $this->angelleye_is_taxable = 0;
                 $this->angelleye_needs_shipping = 0;
+                $this->angelleye_is_discountable = 0;
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
@@ -253,7 +254,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             if($order->get_total_discount() > 0) {
                                 if($line_item['subtotal'] != $line_item['total']) {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = true;
-                                    $this->map_item_with_account[$product_id]['discount'] = AngellEYE_Gateway_Paypal::number_format($line_item['subtotal'] - $line_item['total']);
+                                    $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = false;
                                 }
@@ -340,7 +341,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if(WC()->cart->get_cart_discount_total() > 0) {
                                     if($cart_item['line_subtotal'] != $cart_item['line_total']) {
                                         $this->map_item_with_account[$product_id]['is_discountable'] = true;
-                                        $this->map_item_with_account[$product_id]['discount'] = AngellEYE_Gateway_Paypal::number_format($cart_item['line_subtotal'] - $cart_item['line_total']);
+                                        $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
                                     } else {
                                         $this->map_item_with_account[$product_id]['is_discountable'] = false;
                                     }
