@@ -389,10 +389,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_eight .= '</select>';
         $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'woocommerce') . '">';
-        $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
-        if ($tags) {
-            foreach ($tags as $tag) {
-                $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+        if( empty($product_categories) ) {
+            $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
+            if ($tags) {
+                foreach ($tags as $tag) {
+                    $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+                }
+            }
+        } else {
+            foreach ($product_tags as $key => $value) {
+                $term_object = get_term_by('id', $value, 'product_tag');
+                if(!empty($term_object->name)) {
+                    $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+                }
             }
         }
         if(!isset($product_categories)) {
