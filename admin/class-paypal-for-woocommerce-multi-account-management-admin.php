@@ -296,7 +296,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
-        $option_two = '<option value="transaction_amount">Transaction Amount</option>';
+        $option_two = 'transaction_amount';
         $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
         $option_three = '';
         foreach ($option_three_array as $key => $value) {
@@ -441,8 +441,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             $option_twelve = '';
         }
-        $option_six .= '</select><p class="description"></p>';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
+        $option_six .= '</select><p class="description">' . __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="%2$s"><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select>&nbsp;<input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -1450,8 +1450,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Transaction', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
+                    <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                     <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="0">
                     <div class="angelleye_multi_account_paypal_pro_payflow_field">
