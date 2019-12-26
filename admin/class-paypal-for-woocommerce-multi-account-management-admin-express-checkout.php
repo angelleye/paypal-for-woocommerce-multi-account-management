@@ -604,7 +604,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $Payment = array(
                             'amt' => $final_total,
                             'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'itemamt' => $item_total,
+                            'itemamt' => AngellEYE_Gateway_Paypal::number_format($item_total),
                             'shippingamt' => $shippingamt,
                             'taxamt' => $taxamt,
                             'custom' => $custom_param,
@@ -710,7 +710,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $Payment = array(
                             'amt' => $final_total,
                             'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'itemamt' => $item_total,
+                            'itemamt' => AngellEYE_Gateway_Paypal::number_format($item_total),
                             'shippingamt' => $shippingamt,
                             'taxamt' => $taxamt,
                             'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
