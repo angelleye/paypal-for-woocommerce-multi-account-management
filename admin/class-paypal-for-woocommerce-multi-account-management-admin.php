@@ -368,7 +368,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
         $categories = get_terms(apply_filters('angelleye_get_product_categories', 
                                     array('product_cat')), array(
-					'hide_empty' => '0',
+					'hide_empty' => 1,
 					'orderby'    => 'name',
 				));
         if(!isset($product_categories)) {
@@ -390,7 +390,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'woocommerce') . '">';
         if( empty($product_categories) ) {
-            $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
+            $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
             if ($tags) {
                 foreach ($tags as $tag) {
                     $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
@@ -1414,7 +1414,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $category_ids = array();
                         $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), 
                                             array(
-                                                'hide_empty' => '0',
+                                                'hide_empty' => 1,
                                                 'orderby'    => 'name',
                                             ));
                         if ($categories) {
@@ -1436,7 +1436,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=0');
+                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=1');
                         if ($tags) {
                             foreach ($tags as $tag) {
                                 echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
