@@ -397,10 +397,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         } else {
-            foreach ($product_tags as $key => $value) {
-                $term_object = get_term_by('id', $value, 'product_tag');
-                if(!empty($term_object->name)) {
-                    $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+            if( !empty($product_tags)) {
+                foreach ($product_tags as $key => $value) {
+                    $term_object = get_term_by('id', $value, 'product_tag');
+                    if(!empty($term_object->name)) {
+                        $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+                    }
                 }
             }
         }
