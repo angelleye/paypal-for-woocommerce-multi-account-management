@@ -296,8 +296,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
-        $option_two = '<option value="transaction_amount">Transaction Amount</option>';
-        $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
+        $option_two = 'transaction_amount';
+        $option_three_array = array('greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'));
         $option_three = '';
         foreach ($option_three_array as $key => $value) {
             if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
@@ -368,7 +368,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
         $categories = get_terms(apply_filters('angelleye_get_product_categories', 
                                     array('product_cat')), array(
-					'hide_empty' => '0',
+					'hide_empty' => 1,
 					'orderby'    => 'name',
 				));
         if(!isset($product_categories)) {
@@ -389,10 +389,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_eight .= '</select>';
         $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'woocommerce') . '">';
-        $tags = get_terms('product_tag', 'orderby=name&hide_empty=0');
-        if ($tags) {
-            foreach ($tags as $tag) {
-                $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+        if( empty($product_categories) ) {
+            $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
+            if ($tags) {
+                foreach ($tags as $tag) {
+                    $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+                }
+            }
+        } else {
+            if( !empty($product_tags)) {
+                foreach ($product_tags as $key => $value) {
+                    $term_object = get_term_by('id', $value, 'product_tag');
+                    if(!empty($term_object->name)) {
+                        $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+                    }
+                }
             }
         }
         if(!isset($product_categories)) {
@@ -441,8 +452,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             $option_twelve = '';
         }
-        $option_six .= '</select><p class="description"></p>';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field">%2$s</select><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select><input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
+        $option_six .= '</select><p class="description">' . __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s  %8$s %13$s %9$s %10$s %7$s <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="%2$s"><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select>&nbsp;<input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen);
         echo sprintf('<tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
@@ -1407,7 +1418,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $category_ids = array();
                         $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), 
                                             array(
-                                                'hide_empty' => '0',
+                                                'hide_empty' => 1,
                                                 'orderby'    => 'name',
                                             ));
                         if ($categories) {
@@ -1429,7 +1440,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
                         <?php
                         $category_ids = array();
-                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=0');
+                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=1');
                         if ($tags) {
                             foreach ($tags as $tag) {
                                 echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
@@ -1454,8 +1465,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Transaction', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_field"><option value="transaction_amount"><?php echo __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
+                    <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                     <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="0">
                     <div class="angelleye_multi_account_paypal_pro_payflow_field">

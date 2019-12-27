@@ -10,6 +10,7 @@
 .angelleye_multi_account_left {
     max-width: 60%;
     float: left;
+    width: 688px;
 }
 
 .angelleye_multi_account_right {
@@ -30,9 +31,9 @@
 }
 
 #woocommerce_paypal_express_api_condition_value { 
-    height: 31px;
+    height: 34px;
     line-height: 1;
-    width: 80px;
+    width: 196px;
 }
 
 .notice.notice-success.angelleye-notice {
@@ -109,7 +110,7 @@
     -webkit-font-smoothing: antialiased;
 }
 select.smart_forwarding_field {
-    width: auto !important;
+    width: 200px !important;
 }
 .updater-dismissible {
     padding-right: 38px;
