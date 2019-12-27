@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 2.0.4 - 12.XX.2019 =
 * Tweak - Adjustment to Buyer country field value on edit mode. ([PFWMA-92](paypal-for-woocommerce-multi-account-management/pull/33))
+* Tweak - Adjustment to Product categories. ([PFWMA-93](paypal-for-woocommerce-multi-account-management/pull/35))
 
 = 2.0.3 - 12.23.2019 =
 * Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](paypal-for-woocommerce-multi-account-management/pull/34))
