@@ -297,7 +297,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
         $option_two = 'transaction_amount';
-        $option_three_array = array('equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'));
+        $option_three_array = array('greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'));
         $option_three = '';
         foreach ($option_three_array as $key => $value) {
             if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
