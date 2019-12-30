@@ -12,7 +12,7 @@
  * Plugin Name:       PayPal for WooCommerce Multi-Account Management
  * Plugin URI:        https://www.angelleye.com/product/paypal-woocommerce-multi-account-management/
  * Description:       Send WooCommerce order payments to different PayPal accounts based on rules provided.
- * Version:           2.0.2
+ * Version:           2.0.3
  * Author:            Angell EYE
  * Author URI:        http://www.angelleye.com/
  * License:           GPLv3 or later
@@ -20,7 +20,7 @@
  * Text Domain:       paypal-for-woocommerce-multi-account-management
  * Domain Path:       /languages
  * Requires at least: 3.8
- * Tested up to: 5.3
+ * Tested up to: 5.3.2
  * WC requires at least: 3.0.0
  * WC tested up to: 3.8.1
  */
@@ -29,7 +29,7 @@ if (!defined('WPINC')) {
     die;
 }
 
-define('PFWMA_VERSION', '2.0.2');
+define('PFWMA_VERSION', '2.0.3');
 
 /**
  * define plugin basename

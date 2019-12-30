@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 3.0.1
-Tested up to: 5.3
-Stable tag: 2.0.2
+Tested up to: 5.3.2
+Stable tag: 2.0.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -29,13 +29,11 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 2.0.4 - 12.30.2019 =
+= 2.0.3 - 12.23.2019 =
 * Feature - Adds Split Payments - Product Specific Coupons. ([PFWMA-91](https://github.com/angelleye/paypal-woocommerce/pull/37))
 * Tweak - Adjustment to Buyer country field value on edit mode. ([PFWMA-92](paypal-for-woocommerce-multi-account-management/pull/33))
 * Tweak - Adjustment to Product categories. ([PFWMA-93](paypal-for-woocommerce-multi-account-management/pull/35))
 * Tweak - Adjustment to Product tags list on edit mode. ([PFWMA-95](paypal-for-woocommerce-multi-account-management/pull/36))
-
-= 2.0.3 - 12.23.2019 =
 * Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](paypal-for-woocommerce-multi-account-management/pull/34))
 
 = 2.0.2 - 12.09.2019 =
