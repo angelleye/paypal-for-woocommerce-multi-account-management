@@ -291,6 +291,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
                             $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
+                            if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
+                                $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                            } else {
+                                $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
+                            }
                             if ($gateways->testmode == true) {
                                 if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                     $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
@@ -378,6 +384,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                 }
                                 $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
+                                if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                                    $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
+                                   $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                                } else {
+                                   $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
+                                }
                                 if ($gateways->testmode == true) {
                                     if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                         $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
@@ -509,9 +521,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
-
         $new_payments = array();
-        $default_new_payments = array();
         $default_new_payments_line_item = array();
         if (!empty($request['Payments'])) {
             $old_payments = $request['Payments'];
