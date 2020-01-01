@@ -440,8 +440,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_thirteen .= '</select>';
-        $option_thirteen .= '<p class="description">' . __('Site Owner Commission', 'paypal-for-woocommerce-multi-account-management') .'</p>';
-        $option_thirteen .= '<input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" value=' . $ec_site_owner_commission. '>';
+        $option_thirteen .= '<div class="angelleye_multi_account_paypal_express_field">';
+        $option_thirteen .= '<p class="description">' . __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management') .'</p>';
+        $option_thirteen .= '<input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value=' . $ec_site_owner_commission. '>';
+        $option_thirteen .= '</div>';
         if ($this->gateway_key == 'paypal_pro_payflow') {
             $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_twelve .= '<select class="card_type" name="card_type">';
@@ -1501,8 +1503,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php echo __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
+                    <div class="angelleye_multi_account_paypal_express_field">
+                        <p class="description"><?php echo __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                        <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
+                    </div>
                 </fieldset>
             </td>
         </tr>
