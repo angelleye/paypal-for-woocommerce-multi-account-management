@@ -101,12 +101,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (!empty($gateway_list[$gateway_key])) {
                     $gateway_value = $gateway_list[$gateway_key];
                     $gateway_option_Selected = "<option value='$gateway_key'>$gateway_value</option>";
-                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway wc-enhanced-select" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
                 }
             }
         } else {
             $gateway_option_Selected = "<option value='paypal_express'>PayPal Express Checkout</option>";
-            echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+            echo sprintf('<tr><th>%1$s</th><td><select class="wc-enhanced-select angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
         }
 
         if ($this->gateway_key == 'paypal_express') {
@@ -312,7 +312,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
         $option_five = '<p class="description">' . __('Select User Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_five .= '<select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
+        $option_five .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
         $option_five .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
         $editable_roles = array_reverse(get_editable_roles());
         foreach ($editable_roles as $role => $details) {
@@ -325,7 +325,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_five .= '</select>';
         $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_ten .= '<select class="smart_forwarding_field" name="woocommerce_priority">';
+        $option_ten .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_priority">';
         for ($x = 0; $x <= 100; $x++) {
             if($x == 0) {
                 $woocommerce_priority_text = $x .' - Lowest';
@@ -426,7 +426,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_thirteen .= '<select class="currency_code" name="currency_code">';
+        $option_thirteen .= '<select class="wc-enhanced-select currency_code" name="currency_code">';
         $option_thirteen .= "<option value=''>All</option>";
         $currency_code_options = get_woocommerce_currencies();
         foreach ($currency_code_options as $code => $name) {
@@ -446,7 +446,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $option_thirteen .= '</div>';
         if ($this->gateway_key == 'paypal_pro_payflow') {
             $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-            $option_twelve .= '<select class="card_type" name="card_type">';
+            $option_twelve .= '<select class="wc-enhanced-select card_type" name="card_type">';
             $option_twelve .= "<option value=''>All</option>";
             $card_type_array = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
             foreach ($card_type_array as $card_key => $card_value) {
@@ -1218,7 +1218,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <th><?php _e('Select Payment Gateway', 'paypal-for-woocommerce-multi-account-management'); ?></th>
             <td>
 
-                <select class="angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway" <?php echo $angelleye_hidden; ?>>
+                <select class="wc-enhanced-select angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway" <?php echo $angelleye_hidden; ?>>
                     <?php
                     foreach ($gateway_list as $key => $details) {
                         echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
@@ -1369,7 +1369,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <p class="description"><?php _e('Select Priority', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="smart_forwarding_field" name="woocommerce_priority">
+                    <select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_priority">
                         <?php
                         for ($x = 0; $x <= 100; $x++) {
                             if($x == 0) {
@@ -1384,7 +1384,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
+                    <select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
                         <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                         <?php
                         $editable_roles = array_reverse(get_editable_roles());
@@ -1479,7 +1479,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="0">
                     <div class="angelleye_multi_account_paypal_pro_payflow_field">
                         <p class="description"><?php _e('Card Type', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                        <select class="card_type" name="card_type">
+                        <select class="wc-enhanced-select card_type" name="card_type">
                             <option value=""><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                             <?php
                             $card_type = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
@@ -1491,7 +1491,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         </select>
                     </div>
                     <p class="description"><?php _e('Currency Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="currency_code" name="currency_code">
+                    <select class="wc-enhanced-select currency_code" name="currency_code">
                         <option value=""><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                         <?php
                         $currency_code_options = get_woocommerce_currencies();
