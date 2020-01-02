@@ -594,7 +594,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         if( isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true ) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
-                            $product_commission = round( $final_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2 );
+                            $product_commission = round( $item_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2 );
                             $default_final_total = $default_final_total + $product_commission;
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
                         }
@@ -746,7 +746,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         if( isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true ) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
-                            $product_commission = round( $final_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2 );
+                            $product_commission = round( $item_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2 );
                             $default_final_total = $default_final_total + $product_commission;
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
                         }
