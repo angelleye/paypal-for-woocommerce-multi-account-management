@@ -616,7 +616,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $custom_param['order_item_id'] = $cart_item_key;
                             $custom_param = json_encode($custom_param);
                         }
-                        $is_commission_enable = false;
+                        $is_commission_not_enabled = false;
                         if( isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true ) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
@@ -733,7 +733,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
-                        $is_commission_enable = false;
+                        $is_commission_not_enabled = false;
                         if( isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true ) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
