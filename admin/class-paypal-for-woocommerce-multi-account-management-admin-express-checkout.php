@@ -297,6 +297,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
                                  $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                  $this->is_commission_enable = true;
+                                 $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($microprocessing_array['ec_site_owner_commission_label'][0]) ? $microprocessing_array['ec_site_owner_commission_label'][0] : __('Commission', '');
                                  $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
                             } else {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
@@ -391,6 +392,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                     $this->is_commission_enable = true;
+                                    $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($microprocessing_array['ec_site_owner_commission_label'][0]) ? $microprocessing_array['ec_site_owner_commission_label'][0] : __('Commission', '');
                                     $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
                                 } else {
                                    $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
@@ -602,8 +604,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $default_item_total = $default_item_total + $product_commission;
                             
                             $Item = array(
-                                'name' => 'Commission',
-                                'desc' => 'Commission ' . $line_item['name'],
+                                'name' => $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'],
+                                'desc' => $line_item['name'],
                                 'amt' => $product_commission,
                                 'number' => '',
                                 'qty' => 1
@@ -757,8 +759,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $default_item_total = $default_item_total + $product_commission;
                             
                             $Item = array(
-                                'name' => 'Commission',
-                                'desc' => 'Commission' . $line_item['name'],
+                                'name' => $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'],
+                                'desc' => $line_item['name'],
                                 'amt' => $product_commission,
                                 'number' => '',
                                 'qty' => 1
