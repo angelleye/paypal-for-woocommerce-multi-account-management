@@ -152,6 +152,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'woocommerce_paypal_express_api_signature':
                         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
+                    case 'ec_site_owner_commission':
+                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
                     case 'woocommerce_paypal_express_api_user_role':
                         $selected_role = $microprocessing_value[0];
                         break;
@@ -172,9 +175,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         break;
                     case 'currency_code':
                         $currency_code = empty($microprocessing_value[0]) ? '' : $microprocessing_value[0];
-                        break;
-                    case 'ec_site_owner_commission':
-                        $ec_site_owner_commission = empty($microprocessing_value[0]) ? '' : $microprocessing_value[0];
                         break;
                 }
             }
@@ -440,10 +440,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         $option_thirteen .= '</select>';
-        $option_thirteen .= '<div class="angelleye_multi_account_paypal_express_field">';
-        $option_thirteen .= '<p class="description">' . __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management') .'</p>';
-        $option_thirteen .= '<input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value=' . $ec_site_owner_commission. '>';
-        $option_thirteen .= '</div>';
         if ($this->gateway_key == 'paypal_pro_payflow') {
             $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_twelve .= '<select class="wc-enhanced-select card_type" name="card_type">';
@@ -1201,6 +1197,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
+        <tr class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc" >
+                <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                    <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
+                </fieldset>
+            </td>
+        </tr>
         <?php
     }
 
@@ -1503,10 +1510,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <div class="angelleye_multi_account_paypal_express_field">
-                        <p class="description"><?php echo __('Site Owner Commission % (percentage)', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                        <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
-                    </div>
                 </fieldset>
             </td>
         </tr>
