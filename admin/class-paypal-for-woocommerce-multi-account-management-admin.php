@@ -349,7 +349,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
         }
         $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "woocommerce") . '">';
+        $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
         $countries = WC()->countries->get_countries();
         if(!isset($buyer_countries)) {
             $buyer_countries = array();
@@ -361,7 +361,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_seven .= '</select>';
         $option_fourteen = '<p class="description">' . __('Store country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "woocommerce") . '">';
+        $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
         if ($countries) {
             $store_countries = !empty($store_countries) ? $store_countries : '';
             $option_fourteen .= '<option value="0">All countries</option>';
@@ -372,7 +372,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         
         $option_fourteen .= '</select>';
         $option_eight = '<p class="description"> ' . apply_filters('angelleye_multi_account_display_category_label',__('Product categories', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
-        $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'woocommerce') . '">';
+        $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'paypal-for-woocommerce-multi-account-management') . '">';
         $categories = get_terms(apply_filters('angelleye_get_product_categories', 
                                     array('product_cat')), array(
 					'hide_empty' => 1,
@@ -395,7 +395,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_eight .= '</select>';
         $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'woocommerce') . '">';
+        $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'paypal-for-woocommerce-multi-account-management') . '">';
         if( empty($product_categories) ) {
             $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
             if ($tags) {
@@ -417,8 +417,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $product_categories = array();
         }
         $option_nine .= '</select>';
-        $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'woocommerce')) . '</p>';
-        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'woocommerce') . '">';
+        $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
+        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
         $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
         if (!empty($product_list)) {
             foreach ($product_list as $product_list_id => $product_list_name) {
@@ -474,7 +474,46 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_tooltip_box() {
+        $global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', '');
+        $global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
         ?>
+        <div class="angelleye_multi_global_commission_right angelleye_multi_account_paypal_express_field">
+            <form method="post" id="mainform" action="" enctype="multipart/form-data">
+                <table class="form-table">
+                <tr class="angelleye_multi_account_paypal_express_field">
+                    <th scope="row" class="titledesc">
+                        <label for="woocommerce_paypal_express_api_signature_microprocessing" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                    </th>
+                    <td class="forminp">
+                        <fieldset>
+                            <input type="number" name="global_ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0" class="commission" value="<?php echo !empty($global_ec_site_owner_commission) ? $global_ec_site_owner_commission : ''; ?>">
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr class="angelleye_multi_account_paypal_express_field">
+                    <th scope="row" class="titledesc">
+                        <label for="woocommerce_paypal_express_api_signature_microprocessing" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                    </th>
+                    <td class="forminp">
+                        <fieldset>
+                            <input type="text" class="input-text regular-input commission" name="global_ec_site_owner_commission_label" placeholder="Commission" value="<?php echo !empty($global_ec_site_owner_commission_label) ? $global_ec_site_owner_commission_label : ''; ?>">
+                        </fieldset>
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row" class="titledesc">
+                    </th>
+                    <td class="forminp">
+                        <fieldset>
+                            <input name="global_commission_microprocessing_save" class="button-primary woocommerce-save-button" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                            <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                            <?php wp_nonce_field('microprocessing_save'); ?>
+                        </fieldset>
+                    </td>
+                </tr>
+            </table>
+            </form>
+        </div>
         <div class="angelleye_multi_account_right">
             <h3><?php echo __('Account Setup', 'paypal-for-woocommerce-multi-account-management'); ?></h3>
             <ul class="angelleye_pfwma_tips">
@@ -495,6 +534,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_ui() {
+        if (!empty($_POST['global_commission_microprocessing_save'])) {
+            update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));
+            update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
+            echo sprintf('<div class="notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
+        }
         if (!empty($_POST['angelleye_multi_account_choose_payment_gateway']) && $_POST['angelleye_multi_account_choose_payment_gateway'] == 'paypal_pro_payflow') {
             $this->angelleye_save_multi_account_data_paypal_pro_payflow();
         }
@@ -504,7 +548,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (!empty($_POST['angelleye_multi_account_choose_payment_gateway']) && $_POST['angelleye_multi_account_choose_payment_gateway'] == 'paypal') {
             $this->angelleye_save_multi_account_data_paypal();
         }
-
         if (empty($_GET['action'])) {
             if (!empty($_GET['success'])) {
                 echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
@@ -695,6 +738,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 echo sprintf('<div class=" notice notice-success is-dismissible"><p>%1$s</p></div>', __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management'));
             }
         }
+         
+        
     }
 
     public function angelleye_save_multi_account_data_paypal_pro_payflow() {
@@ -1416,7 +1461,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('All countries', 'woocommerce'); ?>">
+                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $category_ids = array();
                         $countries = WC()->countries->get_countries();
@@ -1429,7 +1474,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Store country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All countries', 'woocommerce'); ?>">
+                    <select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $category_ids = array();
                         $countries = WC()->countries->get_countries();
@@ -1442,7 +1487,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'woocommerce'); ?>">
+                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $category_ids = array();
                         $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), 
@@ -1466,7 +1511,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </select>
                     <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'woocommerce'); ?>">
+                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $category_ids = array();
                         $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=1');
@@ -1478,7 +1523,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'woocommerce'); ?>" data-action="woocommerce_json_search_products_and_variations">
+                    <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="woocommerce_json_search_products_and_variations">
                         <?php
                         $args = array(
                             'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
