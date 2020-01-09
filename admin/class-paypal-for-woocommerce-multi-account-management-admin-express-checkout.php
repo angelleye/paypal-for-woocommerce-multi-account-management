@@ -48,6 +48,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $final_order_grand_total;
     public $is_calculation_mismatch;
     public $final_refund_amt;
+    public $send_items;
 
     /**
      * Initialize the class and set its properties.
@@ -291,6 +292,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
                             $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
+                            if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
+                                $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                            } else {
+                                $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
+                            }
                             if ($gateways->testmode == true) {
                                 if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                     $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
@@ -378,6 +385,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                 }
                                 $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
+                                if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                                    $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
+                                   $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                                } else {
+                                   $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
+                                }
                                 if ($gateways->testmode == true) {
                                     if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                         $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
@@ -509,9 +522,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
-
+        $this->send_items = $gateways->send_items;
         $new_payments = array();
-        $default_new_payments = array();
         $default_new_payments_line_item = array();
         if (!empty($request['Payments'])) {
             $old_payments = $request['Payments'];
@@ -604,9 +616,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $Payment = array(
                             'amt' => $final_total,
                             'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'itemamt' => AngellEYE_Gateway_Paypal::number_format($item_total),
-                            'shippingamt' => $shippingamt,
-                            'taxamt' => $taxamt,
                             'custom' => $custom_param,
                             'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
                             'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
@@ -623,7 +632,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
                             'paymentrequestid' => $cart_item_key . '-' . rand()
                         );
-                        $Payment['order_items'] = $PaymentOrderItems;
+                        if( $this->send_items ) {
+                            $Payment['order_items'] = $PaymentOrderItems;
+                            $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
+                            $Payment['shippingamt'] = $shippingamt;
+                            $Payment['taxamt'] = $taxamt;
+                        }
                         array_push($new_payments, $Payment);
                         $loop = $loop + 1;
                     } else {
@@ -710,9 +724,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $Payment = array(
                             'amt' => $final_total,
                             'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'itemamt' => AngellEYE_Gateway_Paypal::number_format($item_total),
-                            'shippingamt' => $shippingamt,
-                            'taxamt' => $taxamt,
+                            
                             'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
                             'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
                             'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
@@ -729,7 +741,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
                             'paymentrequestid' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '' . $cart_item_key
                         );
-                        $Payment['order_items'] = $PaymentOrderItems;
+                        if( $this->send_items ) {
+                            $Payment['order_items'] = $PaymentOrderItems;
+                            $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
+                            $Payment['shippingamt'] = $shippingamt;
+                            $Payment['taxamt'] = $taxamt;
+                        }
                         array_push($new_payments, $Payment);
                         $loop = $loop + 1;
                     } else {
@@ -775,9 +792,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $new_default_payment = array(
                 'amt' => AngellEYE_Gateway_Paypal::number_format($default_final_total),
                 'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                'itemamt' => AngellEYE_Gateway_Paypal::number_format($default_item_total),
-                'shippingamt' => AngellEYE_Gateway_Paypal::number_format($default_shippingamt),
-                'taxamt' => AngellEYE_Gateway_Paypal::number_format($default_taxamt),
                 'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
                 'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
                 'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
@@ -795,7 +809,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true)
             );
             $this->final_grand_total = $this->final_grand_total + $default_final_total;
-            $new_default_payment['order_items'] = $default_new_payments_line_item;
+            if( $this->send_items ) {
+                $new_default_payment['order_items'] = $default_new_payments_line_item;
+                $new_default_payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($default_item_total);
+                $new_default_payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($default_shippingamt);
+                $new_default_payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($default_taxamt);
+            }
             array_push($new_payments, $new_default_payment);
         }
         if ($this->final_grand_total != $this->final_order_grand_total) {
