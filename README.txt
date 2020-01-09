@@ -30,14 +30,15 @@ This plugin allows you to configure multiple accounts and provide rules for when
 == Changelog ==
 
 = 2.1.0 - 09.01.2020 =
-* Tweak - Adjustment to use Send line item details to PayPal. ([PFWMA-96](https://github.com/angelleye/paypal-woocommerce/pull/39))
+* Feature - Adds Site Owner Commission. ([PFWMA-84](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/38))
+* Tweak - Adjustment to use Send line item details to PayPal. ([PFWMA-96](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/39))
 
 = 2.0.3 - 12.30.2019 =
-* Feature - Adds Split Payments - Product Specific Coupons. ([PFWMA-91](https://github.com/angelleye/paypal-woocommerce/pull/37))
-* Tweak - Adjustment to Buyer country field value on edit mode. ([PFWMA-92](paypal-for-woocommerce-multi-account-management/pull/33))
-* Tweak - Adjustment to Product categories. ([PFWMA-93](paypal-for-woocommerce-multi-account-management/pull/35))
-* Tweak - Adjustment to Product tags list on edit mode. ([PFWMA-95](paypal-for-woocommerce-multi-account-management/pull/36))
-* Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](paypal-for-woocommerce-multi-account-management/pull/34))
+* Feature - Adds Split Payments - Product Specific Coupons. ([PFWMA-91](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/37))
+* Tweak - Adjustment to Buyer country field value on edit mode. ([PFWMA-92](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/33))
+* Tweak - Adjustment to Product categories. ([PFWMA-93](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/35))
+* Tweak - Adjustment to Product tags list on edit mode. ([PFWMA-95](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/36))
+* Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/34))
 
 = 2.0.2 - 12.09.2019 =
 * Tweak - Adjustment to Updater plugin notice dismissible. ([PFWMA-88](paypal-for-woocommerce-multi-account-management/pull/30))
