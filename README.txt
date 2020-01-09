@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 2.1.0 - 09.01.2020 =
+* Tweak - Adjustment to use Send line item details to PayPal. ([PFWMA-96](https://github.com/angelleye/paypal-woocommerce/pull/39))
+
 = 2.0.3 - 12.30.2019 =
 * Feature - Adds Split Payments - Product Specific Coupons. ([PFWMA-91](https://github.com/angelleye/paypal-woocommerce/pull/37))
 * Tweak - Adjustment to Buyer country field value on edit mode. ([PFWMA-92](paypal-for-woocommerce-multi-account-management/pull/33))
