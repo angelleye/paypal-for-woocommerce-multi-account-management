@@ -20,11 +20,28 @@
     border: 1px solid #d1c6c6;
     border-radius: 15px;
     display: block;
-    margin-top: 6px;
+    margin-top: 0px;
     margin-left: 10px;
     width: 37%;
 }
-
+.angelleye_multi_global_commission_right {
+    max-width: 475px;
+    float: left;
+    padding: 10px;
+    border: 1px solid #d1c6c6;
+    border-radius: 15px;
+    display: block;
+    margin-top: 0px;
+    margin-left: 10px;
+    width: 37%;
+    margin-bottom: 20px;
+}
+.angelleye_multi_global_commission_right label.commission {
+    width: 215px;
+}
+.angelleye_multi_global_commission_right input.commission {
+    width: 190px !important;
+}
 .angelleye_pfwma_tips {
     list-style: circle;
     margin: 0 0 0 12px;
