@@ -82,7 +82,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     }
                     $product_text .= "</div>";
                 }
-                return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$other_condition} {$product_text}";
+                if ($currency_code != 'all') {
+                    return "{$field} {$sign} " . wc_price($condition_value, array('currency' => $currency_code)) . " {$role} {$other_condition} {$product_text}";
+                } else {
+                    return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$other_condition} {$product_text}";
+                }
+                
             case 'status':
                 $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
                 $status_pf = get_post_meta($item['ID'], 'woocommerce_paypal_pro_payflow_enable', true);
