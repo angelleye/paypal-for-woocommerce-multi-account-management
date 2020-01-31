@@ -29,7 +29,10 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 2.1.0 - 09.01.2020 =
+= 2.1.1 - 01.31.2020 =
+* Tweak - Adjustment to Currency Symbol with product amount in admin side. ([PFWMA-48](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/40))
+
+= 2.1.0 - 01.09.2020 =
 * Feature - Adds Site Owner Commission. ([PFWMA-84](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/38))
 * Tweak - Adjustment to use Send line item details to PayPal. ([PFWMA-96](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/39))
 
