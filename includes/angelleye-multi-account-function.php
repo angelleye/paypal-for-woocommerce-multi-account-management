@@ -16,3 +16,24 @@ function angelleye_get_product_cat($categories) {
     }
     return $categories;
 }
+
+function angelleye_get_closest_amount($array, $value) {
+    $size = count($array);
+    $index_key = 0;
+    if ($size > 0) {
+        $diff = abs($array[0]['woocommerce_paypal_express_api_condition_value'] - $value);
+        $ret = $array[0]['woocommerce_paypal_express_api_condition_value'];
+        $index_key = 0;
+        for ($i = 1; $i < $size; $i++) {
+            $temp = abs($array[$i]['woocommerce_paypal_express_api_condition_value'] - $value);
+            if ($temp < $diff) {
+                $diff = $temp;
+                $ret = $array[$i]['woocommerce_paypal_express_api_condition_value'];
+                $index_key = $i;
+            }
+        }
+        return $array[$index_key];
+    } else {
+        return array();
+    }
+}
