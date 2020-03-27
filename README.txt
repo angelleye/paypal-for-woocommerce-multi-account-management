@@ -29,6 +29,9 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 2.1.2 - 03.27.2020 =
+* Tweak - Adjustment admin notice for dependency plugin. ([PFWMA-102](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/43))
+
 = 2.1.1 - 01.31.2020 =
 * Tweak - Adjustment to Currency Symbol with product amount in admin side. ([PFWMA-48](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/40))
 * Tweak - GetPalDetails improvements. ([PFWMA-81](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/42))
