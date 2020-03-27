@@ -427,27 +427,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         }
     }
 
-    public function angelleye_get_closest_amount($array, $value) {
-        $size = count($array);
-        $index_key = 0;
-        if ($size > 0) {
-            $diff = abs($array[0]['woocommerce_paypal_express_api_condition_value'] - $value);
-            $ret = $array[0]['woocommerce_paypal_express_api_condition_value'];
-            $index_key = 0;
-            for ($i = 1; $i < $size; $i) {
-                $temp = abs($array[$i]['woocommerce_paypal_express_api_condition_value'] - $value);
-                if ($temp < $diff) {
-                    $diff = $temp;
-                    $ret = $array[$i]['woocommerce_paypal_express_api_condition_value'];
-                    $index_key = $i;
-                }
-            }
-            return $array[$index_key];
-        } else {
-            return array();
-        }
-    }
-
     public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow($gateways, $request = null, $order_id = null) {
         if ($request == null) {
             $gateway_setting = $gateways;
