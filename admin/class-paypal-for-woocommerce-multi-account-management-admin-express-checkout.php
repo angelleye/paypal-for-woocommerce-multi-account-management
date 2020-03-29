@@ -98,6 +98,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $order_total = $this->angelleye_get_total($order_id);
         if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
             $args = array(
+            	'posts_per_page' => -1,
                 'post_type' => 'microprocessing',
                 'order' => 'DESC',
                 'orderby' => 'order_clause',
@@ -128,6 +129,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
+
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 $passed_rules = array();
@@ -136,6 +138,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $this->angelleye_is_taxable = 0;
                 $this->angelleye_needs_shipping = 0;
                 $this->angelleye_is_discountable = 0;
+
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
@@ -290,6 +293,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+
                             if (!empty($product_ids)) {
                                 if (!array_intersect((array) $product_id, $product_ids)) {
                                     $cart_loop_not_pass = $cart_loop_not_pass + 1;
@@ -444,6 +448,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
                 unset($passed_rules);
             }
+
             if ((isset($result) && count($result)) > 0 && (isset($this->map_item_with_account) && count($this->map_item_with_account))) {
                 return $this->angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id);
             }
