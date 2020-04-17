@@ -231,6 +231,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             }
                         }
                     }
+                    
                     if (!empty($order_id)) {
                         $order = wc_get_order($order_id);
                         foreach ($order->get_items() as $cart_item_key => $values) {
@@ -292,6 +293,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
+                            
+                            $post_author_id = get_post_field( 'post_author', $product_id );
+                            $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
+                            if (!empty($woocommerce_paypal_express_api_user) ) {
+                                if( $woocommerce_paypal_express_api_user != 'all' || $post_author_id != $woocommerce_paypal_express_api_user) {
+                                    $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                    continue;
+                                }
+                            }
+                            
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
 
                             if (!empty($product_ids)) {
@@ -346,6 +357,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     } else {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                                
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
@@ -400,6 +412,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                         continue;
                                     }
                                 }
+                                
+                               $post_author_id = get_post_field( 'post_author', $product_id );
+                                $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
+                                if (!empty($woocommerce_paypal_express_api_user) ) {
+                                    if( $woocommerce_paypal_express_api_user != 'all' || $post_author_id != $woocommerce_paypal_express_api_user) {
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                        continue;
+                                    }
+                                }
+                                
                                 $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
                                if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = true;

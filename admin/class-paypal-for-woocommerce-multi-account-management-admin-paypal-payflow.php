@@ -201,6 +201,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             }
                         }
                     }
+                    
                     if (isset(WC()->cart) && WC()->cart->is_empty()) {
                         foreach ($order->get_items() as $cart_item_key => $values) {
                             $product = $order->get_product_from_item($values);
@@ -273,6 +274,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                 if (!empty($product_ids)) {
                                     if (!array_intersect((array) $product_id, $product_ids)) {
                                         unset($result[$key]);
+                                        unset($passed_rules);
+                                        continue;
+                                    }
+                                }
+                                $post_author_id = get_post_field( 'post_author', $product_id );
+                                $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
+                                if (!empty($woocommerce_paypal_express_api_user) ) {
+                                    if( $woocommerce_paypal_express_api_user != 'all' || $post_author_id != $woocommerce_paypal_express_api_user) {
+                                         unset($result[$key]);
                                         unset($passed_rules);
                                         continue;
                                     }
