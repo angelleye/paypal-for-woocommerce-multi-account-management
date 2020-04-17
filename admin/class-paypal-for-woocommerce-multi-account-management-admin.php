@@ -340,7 +340,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $option_five .= '</select>';
         
-        $option_five_one = '<p class="description">' . __('Select User', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+        $option_five_one = '<p class="description">' . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . '</p>';
         $option_five_one .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">';
         $option_five_one .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
                         
@@ -1488,7 +1488,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Select User', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <p class="description"><?php _e('Select Author', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">
                         <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                         <?php
