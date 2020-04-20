@@ -558,7 +558,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if( !empty($request['SECFields']['customerservicenumber']) ) {
             unset($request['SECFields']['customerservicenumber']);
         }
-        $this->taxamt = round(WC()->cart->get_total_tax(), $this->decimals);
+        if ( ( wc_tax_enabled() && wc_prices_include_tax() )) {
+            $this->taxamt = 0;
+        } else {
+            $this->taxamt = round(WC()->cart->get_total_tax(), $this->decimals);
+        }
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->taxamt) && $this->taxamt > 0) {
@@ -762,7 +766,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $sellerpaypalaccountid = $this->angelleye_get_email_address($this->map_item_with_account[$product_id], $gateways);
                         }
                         $PaymentOrderItems = array();
-                        $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
+                        $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
                         if (!empty($this->discount_array[$product_id])) {
                             $item_total = $item_total - $this->discount_array[$product_id];
@@ -857,7 +861,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $sellerpaypalaccountid = $this->angelleye_get_email_address($this->map_item_with_account[$product_id], $gateways);
                         }
                         $default_pal_id = $sellerpaypalaccountid;
-                        $line_item = $this->angelleye_get_line_item_from_cart($cart_item);
+                        $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
                         if (!empty($this->discount_array['$product_id'])) {
                             $item_total = $item_total - $this->discount_array[$product_id];
@@ -1028,8 +1032,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
     }
 
-    public function angelleye_get_line_item_from_cart($values) {
-        $amount = round($values['line_subtotal'] / $values['quantity'], $this->decimals);
+    public function angelleye_get_line_item_from_cart($product_id, $values) {
+        if ( ( wc_tax_enabled() && wc_prices_include_tax() )) {
+            $product = wc_get_product( $product_id );
+            $amount = round($product->get_price(), $this->decimals);
+        } else {
+            $amount = round($values['line_subtotal'] / $values['quantity'], $this->decimals);
+        }
+        
         if (version_compare(WC_VERSION, '3.0', '<')) {
             $product = $values['data'];
             $name = $values['data']->post->post_title;
@@ -1086,8 +1096,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } else {
             $name = $values['name'];
         }
+
         $name = AngellEYE_Gateway_Paypal::clean_product_title($name);
-        $amount = round($values['line_subtotal'] / $values['qty'], $this->decimals);
+        
+        if ( ( wc_tax_enabled() && wc_prices_include_tax() )) {
+            $amount = round($product->get_price(), $this->decimals);
+        } else {
+            $amount = round($values['line_subtotal'] / $values['qty'], $this->decimals);
+        }
+        
         $desc = '';
         if (is_object($product)) {
             if ($product->is_type('variation') && is_a($product, 'WC_Product_Variation')) {
