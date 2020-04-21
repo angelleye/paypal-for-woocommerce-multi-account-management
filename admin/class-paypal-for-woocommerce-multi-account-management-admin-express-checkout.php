@@ -296,8 +296,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             
                             $post_author_id = get_post_field( 'post_author', $product_id );
                             $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
-                            if (!empty($woocommerce_paypal_express_api_user) ) {
-                                if( $woocommerce_paypal_express_api_user != 'all' || $post_author_id != $woocommerce_paypal_express_api_user) {
+                            if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all' ) {
+                                if($post_author_id != $woocommerce_paypal_express_api_user) {
                                     $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                     continue;
                                 }
@@ -415,8 +415,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 
                                $post_author_id = get_post_field( 'post_author', $product_id );
                                 $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
-                                if (!empty($woocommerce_paypal_express_api_user) ) {
-                                    if( $woocommerce_paypal_express_api_user != 'all' || $post_author_id != $woocommerce_paypal_express_api_user) {
+                                if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all') {
+                                    if($post_author_id != $woocommerce_paypal_express_api_user) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
