@@ -569,6 +569,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
         $this->send_items = $gateways->send_items;
+        $this->map_item_with_account = apply_filters('angelleye_ec_parallel_parameter', $this->map_item_with_account);
         $new_payments = array();
         $default_new_payments_line_item = array();
         if (!empty($request['Payments'])) {
