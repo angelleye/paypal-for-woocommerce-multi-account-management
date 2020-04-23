@@ -347,10 +347,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $users = get_users( [ 'role__not_in' => [ 'subscriber' ] ] );                        
         if( !empty($users)) {
             foreach ($users as $user) {
+                $user_string = sprintf(
+                        esc_html__( '%1$s (#%2$s   %3$s)', 'woocommerce' ),
+                        $user->display_name,
+                        absint( $user->ID ),
+                        $user->user_email
+                );
                 if ($selected_user == $user->ID) {
-                    $option_five_one .= "<option selected='selected' value='" . esc_attr($user->ID) . "'>$user->display_name</option>";
+                    $option_five_one .= "<option selected='selected' value='" . esc_attr($user->ID) . "'>".htmlspecialchars( wp_kses_post( $user_string ) )."</option>";
                 } else {
-                    $option_five_one .= "<option value='" . esc_attr($user->ID) . "'>$user->display_name</option>";
+                    $option_five_one .= "<option value='" . esc_attr($user->ID) . "'>".htmlspecialchars( wp_kses_post( $user_string ) )."</option>";
                 }
             }
         }
@@ -1071,7 +1077,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 
             )
         );
-        
+        if( isset($_POST['author']) && $_POST['author'] != 'all' ) {
+            $args['author'] = $_POST['author'];
+        }
         if( !empty($_POST['categories_list'])) {
             $args['tax_query'][] = array(
                 'taxonomy' => 'product_cat',
@@ -1110,6 +1118,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             'fields' => 'ids',
             'post_status' => 'publish',
         );
+        if( isset($_POST['author']) && $_POST['author'] != 'all' ) {
+            $args['author'] = $_POST['author'];
+        }
         if (!empty($_POST['tag_list']) || !empty($_POST['categories_list'])) {
             $args['tax_query'] = array();
             if (!empty($_POST['tag_list'])) {
@@ -1489,13 +1500,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Select Author', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">
+                    <select id="pfwst_author" class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">
                         <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                         <?php
                         $blogusers = get_users( [ 'role__not_in' => [ 'subscriber' ] ] );
                         if( !empty($blogusers)) {
                             foreach ($blogusers as $user) {
-                                echo "\n\t<option value='" . esc_attr($user->ID) . "'>$user->display_name</option>";
+                                $user_string = sprintf(
+                                        esc_html__( '%1$s (#%2$s   %3$s)', 'woocommerce' ),
+                                        $user->display_name,
+                                        absint( $user->ID ),
+                                        $user->user_email
+                                );
+                                echo "\n\t<option value='" . esc_attr($user->ID) . "'>".htmlspecialchars( wp_kses_post( $user_string ) )."</option>";
                             }
                         }
                         ?>
