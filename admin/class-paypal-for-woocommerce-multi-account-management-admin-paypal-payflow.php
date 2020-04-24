@@ -249,6 +249,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                                $product = wc_get_product($product_id);
                                 // Categories
                                 $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                                 $woo_product_categories = angelleye_get_product_cat($woo_product_categories);
@@ -278,12 +279,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                         continue;
                                     }
                                 }
+                                
                                 $post_author_id = get_post_field( 'post_author', $product_id );
                                 $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
                                 if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all') {
                                     if($post_author_id != $woocommerce_paypal_express_api_user) {
                                          unset($result[$key]);
                                         unset($passed_rules);
+                                        continue;
+                                    }
+                                }
+                                
+                                $product_shipping_class = $product->get_shipping_class_id();
+                                $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
+                                if (!empty($shipping_class) && $shipping_class != 'all' ) {
+                                    if($product_shipping_class != $shipping_class) {
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
                                 }

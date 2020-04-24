@@ -188,6 +188,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                                 continue;
                             }
                         }
+                        $product_shipping_class = $product->get_shipping_class_id();
+                        $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
+                        if (!empty($shipping_class) && $shipping_class != 'all' ) {
+                            if($product_shipping_class != $shipping_class) {
+                                $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                continue;
+                            }
+                        }
                     }
                 }
                 unset($passed_rules);

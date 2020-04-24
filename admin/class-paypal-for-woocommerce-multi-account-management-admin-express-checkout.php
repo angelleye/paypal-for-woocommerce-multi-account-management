@@ -303,6 +303,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
                             
+                            $product_shipping_class = $product->get_shipping_class_id();
+                            $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
+                            if (!empty($shipping_class) && $shipping_class != 'all' ) {
+                                if($product_shipping_class != $shipping_class) {
+                                    $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                    continue;
+                                }
+                            }
+                            
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
 
                             if (!empty($product_ids)) {
@@ -417,6 +426,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
                                 if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all') {
                                     if($post_author_id != $woocommerce_paypal_express_api_user) {
+                                        $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                        continue;
+                                    }
+                                }
+                                
+                                $product_shipping_class = $product->get_shipping_class_id();
+                                $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
+                                if (!empty($shipping_class) && $shipping_class != 'all' ) {
+                                    if($product_shipping_class != $shipping_class) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
