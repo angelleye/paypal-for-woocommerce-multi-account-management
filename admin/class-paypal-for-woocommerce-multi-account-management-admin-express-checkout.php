@@ -561,7 +561,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if ( ( wc_tax_enabled() && wc_prices_include_tax() )) {
             $this->taxamt = 0;
         } else {
-            $this->taxamt = round(WC()->cart->get_total_tax(), $this->decimals);
+            //WC()->cart->get_total_tax()
+            $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
         }
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
@@ -1157,7 +1158,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 switch ($type) {
                     case "tax":
                         if(!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
-                            $partition_array[$product_id] = $partition_array[$loop];
+                            $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['tax'], $this->decimals);
                             unset($partition_array[$loop]);
                             $loop = $loop + 1;
                         }
