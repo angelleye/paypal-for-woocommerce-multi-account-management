@@ -29,6 +29,11 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 2.2.0 - 05.04.2020 =
+* Feature - Create new rules based on WooCommerce Shipping Classes. ([PFWMA-114](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/48))
+* Fix - VAT Calculation issue resolved. ([PFWMA-112](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/47))
+* Tweak - Commission Calculation Adjustments. ([PFWMA-112](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/49))
+
 = 2.1.4 - 04.07.2020 =
 * Verification - WooCommerce 4.0.1 and WordPress 5.4 compatibility.
 
