@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 5.0
 Tested up to: 5.4.0
-Stable tag: 2.1.4
+Stable tag: 2.2.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
