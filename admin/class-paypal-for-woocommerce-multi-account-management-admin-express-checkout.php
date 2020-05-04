@@ -255,7 +255,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             } else {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
-                            if ($product->needs_shipping()) {
+                            if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, $order_id, $product_id)) {
                                 $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                 $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
                             } else {
@@ -356,7 +356,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
-                                if ($product->needs_shipping()) {
+                                if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, '', $product_id)) {
                                     $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                     $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
                                 } else {
@@ -1438,5 +1438,63 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             remove_action( 'woocommerce_order_partially_refunded', array( 'WC_Emails', 'send_transactional_email' ) );
         }
+    }
+    
+    public function own_angelleye_multi_account_need_shipping($bool, $order_id = '', $current_product_id = '') {
+        $is_required = 0;
+        $is_not_required = 0;
+        if( !empty($order_id) ) {
+            $order = wc_get_order($order_id);
+            foreach ($order->get_items() as $cart_item_key => $values) {
+                $line_item = $values->get_data();
+                $product = $order->get_product_from_item($values);
+                $product_exists = is_object( $product );
+                if($product_exists == false) {
+                    $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
+                    if(!empty($product_id)) {
+                        $product = wc_get_product($product_id);
+                    } else {
+                        continue;
+                    }
+                } 
+                $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+                $_no_shipping_required = get_post_meta($product_id, '_no_shipping_required', true);
+                if( $_no_shipping_required == 'yes' ) {
+                    $is_not_required = $is_not_required + 1;
+                } elseif($product->needs_shipping()) {
+                    $is_required = $is_required + 1;
+                } else {
+                    $is_not_required = $is_not_required + 1;
+                }
+            }
+        } else {
+            if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+                foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+                    $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+                    $product = wc_get_product($product_id);
+                    $_no_shipping_required = get_post_meta($product_id, '_no_shipping_required', true);
+                    if( $_no_shipping_required == 'yes' ) {
+                        $is_not_required = $is_not_required + 1;
+                    } elseif($product->needs_shipping()) {
+                        $is_required = $is_required + 1;
+                    } else {
+                        $is_not_required = $is_not_required + 1;
+                    }
+                }
+            }
+        }
+        
+        if( !empty($current_product_id) ) {
+            $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+            $_no_shipping_required = get_post_meta($current_product_id, '_no_shipping_required', true);
+            if( $_no_shipping_required == 'yes' ) {
+                if($is_required > 0) {
+                    return false;
+                }
+            }
+        }
+        
+        return $bool;
+        
     }
 }
