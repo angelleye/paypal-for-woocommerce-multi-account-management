@@ -139,6 +139,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                             }
                         }
                     }
+                    
                     foreach ($order->get_items() as $cart_item_key => $values) {
                         $product = $order->get_product_from_item($values);
                         $product_exists = is_object( $product );
@@ -175,6 +176,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                             if (!array_intersect((array) $product_id, $product_ids)) {
                                 unset($result[$key]);
                                 unset($passed_rules);
+                                continue;
+                            }
+                        }
+                        $post_author_id = get_post_field( 'post_author', $product_id );
+                        $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
+                        if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all' ) {
+                            if($post_author_id != $woocommerce_paypal_express_api_user) {
+                                unset($result[$key]);
+                                unset($passed_rules);
+                                continue;
+                            }
+                        }
+                        $product_shipping_class = $product->get_shipping_class_id();
+                        $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
+                        if (!empty($shipping_class) && $shipping_class != 'all' ) {
+                            if($product_shipping_class != $shipping_class) {
+                                $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                 continue;
                             }
                         }

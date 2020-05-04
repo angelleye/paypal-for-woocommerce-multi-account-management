@@ -70,7 +70,10 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
     }
 }).change();
 
-
+jQuery('#pfwst_author, #pfwst_shipping_class').change(function () {
+    jQuery('#product_list').empty();
+    jQuery('#product_tags').change();
+});
 jQuery('#product_categories').change(function () {
     jQuery('#product_tags').empty();
     jQuery('#product_list').empty();
@@ -80,6 +83,8 @@ jQuery('#product_categories').change(function () {
         url: ajaxurl,
         data: {
             categories_list: jQuery('select#product_categories').val(),
+            author : jQuery('select#pfwst_author').val(),
+            shipping_class : jQuery('select#pfwst_shipping_class').val(),
             action: 'angelleye_get_product_tag_by_product_cat'
         },
         dataType: 'json',
@@ -117,6 +122,8 @@ jQuery('#product_tags').change(function () {
         data: {
             tag_list: jQuery('select#product_tags').val(),
             categories_list: jQuery('select#product_categories').val(),
+            shipping_class : jQuery('select#pfwst_shipping_class').val(),
+            author : jQuery('select#pfwst_author').val(),
             action: 'angelleye_get_product_by_product_tags'
         },
         dataType: 'json',

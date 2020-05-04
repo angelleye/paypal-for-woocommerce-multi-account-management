@@ -23,12 +23,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $condition_sign = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_sign', true);
                 $condition_value = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_value', true);
                 $condition_role = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user_role', true);
-
+                $condition_user = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user', true);
+                
                 $product_ids = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_product_ids', true);
+                
                 $role = '';
                 if ($condition_role) {
                     if ($condition_role != 'all') {
                         $role = '<p class="description">' . sprintf('When role is %s', $condition_role) . '</p>';
+                    }
+                }
+                $user_info = '';
+                if ($condition_user) {
+                    if ($condition_user != 'all') {
+                        $user_info = '<p class="description">' . sprintf('When User ID is %s', $condition_user) . '</p>';
                     }
                 }
                 $other_condition = '';
@@ -83,9 +91,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     $product_text .= "</div>";
                 }
                 if ($currency_code != 'all') {
-                    return "{$field} {$sign} " . wc_price($condition_value, array('currency' => $currency_code)) . " {$role} {$other_condition} {$product_text}";
+                    return "{$field} {$sign} " . wc_price($condition_value, array('currency' => $currency_code)) . " {$role}  {$user_info} {$other_condition} {$product_text}";
                 } else {
-                    return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$other_condition} {$product_text}";
+                    return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$user_info} {$other_condition} {$product_text}";
                 }
                 
             case 'status':
