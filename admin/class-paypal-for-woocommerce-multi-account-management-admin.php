@@ -422,7 +422,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $shipping_classes_array = ! is_wp_error( $classes ) ? $classes : array();
         if ($shipping_classes_array) {
             $shipping_class = !empty($shipping_class) ? $shipping_class : '';
-            $option_fifteen .= '<option value="0">All Shipping Class</option>';
+            $option_fifteen .= '<option value="all">All Shipping Class</option>';
             foreach ($shipping_classes_array as $classes_key => $classes_name) {
                 $option_fifteen .= '<option value="' . esc_attr($classes_name->term_id) . '"' . wc_selected($classes_name->term_id, $shipping_class) . '>' . esc_html($classes_name->name) . '</option>';
             }

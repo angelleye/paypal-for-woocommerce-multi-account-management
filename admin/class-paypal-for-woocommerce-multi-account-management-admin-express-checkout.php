@@ -52,6 +52,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $is_commission_enable;
     public $global_ec_site_owner_commission;
     public $global_ec_site_owner_commission_label;
+    public $final_payment_request_data;
+    public $final_paypal_request;
 
     /**
      * Initialize the class and set its properties.
@@ -589,6 +591,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->send_items = $gateways->send_items;
         $this->map_item_with_account = apply_filters('angelleye_ec_parallel_parameter', $this->map_item_with_account);
         $new_payments = array();
+        $this->final_payment_request_data = array();
         $default_new_payments_line_item = array();
         if (!empty($request['Payments'])) {
             $old_payments = $request['Payments'];
@@ -739,12 +742,37 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
                             'paymentrequestid' => $cart_item_key . '-' . rand()
                         );
+                        if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt']) ) {
+                            $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
+                        } else {
+                            $this->final_payment_request_data[$sellerpaypalaccountid] = $Payment;
+                        }
                         if( $this->send_items && $is_mismatch == false) {
                             $Payment['order_items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total, $order);
                             $Payment['shippingamt'] = $shippingamt;
                             $Payment['taxamt'] = $taxamt;
+                            if( empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
+                            }
+                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'], $PaymentOrderItems);
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] + $Payment['itemamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $Payment['itemamt'];
+                            }
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] + $Payment['shippingamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] = $Payment['shippingamt'];
+                            }
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['taxamt']) ) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] + $Payment['taxamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] = $Payment['taxamt'];
+                            }
                         }
+                        
                         array_push($new_payments, $Payment);
                         $loop = $loop + 1;
                     } else {
@@ -888,12 +916,38 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
                             'paymentrequestid' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '' . $cart_item_key
                         );
+                        if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt']) ) {
+                            $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
+                        } else {
+                            $this->final_payment_request_data[$sellerpaypalaccountid] = $Payment;
+                        }
                         if( $this->send_items && $is_mismatch == false) {
                             $Payment['order_items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
                             $Payment['shippingamt'] = $shippingamt;
                             $Payment['taxamt'] = $taxamt;
+                            if( empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
+                            }
+                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'], $PaymentOrderItems);
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] + $Payment['itemamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $Payment['itemamt'];
+                            }
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] + $Payment['shippingamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['shippingamt'] = $Payment['shippingamt'];
+                            }
+                            if( !empty($this->final_payment_request_data[$sellerpaypalaccountid]['taxamt']) ) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] + $Payment['taxamt'];
+                            } else {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] = $Payment['taxamt'];
+                            }
+                        
                         }
+                        
                         array_push($new_payments, $Payment);
                         $loop = $loop + 1;
                     } else {
@@ -942,6 +996,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $map_item_with_account_array['multi_account_id'] = 'default';
                 $default_pal_id = $this->angelleye_get_email_address($map_item_with_account_array, $gateways);
             }
+            
             $new_default_payment = array(
                 'amt' => AngellEYE_Gateway_Paypal::number_format($default_final_total),
                 'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
@@ -961,17 +1016,72 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 'sellerpaypalaccountid' => $default_pal_id,
                 'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true)
             );
+            
+            if( !empty($this->final_payment_request_data[$default_pal_id]['amt']) ) {
+                $this->final_payment_request_data[$default_pal_id]['amt'] = $this->final_payment_request_data[$default_pal_id]['amt'] + $new_default_payment['amt'];
+            } else {
+                $this->final_payment_request_data[$default_pal_id] = $new_default_payment;
+            }
+            
+            
+            
             $this->final_grand_total = $this->final_grand_total + $default_final_total;
             if( $this->send_items ) {
                 if( !empty($default_new_payments_line_item) ) {
                     $new_default_payment['order_items'] = $default_new_payments_line_item;
                     $new_default_payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($default_item_total);
-                    $new_default_payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($default_shippingamt);
+                    $new_default_payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($default_shippingamt); 
                     $new_default_payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($default_taxamt);
+                    if( empty($this->final_payment_request_data[$default_pal_id]['order_items'])) {
+                        $this->final_payment_request_data[$default_pal_id]['order_items'] = array();
+                    }
+                    array_push($this->final_payment_request_data[$default_pal_id]['order_items'], $default_new_payments_line_item);
+                    if( !empty($this->final_payment_request_data[$default_pal_id]['itemamt'])) {
+                        $this->final_payment_request_data[$default_pal_id]['itemamt'] = $this->final_payment_request_data[$default_pal_id]['itemamt'] + $new_default_payment['itemamt'];
+                    } else {
+                        $this->final_payment_request_data[$default_pal_id]['itemamt'] = $new_default_payment['itemamt'];
+                    }
+                    if( !empty($this->final_payment_request_data[$default_pal_id]['shippingamt'])) {
+                        $this->final_payment_request_data[$default_pal_id]['shippingamt'] = $this->final_payment_request_data[$default_pal_id]['shippingamt'] + $new_default_payment['shippingamt'];
+                    } else {
+                        $this->final_payment_request_data[$default_pal_id]['shippingamt'] = $new_default_payment['shippingamt'];
+                    }
+                    if( !empty($this->final_payment_request_data[$default_pal_id]['taxamt']) ) {
+                        $this->final_payment_request_data[$default_pal_id]['taxamt'] = $this->final_payment_request_data[$default_pal_id]['taxamt'] + $new_default_payment['taxamt'];
+                    } else {
+                        $this->final_payment_request_data[$default_pal_id]['taxamt'] = $new_default_payment['taxamt'];
+                    }
                 }
+                
             }
             array_push($new_payments, $new_default_payment);
         } 
+        
+        if( !empty($this->final_payment_request_data)) {
+            $this->final_paypal_request = array();
+            $index = 0;
+            foreach ($this->final_payment_request_data as $email_id => $vendor_payment) {
+                if( !empty($vendor_payment['order_items'])) {
+                    $this->final_paypal_request[$index] = $vendor_payment;
+                    unset($this->final_paypal_request[$index]['order_items']);
+                    $first_inner_index = 0;
+                    foreach ($vendor_payment['order_items'] as $first_key => $first_order_item) {
+                        foreach ($first_order_item as $second_key => $second_order_item) {
+                            if( empty( $this->final_paypal_request[$index]['order_items'])) {
+                                $this->final_paypal_request[$index]['order_items'] = array();
+                            }
+                            $this->final_paypal_request[$index]['order_items'][$first_inner_index] = $second_order_item;
+                            $first_inner_index = $first_inner_index + 1;
+                        }
+                    }
+                } else {
+                    $this->final_paypal_request[$index] = $vendor_payment;
+                }
+                $index = $index + 1;
+            }
+            $new_payments = $this->final_paypal_request;
+        }
+        
         if ($this->final_grand_total != $this->final_order_grand_total) {
             $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
@@ -1526,7 +1636,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
         
         if( !empty($current_product_id) ) {
-            $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
             $_no_shipping_required = get_post_meta($current_product_id, '_no_shipping_required', true);
             if( $_no_shipping_required == 'yes' ) {
                 if($is_required > 0) {
@@ -1534,8 +1643,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
         }
-        
         return $bool;
-        
     }
 }
