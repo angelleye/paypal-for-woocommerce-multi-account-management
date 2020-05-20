@@ -147,7 +147,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -155,7 +155,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -163,7 +163,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -696,13 +696,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $Item = array(
                                     'name' => $line_item['name'],
                                     'desc' => $line_item['desc'],
-                                    'amt' => AngellEYE_Gateway_Paypal::number_format( ($item_total + $this->discount_array[$product_id] ) / $line_item['qty'], $order),
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty'], $order),
                                     'number' => $line_item['number'],
                                     'qty' => $line_item['qty']
                                 );
 
                                 array_push($PaymentOrderItems, $Item);
-                                
+
                                 $Item = array(
                                     'name' => 'Discount',
                                     'desc' => 'Discount Amount',
@@ -710,11 +710,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     'number' => '',
                                     'qty' => 1
                                 );
-                                
+
                                 array_push($PaymentOrderItems, $Item);
-                                
                             } else {
-                                
+
                                 $Item = array(
                                     'name' => $line_item['name'],
                                     'desc' => $line_item['desc'],
@@ -928,7 +927,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 );
 
                                 array_push($PaymentOrderItems, $Item);
-                                
                             } else {
 
                                 $Item = array(
@@ -1522,7 +1520,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             return false;
         } catch (Exception $ex) {
-            
+
         }
     }
 
