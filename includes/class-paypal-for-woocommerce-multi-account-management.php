@@ -189,6 +189,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('user_register', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
         $this->loader->add_action('profile_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
         $this->loader->add_action('wcv_pro_store_settings_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+        $this->loader->add_action('dokan_new_seller_created', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+        $this->loader->add_action('dokan_store_profile_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+         
     }
 
     /**
