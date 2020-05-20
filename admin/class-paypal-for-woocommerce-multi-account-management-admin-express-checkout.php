@@ -147,7 +147,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -155,7 +155,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -163,7 +163,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -1150,8 +1150,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
                 if (isset($new_payments[0]['amt']) && $new_payments[0]['amt'] > 1) {
                     $new_payments[0]['amt'] = $new_payments[0]['amt'] + $Difference;
-                    unset($new_payments[0]['itemamt']);
-                    unset($new_payments[0]['order_items']);
+                    $item_names = array();
+                    if (!empty($new_payments[0]['order_items'])) {
+                        $first_line_item = $new_payments[0]['order_items'];
+                    }
+                    if (!empty($first_line_item)) {
+                        unset($new_payments[0]['order_items']);
+                        $new_payments[0]['order_items'] = array();
+                        $new_payments[0]['itemamt'] = $new_payments[0]['amt'];
+                        foreach ($first_line_item as $key => $value) {
+                            $item_names[] = $value['name'] . ' x ' . $value['qty'];
+                        }
+                        $item_details = implode(', ', $item_names);
+                        $item_details = html_entity_decode(wc_trim_string($item_details ? wp_strip_all_tags($item_details) : __('Item', 'paypal-for-woocommerce-multi-account-management'), 127), ENT_NOQUOTES, 'UTF-8');
+                        $new_payments[0]['order_items'][0] = array(
+                            'name' => $item_details,
+                            'desc' => '',
+                            'amt' => $new_payments[0]['amt'],
+                            'qty' => 1
+                        );
+                    }
                     unset($new_payments[0]['shippingamt']);
                     unset($new_payments[0]['taxamt']);
                 }
@@ -1520,7 +1538,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             return false;
         } catch (Exception $ex) {
-
+            
         }
     }
 
