@@ -45,6 +45,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     protected $version;
     protected $plugin_screen_hook_suffix = null;
     public $plugin_admin;
+    public $message;
 
     /**
      * Define the core functionality of the plugin.
@@ -163,7 +164,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('angelleye_set_multi_account', $plugin_admin, 'angelleye_set_multi_account', 10, 2);
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
-        
+
 
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
@@ -181,8 +182,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         //$this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
         $this->loader->add_action('woocommerce_create_refund', $express_checkout, 'own_woocommerce_create_refund', 10, 2);
         $this->loader->add_filter('angelleye_multi_account_need_shipping', $express_checkout, 'own_angelleye_multi_account_need_shipping', 10, 3);
- 
-
     }
 
     /**
@@ -263,9 +262,50 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             'title_li' => $title,
             'hide_empty' => $empty
         );
-
         $product_cats = get_categories($args);
-        $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
+        $this->display_plugin_admin_page_submenu();
+        echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
+        $this->plugin_admin->display_admin_notice();
+        if (empty($_GET['section'])) {
+             $this->plugin_admin->angelleye_multi_account_list();
+        } elseif (!empty($_GET['section']) && $_GET['section'] === 'add_edit_account') {
+            $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
+        } elseif (!empty($_GET['section']) && $_GET['section'] === 'settings') {
+            $this->plugin_admin->angelleye_multi_account_settings_fields();
+        }
+        
+        
+    }
+
+    public function display_plugin_admin_page_submenu() {
+        ?>
+        </form>
+        <div class="wrap">
+            <ul class="subsubsub">
+                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=')); ?>" class="<?php
+                    if (empty($_GET['section'])) {
+                        echo 'current';
+                    }
+                    ?>"><?php echo __('All PayPal Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> |</li>
+                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="<?php
+                    if ($_GET['section'] == 'add_edit_account') {
+                        echo 'current';
+                    }
+                    ?>"><?php echo __('Add Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
+                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=settings')); ?>" class="<?php
+                    if ($_GET['section'] == 'settings') {
+                        echo 'current';
+                    }
+                    ?>"><?php echo __('Settings', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>
+            </ul>
+            <br class="clear">
+            <?php
+            if (!empty($this->message)) {
+                echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
+            }
+            ?>
+        </div>
+        <?php
     }
 
     public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {

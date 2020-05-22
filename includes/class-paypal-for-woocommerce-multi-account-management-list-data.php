@@ -116,7 +116,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     }
 
     function column_title($item) {
-        $edit_params = array('page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
+        $edit_params = array('section' => 'add_edit_account', 'page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
         $delete_params = array('page' => $_REQUEST['page'], 'action' => 'delete', 'ID' => $item['ID']);
         $actions = array(
             'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params))),
@@ -169,11 +169,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 }
                 $redirect_url = remove_query_arg(array('action', 'ID'));
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
+                $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
                 exit();
             }
             if (!empty($_GET['action']) && 'delete' == $_GET['action'] && !empty($_GET['ID'])) {
                 wp_delete_post($_GET['ID'], true);
                 $redirect_url = remove_query_arg(array('action', 'ID'));
+                $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
                 exit();
             }
