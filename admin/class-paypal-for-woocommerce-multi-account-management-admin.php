@@ -531,6 +531,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (!empty($_POST['global_commission_microprocessing_save'])) {
             update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));
             update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
+            update_option('global_automatic_rule_creation_enable', wc_clean($_POST['global_automatic_rule_creation_enable']));
+            update_option('global_automatic_rule_creation_testmode', wc_clean($_POST['global_automatic_rule_creation_testmode']));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
         }
         if (!empty($this->message)) {
@@ -538,6 +540,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', '');
         $global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
+        $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
+        $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
         ?>
         <div class="angelleye_multi_account_paypal_express_field">
             <form method="post" id="mainform" action="" enctype="multipart/form-data">
@@ -562,28 +566,30 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </fieldset>
                         </td>
                     </tr>
+                    <?php if (function_exists('dokan') || class_exists('WCV_Vendors')) { ?>
                     <tr class="angelleye_multi_account_paypal_express_field" valign="top">
                         <th scope="row" class="titledesc">
-                            <label for="global_automatic_rule_creation_enable">Enable / Disable</label>
+                            <label for="global_automatic_rule_creation_enable"><?php echo __('Enable / Disable', ''); ?></label>
                         </th>
                         <td class="forminp">
                             <fieldset>
                                 <label for="global_automatic_rule_creation_enable">
-                                    <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox"><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
+                                    <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox" <?php echo ($global_automatic_rule_creation_enable == 'on') ? 'checked' : '' ?> ><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
                             </fieldset>
                         </td>
                     </tr>
                     <tr class="angelleye_multi_account_paypal_express_field" valign="top">
                         <th scope="row" class="titledesc">
-                            <label for="global_automatic_rule_creation_testmode">PayPal Sandbox</label>
+                            <label for="global_automatic_rule_creation_testmode"><?php echo __('PayPal Sandbox', ''); ?></label>
                         </th>
                         <td class="forminp">
                             <fieldset>
                                 <label for="global_automatic_rule_creation_testmode">
-                                    <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox"><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', '') ; ?></label><br>
+                                    <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox" <?php echo ($global_automatic_rule_creation_testmode == 'on') ? 'checked' : '' ?> ><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', '') ; ?></label><br>
                             </fieldset>
                         </td>
                     </tr>
+                    <?php } ?>
                     <tr>
                         <th scope="row" class="titledesc">
                         </th>
