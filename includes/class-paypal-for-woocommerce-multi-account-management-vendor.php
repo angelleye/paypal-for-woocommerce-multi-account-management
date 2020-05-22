@@ -12,10 +12,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
 
     private $plugin_name;
     private $version;
+    public $testmode;
 
     public function __construct($plugin_name, $version) {
         $this->plugin_name = $plugin_name;
         $this->version = $version;
+        $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
+        if($global_automatic_rule_creation_testmode == 'on') {
+            $this->testmode = 'on';
+        } else {
+            $this->testmode = '';
+        }
     }
 
     public function angelleye_paypal_for_woocommerce_multi_account_rule_save_dokan($vendor_id) {
@@ -71,7 +78,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                     }
                     $microprocessing_key_array = array(
                         'woocommerce_paypal_express_enable' => 'on',
-                        'woocommerce_paypal_express_testmode' => 'on',
+                        'woocommerce_paypal_express_testmode' => $this->testmode,
                         'woocommerce_paypal_express_account_name' => $user_string,
                         'woocommerce_paypal_express_sandbox_email' => $email,
                         'woocommerce_paypal_express_sandbox_merchant_id' => '',
@@ -161,7 +168,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                     }
                     $microprocessing_key_array = array(
                         'woocommerce_paypal_express_enable' => 'on',
-                        'woocommerce_paypal_express_testmode' => 'on',
+                        'woocommerce_paypal_express_testmode' => $this->testmode,
                         'woocommerce_paypal_express_account_name' => $user_string,
                         'woocommerce_paypal_express_sandbox_email' => $email,
                         'woocommerce_paypal_express_sandbox_merchant_id' => '',

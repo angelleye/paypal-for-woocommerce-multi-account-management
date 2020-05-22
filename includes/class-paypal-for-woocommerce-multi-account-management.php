@@ -184,14 +184,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_create_refund', $express_checkout, 'own_woocommerce_create_refund', 10, 2);
         $this->loader->add_filter('angelleye_multi_account_need_shipping', $express_checkout, 'own_angelleye_multi_account_need_shipping', 10, 3);
         
-        $vendor = new Paypal_For_Woocommerce_Multi_Account_Management_Vendor($this->get_plugin_name(), $this->get_version());
-        $this->loader->add_action('personal_options_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('edit_user_profile_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('user_register', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('profile_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('wcv_pro_store_settings_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('dokan_new_seller_created', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
-        $this->loader->add_action('dokan_store_profile_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+        $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
+        
+        if( $global_automatic_rule_creation_enable == 'on' ) {
+            $vendor = new Paypal_For_Woocommerce_Multi_Account_Management_Vendor($this->get_plugin_name(), $this->get_version());
+            $this->loader->add_action('personal_options_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('edit_user_profile_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('user_register', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('profile_update', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('wcv_pro_store_settings_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('dokan_new_seller_created', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('dokan_store_profile_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+        }
     }
 
     /**
