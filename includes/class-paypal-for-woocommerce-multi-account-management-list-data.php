@@ -36,7 +36,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $user_info = '';
                 if ($condition_user) {
                     if ($condition_user != 'all') {
-                        $user_info = '<p class="description">' . sprintf('When User ID is %s', $condition_user) . '</p>';
+                        $user = get_user_by( 'id', $condition_user );
+                        $user_string = sprintf(
+                                esc_html__( '%1$s (#%2$s   %3$s)', 'woocommerce' ),
+                                $user->display_name,
+                                absint( $user->ID ),
+                                $user->user_email
+                        );
+                        $user_info = '<p class="description">' . sprintf('When Author is %s', $user_string) . '</p>';
                     }
                 }
                 $other_condition = '';
@@ -76,7 +83,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
 
                 add_thickbox();
                 $product_text = '';
-                if (!empty($product_ids)) {
+                if (!empty($product_ids) && is_array($product_ids)) {
                     $products = $product_ids;
                     $product_text .= '<a href="#TB_inline?width=600&height=550&inlineId=modal-window-' . esc_attr($item['ID']) . '" class="thickbox" title="Products added in Trigger Condition">Products</a>';
                     $product_text .= '<div id="modal-window-' . esc_attr($item['ID']) . '" style="display:none;">';
