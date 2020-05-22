@@ -567,28 +567,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         </td>
                     </tr>
                     <?php if (function_exists('dokan') || class_exists('WCV_Vendors')) { ?>
-                    <tr class="angelleye_multi_account_paypal_express_field" valign="top">
-                        <th scope="row" class="titledesc">
-                            <label for="global_automatic_rule_creation_enable"><?php echo __('Enable / Disable', ''); ?></label>
-                        </th>
-                        <td class="forminp">
-                            <fieldset>
-                                <label for="global_automatic_rule_creation_enable">
-                                    <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox" <?php echo ($global_automatic_rule_creation_enable == 'on') ? 'checked' : '' ?> ><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
-                            </fieldset>
-                        </td>
-                    </tr>
-                    <tr class="angelleye_multi_account_paypal_express_field" valign="top">
-                        <th scope="row" class="titledesc">
-                            <label for="global_automatic_rule_creation_testmode"><?php echo __('PayPal Sandbox', ''); ?></label>
-                        </th>
-                        <td class="forminp">
-                            <fieldset>
-                                <label for="global_automatic_rule_creation_testmode">
-                                    <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox" <?php echo ($global_automatic_rule_creation_testmode == 'on') ? 'checked' : '' ?> ><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', '') ; ?></label><br>
-                            </fieldset>
-                        </td>
-                    </tr>
+                        <tr class="angelleye_multi_account_paypal_express_field" valign="top">
+                            <th scope="row" class="titledesc">
+                                <label for="global_automatic_rule_creation_enable"><?php echo __('Enable / Disable', ''); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="global_automatic_rule_creation_enable">
+                                        <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox" <?php echo ($global_automatic_rule_creation_enable == 'on') ? 'checked' : '' ?> ><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr class="angelleye_multi_account_paypal_express_field" valign="top">
+                            <th scope="row" class="titledesc">
+                                <label for="global_automatic_rule_creation_testmode"><?php echo __('PayPal Sandbox', ''); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="global_automatic_rule_creation_testmode">
+                                        <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox" <?php echo ($global_automatic_rule_creation_testmode == 'on') ? 'checked' : '' ?> ><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', ''); ?></label><br>
+                                </fieldset>
+                            </td>
+                        </tr>
                     <?php } ?>
                     <tr>
                         <th scope="row" class="titledesc">
@@ -694,7 +694,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         <br>
         <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
         <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action">Add New</a>
+
         <?php
+        $active_count = $this->angelleye_multi_account_get_count_active_vendor();
+        $deactive_count =  $this->angelleye_multi_account_get_count_deactive_vendor();
         if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
             $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
             $table->prepare_items();
@@ -2127,6 +2130,57 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
             }
         }
+    }
+
+    public function angelleye_multi_account_get_count_active_vendor() {
+        $args = array(
+            'post_type' => 'microprocessing',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'vendor_id',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_enable',
+                    'value' => 'on',
+                    'compare' => 'LIKE'
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            return $query->found_posts;
+        }
+        return false;
+    }
+
+    public function angelleye_multi_account_get_count_deactive_vendor() {
+        $args = array(
+            'post_type' => 'microprocessing',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'vendor_id',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_enable',
+                    'value' => '',
+                    'compare' => '='
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            return $query->found_posts;
+        }
+        return false;
     }
 
 }
