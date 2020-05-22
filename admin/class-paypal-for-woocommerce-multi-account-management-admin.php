@@ -544,7 +544,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <table class="form-table">
                     <tr class="angelleye_multi_account_paypal_express_field">
                         <th scope="row" class="titledesc">
-                            <label for="woocommerce_paypal_express_api_signature_microprocessing" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            <label for="global_ec_site_owner_commission" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                         </th>
                         <td class="forminp">
                             <fieldset>
@@ -554,11 +554,33 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </tr>
                     <tr class="angelleye_multi_account_paypal_express_field">
                         <th scope="row" class="titledesc">
-                            <label for="woocommerce_paypal_express_api_signature_microprocessing" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            <label for="global_ec_site_owner_commission_label" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                         </th>
                         <td class="forminp">
                             <fieldset>
                                 <input type="text" class="input-text regular-input commission" name="global_ec_site_owner_commission_label" placeholder="Commission" value="<?php echo!empty($global_ec_site_owner_commission_label) ? $global_ec_site_owner_commission_label : ''; ?>">
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr class="angelleye_multi_account_paypal_express_field" valign="top">
+                        <th scope="row" class="titledesc">
+                            <label for="global_automatic_rule_creation_enable">Enable / Disable</label>
+                        </th>
+                        <td class="forminp">
+                            <fieldset>
+                                <label for="global_automatic_rule_creation_enable">
+                                    <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox"><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr class="angelleye_multi_account_paypal_express_field" valign="top">
+                        <th scope="row" class="titledesc">
+                            <label for="global_automatic_rule_creation_testmode">PayPal Sandbox</label>
+                        </th>
+                        <td class="forminp">
+                            <fieldset>
+                                <label for="global_automatic_rule_creation_testmode">
+                                    <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox"><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', '') ; ?></label><br>
                             </fieldset>
                         </td>
                     </tr>
@@ -1068,7 +1090,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <a href="?page=wc-settings&tab=multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
     }
-    
+
     public function display_admin_notice() {
         if (!empty($this->message)) {
             echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
