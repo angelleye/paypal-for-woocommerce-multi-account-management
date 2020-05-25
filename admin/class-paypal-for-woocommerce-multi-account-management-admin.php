@@ -692,10 +692,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_multi_account_list() {
         $active_count = $this->angelleye_multi_account_get_count_active_vendor();
         $deactive_count =  $this->angelleye_multi_account_get_count_deactive_vendor();
+        $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
+        $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', 
             array(
-                'disable_all_vendor_rules_alert_message' => sprintf( __('This will disable %s auto generated rules, Would you like to continue?', ''), $active_count),
-                'enable_all_vendor_rules_alert_message' => sprintf( __('This will enable %s auto generated rules, Would you like to continue?', ''), $deactive_count)
+                'disable_all_vendor_rules_alert_message' => sprintf( __('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
+                'enable_all_vendor_rules_alert_message' => sprintf( __('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text)
             )
         );
         ?>
@@ -2265,7 +2267,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_pfwma_display_notice() {
         $pfwma_processed = (isset($_GET['pfwma_processed']) ) ? $_GET['pfwma_processed'] : FALSE;
         if($pfwma_processed) {
-            $this->message =  sprintf( __('Action completed; %s records processed. ', 'paypal-for-woocommerce'), $pfwma_processed);
+            $this->message =  __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf( _n( '%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management' ), $pfwma_processed ) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
         }
     }
 
