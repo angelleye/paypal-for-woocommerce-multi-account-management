@@ -181,3 +181,51 @@ jQuery(document).off('click', '#angelleye-updater-notice .notice-dismiss').on('c
         });
     } 
 });
+jQuery('.disable_all_vendor_rules').on('click', function (event) {
+        var r = confirm(pfwma_param.disable_all_vendor_rules_alert_message);
+        if (r == true) {
+            jQuery(".disable_all_vendor_rules").block({message:null,overlayCSS:{background:"#fff",opacity:.6}});
+            var data = {
+                'action': 'pfwma_disable_all_vendor_rules'
+            };
+            jQuery.post(ajaxurl, data, function (response) {
+                if ('failed' !== response)
+                {
+                    var redirectUrl = response;
+                    top.location.replace(redirectUrl);
+                    return true;
+                } else
+                {
+                    alert('Error updating records.');
+                    return false;
+                }
+            });
+        } else {
+            event.preventDefault();
+            return r;
+        }
+});
+jQuery('.enable_all_vendor_rules').on('click', function (event) {
+        var r = confirm(pfwma_param.enable_all_vendor_rules_alert_message);
+        if (r == true) {
+            jQuery(".enable_all_vendor_rules").block({message:null,overlayCSS:{background:"#fff",opacity:.6}});
+            var data = {
+                'action': 'pfwma_enable_all_vendor_rules'
+            };
+            jQuery.post(ajaxurl, data, function (response) {
+                if ('failed' !== response)
+                {
+                    var redirectUrl = response;
+                    top.location.replace(redirectUrl);
+                    return true;
+                } else
+                {
+                    alert('Error updating records.');
+                    return false;
+                }
+            });
+        } else {
+            event.preventDefault();
+            return r;
+        }
+});

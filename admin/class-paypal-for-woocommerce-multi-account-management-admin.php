@@ -690,14 +690,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_list() {
+        $active_count = $this->angelleye_multi_account_get_count_active_vendor();
+        $deactive_count =  $this->angelleye_multi_account_get_count_deactive_vendor();
+        wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', 
+            array(
+                'disable_all_vendor_rules_alert_message' => sprintf( __('This will disable %s auto generated rules, Would you like to continue?', ''), $active_count),
+                'enable_all_vendor_rules_alert_message' => sprintf( __('This will enable %s auto generated rules, Would you like to continue?', ''), $deactive_count)
+            )
+        );
         ?>
         <br>
         <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
-        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action">Add New</a>
-
+        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', ''); ?></a>
         <?php
-        $active_count = $this->angelleye_multi_account_get_count_active_vendor();
-        $deactive_count =  $this->angelleye_multi_account_get_count_deactive_vendor();
+        if($active_count !== false) {
+            ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable all vendor rules', ''); ?></a> <?php
+        }
+        if($deactive_count !== false) {
+            ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable all vendor rules', ''); ?></a> <?php
+        }
         if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
             $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
             $table->prepare_items();
@@ -2181,6 +2192,81 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             return $query->found_posts;
         }
         return false;
+    }
+    
+    public function angelleye_multi_account_disable_active_vendor_account() {
+        $args = array(
+            'post_type' => 'microprocessing',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'vendor_id',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_enable',
+                    'value' => 'on',
+                    'compare' => 'LIKE'
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            foreach ($query->posts as $key => $post_id) {
+                update_post_meta($post_id, 'woocommerce_paypal_express_enable', '');
+            }
+        }
+        return $query->found_posts;
+    }
+    
+    public function angelleye_multi_account_enable_active_vendor_account() {
+        $args = array(
+            'post_type' => 'microprocessing',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'vendor_id',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_enable',
+                    'value' => '',
+                    'compare' => '='
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            foreach ($query->posts as $key => $post_id) {
+                update_post_meta($post_id, 'woocommerce_paypal_express_enable', 'on');
+            }
+        }
+        return $query->found_posts;
+    }
+    
+    public function angelleye_pfwma_disable_all_vendor_rules() {
+        $update_count = $this->angelleye_multi_account_disable_active_vendor_account();
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        echo $redirect_url;
+        exit();
+    }
+    
+    public function angelleye_pfwma_enable_all_vendor_rules() {
+        $update_count = $this->angelleye_multi_account_enable_active_vendor_account();
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        echo $redirect_url;
+        exit();
+    }
+    
+    public function angelleye_pfwma_display_notice() {
+        $pfwma_processed = (isset($_GET['pfwma_processed']) ) ? $_GET['pfwma_processed'] : FALSE;
+        if($pfwma_processed) {
+            $this->message =  sprintf( __('Action completed; %s records processed. ', 'paypal-for-woocommerce'), $pfwma_processed);
+        }
     }
 
 }
