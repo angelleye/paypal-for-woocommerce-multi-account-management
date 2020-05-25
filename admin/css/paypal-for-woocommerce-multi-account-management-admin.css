@@ -134,6 +134,10 @@ select.smart_forwarding_field {
     position: relative;
 }
 
+#angelleye_paypal_marketing_table table.fixed {
+    border-right: none;
+}
+
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
          max-width: 100% !important;

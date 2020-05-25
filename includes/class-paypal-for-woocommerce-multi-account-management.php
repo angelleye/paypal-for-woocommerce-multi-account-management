@@ -119,6 +119,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
         //require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . '/template/sidebar-process.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }
@@ -304,12 +305,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                     }
                     ?>"><?php echo __('All PayPal Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> |</li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="<?php
-                    if ($_GET['section'] == 'add_edit_account') {
+                    if (!empty($_GET['section']) && $_GET['section'] == 'add_edit_account') {
                         echo 'current';
                     }
                     ?>"><?php echo __('Add / Edit Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=settings')); ?>" class="<?php
-                    if ($_GET['section'] == 'settings') {
+                    if (!empty($_GET['section']) && $_GET['section'] == 'settings') {
                         echo 'current';
                     }
                     ?>"><?php echo __('Settings', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>
