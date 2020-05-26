@@ -198,6 +198,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('wp_ajax_pfwma_disable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_disable_all_vendor_rules');
         $this->loader->add_action('wp_ajax_pfwma_enable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_enable_all_vendor_rules');
         $this->loader->add_action( 'admin_init', $plugin_admin, 'angelleye_pfwma_display_notice');
+        $this->loader->add_action( 'admin_footer', $plugin_admin, 'angelleye_pfwma_add_deactivation_form');
+        $this->loader->add_action( 'wp_ajax_angelleye_send_deactivation_pfwma', $plugin_admin, 'angelleye_pfwma_plugin_deactivation_request');
         
     }
 
