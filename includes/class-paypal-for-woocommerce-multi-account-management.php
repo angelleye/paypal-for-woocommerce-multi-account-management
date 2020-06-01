@@ -193,6 +193,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $this->loader->add_action('wcv_pro_store_settings_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
             $this->loader->add_action('dokan_new_seller_created', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
             $this->loader->add_action('dokan_store_profile_saved', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            $this->loader->add_action('wcvendors_approve_vendor', $vendor, 'angelleye_paypal_for_woocommerce_multi_account_rule_save');
+            
         }
         $this->loader->add_action('wp_ajax_pfwma_disable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_disable_all_vendor_rules');
         $this->loader->add_action('wp_ajax_pfwma_enable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_enable_all_vendor_rules');
@@ -304,12 +306,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                     }
                     ?>"><?php echo __('All PayPal Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> |</li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="<?php
-                    if ($_GET['section'] == 'add_edit_account') {
+                    if (!empty($_GET['section']) && $_GET['section'] == 'add_edit_account') {
                         echo 'current';
                     }
                     ?>"><?php echo __('Add / Edit Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=settings')); ?>" class="<?php
-                    if ($_GET['section'] == 'settings') {
+                    if (!empty($_GET['section']) && $_GET['section'] == 'settings') {
                         echo 'current';
                     }
                     ?>"><?php echo __('Settings', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>

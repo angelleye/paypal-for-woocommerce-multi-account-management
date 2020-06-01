@@ -210,6 +210,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
 
     public function angelleye_paypal_for_woocommerce_multi_account_rule_save($vendor_id) {
         try {
+            if(is_object($vendor_id)) {
+                $vendor_id = $vendor_id->ID;
+            }
             $dokan_profile_settings = get_user_meta($vendor_id, 'dokan_profile_settings', true);
             if (!empty($dokan_profile_settings)) {
                 $this->angelleye_paypal_for_woocommerce_multi_account_rule_save_dokan($vendor_id);
