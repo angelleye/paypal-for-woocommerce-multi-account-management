@@ -59,6 +59,14 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
     }
 }
 
+jQuery('#angelleye_payment_load_balancer').change(function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery('.angelleye_multi_account_paypal_express_field').hide();
+    } else {
+       jQuery('.angelleye_multi_account_paypal_express_field').show();
+    }
+}).change();
+
 jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
     angelleye_multi_account_choose_payment_hide_show_field();
     if( jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_pro_payflow' ) {
@@ -69,6 +77,7 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
         angelleye_multi_account_paypal_hide_show_field();
     }
 }).change();
+
 
 jQuery('#pfwst_author, #pfwst_shipping_class').change(function () {
     jQuery('#product_list').empty();

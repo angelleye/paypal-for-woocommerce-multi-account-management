@@ -74,6 +74,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_display_multi_account_list() {
         $this->gateway_key = 'paypal_express';
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if (empty($_GET['ID'])) {
             return false;
         }
@@ -132,7 +133,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_email_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_email" value="%2$s" id="woocommerce_paypal_express_sandbox_email_microprocessing" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_paypal_express_sandbox_merchant_id':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_merchant_id" value="%2$s" id="woocommerce_paypal_express_sandbox_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        if(!empty($microprocessing_value[0])) {
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_merchant_id" value="%2$s" id="woocommerce_paypal_express_sandbox_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        }
                         break;
                     case 'woocommerce_paypal_express_sandbox_api_username':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_api_username_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_api_username" value="%2$s" id="woocommerce_paypal_express_sandbox_api_username_microprocessing" style="" placeholder="Optional" type="text"></fieldset></td></tr>', __('Sandbox API Username', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
@@ -147,7 +150,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_email_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_email" value="%2$s" id="woocommerce_paypal_express_email_microprocessing" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_paypal_express_merchant_id':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_merchant_id" value="%2$s" id="woocommerce_paypal_express_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        if(!empty($microprocessing_value[0])) {
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_merchant_id" value="%2$s" id="woocommerce_paypal_express_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        }
                         break;
                     case 'woocommerce_paypal_express_api_username':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_username_microprocessing">%1$s</label><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_username" value="%2$s" id="woocommerce_paypal_express_api_username_microprocessing" style="" placeholder="Optional" type="text"></fieldset></td></tr>', __('API Username', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
@@ -159,10 +164,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'ec_site_owner_commission':
-                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        if($angelleye_payment_load_balancer == '') {
+                            echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        }
                         break;
                     case 'ec_site_owner_commission_label':
-                        echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission_label">%1$s</label></th><td class="forminp"><fieldset><input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" value="%2$s" id="ec_site_owner_commission_label" placeholder="Commission"></fieldset></td></tr>', __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        if($angelleye_payment_load_balancer == '') {
+                            echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission_label">%1$s</label></th><td class="forminp"><fieldset><input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" value="%2$s" id="ec_site_owner_commission_label" placeholder="Commission"></fieldset></td></tr>', __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        }
                         break;
                     case 'woocommerce_paypal_express_api_user_role':
                         $selected_role = $microprocessing_value[0];
@@ -324,206 +333,210 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         }
-        $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
-        $option_two = 'transaction_amount';
-        $option_three_array = array('greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'));
-        $option_three = '';
-        foreach ($option_three_array as $key => $value) {
-            if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
-                $option_three .= '<option selected value=' . $key . '>' . $value . '</option>';
-            } else {
-                $option_three .= '<option value=' . $key . '>' . $value . '</option>';
-            }
-        }
-        $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
-        $option_five = '<p class="description">' . __('Select User Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_five .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
-        $option_five .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
-        $editable_roles = array_reverse(get_editable_roles());
-        foreach ($editable_roles as $role => $details) {
-            $name = translate_user_role($details['name']);
-            if ($selected_role == $role) {
-                $option_five .= "<option selected='selected' value='" . esc_attr($role) . "'>$name</option>";
-            } else {
-                $option_five .= "<option value='" . esc_attr($role) . "'>$name</option>";
-            }
-        }
-        $option_five .= '</select>';
-
-        $option_five_one = '<p class="description">' . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_five_one .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">';
-        $option_five_one .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
-
-        $users = get_users(['role__not_in' => ['subscriber']]);
-        if (!empty($users)) {
-            foreach ($users as $user) {
-                $user_string = sprintf(
-                        esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'), $user->display_name, absint($user->ID), $user->user_email
-                );
-                if ($selected_user == $user->ID) {
-                    $option_five_one .= "<option selected='selected' value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
+        if($angelleye_payment_load_balancer == '') {
+            $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
+            $option_two = 'transaction_amount';
+            $option_three_array = array('greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'));
+            $option_three = '';
+            foreach ($option_three_array as $key => $value) {
+                if (!empty($microprocessing['woocommerce_paypal_express_api_condition_sign'][0]) && $microprocessing['woocommerce_paypal_express_api_condition_sign'][0] == $key) {
+                    $option_three .= '<option selected value=' . $key . '>' . $value . '</option>';
                 } else {
-                    $option_five_one .= "<option value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
+                    $option_three .= '<option value=' . $key . '>' . $value . '</option>';
                 }
             }
-        }
-        $option_five_one .= '</select>';
-        $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_ten .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_priority">';
-        for ($x = 0; $x <= 100; $x++) {
-            if ($x == 0) {
-                $woocommerce_priority_text = $x . ' - Lowest';
-            } elseif ($x == 100) {
-                $woocommerce_priority_text = $x . ' - Highest';
-            } else {
-                $woocommerce_priority_text = $x;
-            }
-            if (isset($woocommerce_priority) && $woocommerce_priority == $x) {
-                $option_ten .= "<option selected='selected' value='" . $x . "'>$woocommerce_priority_text</option>";
-            } else {
-                $option_ten .= "<option value='" . $x . "'>$woocommerce_priority_text</option>";
-            }
-        }
-        $option_ten .= '</select>';
-        $product_ids = array();
-        if (isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])) {
-            $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
-        }
-        $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
-        $countries = WC()->countries->get_countries();
-        if (!isset($buyer_countries)) {
-            $buyer_countries = array();
-        }
-        if ($countries) {
-            foreach ($countries as $country_key => $country_full_name) {
-                $option_seven .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $buyer_countries) . '>' . esc_html($country_full_name) . '</option>';
-            }
-        }
-        $option_seven .= '</select>';
-        $option_fourteen = '<p class="description">' . __('Store country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
-        if ($countries) {
-            $store_countries = !empty($store_countries) ? $store_countries : '';
-            $option_fourteen .= '<option value="0">All countries</option>';
-            foreach ($countries as $country_key => $country_full_name) {
-                $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
-            }
-        }
-
-        $option_fourteen .= '</select>';
-
-        $option_fifteen = '<p class="description">' . __('Shipping Class', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_fifteen .= '<select id="pfwst_shipping_class" name="shipping_class" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All Shipping Class", "paypal-for-woocommerce-multi-account-management") . '">';
-        $classes = get_terms('product_shipping_class', array('hide_empty' => 1));
-        $shipping_classes_array = !is_wp_error($classes) ? $classes : array();
-        if ($shipping_classes_array) {
-            $shipping_class = !empty($shipping_class) ? $shipping_class : '';
-            $option_fifteen .= '<option value="0">All Shipping Class</option>';
-            foreach ($shipping_classes_array as $classes_key => $classes_name) {
-                $option_fifteen .= '<option value="' . esc_attr($classes_name->term_id) . '"' . wc_selected($classes_name->term_id, $shipping_class) . '>' . esc_html($classes_name->name) . '</option>';
-            }
-        }
-        $option_fifteen .= '</select>';
-
-        $option_eight = '<p class="description"> ' . apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
-        $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'paypal-for-woocommerce-multi-account-management') . '">';
-        $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), array(
-            'hide_empty' => 1,
-            'orderby' => 'name',
-        ));
-        if (!isset($product_categories)) {
-            $product_categories = array();
-        }
-        if ($categories) {
-            foreach ($categories as $cat) {
-                $category_lable = '';
-                $taxonomy_obj = get_taxonomy($cat->taxonomy);
-                if (isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
-                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
+            $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
+            $option_five = '<p class="description">' . __('Select User Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_five .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
+            $option_five .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
+            $editable_roles = array_reverse(get_editable_roles());
+            foreach ($editable_roles as $role => $details) {
+                $name = translate_user_role($details['name']);
+                if ($selected_role == $role) {
+                    $option_five .= "<option selected='selected' value='" . esc_attr($role) . "'>$name</option>";
                 } else {
-                    $category_lable = $cat->name;
-                }
-                $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($category_lable) . '</option>';
-            }
-        }
-        $option_eight .= '</select>';
-        $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'paypal-for-woocommerce-multi-account-management') . '">';
-        if (empty($product_categories)) {
-            $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
-            if ($tags) {
-                foreach ($tags as $tag) {
-                    $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+                    $option_five .= "<option value='" . esc_attr($role) . "'>$name</option>";
                 }
             }
-        } else {
-            if (!empty($product_tags)) {
-                foreach ($product_tags as $key => $value) {
-                    $term_object = get_term_by('id', $value, 'product_tag');
-                    if (!empty($term_object->name)) {
-                        $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+            $option_five .= '</select>';
+
+            $option_five_one = '<p class="description">' . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_five_one .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">';
+            $option_five_one .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
+
+            $users = get_users(['role__not_in' => ['subscriber']]);
+            if (!empty($users)) {
+                foreach ($users as $user) {
+                    $user_string = sprintf(
+                            esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'), $user->display_name, absint($user->ID), $user->user_email
+                    );
+                    if ($selected_user == $user->ID) {
+                        $option_five_one .= "<option selected='selected' value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
+                    } else {
+                        $option_five_one .= "<option value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
                     }
                 }
             }
-        }
-        if (!isset($product_categories)) {
-            $product_categories = array();
-        }
-        $option_nine .= '</select>';
-        $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
-        $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
-        $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
-        if (!empty($product_list)) {
-            foreach ($product_list as $product_list_id => $product_list_name) {
-                $product = wc_get_product($product_list_id);
-                if (is_object($product)) {
-                    $option_six .= '<option value="' . esc_attr($product_list_id) . '"' . wc_selected($product_list_id, $product_ids) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
-                }
-            }
-        }
-        $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        $option_thirteen .= '<select class="wc-enhanced-select currency_code" name="currency_code">';
-        $option_thirteen .= "<option value=''>All</option>";
-        $currency_code_options = get_woocommerce_currencies();
-        foreach ($currency_code_options as $code => $name) {
-            $currency_code_options[$code] = $name . ' (' . get_woocommerce_currency_symbol($code) . ')';
-        }
-        foreach ($currency_code_options as $currency_code_key => $currency_code_value) {
-            if (isset($currency_code) && $currency_code == $currency_code_key) {
-                $option_thirteen .= "<option selected='selected' value='" . $currency_code_key . "'>$currency_code_value</option>";
-            } else {
-                $option_thirteen .= "<option value='" . $currency_code_key . "'>$currency_code_value</option>";
-            }
-        }
-        $option_thirteen .= '</select>';
-        if ($this->gateway_key == 'paypal_pro_payflow') {
-            $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-            $option_twelve .= '<select class="wc-enhanced-select card_type" name="card_type">';
-            $option_twelve .= "<option value=''>All</option>";
-            $card_type_array = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
-            foreach ($card_type_array as $card_key => $card_value) {
-                if ($card_type == $card_key) {
-                    $option_twelve .= "<option selected='selected' value='" . $card_key . "'>$card_value</option>";
+            $option_five_one .= '</select>';
+            $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_ten .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_priority">';
+            for ($x = 0; $x <= 100; $x++) {
+                if ($x == 0) {
+                    $woocommerce_priority_text = $x . ' - Lowest';
+                } elseif ($x == 100) {
+                    $woocommerce_priority_text = $x . ' - Highest';
                 } else {
-                    $option_twelve .= "<option value='" . $card_key . "'>$card_value</option>";
+                    $woocommerce_priority_text = $x;
+                }
+                if (isset($woocommerce_priority) && $woocommerce_priority == $x) {
+                    $option_ten .= "<option selected='selected' value='" . $x . "'>$woocommerce_priority_text</option>";
+                } else {
+                    $option_ten .= "<option value='" . $x . "'>$woocommerce_priority_text</option>";
                 }
             }
-            $option_twelve .= '</select>';
+            $option_ten .= '</select>';
+            $product_ids = array();
+            if (isset($microprocessing['woocommerce_paypal_express_api_product_ids'][0])) {
+                $product_ids = maybe_unserialize($microprocessing['woocommerce_paypal_express_api_product_ids'][0]);
+            }
+            $option_seven = '<p class="description">' . __('Buyer country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_seven .= '<select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
+            $countries = WC()->countries->get_countries();
+            if (!isset($buyer_countries)) {
+                $buyer_countries = array();
+            }
+            if ($countries) {
+                foreach ($countries as $country_key => $country_full_name) {
+                    $option_seven .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $buyer_countries) . '>' . esc_html($country_full_name) . '</option>';
+                }
+            }
+            $option_seven .= '</select>';
+            $option_fourteen = '<p class="description">' . __('Store country', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_fourteen .= '<select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All countries", "paypal-for-woocommerce-multi-account-management") . '">';
+            if ($countries) {
+                $store_countries = !empty($store_countries) ? $store_countries : '';
+                $option_fourteen .= '<option value="0">All countries</option>';
+                foreach ($countries as $country_key => $country_full_name) {
+                    $option_fourteen .= '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $store_countries) . '>' . esc_html($country_full_name) . '</option>';
+                }
+            }
+
+            $option_fourteen .= '</select>';
+
+            $option_fifteen = '<p class="description">' . __('Shipping Class', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_fifteen .= '<select id="pfwst_shipping_class" name="shipping_class" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="' . __("All Shipping Class", "paypal-for-woocommerce-multi-account-management") . '">';
+            $classes = get_terms('product_shipping_class', array('hide_empty' => 1));
+            $shipping_classes_array = !is_wp_error($classes) ? $classes : array();
+            if ($shipping_classes_array) {
+                $shipping_class = !empty($shipping_class) ? $shipping_class : '';
+                $option_fifteen .= '<option value="0">All Shipping Class</option>';
+                foreach ($shipping_classes_array as $classes_key => $classes_name) {
+                    $option_fifteen .= '<option value="' . esc_attr($classes_name->term_id) . '"' . wc_selected($classes_name->term_id, $shipping_class) . '>' . esc_html($classes_name->name) . '</option>';
+                }
+            }
+            $option_fifteen .= '</select>';
+
+            $option_eight = '<p class="description"> ' . apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
+            $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'paypal-for-woocommerce-multi-account-management') . '">';
+            $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), array(
+                'hide_empty' => 1,
+                'orderby' => 'name',
+            ));
+            if (!isset($product_categories)) {
+                $product_categories = array();
+            }
+            if ($categories) {
+                foreach ($categories as $cat) {
+                    $category_lable = '';
+                    $taxonomy_obj = get_taxonomy($cat->taxonomy);
+                    if (isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
+                        $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
+                    } else {
+                        $category_lable = $cat->name;
+                    }
+                    $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($category_lable) . '</option>';
+                }
+            }
+            $option_eight .= '</select>';
+            $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'paypal-for-woocommerce-multi-account-management') . '">';
+            if (empty($product_categories)) {
+                $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
+                if ($tags) {
+                    foreach ($tags as $tag) {
+                        $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+                    }
+                }
+            } else {
+                if (!empty($product_tags)) {
+                    foreach ($product_tags as $key => $value) {
+                        $term_object = get_term_by('id', $value, 'product_tag');
+                        if (!empty($term_object->name)) {
+                            $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
+                        }
+                    }
+                }
+            }
+            if (!isset($product_categories)) {
+                $product_categories = array();
+            }
+            $option_nine .= '</select>';
+            $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
+            $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
+            $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
+            if (!empty($product_list)) {
+                foreach ($product_list as $product_list_id => $product_list_name) {
+                    $product = wc_get_product($product_list_id);
+                    if (is_object($product)) {
+                        $option_six .= '<option value="' . esc_attr($product_list_id) . '"' . wc_selected($product_list_id, $product_ids) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+                    }
+                }
+            }
+            $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_thirteen .= '<select class="wc-enhanced-select currency_code" name="currency_code">';
+            $option_thirteen .= "<option value=''>All</option>";
+            $currency_code_options = get_woocommerce_currencies();
+            foreach ($currency_code_options as $code => $name) {
+                $currency_code_options[$code] = $name . ' (' . get_woocommerce_currency_symbol($code) . ')';
+            }
+            foreach ($currency_code_options as $currency_code_key => $currency_code_value) {
+                if (isset($currency_code) && $currency_code == $currency_code_key) {
+                    $option_thirteen .= "<option selected='selected' value='" . $currency_code_key . "'>$currency_code_value</option>";
+                } else {
+                    $option_thirteen .= "<option value='" . $currency_code_key . "'>$currency_code_value</option>";
+                }
+            }
+            $option_thirteen .= '</select>';
+            if ($this->gateway_key == 'paypal_pro_payflow') {
+                $option_twelve = '<p class="description">' . __('Card Type', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+                $option_twelve .= '<select class="wc-enhanced-select card_type" name="card_type">';
+                $option_twelve .= "<option value=''>All</option>";
+                $card_type_array = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
+                foreach ($card_type_array as $card_key => $card_value) {
+                    if ($card_type == $card_key) {
+                        $option_twelve .= "<option selected='selected' value='" . $card_key . "'>$card_value</option>";
+                    } else {
+                        $option_twelve .= "<option value='" . $card_key . "'>$card_value</option>";
+                    }
+                }
+                $option_twelve .= '</select>';
+            } else {
+                $option_twelve = '';
+            }
+            $option_six .= '</select><p class="description">' . __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s %14$s %8$s %13$s  %15$s %9$s %10$s  %7$s <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="%2$s"><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select>&nbsp;<input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen, $option_five_one, $option_fifteen);
+            echo sprintf('<tr style="display: table-row;" valign="top">
+                                    <th scope="row" class="titledesc">
+                                        <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
+                                        <input name="microprocessing_save" class="button-primary" type="submit" value="%2$s" />
+                                        <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
+                                        %4$s
+                                    </th>
+                                </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
+            echo '</tbody></table></form></div>';
         } else {
-            $option_twelve = '';
+            echo '</tbody></table></form></div>';
         }
-        $option_six .= '</select><p class="description">' . __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-        echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_trigger_conditions">%1$s</label></th><td class="forminp"><fieldset>%5$s %6$s %14$s %8$s %13$s  %15$s %9$s %10$s  %7$s <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="%2$s"><select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign">%3$s</select>&nbsp;<input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" max="1000" step="0.01" value="%4$s">%11$s %12$s</fieldset></td></tr>', $option_one, $option_two, $option_three, $option_four, $option_ten, $option_five, $option_six, $option_seven, $option_eight, $option_nine, $option_twelve, $option_thirteen, $option_fourteen, $option_five_one, $option_fifteen);
-        echo sprintf('<tr style="display: table-row;" valign="top">
-                                <th scope="row" class="titledesc">
-                                    <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
-                                    <input name="microprocessing_save" class="button-primary" type="submit" value="%2$s" />
-                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
-                                    %4$s
-                                </th>
-                            </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
-        echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
     }
 
@@ -533,6 +546,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
             update_option('global_automatic_rule_creation_enable', wc_clean($_POST['global_automatic_rule_creation_enable']));
             update_option('global_automatic_rule_creation_testmode', wc_clean($_POST['global_automatic_rule_creation_testmode']));
+            update_option('angelleye_payment_load_balancer', wc_clean($_POST['angelleye_payment_load_balancer']));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
         }
         if (!empty($this->message)) {
@@ -542,10 +556,24 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         ?>
-        <div class="angelleye_multi_account_paypal_express_field">
+        <div class="angelleye_multi_account_global_setting">
             <form method="post" id="mainform" action="" enctype="multipart/form-data">
                 <table class="form-table">
+                    <tr class="angelleye_payment_load_balancer_tr">
+                        <th scope="row" class="titledesc">
+                            <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                        </th>
+                        <td class="forminp">
+                            <fieldset>
+                                <label for="angelleye_payment_load_balancer">
+                                    <input class="angelleye_payment_load_balancer" type="checkbox" name="angelleye_payment_load_balancer" id="angelleye_payment_load_balancer" <?php echo ($angelleye_payment_load_balancer == 'on') ? 'checked' : '' ?>> 
+                                    <?php echo __('Payment Load Balancer', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
                     <tr class="angelleye_multi_account_paypal_express_field">
                         <th scope="row" class="titledesc">
                             <label for="global_ec_site_owner_commission" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -660,7 +688,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <?php echo $this->angelleye_multi_account_api_field_ui() ?>
                             <?php echo $this->angelleye_multi_account_paypal_pro_payflow_api_field_ui(); ?>
                             <?php echo $this->angelleye_multi_account_api_paypal_field_ui(); ?>
-                            <?php echo $this->angelleye_multi_account_condition_ui(); ?>
+                            <?php 
+                            $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+                            if($angelleye_payment_load_balancer == '') {
+                                echo $this->angelleye_multi_account_condition_ui(); 
+                            }
+                            ?>
                             <tr style="display: table-row;" valign="top">
                                 <th scope="row" class="titledesc">
                                     <input name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
@@ -1386,6 +1419,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
+        <?php 
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if($angelleye_payment_load_balancer == '' ) :
+        ?>
+        
         <tr class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc" >
                 <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -1409,6 +1447,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             </td>
         </tr>
         <?php
+        endif;
     }
 
     public function angelleye_multi_account_choose_payment_gateway() {
