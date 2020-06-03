@@ -1177,6 +1177,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         WC()->session->set('multi_account_api_username', '');
         WC()->session->__unset('multi_account_api_username');
+        WC()->session->set('angelleye_sandbox_payment_load_balancer_ec_email', '');
+        WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ec_email');
+        WC()->session->set('angelleye_payment_load_balancer_ec_email', '');
+        WC()->session->__unset('angelleye_payment_load_balancer_ec_email');
+        
     }
 
     public function angelleye_get_product_tag_by_product_cat() {

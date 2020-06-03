@@ -518,7 +518,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
         $payment_action = array('set_express_checkout', 'get_express_checkout_details', 'do_express_checkout_payment');
         if (!empty($_GET['pp_action']) && ( in_array($_GET['pp_action'], $payment_action))) {
-            return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
+            $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+            if($angelleye_payment_load_balancer != '') {
+                return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
+            } else {
+                return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
+            }
         }
         return $request;
     }
@@ -1546,5 +1551,61 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         
         return $bool;
         
+    }
+    
+    public function angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request) {
+        if (!isset($gateways->testmode)) {
+            return;
+        }
+        $found_account = false;
+        $found_email = '';
+        if ($gateways->testmode == true) {
+            $option_key = 'angelleye_multi_ec_payment_load_balancer_sandbox';
+            $session_key = 'angelleye_sandbox_payment_load_balancer_ec_email';
+        } else {
+            $option_key = 'angelleye_multi_ec_payment_load_balancer';
+            $session_key = 'angelleye_payment_load_balancer_ec_email';
+        }
+        $found_email = WC()->session->get( $session_key );
+        if( empty($found_email) ) {
+            $found_email = '';
+            $express_checkout_accounts = get_option($option_key);
+            if(!empty($express_checkout_accounts)) {
+                foreach ($express_checkout_accounts as $key => $account) {
+                    if(empty($account['is_used'])) {
+                        $found_email = $account['email'];
+                        WC()->session->set($session_key, $account['email']);
+                        $account['is_used'] = 'yes';
+                        $express_checkout_accounts[$key] = $account;
+                        update_option($option_key, $express_checkout_accounts);
+                        $found_account = true;
+                        break;
+                    }
+                }
+                if($found_account == false) {
+                    foreach ($express_checkout_accounts as $key => $account) {
+                        $account['is_used'] = '';
+                        $express_checkout_accounts[$key] = $account;
+                    }
+                    foreach ($express_checkout_accounts as $key => $account) {
+                        if(empty($account['is_used'])) {
+                            $found_email = $account['email'];
+                            WC()->session->set($session_key, $account['email']);
+                            $account['is_used'] = 'yes';
+                            $express_checkout_accounts[$key] = $account;
+                            update_option($option_key, $express_checkout_accounts);
+                            $found_account = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if( !empty($request)) {
+            if($found_email != 'default') {
+                $request['Payments'][0]['sellerpaypalaccountid'] = $found_email;
+            }
+        }
+        return $request;
     }
 }

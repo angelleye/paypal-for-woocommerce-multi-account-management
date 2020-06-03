@@ -109,6 +109,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-list-data.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/angelleye-multi-account-function.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-vendor.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-payment-load-balancer.php';
 
 
 
@@ -204,7 +205,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('wp_ajax_pfwma_disable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_disable_all_vendor_rules');
         $this->loader->add_action('wp_ajax_pfwma_enable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_enable_all_vendor_rules');
         $this->loader->add_action( 'admin_init', $plugin_admin, 'angelleye_pfwma_display_notice');
-        
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if($angelleye_payment_load_balancer != '') {
+            $load_balancer = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer($this->get_plugin_name(), $this->get_version());
+            $this->loader->add_action( 'admin_init', $load_balancer, 'angelleye_synce_express_checkout_account');
+        }
     }
 
     /**
