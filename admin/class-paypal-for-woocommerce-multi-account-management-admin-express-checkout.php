@@ -1562,9 +1562,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if ($gateways->testmode == true) {
             $option_key = 'angelleye_multi_ec_payment_load_balancer_sandbox';
             $session_key = 'angelleye_sandbox_payment_load_balancer_ec_email';
+            $session_key_account = 'angelleye_sandbox_payment_load_balancer_ec_account';
         } else {
             $option_key = 'angelleye_multi_ec_payment_load_balancer';
             $session_key = 'angelleye_payment_load_balancer_ec_email';
+            $session_key_account = 'angelleye_payment_load_balancer_ec_account';
         }
         $found_email = WC()->session->get( $session_key );
         if( empty($found_email) ) {
@@ -1577,6 +1579,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         WC()->session->set($session_key, $account['email']);
                         $account['is_used'] = 'yes';
                         $express_checkout_accounts[$key] = $account;
+                        WC()->session->set($session_key_account, $account);
                         update_option($option_key, $express_checkout_accounts);
                         $found_account = true;
                         break;
@@ -1593,6 +1596,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             WC()->session->set($session_key, $account['email']);
                             $account['is_used'] = 'yes';
                             $express_checkout_accounts[$key] = $account;
+                            WC()->session->set($session_key_account, $account);
                             update_option($option_key, $express_checkout_accounts);
                             $found_account = true;
                             break;
@@ -1601,9 +1605,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
         }
+        
         if( !empty($request)) {
             if($found_email != 'default') {
                 $request['Payments'][0]['sellerpaypalaccountid'] = $found_email;
+                if( !empty($order_id)) {
+                    $angelleye_payment_load_balancer_account = WC()->session->get( $session_key_account );
+                    update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
+                }
             }
         }
         return $request;
