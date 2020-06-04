@@ -68,6 +68,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'post_type' => 'microprocessing'
                     );
                     $post_id = wp_insert_post($my_post);
+                    do_action('update_angelleye_multi_account', $post_id);
                     $email = get_user_meta($vendor_id, 'pv_paypal', true);
                     if (empty($email)) {
                         $email = get_user_meta($vendor_id, 'billing_email', true);
@@ -158,6 +159,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'post_type' => 'microprocessing'
                     );
                     $post_id = wp_insert_post($my_post);
+                    do_action('update_angelleye_multi_account', $post_id);
                     $email = get_user_meta($vendor_id, 'pv_paypal', true);
                     if (empty($email)) {
                         $email = get_user_meta($vendor_id, 'billing_email', true);

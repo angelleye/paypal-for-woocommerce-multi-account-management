@@ -103,12 +103,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (!empty($gateway_list[$gateway_key])) {
                     $gateway_value = $gateway_list[$gateway_key];
                     $gateway_option_Selected = "<option value='$gateway_key'>$gateway_value</option>";
-                    echo sprintf('<tr><th>%1$s</th><td><select disabled class="angelleye_multi_account_choose_payment_gateway wc-enhanced-select" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+                    echo sprintf('<tr><th>%1$s</th><td><select class="angelleye_multi_account_choose_payment_gateway wc-enhanced-select" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
                 }
             }
         } else {
             $gateway_option_Selected = "<option value='paypal_express'>PayPal Express Checkout</option>";
-            echo sprintf('<tr><th>%1$s</th><td><select disabled class="wc-enhanced-select angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
+            echo sprintf('<tr><th>%1$s</th><td><select class="wc-enhanced-select angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway">%2$s</select></td></tr>', __('Select Payment Gateway', ''), $gateway_option_Selected);
         }
 
         if ($this->gateway_key == 'paypal_express') {
@@ -843,6 +843,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'post_type' => 'microprocessing'
                 );
                 $post_id = wp_insert_post($my_post);
+                do_action('update_angelleye_multi_account', $post_id);
             } else {
                 $my_post = array(
                     'ID' => $_POST['is_edit'],
@@ -851,6 +852,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 );
                 wp_update_post($my_post);
                 $post_id = $_POST['is_edit'];
+                do_action('update_angelleye_multi_account', $post_id);
             }
             foreach ($microprocessing_key_array as $index => $microprocessing_key) {
                 if ($microprocessing_key == 'woocommerce_paypal_express_api_product_ids') {
@@ -1058,6 +1060,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'post_type' => 'microprocessing'
                 );
                 $post_id = wp_insert_post($my_post);
+                do_action('update_angelleye_multi_account', $post_id);
             } else {
                 $my_post = array(
                     'ID' => $_POST['is_edit'],
@@ -1066,6 +1069,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 );
                 wp_update_post($my_post);
                 $post_id = $_POST['is_edit'];
+                do_action('update_angelleye_multi_account', $post_id);
             }
             foreach ($microprocessing_key_array as $index => $microprocessing_key) {
                 if ($microprocessing_key == 'woocommerce_paypal_pro_payflow_api_product_ids') {
@@ -2149,6 +2153,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'post_type' => 'microprocessing'
                 );
                 $post_id = wp_insert_post($my_post);
+                do_action('update_angelleye_multi_account', $post_id);
             } else {
                 $my_post = array(
                     'ID' => $_POST['is_edit'],
@@ -2317,6 +2322,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if($pfwma_processed) {
             $this->message =  __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf( _n( '%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management' ), $pfwma_processed ) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
         }
+    }
+    
+    public function own_update_angelleye_multi_account() {
+        delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce' );
+        delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce_sandbox' );
     }
 
 }

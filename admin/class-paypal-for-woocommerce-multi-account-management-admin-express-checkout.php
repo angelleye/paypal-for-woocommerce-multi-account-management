@@ -1327,10 +1327,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
             $refund_error_message_after = array();
             $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
-            foreach ($angelleye_multi_account_ec_parallel_data_map as $key => $value) {
-                if (!empty($value['product_id']) && isset($value['is_api_set']) && $value['is_api_set'] == false) {
-                    $product = wc_get_product($value['product_id']);
-                    $refund_error_message_after[] = $product->get_title();
+            if( !empty($angelleye_multi_account_ec_parallel_data_map) ) {
+                foreach ($angelleye_multi_account_ec_parallel_data_map as $key => $value) {
+                    if (!empty($value['product_id']) && isset($value['is_api_set']) && $value['is_api_set'] == false) {
+                        $product = wc_get_product($value['product_id']);
+                        $refund_error_message_after[] = $product->get_title();
+                    }
                 }
             }
             if (!empty($refund_error_message_after)) {
@@ -1616,5 +1618,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
         }
         return $request;
+    }
+    
+    public function own_angelleye_is_payment_load_balancer_not_used($bool, $order_id) {
+        $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
+        if (!empty($angelleye_payment_load_balancer_account)) {
+            return false;
+        }
+        return $bool;
+    }
+    
+    public function own_angelleye_is_express_checkout_payment_load_balancer_handle($bool, $order_id, $gateway) {
+        try {
+            $processed_transaction_id = array();
+            $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
+            $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
+            if (!empty($angelleye_payment_load_balancer_account)) {
+                if( !empty($angelleye_payment_load_balancer_account['is_api_set']) && $angelleye_payment_load_balancer_account['is_api_set'] === true) {
+                    $_transaction_id = get_post_meta($order_id, '_transaction_id', true);
+                    $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
+                    $this->angelleye_express_checkout_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
+                    return true;
+                } else {
+                     return new WP_Error('invalid_refund', $refund_error_message_pre);
+                }
+            }
+            return $bool;
+        } catch (Exception $ex) {
+            
+        }
     }
 }

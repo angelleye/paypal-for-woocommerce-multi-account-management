@@ -208,8 +208,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if($angelleye_payment_load_balancer != '') {
             $load_balancer = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer($this->get_plugin_name(), $this->get_version());
-            $this->loader->add_action( 'admin_init', $load_balancer, 'angelleye_synce_express_checkout_account');
+            $this->loader->add_action( 'init', $load_balancer, 'angelleye_synce_express_checkout_account');
         }
+        $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_not_used', $express_checkout, 'own_angelleye_is_payment_load_balancer_not_used', 12, 2);
+        $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_payment_load_balancer_handle', 12, 3);
+        $this->loader->add_action('update_angelleye_multi_account', $plugin_admin, 'own_update_angelleye_multi_account', 10);
     }
 
     /**

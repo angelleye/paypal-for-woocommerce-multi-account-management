@@ -58,7 +58,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         );
         $query = new WP_Query($args);
         if (empty($express_checkout_accounts['default'])) {
-            $express_checkout_accounts['default'] = array('account_id' => 'default', 'is_used' => '', 'is_set_api' => true, 'email' => 'default');
+            $express_checkout_accounts['default'] = array('multi_account_id' => 'default', 'is_used' => '', 'is_api_set' => true, 'email' => 'default');
         }
         if (!empty($query->posts) && count($query->posts) > 0) {
             foreach ($query->posts as $key => $post_id) {
@@ -80,7 +80,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                         }
                         
                     }
-                    $express_checkout_accounts[$post_id] = array('account_id' => $post_id, 'is_used' => '', 'is_set_api' => $bool, 'email' => $email);
+                    $express_checkout_accounts[$post_id] = array('multi_account_id' => $post_id, 'is_used' => '', 'is_api_set' => $bool, 'email' => $email);
                 }
             }
         }
