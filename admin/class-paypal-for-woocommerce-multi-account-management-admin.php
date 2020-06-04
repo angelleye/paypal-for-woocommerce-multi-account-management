@@ -2327,6 +2327,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function own_update_angelleye_multi_account() {
         delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce' );
         delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce_sandbox' );
+        delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce' );
+        delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce_sandbox' );
     }
 
 }

@@ -106,5 +106,60 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         $gateways = $woocommerce->payment_gateways->payment_gateways();
         return $gateways[$gateway];
     }
+    
+    public function angelleye_synce_payflow_account() {
+        $testmode = $this->angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+        if ($testmode == 'yes') {
+            $environment = 'on';
+            $option_key = 'angelleye_multi_payflow_payment_load_balancer_sandbox';
+            $cache_key = 'angelleye_multi_payflow_payment_load_balancer_synce_sandbox';
+        } else {
+            $environment = '';
+            $option_key = 'angelleye_multi_payflow_payment_load_balancer';
+            $cache_key = 'angelleye_multi_payflow_payment_load_balancer_synce';
+        }
+        $payflow_accounts_data = get_transient($cache_key);
+        if (!empty($payflow_accounts_data)) {
+            $payflow_accounts = get_option($option_key);
+            return $payflow_accounts;
+        }
+        $payflow_accounts = get_option($option_key);
+        if (empty($payflow_accounts)) {
+            $payflow_accounts = array();
+        }
+
+        $args = array(
+            'posts_per_page' => -1,
+            'post_type' => 'microprocessing',
+            'order' => 'DESC',
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'woocommerce_paypal_pro_payflow_enable',
+                    'value' => 'on',
+                    'compare' => 'LIKE'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_pro_payflow_testmode',
+                    'value' => $environment,
+                    'compare' => 'LIKE'
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        if (empty($payflow_accounts['default'])) {
+            $payflow_accounts['default'] = array('multi_account_id' => 'default', 'is_used' => '');
+        }
+        if (!empty($query->posts) && count($query->posts) > 0) {
+            foreach ($query->posts as $key => $post_id) {
+                if (empty($payflow_accounts[$post_id])) {
+                    $payflow_accounts[$post_id] = array('multi_account_id' => $post_id, 'is_used' => '');
+                }
+            }
+        }
+        update_option($option_key, $payflow_accounts);
+        set_transient($cache_key, $payflow_accounts, 6 * HOUR_IN_SECONDS);
+    }
 
 }
