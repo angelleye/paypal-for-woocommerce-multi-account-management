@@ -546,7 +546,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 update_option('global_automatic_rule_creation_enable', wc_clean($_POST['global_automatic_rule_creation_enable']));
                 update_option('global_automatic_rule_creation_testmode', wc_clean($_POST['global_automatic_rule_creation_testmode']));
             }
-            update_option('angelleye_payment_load_balancer', wc_clean($_POST['angelleye_payment_load_balancer']));
+            $angelleye_payment_load_balancer = !empty($_POST['angelleye_payment_load_balancer']) ? $_POST['angelleye_payment_load_balancer'] : '';
+            update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
         }
         if (!empty($this->message)) {
