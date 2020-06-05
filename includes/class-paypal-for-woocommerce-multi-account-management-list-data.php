@@ -204,10 +204,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $sortable = $this->get_sortable_columns();
         $this->_column_headers = array($columns, $hidden, $sortable);
         $this->process_bulk_action();
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        $order_by = 'DESC';
+        if($angelleye_payment_load_balancer != '') {
+            $order_by = 'ASC';
+        }
         $args = array(
             'post_type' => 'microprocessing',
             'numberposts' => -1,
-            'order' => 'DESC',
+            'order' => $order_by,
         );
         if (isset($_REQUEST['orderby'])) {
             $args['orderby'] = $_REQUEST['orderby'];
@@ -215,6 +220,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         if (isset($_REQUEST['order'])) {
             $args['order'] = $_REQUEST['order'];
         }
+        $paypal_express_api_mode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
+        $paypal_pro_payflow_api_mode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+        $paypal_express_seq = 1;
+        $payflow_seq = 1;
+        $seq_text = __('Payment Seq #', 'paypal-for-woocommerce-multi-account-management');
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         $posts = get_posts($args);
         if (!empty($posts)) {
             foreach ($posts as $key => $value) {
@@ -233,10 +244,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         if (empty($account_data[$key]['api_user_name'])) {
                             $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_sandbox_email'][0]) ? $meta_data['woocommerce_paypal_express_sandbox_email'][0] : '';
                         }
+                        if($paypal_express_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
+                            $paypal_express_seq = $paypal_express_seq + 1;
+                        }
                     } else {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_api_username'][0]) ? $meta_data['woocommerce_paypal_express_api_username'][0] : '';
                         if (empty($account_data[$key]['api_user_name'])) {
                             $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_email'][0]) ? $meta_data['woocommerce_paypal_express_email'][0] : '';
+                        }
+                        if($paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
+                            $paypal_express_seq = $paypal_express_seq + 1;
                         }
                     }
                 } else if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'paypal_pro_payflow') {
@@ -249,8 +268,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_pro_payflow_account_name'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_account_name'][0] : '';
                     if ($account_data[$key]['mode'] == 'Sandbox') {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'][0] : '';
+                        if($paypal_pro_payflow_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $payflow_seq . '</span></mark>';
+                            $payflow_seq = $payflow_seq + 1;
+                        }
                     } else {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_pro_payflow_api_paypal_user'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_api_paypal_user'][0] : '';
+                        if($paypal_pro_payflow_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $payflow_seq . '</span></mark>';
+                            $payflow_seq = $payflow_seq + 1;
+                        }
                     }
                 } else {
                     if (!empty($meta_data['woocommerce_paypal_testmode']) && $meta_data['woocommerce_paypal_testmode'][0] == 'on') {

@@ -17,7 +17,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
     }
 
     public function angelleye_synce_express_checkout_account() {
-        $testmode = $this->angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
+        $testmode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
         if ($testmode == 'yes') {
             $environment = 'on';
             $option_key = 'angelleye_multi_ec_payment_load_balancer_sandbox';
@@ -101,14 +101,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         return false;
     }
 
-    public function angelleye_wc_gateway($gateway) {
-        global $woocommerce;
-        $gateways = $woocommerce->payment_gateways->payment_gateways();
-        return $gateways[$gateway];
-    }
-    
     public function angelleye_synce_payflow_account() {
-        $testmode = $this->angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+        $testmode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
         if ($testmode == 'yes') {
             $environment = 'on';
             $option_key = 'angelleye_multi_payflow_payment_load_balancer_sandbox';
