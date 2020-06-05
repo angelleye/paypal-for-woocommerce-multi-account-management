@@ -224,6 +224,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         $paypal_pro_payflow_api_mode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
         $paypal_express_seq = 1;
         $payflow_seq = 1;
+        
         $seq_text = __('Payment Seq #', 'paypal-for-woocommerce-multi-account-management');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         $posts = get_posts($args);
@@ -233,10 +234,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $meta_data = get_post_meta($value->ID);
                 $meta_data['angelleye_multi_account_choose_payment_gateway'][0] = empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) ? 'paypal_express' : $meta_data['angelleye_multi_account_choose_payment_gateway'][0];
                 if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'paypal_express') {
+                    $is_enable = false;
                     if (!empty($meta_data['woocommerce_paypal_express_testmode']) && $meta_data['woocommerce_paypal_express_testmode'][0] == 'on') {
                         $account_data[$key]['mode'] = 'Sandbox';
                     } else {
                         $account_data[$key]['mode'] = 'Live';
+                    }
+                    
+                    if( !empty($meta_data['woocommerce_paypal_express_enable'][0]) && $meta_data['woocommerce_paypal_express_enable'][0] == 'on' ) {
+                        $is_enable = true;
                     }
                     $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_express_account_name'][0]) ? $meta_data['woocommerce_paypal_express_account_name'][0] : '';
                     if ($account_data[$key]['mode'] == 'Sandbox') {
@@ -244,7 +250,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         if (empty($account_data[$key]['api_user_name'])) {
                             $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_sandbox_email'][0]) ? $meta_data['woocommerce_paypal_express_sandbox_email'][0] : '';
                         }
-                        if($paypal_express_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
+                        if($is_enable == true && $paypal_express_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
                             $paypal_express_seq = $paypal_express_seq + 1;
                         }
@@ -253,28 +259,31 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         if (empty($account_data[$key]['api_user_name'])) {
                             $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_email'][0]) ? $meta_data['woocommerce_paypal_express_email'][0] : '';
                         }
-                        if($paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
+                        if($is_enable == true && $paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
                             $paypal_express_seq = $paypal_express_seq + 1;
                         }
                     }
                 } else if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'paypal_pro_payflow') {
+                    $is_enable = false;
                     if (!empty($meta_data['woocommerce_paypal_pro_payflow_testmode']) && $meta_data['woocommerce_paypal_pro_payflow_testmode'][0] == 'on') {
                         $account_data[$key]['mode'] = 'Sandbox';
                     } else {
                         $account_data[$key]['mode'] = 'Live';
                     }
-
+                    if( !empty($meta_data['woocommerce_paypal_pro_payflow_enable'][0]) && $meta_data['woocommerce_paypal_pro_payflow_enable'][0] == 'on' ) {
+                        $is_enable = true;
+                    }
                     $account_data[$key]['title'] = !empty($meta_data['woocommerce_paypal_pro_payflow_account_name'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_account_name'][0] : '';
                     if ($account_data[$key]['mode'] == 'Sandbox') {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_sandbox_api_paypal_user'][0] : '';
-                        if($paypal_pro_payflow_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
+                        if($is_enable == true && $paypal_pro_payflow_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $payflow_seq . '</span></mark>';
                             $payflow_seq = $payflow_seq + 1;
                         }
                     } else {
                         $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_pro_payflow_api_paypal_user'][0]) ? $meta_data['woocommerce_paypal_pro_payflow_api_paypal_user'][0] : '';
-                        if($paypal_pro_payflow_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
+                        if($is_enable == true && $paypal_pro_payflow_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $payflow_seq . '</span></mark>';
                             $payflow_seq = $payflow_seq + 1;
                         }
