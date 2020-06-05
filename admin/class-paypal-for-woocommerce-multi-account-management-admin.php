@@ -572,6 +572,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <input class="angelleye_payment_load_balancer" type="checkbox" name="angelleye_payment_load_balancer" id="angelleye_payment_load_balancer" <?php echo ($angelleye_payment_load_balancer == 'on') ? 'checked' : '' ?>> 
                                     <?php echo __('Payment Load Balancer', 'paypal-for-woocommerce-multi-account-management'); ?>
                                 </label>
+                                <p class="description">
+                                    <?php echo __('Cycle through a series of accounts to balance the load of payment volume across each account. <a href="https://www.angelleye.com/paypal-for-woocommerce-multi-account-management-setup-guide/#load-balancer" target="_blank">Read more</a>', 'paypal-for-woocommerce'); ?>
+                                </p>
                             </fieldset>
                         </td>
                     </tr>

@@ -40,7 +40,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         $args = array(
             'posts_per_page' => -1,
             'post_type' => 'microprocessing',
-            'order' => 'DESC',
+            'order' => 'ASC',
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
@@ -131,7 +131,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         $args = array(
             'posts_per_page' => -1,
             'post_type' => 'microprocessing',
-            'order' => 'DESC',
+            'order' => 'ASC',
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
