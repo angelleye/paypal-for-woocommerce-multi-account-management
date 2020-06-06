@@ -266,6 +266,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                             $paypal_express_seq = $paypal_express_seq + 1;
                         }
                     }
+                    if( !empty($meta_data['vendor_id'][0]) && $angelleye_payment_load_balancer === '') {
+                        $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . __('Vendor Rule - Auto Generated', 'paypal-for-woocommerce-multi-account-management') . '</span></mark>';
+                    }
                 } else if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'paypal_pro_payflow') {
                     $is_enable = false;
                     if (!empty($meta_data['woocommerce_paypal_pro_payflow_testmode']) && $meta_data['woocommerce_paypal_pro_payflow_testmode'][0] == 'on') {
