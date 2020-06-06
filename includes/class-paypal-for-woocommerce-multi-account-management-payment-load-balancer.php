@@ -32,10 +32,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
             $express_checkout_accounts = get_option($option_key);
             return $express_checkout_accounts;
         }
-        $express_checkout_accounts = get_option($option_key);
-        if (empty($express_checkout_accounts)) {
-            $express_checkout_accounts = array();
-        }
+	    $express_checkout_accounts = array();
 
         $args = array(
             'posts_per_page' => -1,
