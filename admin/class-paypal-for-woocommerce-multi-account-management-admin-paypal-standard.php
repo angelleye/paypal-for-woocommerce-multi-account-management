@@ -69,12 +69,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                 array(
                     'key' => 'woocommerce_paypal_enable',
                     'value' => 'on',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 ),
                 array(
                     'key' => 'woocommerce_paypal_testmode',
                     'value' => ($this->gateway->testmode == true) ? 'on' : '',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 ),
                 array(
                     'key' => 'woocommerce_priority',

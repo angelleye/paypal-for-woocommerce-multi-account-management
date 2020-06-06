@@ -46,12 +46,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
                     'value' => 'on',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 ),
                 array(
                     'key' => 'woocommerce_paypal_express_testmode',
                     'value' => $environment,
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 )
             ),
             'fields' => 'ids'
@@ -131,12 +131,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                 array(
                     'key' => 'woocommerce_paypal_pro_payflow_enable',
                     'value' => 'on',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 ),
                 array(
                     'key' => 'woocommerce_paypal_pro_payflow_testmode',
                     'value' => $environment,
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 )
             ),
             'fields' => 'ids'

@@ -112,12 +112,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     array(
                         'key' => 'woocommerce_paypal_express_enable',
                         'value' => 'on',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_express_testmode',
                         'value' => ($gateways->testmode == true) ? 'on' : '',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_priority',
@@ -538,12 +538,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     array(
                         'key' => 'woocommerce_paypal_express_sandbox_api_username',
                         'value' => $_multi_account_api_username,
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_express_api_username',
                         'value' => $_multi_account_api_username,
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     )
                 )
             );

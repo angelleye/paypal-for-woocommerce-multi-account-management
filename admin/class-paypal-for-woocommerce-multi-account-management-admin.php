@@ -2215,7 +2215,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
                     'value' => 'on',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 )
             ),
             'fields' => 'ids'
@@ -2266,7 +2266,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
                     'value' => 'on',
-                    'compare' => 'LIKE'
+                    'compare' => '='
                 )
             ),
             'fields' => 'ids'
