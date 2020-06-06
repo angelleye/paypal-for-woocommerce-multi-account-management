@@ -147,7 +147,7 @@ function admin_notices_required_plugin() {
 
 function load_angelleye_woo_paypal_for_woo_multi_account() {
     try {
-        if (function_exists('WC')) {
+        if (function_exists('WC') && class_exists('AngellEYE_Gateway_Paypal')) {
             run_paypal_for_woocommerce_multi_account_management();
         }
         
