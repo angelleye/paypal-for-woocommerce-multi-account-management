@@ -174,6 +174,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 foreach ($account as $key => $value) {
                     wp_delete_post($value, true);
                 }
+                do_action('update_angelleye_multi_account');
                 $redirect_url = remove_query_arg(array('action', 'ID'));
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
                 $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
@@ -181,6 +182,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             }
             if (!empty($_GET['action']) && 'delete' == $_GET['action'] && !empty($_GET['ID'])) {
                 wp_delete_post($_GET['ID'], true);
+                do_action('update_angelleye_multi_account');
                 $redirect_url = remove_query_arg(array('action', 'ID'));
                 $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
                 wp_redirect(add_query_arg('deleted', true, $redirect_url));
