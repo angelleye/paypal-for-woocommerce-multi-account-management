@@ -1577,7 +1577,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             if(!empty($express_checkout_accounts)) {
                 foreach ($express_checkout_accounts as $key => $account) {
                     if(empty($account['is_used'])) {
-                        if ( false === get_post_status( $key ) ) {
+                        if ( $key != 'default' && false === get_post_status( $key ) ) {
                             unset($express_checkout_accounts[$key]);
                         } else {
                             $found_email = $account['email'];
@@ -1598,7 +1598,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     }
                     foreach ($express_checkout_accounts as $key => $account) {
                         if(empty($account['is_used'])) {
-                            if ( false === get_post_status( $key ) ) {
+                            if ( $key != 'default' && false === get_post_status( $key ) ) {
                                 unset($express_checkout_accounts[$key]);
                             } else {
                                 $found_email = $account['email'];
