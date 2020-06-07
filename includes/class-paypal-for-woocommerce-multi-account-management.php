@@ -215,6 +215,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_not_used', $express_checkout, 'own_angelleye_is_payment_load_balancer_not_used', 12, 2);
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_payment_load_balancer_handle', 12, 3);
         $this->loader->add_action('update_angelleye_multi_account', $plugin_admin, 'own_update_angelleye_multi_account', 10);
+        $this->loader->add_action( 'admin_footer', $plugin_admin, 'angelleye_pfwma_add_deactivation_form');
+        $this->loader->add_action( 'wp_ajax_angelleye_send_deactivation_pfwma', $plugin_admin, 'angelleye_pfwma_plugin_deactivation_request');
+
     }
 
     /**

@@ -38,6 +38,10 @@ if (!defined('PFWMA_PLUGIN_BASENAME')) {
     define('PFWMA_PLUGIN_BASENAME', plugin_basename(__FILE__));
 }
 
+if (!defined('PFWMA_PLUGIN_DIR')) {
+    define('PFWMA_PLUGIN_DIR', dirname(__FILE__));
+}
+
 if (!defined('AEU_ZIP_URL')) {
     define('AEU_ZIP_URL', 'https://updates.angelleye.com/ae-updater/angelleye-updater/angelleye-updater.zip');
 }
