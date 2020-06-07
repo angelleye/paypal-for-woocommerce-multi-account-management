@@ -616,32 +616,40 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             return;
         }
         if( empty($used_account)) {
-            $express_checkout_accounts = get_option($option_key);
-            if(!empty($express_checkout_accounts)) {
-                foreach ($express_checkout_accounts as $key => $account) {
+            $payflow_accounts = get_option($option_key);
+            if(!empty($payflow_accounts)) {
+                foreach ($payflow_accounts as $key => $account) {
                     if(empty($account['is_used'])) {
-                        $account['is_used'] = 'yes';
-                        $is_account_found = true;
-                        $express_checkout_accounts[$key] = $account;
-                        $used_account = $account['multi_account_id'];
-                        update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
-                        update_option($option_key, $express_checkout_accounts);
-                        break;
+                        if ( false === get_post_status( $key ) ) {
+                            unset($payflow_accounts[$key]);
+                        } else {
+                            $account['is_used'] = 'yes';
+                            $is_account_found = true;
+                            $payflow_accounts[$key] = $account;
+                            $used_account = $account['multi_account_id'];
+                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            update_option($option_key, $payflow_accounts);
+                            break;
+                        }
                     }
                 }
                 if($is_account_found == false) {
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($payflow_accounts as $key => $account) {
                         $account['is_used'] = '';
-                        $express_checkout_accounts[$key] = $account;
+                        $payflow_accounts[$key] = $account;
                     }
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($payflow_accounts as $key => $account) {
                         if(empty($account['is_used'])) {
-                            $account['is_used'] = 'yes';
-                            $express_checkout_accounts[$key] = $account;
-                            $used_account = $account['multi_account_id'];
-                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
-                            update_option($option_key, $express_checkout_accounts);
-                            break;
+                            if ( false === get_post_status( $key ) ) {
+                                unset($payflow_accounts[$key]);
+                            } else {
+                                $account['is_used'] = 'yes';
+                                $payflow_accounts[$key] = $account;
+                                $used_account = $account['multi_account_id'];
+                                update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                                update_option($option_key, $payflow_accounts);
+                                break;
+                            }
                         }
                     }
                 }

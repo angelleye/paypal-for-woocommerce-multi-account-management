@@ -32,12 +32,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
             $express_checkout_accounts = get_option($option_key);
             return $express_checkout_accounts;
         }
-	    $old_express_checkout_accounts = get_option($option_key);
-	    if (empty($old_express_checkout_accounts)) {
-		    $old_express_checkout_accounts = array();
-	    }
-	    $express_checkout_accounts = array();
-
+        $old_express_checkout_accounts = get_option($option_key);
+        if (empty($old_express_checkout_accounts)) {
+            $old_express_checkout_accounts = array();
+        }
+        $express_checkout_accounts = array();
         $args = array(
             'posts_per_page' => -1,
             'post_type' => 'microprocessing',
@@ -59,38 +58,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         );
         $query = new WP_Query($args);
 
-        if(isset($old_express_checkout_accounts['default']))
-	        $express_checkout_accounts['default'] = $old_express_checkout_accounts['default'];
-        else
-        	$express_checkout_accounts['default'] = array('multi_account_id' => 'default', 'is_used' => '', 'is_api_set' => true, 'email' => 'default');
-
+        if (isset($old_express_checkout_accounts['default'])) {
+            $express_checkout_accounts['default'] = $old_express_checkout_accounts['default'];
+        } else {
+            $express_checkout_accounts['default'] = array('multi_account_id' => 'default', 'is_used' => '', 'is_api_set' => true, 'email' => 'default');
+        }
         if (!empty($query->posts) && count($query->posts) > 0) {
             foreach ($query->posts as $key => $post_id) {
-	            if(isset($old_express_checkout_accounts[$post_id])){
-		            $express_checkout_accounts[$post_id] = $old_express_checkout_accounts[$post_id];
-	            }else
-		            $express_checkout_accounts[$post_id] = array('multi_account_id' => $post_id, 'is_used' => '', 'is_api_set' => false, 'email' => '');
-
+                if (isset($old_express_checkout_accounts[$post_id])) {
+                    $express_checkout_accounts[$post_id] = $old_express_checkout_accounts[$post_id];
+                } else {
+                    $express_checkout_accounts[$post_id] = array('multi_account_id' => $post_id, 'is_used' => '', 'is_api_set' => false, 'email' => '');
+                }
                 $microprocessing_array = get_post_meta($post_id);
                 $bool = $this->angelleye_is_multi_account_api_set($microprocessing_array, $environment);
-                if($bool) {
-                    if($environment) {
+                if ($bool) {
+                    if ($environment) {
                         $email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0] : '';
                     } else {
                         $email = isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) ? $microprocessing_array['woocommerce_paypal_express_merchant_id'][0] : '';
                     }
-
                 } else {
-                    if($environment) {
+                    if ($environment) {
                         $email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0] : '';
                     } else {
                         $email = isset($microprocessing_array['woocommerce_paypal_express_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_email'][0] : '';
                     }
-
                 }
                 $express_checkout_accounts[$post_id]['is_api_set'] = $bool;
                 $express_checkout_accounts[$post_id]['email'] = $email;
-
             }
         }
         update_option($option_key, $express_checkout_accounts);
@@ -126,11 +122,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
             $payflow_accounts = get_option($option_key);
             return $payflow_accounts;
         }
-        $payflow_accounts = get_option($option_key);
-        if (empty($payflow_accounts)) {
-            $payflow_accounts = array();
+        $old_payflow_accounts = get_option($option_key);
+        if (empty($old_payflow_accounts)) {
+            $old_payflow_accounts = array();
         }
-
+        $payflow_accounts = array();
         $args = array(
             'posts_per_page' => -1,
             'post_type' => 'microprocessing',
@@ -151,12 +147,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
             'fields' => 'ids'
         );
         $query = new WP_Query($args);
-        if (empty($payflow_accounts['default'])) {
+        if (isset($old_payflow_accounts['default'])) {
+            $payflow_accounts['default'] = $old_payflow_accounts['default'];
+        } else {
             $payflow_accounts['default'] = array('multi_account_id' => 'default', 'is_used' => '');
         }
         if (!empty($query->posts) && count($query->posts) > 0) {
             foreach ($query->posts as $key => $post_id) {
-                if (empty($payflow_accounts[$post_id])) {
+                if (isset($old_payflow_accounts[$post_id])) {
+                    $payflow_accounts[$post_id] = $old_payflow_accounts[$post_id];
+                } else {
                     $payflow_accounts[$post_id] = array('multi_account_id' => $post_id, 'is_used' => '');
                 }
             }
