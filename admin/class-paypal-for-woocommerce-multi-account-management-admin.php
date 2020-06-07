@@ -598,6 +598,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </fieldset>
                         </td>
                     </tr>
+                </table>
+                 <?php if (function_exists('dokan') ) { 
+                     echo '<h2>' . __('Dokan Settings', 'paypal-for-woocommerce-multi-account-management') . '</h2>';
+                 } elseif(class_exists('WCV_Vendors')) {
+                     echo '<h2>' . __('WC Vendors Settings', 'paypal-for-woocommerce-multi-account-management') . '</h2>';
+                 }
+                 ?>
+                <table class="form-table">
                     <?php if (function_exists('dokan') || class_exists('WCV_Vendors')) { ?>
                         <tr class="angelleye_multi_account_paypal_express_field" valign="top">
                             <th scope="row" class="titledesc">
@@ -606,7 +614,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <td class="forminp">
                                 <fieldset>
                                     <label for="global_automatic_rule_creation_enable">
-                                        <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox" <?php echo ($global_automatic_rule_creation_enable == 'on') ? 'checked' : '' ?> ><?php echo __('Enable Automatic Rule Creation', ''); ?> </label><br>
+                                        <input class="global_automatic_rule_creation_enable" name="global_automatic_rule_creation_enable" id="global_automatic_rule_creation_enable" type="checkbox" <?php echo ($global_automatic_rule_creation_enable == 'on') ? 'checked' : '' ?> ><?php echo __('Enable Automatic Rule Creation', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
                                 </fieldset>
                             </td>
                         </tr>
@@ -617,7 +625,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <td class="forminp">
                                 <fieldset>
                                     <label for="global_automatic_rule_creation_testmode">
-                                        <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox" <?php echo ($global_automatic_rule_creation_testmode == 'on') ? 'checked' : '' ?> ><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', ''); ?></label><br>
+                                        <input class="global_automatic_rule_creation_testmode" name="global_automatic_rule_creation_testmode" id="global_automatic_rule_creation_testmode" type="checkbox" <?php echo ($global_automatic_rule_creation_testmode == 'on') ? 'checked' : '' ?> ><?php echo __('Enable PayPal Sandbox for Automatic Rule Creation', 'paypal-for-woocommerce-multi-account-management'); ?></label><br>
                                 </fieldset>
                             </td>
                         </tr>
@@ -740,13 +748,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <br>
         <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
-        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', ''); ?></a>
+        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
         <?php
         if($active_count !== false) {
-            ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable all vendor rules', ''); ?></a> <?php
+            ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
         }
         if($deactive_count !== false) {
-            ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable all vendor rules', ''); ?></a> <?php
+            ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
         }
         if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
             $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
