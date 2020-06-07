@@ -1,8 +1,8 @@
 var $ = jQuery;
 $(document).ready(function () {
-    var $deactivationModal = $(".deactivation-Modal-pfwma");
+    var $deactivationModal = $(".angelleye-deactivation-modal-pfwma");
     if ($deactivationModal) {
-        new ModalWprshipmenttracking($deactivationModal);
+        new ModalInit($deactivationModal, 'paypal-for-woocommerce-multi-account-management');
     }
     $("#mixpanel-send-deactivation-pfwma").click(function (e) {
         e.preventDefault();
@@ -22,17 +22,17 @@ $(document).ready(function () {
         });
     });
 });
-function ModalWprshipmenttracking(aElem) {
+function ModalInit(aElem) {
     var refThis = this;
     this.elem = aElem;
-    this.overlay = $('.deactivation-Modal-pfwma-overlay');
+    this.overlay = $('.angelleye-deactivation-modal-overlay');
     this.radio = $('input[name=reason]', aElem);
-    this.closer = $('.deactivation-Modal-pfwma-close, .deactivation-Modal-pfwma-cancel', aElem);
-    this.return = $('.deactivation-Modal-pfwma-return', aElem);
+    this.closer = $('.angelleye-deactivation-modal-close, .angelleye-deactivation-modal-cancel', aElem);
+    this.return = $('.angelleye-deactivation-modal-return', aElem);
     this.opener = $('.plugins [data-slug="paypal-for-woocommerce-multi-account-management"] .deactivate');
-    this.question = $('.deactivation-Modal-pfwma-question', aElem);
+    this.question = $('.angelleye-deactivation-modal-question', aElem);
     this.button = $('.button-primary', aElem);
-    this.title = $('.deactivation-Modal-pfwma-header h2', aElem);
+    this.title = $('.angelleye-deactivation-modal-header h2', aElem);
     this.textFields = $('input[type=text], textarea', aElem);
     this.hiddenReason = $('#deactivation-reason', aElem);
     this.hiddenDetails = $('#deactivation-details', aElem);
@@ -69,14 +69,14 @@ function ModalWprshipmenttracking(aElem) {
         }
     });
 }
-ModalWprshipmenttracking.prototype.change = function (aElem) {
+ModalInit.prototype.change = function (aElem) {
     var id = aElem.attr('id');
     var refThis = this;
     this.hiddenReason.val(aElem.val());
     this.hiddenDetails.val('');
     this.textFields.val('');
-    $('.deactivation-Modal-pfwma-fieldHidden').removeClass('deactivation-isOpen');
-    $('.deactivation-Modal-pfwma-hidden').removeClass('deactivation-isOpen');
+    this.elem.find('.angelleye-deactivation-modal-fieldHidden').removeClass('deactivation-isOpen');
+    this.elem.find('.angelleye-deactivation-modal-hidden').removeClass('deactivation-isOpen');
     this.button.removeClass('deactivation-isDisabled');
     this.button.removeAttr("disabled");
     switch (id) {
@@ -88,7 +88,7 @@ ModalWprshipmenttracking.prototype.change = function (aElem) {
             break;
             break;
         case 'reason-other':
-            var field = aElem.siblings('.deactivation-Modal-pfwma-fieldHidden');
+            var field = aElem.siblings('.angelleye-deactivation-modal-fieldHidden');
             field.addClass('deactivation-isOpen');
             field.find('input, textarea').focus();
             refThis.button.addClass('deactivation-isDisabled');
@@ -96,9 +96,9 @@ ModalWprshipmenttracking.prototype.change = function (aElem) {
             break;
     }
 };
-ModalWprshipmenttracking.prototype.returnToQuestion = function () {
-    $('.deactivation-Modal-pfwma-fieldHidden').removeClass('deactivation-isOpen');
-    $('.deactivation-Modal-pfwma-hidden').removeClass('deactivation-isOpen');
+ModalInit.prototype.returnToQuestion = function () {
+    this.elem.find('.angelleye-deactivation-modal-fieldHidden').removeClass('deactivation-isOpen');
+    this.elem.find('.angelleye-deactivation-modal-hidden').removeClass('deactivation-isOpen');
     this.question.addClass('deactivation-isOpen');
     this.return.removeClass('deactivation-isOpen');
     this.title.text(this.titleText);
@@ -108,12 +108,12 @@ ModalWprshipmenttracking.prototype.returnToQuestion = function () {
     this.button.addClass('deactivation-isDisabled');
     this.button.attr("disabled", true);
 };
-ModalWprshipmenttracking.prototype.open = function () {
+ModalInit.prototype.open = function () {
     this.elem.css('display', 'block');
     this.overlay.css('display', 'block');
     localStorage.setItem('deactivation-hash', '');
 };
-ModalWprshipmenttracking.prototype.close = function () {
+ModalInit.prototype.close = function () {
     this.returnToQuestion();
     this.elem.css('display', 'none');
     this.overlay.css('display', 'none');
