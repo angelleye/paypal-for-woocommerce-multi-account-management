@@ -206,6 +206,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('wp_ajax_pfwma_disable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_disable_all_vendor_rules');
         $this->loader->add_action('wp_ajax_pfwma_enable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_enable_all_vendor_rules');
         $this->loader->add_action( 'admin_init', $plugin_admin, 'angelleye_pfwma_display_notice');
+        $this->loader->add_action( 'admin_footer', $plugin_admin, 'angelleye_pfwma_add_deactivation_form');
+        $this->loader->add_action( 'wp_ajax_angelleye_send_deactivation_pfwma', $plugin_admin, 'angelleye_pfwma_plugin_deactivation_request');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if($angelleye_payment_load_balancer != '') {
             $load_balancer = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer($this->get_plugin_name(), $this->get_version());
@@ -215,9 +217,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_not_used', $express_checkout, 'own_angelleye_is_payment_load_balancer_not_used', 12, 2);
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_payment_load_balancer_handle', 12, 3);
         $this->loader->add_action('update_angelleye_multi_account', $plugin_admin, 'own_update_angelleye_multi_account', 10);
-        $this->loader->add_action( 'admin_footer', $plugin_admin, 'angelleye_pfwma_add_deactivation_form');
-        $this->loader->add_action( 'wp_ajax_angelleye_send_deactivation_pfwma', $plugin_admin, 'angelleye_pfwma_plugin_deactivation_request');
-
     }
 
     /**

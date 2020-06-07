@@ -100,7 +100,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $order_total = $this->angelleye_get_total($order_id);
         if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_express') {
             $args = array(
-            	'posts_per_page' => -1,
+                'posts_per_page' => -1,
                 'post_type' => 'microprocessing',
                 'order' => 'DESC',
                 'orderby' => 'order_clause',
@@ -233,7 +233,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             }
                         }
                     }
-                    
+
                     if (!empty($order_id)) {
                         $order = wc_get_order($order_id);
                         foreach ($order->get_items() as $cart_item_key => $values) {
@@ -1457,14 +1457,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'])) {
                     $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'];
                     $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
-	                if( !empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
-		                if( !empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
-			                $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-			                wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
-		                } elseif(!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
-			                wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'Payment Status', __('Not Paid', 'paypal-for-woocommerce-multi-account-management'));
-		                }
-	                }
+                    if( !empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
+                        if( !empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
+                            $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
+                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
+                        } elseif(!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
+                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'Payment Status', __('Not Paid', 'paypal-for-woocommerce-multi-account-management'));
+                        }
+                    }
                 }
             }
         }
@@ -1731,17 +1731,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
         }
 
-	    if( !empty($current_product_id) ) {
-		    $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
-		    $_no_shipping_required = get_post_meta($current_product_id, '_no_shipping_required', true);
-		    if( $_no_shipping_required == 'yes' ) {
-			    if($is_required > 0) {
-				    return false;
-			    }
-		    }
-	    }
+        if (!empty($current_product_id)) {
+            $_no_shipping_required = get_post_meta($current_product_id, '_no_shipping_required', true);
+            if ($_no_shipping_required == 'yes') {
+                if ($is_required > 0) {
+                    return false;
+                }
+            }
+        }
         return $bool;
-        
     }
 
     public function angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request) {
