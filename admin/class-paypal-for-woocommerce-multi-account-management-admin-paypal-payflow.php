@@ -108,12 +108,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_enable',
                         'value' => 'on',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_testmode',
                         'value' => ($gateways->testmode == true) ? 'on' : '',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_priority',
@@ -346,7 +346,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             } elseif (count($this->final_associate_account) == 0) {
                 return $this->final_associate_account;
             } else {
-                return $this->angelleye_get_closest_amount($this->final_associate_account, $order_total);
+                return angelleye_get_closest_amount($this->final_associate_account, $order_total);
             }
         }
     }
@@ -371,12 +371,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_enable',
                         'value' => 'on',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_testmode',
                         'value' => ($gateways->testmode == true) ? 'on' : '',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     )
                 )
             );
@@ -388,12 +388,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     array(
                         'key' => 'woocommerce_paypal_express_enable',
                         'value' => 'on',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_express_testmode',
                         'value' => ($gateways->testmode == true) ? 'on' : '',
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     )
                 )
             );
@@ -443,7 +443,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             } elseif (count($this->final_associate_account) == 0) {
                 return $this->final_associate_account;
             } else {
-                return $this->angelleye_get_closest_amount($this->final_associate_account, $order_total);
+                return angelleye_get_closest_amount($this->final_associate_account, $order_total);
             }
         }
     }
@@ -466,7 +466,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                 return false;
             }
         }
-        if ($this->is_angelleye_multi_account_used($order_id)) {
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if(!empty($angelleye_payment_load_balancer)) {
+            $microprocessing_value = $this->angelleye_get_account_for_payflow_payment_load_balancer($gateways, $gateway_setting, $order_id);
+        } elseif ($this->is_angelleye_multi_account_used($order_id)) {
             $_multi_account_api_username = $this->angelleye_get_multi_account_api_user_name($order_id);
             $microprocessing_value = $this->angelleye_get_multi_account_details_by_api_user_name($gateway_setting, $_multi_account_api_username);
         } elseif (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
@@ -525,12 +528,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_sandbox_api_paypal_user',
                         'value' => $_multi_account_api_username,
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     ),
                     array(
                         'key' => 'woocommerce_paypal_pro_payflow_api_paypal_user',
                         'value' => $_multi_account_api_username,
-                        'compare' => 'LIKE'
+                        'compare' => '='
                     )
                 )
             );
@@ -596,5 +599,72 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             }
         }
         return null;
+    }
+    
+    public function angelleye_get_account_for_payflow_payment_load_balancer($gateways, $gateway_setting, $order_id) {
+        if (!isset($gateways->testmode)) {
+            return;
+        }
+        if ($gateways->testmode == true) {
+            $option_key = 'angelleye_multi_payflow_payment_load_balancer_sandbox';
+        } else {
+            $option_key = 'angelleye_multi_payflow_payment_load_balancer';
+        }
+        $is_account_found = false;
+        $used_account = get_post_meta($order_id, '_multi_account_api_username_load_balancer', true);
+        if( $used_account == 'default' ) {
+            return;
+        }
+        if( empty($used_account)) {
+            $payflow_accounts = get_option($option_key);
+            if(!empty($payflow_accounts)) {
+                foreach ($payflow_accounts as $key => $account) {
+                    if(empty($account['is_used'])) {
+                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                            unset($payflow_accounts[$key]);
+                        } else {
+                            $account['is_used'] = 'yes';
+                            $is_account_found = true;
+                            $payflow_accounts[$key] = $account;
+                            $used_account = $account['multi_account_id'];
+                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            update_option($option_key, $payflow_accounts);
+                            break;
+                        }
+                    }
+                }
+                if($is_account_found == false) {
+                    foreach ($payflow_accounts as $key => $account) {
+                        $account['is_used'] = '';
+                        $payflow_accounts[$key] = $account;
+                    }
+                    foreach ($payflow_accounts as $key => $account) {
+                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                            unset($payflow_accounts[$key]);
+                        } else {
+                            $account['is_used'] = 'yes';
+                            $payflow_accounts[$key] = $account;
+                            $used_account = $account['multi_account_id'];
+                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            update_option($option_key, $payflow_accounts);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if($used_account == 'default') {
+            return;
+        }
+        if(!empty($used_account)) {
+            $post_meta = get_post_meta($used_account);
+            if( !empty($post_meta) ) {
+                $microprocessing_value = array();
+                foreach ($post_meta as $key => $value) {
+                    $microprocessing_value[$key] = isset($value[0]) ? $value[0] : '';
+                }
+                return $microprocessing_value;
+            }
+        }
     }
 }

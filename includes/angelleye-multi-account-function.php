@@ -37,3 +37,9 @@ function angelleye_get_closest_amount($array, $value) {
         return array();
     }
 }
+
+function angelleye_wc_gateway($gateway) {
+    global $woocommerce;
+    $gateways = $woocommerce->payment_gateways->payment_gateways();
+    return $gateways[$gateway];
+}
