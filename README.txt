@@ -29,6 +29,15 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 3.0.0 - 06.07.2020 =
+* Feature - WC Vendors & Dokan Compatibility Added. ([PFWMA-125](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/55))
+* Feature - Added Settings to Enable/Disable Auto Rule Creation for WC Vendors & Dokan. ([PFWMA-131](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/52))
+* Tweak - Handle the Partially Successful Orders and Notify Admin & User. ([PFWMA-124](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/54))
+* Tweak - Separated the Account Rule Listing, Add/Edit Rule and Settings Page. ([PFWMA-130](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/53))
+* Tweak - User feedback form added on plugin deactivation. ([PFWMA-133](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/51))
+* Tweak - Added the Plugin Listing Sidebar. ([PFWMA-116](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/50))
+* Fix - Send a single payment to every secondary account in a single order. ([PFWMA-122](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/56))
+
 = 2.2.0 - 05.04.2020 =
 * Feature - Create new rules based on WooCommerce Shipping Classes. ([PFWMA-114](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/48))
 * Fix - VAT Calculation issue resolved. ([PFWMA-112](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/47))
