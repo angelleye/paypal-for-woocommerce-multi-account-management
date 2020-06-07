@@ -120,6 +120,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-payflow.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
         //require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . '/template/sidebar-process.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }

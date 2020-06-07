@@ -559,7 +559,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         ?>
-        <div class="angelleye_multi_account_global_setting">
+
+        <div id="angelleye_paypal_marketing_table">
+            <div class="angelleye_multi_account_global_setting">
             <form method="post" id="mainform" action="" enctype="multipart/form-data">
                 <table class="form-table">
                     <tr class="angelleye_payment_load_balancer_tr">
@@ -644,7 +646,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </table>
             </form>
         </div>
+        </div>
         <?php
+        $this->angelleye_pfwma_display_marketing_sidebar();
     }
 
     public function angelleye_multi_account_tooltip_box() {
@@ -746,6 +750,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             )
         );
         ?>
+        <div id="angelleye_paypal_marketing_table">
         <br>
         <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
         <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
@@ -764,6 +769,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $table->display();
             echo '</form>';
         }
+        ?> </div> <?php
+        $this->angelleye_pfwma_display_marketing_sidebar();
     }
 
     public function angelleye_save_multi_account_data() {
@@ -2341,6 +2348,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce_sandbox' );
         delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce' );
         delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce_sandbox' );
+    }
+
+    public function angelleye_pfwma_display_marketing_sidebar() {
+        if (false === ( $html = get_transient('angelleye_dynamic_marketing_sidebar_html_pfwma') )) {
+            $response = wp_remote_get('https://8aystwpoqi.execute-api.us-east-2.amazonaws.com/AngellEyeDynamicSidebar?pluginId=18');
+            if (is_array($response) && !is_wp_error($response)) {
+                if (!empty($response['body'])) {
+                    set_transient('angelleye_dynamic_marketing_sidebar_html_pfwma', $response['body'], 24 * HOUR_IN_SECONDS);
+                    echo $response['body'];
+                }
+            }
+        } else {
+            echo $html;
+        }
     }
 
 }
