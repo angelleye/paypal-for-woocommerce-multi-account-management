@@ -122,7 +122,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
     public function angelleye_paypal_for_woocommerce_multi_account_rule_save_wc_vendor($vendor_id) {
         try {
             if (class_exists('WCV_Vendors')) {
-                if (!WCV_Vendors::is_pending($vendor_id) && !WCV_Vendors::is_vendor($vendor_id)) {
+                if (WCV_Vendors::is_pending($vendor_id) || !WCV_Vendors::is_vendor($vendor_id)) {
                     return;
                 }
                 $post_id = $this->angelleye_is_vendor_account_exist($vendor_id);
