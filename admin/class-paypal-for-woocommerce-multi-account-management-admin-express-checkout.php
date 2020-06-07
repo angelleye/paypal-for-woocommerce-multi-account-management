@@ -1597,19 +1597,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $express_checkout_accounts[$key] = $account;
                     }
                     foreach ($express_checkout_accounts as $key => $account) {
-                        if(empty($account['is_used'])) {
-                            if ( $key != 'default' && false === get_post_status( $key ) ) {
-                                unset($express_checkout_accounts[$key]);
-                            } else {
-                                $found_email = $account['email'];
-                                WC()->session->set($session_key, $account['email']);
-                                $account['is_used'] = 'yes';
-                                $express_checkout_accounts[$key] = $account;
-                                WC()->session->set($session_key_account, $account);
-                                update_option($option_key, $express_checkout_accounts);
-                                $found_account = true;
-                                break;
-                            }
+                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                            unset($express_checkout_accounts[$key]);
+                        } else {
+                            $found_email = $account['email'];
+                            WC()->session->set($session_key, $account['email']);
+                            $account['is_used'] = 'yes';
+                            $express_checkout_accounts[$key] = $account;
+                            WC()->session->set($session_key_account, $account);
+                            update_option($option_key, $express_checkout_accounts);
+                            $found_account = true;
+                            break;
                         }
                     }
                 }

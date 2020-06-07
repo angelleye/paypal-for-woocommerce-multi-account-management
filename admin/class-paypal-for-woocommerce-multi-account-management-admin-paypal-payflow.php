@@ -639,17 +639,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         $payflow_accounts[$key] = $account;
                     }
                     foreach ($payflow_accounts as $key => $account) {
-                        if(empty($account['is_used'])) {
-                            if ( $key != 'default' && false === get_post_status( $key ) ) {
-                                unset($payflow_accounts[$key]);
-                            } else {
-                                $account['is_used'] = 'yes';
-                                $payflow_accounts[$key] = $account;
-                                $used_account = $account['multi_account_id'];
-                                update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
-                                update_option($option_key, $payflow_accounts);
-                                break;
-                            }
+                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                            unset($payflow_accounts[$key]);
+                        } else {
+                            $account['is_used'] = 'yes';
+                            $payflow_accounts[$key] = $account;
+                            $used_account = $account['multi_account_id'];
+                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            update_option($option_key, $payflow_accounts);
+                            break;
                         }
                     }
                 }
