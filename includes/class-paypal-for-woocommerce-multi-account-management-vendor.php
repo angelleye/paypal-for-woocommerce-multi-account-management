@@ -69,7 +69,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                     );
                     $post_id = wp_insert_post($my_post);
                     do_action('update_angelleye_multi_account', $post_id);
-                    $email = get_user_meta($vendor_id, 'pv_paypal', true);
+                    $dokan_profile_settings = get_user_meta($vendor_id, 'dokan_profile_settings', true);
+                    if( !empty($dokan_profile_settings['payment']['paypal']['email'])) {
+                        $email = $dokan_profile_settings['payment']['paypal']['email'];
+                    }
                     if (empty($email)) {
                         $email = get_user_meta($vendor_id, 'billing_email', true);
                     }
