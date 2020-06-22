@@ -547,6 +547,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (!empty($_POST['global_commission_microprocessing_save'])) {
             update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));
             update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
+            if( !empty($_POST['global_ec_include_tax_shipping_in_commission']) ) {
+                update_option('global_ec_include_tax_shipping_in_commission', wc_clean($_POST['global_ec_include_tax_shipping_in_commission']));
+            }
             if(isset($_POST['global_automatic_rule_creation_enable'])) {
                 update_option('global_automatic_rule_creation_enable', wc_clean($_POST['global_automatic_rule_creation_enable']));
                 update_option('global_automatic_rule_creation_testmode', wc_clean($_POST['global_automatic_rule_creation_testmode']));
@@ -563,6 +566,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        $global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
         ?>
         <div id="angelleye_paypal_marketing_table">
         <div class="angelleye_multi_account_global_setting">
@@ -601,6 +605,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         <td class="forminp">
                             <fieldset>
                                 <input type="text" class="input-text regular-input commission" name="global_ec_site_owner_commission_label" placeholder="Commission" value="<?php echo!empty($global_ec_site_owner_commission_label) ? $global_ec_site_owner_commission_label : ''; ?>">
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr class="angelleye_multi_account_paypal_express_field">
+                        <th scope="row" class="titledesc">
+                            <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                        </th>
+                        <td class="forminp">
+                            <fieldset>
+                                <label for="global_ec_include_tax_shipping_in_commission">
+                                    <input class="global_ec_include_tax_shipping_in_commission" type="checkbox" name="global_ec_include_tax_shipping_in_commission" id="global_ec_include_tax_shipping_in_commission" <?php echo ($global_ec_include_tax_shipping_in_commission == 'on') ? 'checked' : '' ?>>
+                                    <?php echo __('Include sales tax and shipping amounts in commission calculations', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                </label>
+                                <p class="description">
+                                    <?php echo __('', 'paypal-for-woocommerce'); ?>
+                                </p>
                             </fieldset>
                         </td>
                     </tr>
