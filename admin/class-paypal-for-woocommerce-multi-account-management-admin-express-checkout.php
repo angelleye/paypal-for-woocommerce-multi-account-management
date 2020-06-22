@@ -611,18 +611,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if (!empty($request['SECFields']['customerservicenumber'])) {
             unset($request['SECFields']['customerservicenumber']);
         }
-        if (( wc_tax_enabled() && wc_prices_include_tax())) {
-            $this->taxamt = 0;
-        } else {
-            //WC()->cart->get_total_tax()
-
+        if (wc_tax_enabled()) {
             $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
+            $total_tax = WC()->cart->get_total_tax();
+            if (isset($total_tax) && $total_tax > 0) {
+                $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_is_taxable, 'tax');
+            }
+        } else {
+            $this->taxamt = 0;
         }
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
-        if (isset($this->taxamt) && $this->taxamt > 0) {
-            $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_is_taxable, 'tax');
-        }
         if (isset($this->shippingamt) && $this->shippingamt > 0) {
             $this->shipping_array = $this->angelleye_get_extra_fee_array($this->shippingamt, $this->angelleye_needs_shipping, 'shipping');
         }
@@ -1271,13 +1270,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_get_line_item_from_cart($product_id, $values) {
-        if (( wc_tax_enabled() && wc_prices_include_tax())) {
-            $product = wc_get_product($product_id);
-            $amount = round($product->get_price(), $this->decimals);
-        } else {
-            $amount = round($values['line_subtotal'] / $values['quantity'], $this->decimals);
-        }
-
+        $amount = round($values['line_subtotal'] / $values['quantity'], $this->decimals);
         if (version_compare(WC_VERSION, '3.0', '<')) {
             $product = $values['data'];
             $name = $values['data']->post->post_title;
@@ -1337,11 +1330,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
         $name = AngellEYE_Gateway_Paypal::clean_product_title($name);
 
-        if (( wc_tax_enabled() && wc_prices_include_tax())) {
-            $amount = round($product->get_price(), $this->decimals);
-        } else {
-            $amount = round($values['line_subtotal'] / $values['qty'], $this->decimals);
-        }
+        $amount = round($values['line_subtotal'] / $values['qty'], $this->decimals);
 
         $desc = '';
         if (is_object($product)) {
