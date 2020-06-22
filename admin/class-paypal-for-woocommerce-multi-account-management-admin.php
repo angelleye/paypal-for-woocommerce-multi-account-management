@@ -2404,6 +2404,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 wp_delete_post($post_id, true);
             }
         }
+        $post_id = angelleye_is_vendor_account_exist($id);
+        if ($post_id != false) {
+            wp_delete_post($post_id, true);
+        }
+        $multi_accounts = angelleye_get_user_multi_accounts($id);
+        if(!empty($multi_accounts)) {
+            foreach ($multi_accounts as $key => $account_id) {
+                 wp_delete_post($account_id, true);
+            }
+        }
         $this->own_update_angelleye_multi_account();
     }
 

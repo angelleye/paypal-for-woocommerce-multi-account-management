@@ -31,7 +31,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                 if (!dokan_is_user_seller($vendor_id)) {
                     return;
                 }
-                $post_id = $this->angelleye_is_vendor_account_exist($vendor_id);
+                $post_id = angelleye_is_vendor_account_exist($vendor_id);
                 if ($post_id != false) {
                     $user = get_user_by('id', $vendor_id);
                     $dokan_profile_settings = get_user_meta($vendor_id, 'dokan_profile_settings', true);
@@ -125,7 +125,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                 if (WCV_Vendors::is_pending($vendor_id) || !WCV_Vendors::is_vendor($vendor_id)) {
                     return;
                 }
-                $post_id = $this->angelleye_is_vendor_account_exist($vendor_id);
+                $post_id = angelleye_is_vendor_account_exist($vendor_id);
                 if ($post_id != false) {
                     $user = get_user_by('id', $vendor_id);
                     $email = get_user_meta($vendor_id, 'pv_paypal', true);
@@ -227,26 +227,4 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
             
         }
     }
-
-    public function angelleye_is_vendor_account_exist($vendor_id) {
-        $args = array(
-            'post_type' => 'microprocessing',
-            'meta_query' => array(
-                array(
-                    'key' => 'vendor_id',
-                    'value' => $vendor_id
-                )
-            ),
-            'fields' => 'ids'
-        );
-        $query = new WP_Query($args);
-        $duplicates = $query->posts;
-        if (!empty($duplicates)) {
-            if (!empty($query->posts[0])) {
-                return $query->posts[0];
-            }
-        }
-        return false;
-    }
-
 }
