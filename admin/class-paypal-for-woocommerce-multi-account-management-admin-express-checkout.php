@@ -711,7 +711,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $Item = array(
                                 'name' => $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'],
                                 'desc' => $line_item['name'],
-                                'amt' => $product_commission,
+                                'amt' => $sub_total_commission,
                                 'number' => '',
                                 'qty' => 1
                             );
