@@ -2414,6 +2414,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                  wp_delete_post($account_id, true);
             }
         }
+        $user = get_user_by('id', $id);
+        if(isset($user) && isset($user->user_email) && !empty($user->user_email)) {
+            $multi_account_by_email = angelleye_get_user_multi_accounts_by_paypal_email($user->user_email);
+            if(!empty($multi_account_by_email)) {
+                foreach ($multi_account_by_email as $key => $account_id) {
+                     wp_delete_post($account_id, true);
+                }
+            }
+        }
         $this->own_update_angelleye_multi_account();
     }
 

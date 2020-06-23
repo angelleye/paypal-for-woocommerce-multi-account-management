@@ -85,3 +85,29 @@ function angelleye_get_user_multi_accounts($vendor_id) {
     }
     return false;
 }
+
+function angelleye_get_user_multi_accounts_by_paypal_email($email) {
+    $args = array(
+        'post_type' => 'microprocessing',
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => 'woocommerce_paypal_express_sandbox_email',
+                'value' => $email
+            ),
+            array(
+                'key' => 'woocommerce_paypal_express_email',
+                'value' => $email
+            )
+        ),
+        'fields' => 'ids'
+    );
+    $query = new WP_Query($args);
+    $duplicates = $query->posts;
+    if (!empty($duplicates)) {
+        if (!empty($query->posts[0])) {
+            return $query->posts;
+        }
+    }
+    return false;
+}
