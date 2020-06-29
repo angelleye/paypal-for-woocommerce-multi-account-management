@@ -69,7 +69,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                     );
                     $post_id = wp_insert_post($my_post);
                     do_action('update_angelleye_multi_account', $post_id);
-                    $email = get_user_meta($vendor_id, 'pv_paypal', true);
+                    $dokan_profile_settings = get_user_meta($vendor_id, 'dokan_profile_settings', true);
+                    if( !empty($dokan_profile_settings['payment']['paypal']['email'])) {
+                        $email = $dokan_profile_settings['payment']['paypal']['email'];
+                    }
                     if (empty($email)) {
                         $email = get_user_meta($vendor_id, 'billing_email', true);
                     }
@@ -96,7 +99,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'woocommerce_paypal_express_api_condition_value' => '0',
                         'woocommerce_paypal_express_api_user_role' => 'all',
                         'woocommerce_paypal_express_api_user' => $vendor_id,
-                        'woocommerce_paypal_express_api_product_ids' => 'a:0:{}',
+                        'woocommerce_paypal_express_api_product_ids' => array(),
                         'product_categories' => '',
                         'product_tags' => '',
                         'buyer_countries' => '',
@@ -187,7 +190,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'woocommerce_paypal_express_api_condition_value' => '0',
                         'woocommerce_paypal_express_api_user_role' => 'all',
                         'woocommerce_paypal_express_api_user' => $vendor_id,
-                        'woocommerce_paypal_express_api_product_ids' => 'a:0:{}',
+                        'woocommerce_paypal_express_api_product_ids' => array(),
                         'product_categories' => '',
                         'product_tags' => '',
                         'buyer_countries' => '',
