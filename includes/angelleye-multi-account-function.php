@@ -43,3 +43,71 @@ function angelleye_wc_gateway($gateway) {
     $gateways = $woocommerce->payment_gateways->payment_gateways();
     return $gateways[$gateway];
 }
+
+function angelleye_is_vendor_account_exist($vendor_id) {
+    $args = array(
+        'post_type' => 'microprocessing',
+        'meta_query' => array(
+            array(
+                'key' => 'vendor_id',
+                'value' => $vendor_id
+            )
+        ),
+        'fields' => 'ids'
+    );
+    $query = new WP_Query($args);
+    $duplicates = $query->posts;
+    if (!empty($duplicates)) {
+        if (!empty($query->posts[0])) {
+            return $query->posts[0];
+        }
+    }
+    return false;
+}
+
+function angelleye_get_user_multi_accounts($vendor_id) {
+    $args = array(
+        'post_type' => 'microprocessing',
+        'meta_query' => array(
+            array(
+                'key' => 'woocommerce_paypal_express_api_user',
+                'value' => $vendor_id
+            )
+        ),
+        'fields' => 'ids'
+    );
+    $query = new WP_Query($args);
+    $duplicates = $query->posts;
+    if (!empty($duplicates)) {
+        if (!empty($query->posts[0])) {
+            return $query->posts;
+        }
+    }
+    return false;
+}
+
+function angelleye_get_user_multi_accounts_by_paypal_email($email) {
+    $args = array(
+        'post_type' => 'microprocessing',
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => 'woocommerce_paypal_express_sandbox_email',
+                'value' => $email
+            ),
+            array(
+                'key' => 'woocommerce_paypal_express_email',
+                'value' => $email
+            )
+        ),
+        'fields' => 'ids'
+    );
+    $query = new WP_Query($args);
+    $duplicates = $query->posts;
+    if (!empty($duplicates)) {
+        if (!empty($query->posts[0])) {
+            return $query->posts;
+        }
+    }
+    return false;
+}

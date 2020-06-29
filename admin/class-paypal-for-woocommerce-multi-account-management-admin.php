@@ -138,7 +138,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_email_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_email" value="%2$s" id="woocommerce_paypal_express_sandbox_email_microprocessing" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_paypal_express_sandbox_merchant_id':
-                        if(!empty($microprocessing_value[0])) {
+                        if (!empty($microprocessing_value[0])) {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_sandbox_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_sandbox_merchant_id" value="%2$s" id="woocommerce_paypal_express_sandbox_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
@@ -155,7 +155,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_email_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_email" value="%2$s" id="woocommerce_paypal_express_email_microprocessing" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_paypal_express_merchant_id':
-                        if(!empty($microprocessing_value[0])) {
+                        if (!empty($microprocessing_value[0])) {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_merchant_id" value="%2$s" id="woocommerce_paypal_express_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
@@ -169,12 +169,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_api_signature_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_paypal_express_api_signature" value="%2$s" id="woocommerce_paypal_express_api_signature_microprocessing" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('API Signature', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'ec_site_owner_commission':
-                        if($angelleye_payment_load_balancer == '') {
+                        if ($angelleye_payment_load_balancer == '') {
                             echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'ec_site_owner_commission_label':
-                        if($angelleye_payment_load_balancer == '') {
+                        if ($angelleye_payment_load_balancer == '') {
                             echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission_label">%1$s</label></th><td class="forminp"><fieldset><input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" value="%2$s" id="ec_site_owner_commission_label" placeholder="Commission"></fieldset></td></tr>', __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
@@ -338,7 +338,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
         }
-        if($angelleye_payment_load_balancer == '') {
+        if ($angelleye_payment_load_balancer == '') {
             $option_one = __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management');
             $option_two = 'transaction_amount';
             $option_three_array = array('greaterthan' => __('Greater than', 'paypal-for-woocommerce-multi-account-management'), 'lessthan' => __('Less than', 'paypal-for-woocommerce-multi-account-management'), 'equalto' => __('Equal to', 'paypal-for-woocommerce-multi-account-management'));
@@ -434,7 +434,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $shipping_classes_array = !is_wp_error($classes) ? $classes : array();
             if ($shipping_classes_array) {
                 $shipping_class = !empty($shipping_class) ? $shipping_class : '';
-            $option_fifteen .= '<option value="all">All Shipping Class</option>';
+                $option_fifteen .= '<option value="all">All Shipping Class</option>';
                 foreach ($shipping_classes_array as $classes_key => $classes_name) {
                     $option_fifteen .= '<option value="' . esc_attr($classes_name->term_id) . '"' . wc_selected($classes_name->term_id, $shipping_class) . '>' . esc_html($classes_name->name) . '</option>';
                 }
@@ -539,7 +539,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                         %4$s
                                     </th>
                                 </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
-            echo '</tbody></table></form></div>';
+        echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
     }
 
@@ -729,7 +729,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <?php echo $this->angelleye_multi_account_api_paypal_field_ui(); ?>
                             <?php
                             $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-                            if($angelleye_payment_load_balancer == '') {
+                            if ($angelleye_payment_load_balancer == '') {
                                 echo $this->angelleye_multi_account_condition_ui();
                             }
                             ?>
@@ -763,36 +763,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_multi_account_list() {
         $active_count = $this->angelleye_multi_account_get_count_active_vendor();
-        $deactive_count =  $this->angelleye_multi_account_get_count_deactive_vendor();
+        $deactive_count = $this->angelleye_multi_account_get_count_deactive_vendor();
         $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
         $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
-        wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param',
-            array(
-                'disable_all_vendor_rules_alert_message' => sprintf( __('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
-                'enable_all_vendor_rules_alert_message' => sprintf( __('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text)
-            )
+        wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
+            'disable_all_vendor_rules_alert_message' => sprintf(__('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
+            'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text)
+                )
         );
         ?>
         <div id="angelleye_paypal_marketing_table">
-        <br>
-        <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
-        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
-        <?php
-        if($active_count !== false) {
-            ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-        }
-        if($deactive_count !== false) {
-            ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-        }
-        if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
-            $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
-            $table->prepare_items();
-            echo '<form id="account-filter" method="post">';
-            echo sprintf('<input type="hidden" name="page" value="%1$s" />', $_REQUEST['page']);
-            $table->display();
-            echo '</form>';
-        }
-        ?> </div> <?php
+            <br>
+            <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+            <?php
+            if ($active_count !== false) {
+                ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+            }
+            if ($deactive_count !== false) {
+                ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+            }
+            if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
+                $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
+                $table->prepare_items();
+                echo '<form id="account-filter" method="post">';
+                echo sprintf('<input type="hidden" name="page" value="%1$s" />', $_REQUEST['page']);
+                $table->display();
+                echo '</form>';
+            }
+            ?> </div> <?php
         $this->angelleye_pfwma_display_marketing_sidebar();
     }
 
@@ -1476,32 +1475,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <?php
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-        if($angelleye_payment_load_balancer == '' ) :
-        ?>
+        if ($angelleye_payment_load_balancer == '') :
+            ?>
 
-        <tr class="angelleye_multi_account_paypal_express_field">
-            <th scope="row" class="titledesc" >
-                <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-            </th>
-            <td class="forminp">
-                <fieldset>
-                    <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
-                </fieldset>
-            </td>
-        </tr>
-        <tr class="angelleye_multi_account_paypal_express_field">
-            <th scope="row" class="titledesc" >
-                <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-            </th>
-            <td class="forminp">
-                <fieldset>
-                    <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" placeholder="Commission">
-                </fieldset>
-            </td>
-        </tr>
-        <?php
+            <tr class="angelleye_multi_account_paypal_express_field">
+                <th scope="row" class="titledesc" >
+                    <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                </th>
+                <td class="forminp">
+                    <fieldset>
+                        <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                        <input type="number" name="ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0">
+                    </fieldset>
+                </td>
+            </tr>
+            <tr class="angelleye_multi_account_paypal_express_field">
+                <th scope="row" class="titledesc" >
+                    <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                </th>
+                <td class="forminp">
+                    <fieldset>
+                        <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                        <input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" placeholder="Commission">
+                    </fieldset>
+                </td>
+            </tr>
+            <?php
         endif;
     }
 
@@ -2361,8 +2360,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_pfwma_display_notice() {
         $pfwma_processed = (isset($_GET['pfwma_processed']) ) ? $_GET['pfwma_processed'] : FALSE;
-        if($pfwma_processed) {
-            $this->message =  __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf( _n( '%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management' ), $pfwma_processed ) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        if ($pfwma_processed) {
+            $this->message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management'), $pfwma_processed) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
         }
     }
 
@@ -2392,13 +2391,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $log_url = wc_clean($_SERVER['HTTP_HOST']);
         $log_plugin_id = 18;
         $web_services_url = 'http://www.angelleye.com/web-services/wordpress/update-plugin-status.php';
-        $request_url = add_query_arg( array(
+        $request_url = add_query_arg(array(
             'url' => $log_url,
             'plugin_id' => $log_plugin_id,
             'activation_status' => 0,
             'reason' => wc_clean($_POST['reason']),
             'reason_details' => wc_clean($_POST['reason_details']),
-        ), $web_services_url );
+                ), $web_services_url);
         $response = wp_remote_request($request_url);
         update_option('angelleye_pfwma_submited_feedback', 'yes');
         if (is_wp_error($response)) {
@@ -2409,9 +2408,41 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function own_update_angelleye_multi_account() {
-        delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce' );
-        delete_transient( 'angelleye_multi_ec_payment_load_balancer_synce_sandbox' );
-        delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce' );
-        delete_transient( 'angelleye_multi_payflow_payment_load_balancer_synce_sandbox' );
+        delete_transient('angelleye_multi_ec_payment_load_balancer_synce');
+        delete_transient('angelleye_multi_ec_payment_load_balancer_synce_sandbox');
+        delete_transient('angelleye_multi_payflow_payment_load_balancer_synce');
+        delete_transient('angelleye_multi_payflow_payment_load_balancer_synce_sandbox');
     }
+
+    public function angelleye_delete_multi_account($id) {
+        global $wpdb;
+        $post_types_to_delete = 'microprocessing';
+        $post_ids = $wpdb->get_col($wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_author = %d AND post_type IN ('$post_types_to_delete')", $id));
+        if ($post_ids) {
+            foreach ($post_ids as $post_id) {
+                wp_delete_post($post_id, true);
+            }
+        }
+        $post_id = angelleye_is_vendor_account_exist($id);
+        if ($post_id != false) {
+            wp_delete_post($post_id, true);
+        }
+        $multi_accounts = angelleye_get_user_multi_accounts($id);
+        if(!empty($multi_accounts)) {
+            foreach ($multi_accounts as $key => $account_id) {
+                 wp_delete_post($account_id, true);
+            }
+        }
+        $user = get_user_by('id', $id);
+        if(isset($user) && isset($user->user_email) && !empty($user->user_email)) {
+            $multi_account_by_email = angelleye_get_user_multi_accounts_by_paypal_email($user->user_email);
+            if(!empty($multi_account_by_email)) {
+                foreach ($multi_account_by_email as $key => $account_id) {
+                     wp_delete_post($account_id, true);
+                }
+            }
+        }
+        $this->own_update_angelleye_multi_account();
+    }
+
 }

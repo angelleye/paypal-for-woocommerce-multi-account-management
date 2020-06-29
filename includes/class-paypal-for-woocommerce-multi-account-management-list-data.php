@@ -37,13 +37,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 if ($condition_user) {
                     if ($condition_user != 'all') {
                         $user = get_user_by( 'id', $condition_user );
-                        $user_string = sprintf(
-                                esc_html__( '%1$s (#%2$s   %3$s)', 'woocommerce' ),
-                                $user->display_name,
-                                absint( $user->ID ),
-                                $user->user_email
-                        );
-                        $user_info = '<p class="description">' . sprintf('When Author is %s', $user_string) . '</p>';
+                        if ( isset($user->ID) && !empty($user->ID) ) {
+                            $user_string = sprintf(
+                                    esc_html__( '%1$s (#%2$s   %3$s)', 'woocommerce' ),
+                                    $user->display_name,
+                                    absint( $user->ID ),
+                                    $user->user_email
+                            );
+                            $user_info = '<p class="description">' . sprintf('When Author is %s', $user_string) . '</p>';
+                        }
                     }
                 }
                 $other_condition = '';
