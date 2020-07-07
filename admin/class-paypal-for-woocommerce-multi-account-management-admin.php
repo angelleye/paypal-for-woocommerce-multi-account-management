@@ -1235,61 +1235,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     }
 
-    public function angelleye_get_product_tag_by_product_cat() {
-        $args = array(
-            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-            'post_status' => 'publish',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_type',
-                    'field' => 'slug',
-                    'terms' => array('grouped', 'external'),
-                    'operator' => 'NOT IN',
-                )
-            )
-        );
-        if (isset($_POST['author']) && $_POST['author'] != 'all') {
-            $args['author'] = $_POST['author'];
-        }
-        if (isset($_POST['shipping_class']) && $_POST['shipping_class'] != 'all') {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_shipping_class',
-                'terms' => $_POST['shipping_class'],
-                'operator' => 'IN',
-            );
-        }
-        if (!empty($_POST['categories_list'])) {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_cat',
-                'terms' => $_POST['categories_list'],
-                'operator' => 'IN',
-            );
-        }
-        $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
-        $all_tags = array();
-        $all_products = array();
-        if (!empty($loop->posts)) {
-            foreach ($loop->posts as $key => $value) {
-                $all_products[$value] = get_the_title($value);
-                $terms = get_the_terms($value, 'product_tag');
-                if (!empty($terms)) {
-                    foreach ($terms as $terms_key => $terms_value) {
-                        if ($terms_value->count > 0) {
-                            $all_tags[$terms_value->term_id] = $terms_value->name;
-                        }
-                    }
-                }
-            }
-        }
-        wp_send_json_success(
-                array(
-                    'all_tags' => $all_tags,
-                    'all_products' => $all_products
-                )
-        );
-    }
+    
 
     
 
@@ -1686,9 +1632,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </select>
                     <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>">
-                        
-                    </select>
+                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="angelleye_pfwma_get_product_tags"></select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
                     <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_pfwma_get_products"></select>
                     <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
@@ -2402,6 +2346,55 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         wp_send_json($all_products);
+    }
+    
+    public function angelleye_pfwma_get_product_tags() {
+        $args = array(
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_type',
+                    'field' => 'slug',
+                    'terms' => array('grouped', 'external'),
+                    'operator' => 'NOT IN',
+                )
+            )
+        );
+        if (isset($_GET['author']) && $_GET['author'] != 'all') {
+            $args['author'] = $_GET['author'];
+        }
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all') {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_shipping_class',
+                'terms' => $_GET['shipping_class'],
+                'operator' => 'IN',
+            );
+        }
+        if (!empty($_GET['categories_list'])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_cat',
+                'terms' => $_GET['categories_list'],
+                'operator' => 'IN',
+            );
+        }
+        $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
+        $all_tags = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $terms = get_the_terms($value, 'product_tag');
+                if (!empty($terms)) {
+                    foreach ($terms as $terms_key => $terms_value) {
+                        if ($terms_value->count > 0) {
+                            $all_tags[$terms_value->term_id] = $terms_value->name;
+                        }
+                    }
+                }
+            }
+        }
+        wp_send_json($all_tags);
     }
 
 }
