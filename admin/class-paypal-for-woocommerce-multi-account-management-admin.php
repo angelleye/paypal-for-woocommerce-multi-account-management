@@ -1690,8 +1690,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         
                     </select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_get_product_by_product_tags"></select>
-                    
+                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_pfwma_get_products"></select>
                     <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -2348,7 +2347,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         return $found_categories;
     }
     
-    public function angelleye_get_product_by_product_tags() {
+    public function angelleye_pfwma_get_products() {
         $args = array(
             'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,

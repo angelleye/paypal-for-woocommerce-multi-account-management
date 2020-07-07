@@ -81,9 +81,9 @@ jQuery(function ($) {
                                         term: params.term,
                                         action: $(this).data('action'),
                                         tag_list: jQuery('#product_tags').val(),
-            categories_list: jQuery('#product_categories').val(),
-            shipping_class : jQuery('#pfwst_shipping_class').val(),
-            author : jQuery('#customer_user').val(),
+                                        categories_list: jQuery('#product_categories').val(),
+                                        shipping_class : jQuery('#pfwst_shipping_class').val(),
+                                        author : jQuery('#customer_user').val(),
                                     };
                                 },
                                 processResults: function (data) {
