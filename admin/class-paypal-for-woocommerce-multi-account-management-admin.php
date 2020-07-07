@@ -67,7 +67,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_register_script('jquery-blockui', WC()->plugin_url() . '/assets/js/jquery-blockui/jquery.blockUI' . $suffix . '.js', array('jquery'), '2.70', true);
         wp_enqueue_script('jquery-blockui');
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array( 'jquery' ), $this->version, true);
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-ajax.js', array( 'jquery', 'selectWoo', 'wc-enhanced-select' ), $this->version, true);
+        wp_enqueue_script($this->plugin_name .'ajax', plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-ajax.js', array( 'jquery', 'selectWoo', 'wc-enhanced-select' ), $this->version, true);
         if ('plugins.php' === $hook_suffix) {
             wp_enqueue_style('deactivation-pfwma-css', plugin_dir_url(__FILE__) . 'css/deactivation-modal.css', null, $this->version);
             wp_enqueue_script('deactivation-pfwma-js', plugin_dir_url(__FILE__) . 'js/deactivation-form-modal.js', null, $this->version, true);
@@ -1291,66 +1291,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         );
     }
 
-    public function angelleye_get_product_by_product_tags() {
-        $args = array(
-            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-            'post_status' => 'publish',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_type',
-                    'field' => 'slug',
-                    'terms' => array('grouped', 'external'),
-                    'operator' => 'NOT IN',
-                )
-            )
-        );
-
-        if (isset($_POST['author']) && $_POST['author'] != 'all') {
-            $args['author'] = $_POST['author'];
-        }
-
-        if (isset($_POST['shipping_class']) && $_POST['shipping_class'] != 'all') {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_shipping_class',
-                'terms' => $_POST['shipping_class'],
-                'operator' => 'IN',
-            );
-        }
-
-        if (!empty($_POST['tag_list']) || !empty($_POST['categories_list'])) {
-            if (!empty($_POST['tag_list'])) {
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'product_tag',
-                    'terms' => $_POST['tag_list'],
-                    'operator' => 'IN'
-                );
-            }
-            if (!empty($_POST['categories_list'])) {
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'product_cat',
-                    'terms' => $_POST['categories_list'],
-                    'operator' => 'IN',
-                );
-            }
-        }
-        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
-        $all_products = array();
-        if (!empty($loop->posts)) {
-            foreach ($loop->posts as $key => $value) {
-                $product_title = get_the_title($value);
-                if (!empty($product_title)) {
-                    $all_products[$value] = $product_title;
-                }
-            }
-        }
-        wp_send_json_success(
-                array(
-                    'all_products' => $all_products,
-                )
-        );
-    }
+    
 
     public function angelleye_multi_account_api_field_ui() {
         ?>
@@ -1749,9 +1690,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         
                     </select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_list" class="angelleye-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="woocommerce_json_search_products_and_variations">
-                        
-                    </select>
+                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_get_product_by_product_tags"></select>
+                    
                     <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -2406,6 +2346,63 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         
         return $found_categories;
+    }
+    
+    public function angelleye_get_product_by_product_tags() {
+        $args = array(
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_type',
+                    'field' => 'slug',
+                    'terms' => array('grouped', 'external'),
+                    'operator' => 'NOT IN',
+                )
+            )
+        );
+        if( isset($_GET['term']) && !empty($_GET['term'])) {
+            $args['s'] = wc_clean($_GET['term']);
+        }
+        if (isset($_GET['author']) && $_GET['author'] != 'all') {
+            $args['author'] = $_GET['author'];
+        }
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all') {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_shipping_class',
+                'terms' => $_GET['shipping_class'],
+                'operator' => 'IN',
+            );
+        }
+        if (!empty($_GET['tag_list']) || !empty($_GET['categories_list'])) {
+            if (!empty($_GET['tag_list'])) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_tag',
+                    'terms' => $_GET['tag_list'],
+                    'operator' => 'IN'
+                );
+            }
+            if (!empty($_GET['categories_list'])) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $_GET['categories_list'],
+                    'operator' => 'IN',
+                );
+            }
+        }
+        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
+        $all_products = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $product_title = get_the_title($value);
+                if (!empty($product_title)) {
+                    $all_products[$value] = $product_title;
+                }
+            }
+        }
+        wp_send_json($all_products);
     }
 
 }

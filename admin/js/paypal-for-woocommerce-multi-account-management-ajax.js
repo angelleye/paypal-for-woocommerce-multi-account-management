@@ -79,13 +79,11 @@ jQuery(function ($) {
                                 data: function (params) {
                                     return {
                                         term: params.term,
-                                        action: $(this).data('action') || 'woocommerce_json_search_products_and_variations',
-                                        security: wc_enhanced_select_params.search_products_nonce,
-                                        exclude: $(this).data('exclude'),
-                                        exclude_type: $(this).data('exclude_type'),
-                                        include: $(this).data('include'),
-                                        limit: $(this).data('limit'),
-                                        display_stock: $(this).data('display_stock')
+                                        action: $(this).data('action'),
+                                        tag_list: jQuery('#product_tags').val(),
+            categories_list: jQuery('#product_categories').val(),
+            shipping_class : jQuery('#pfwst_shipping_class').val(),
+            author : jQuery('#customer_user').val(),
                                     };
                                 },
                                 processResults: function (data) {
