@@ -1628,13 +1628,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         </select>
                     <?php } ?>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-category-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>" data-allow_clear="true">
+                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="angelleye-category-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>" data-allow_clear="true">
                     </select>
                     <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="angelleye_pfwma_get_product_tags"></select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_pfwma_get_products"></select>
+                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_ids" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_pfwma_get_products"></select>
                     <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -2278,20 +2278,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $this->own_update_angelleye_multi_account();
     }
     
-    public function angelleye_remove_count_woocommerce_found_categories($found_categories) {
-        $new_found_categories = array();
-        if( !empty($found_categories)) {
-            foreach ($found_categories as $key => $term) {
-                $term->formatted_name = substr($term->formatted_name, 0, strpos($term->formatted_name, ' ('));
-                $new_found_categories[$key] = $term;
-            }
-            return $new_found_categories;
-        }
-        
-        return $found_categories;
-    }
-    
     public function angelleye_pfwma_get_products() {
+        ob_start();
         $args = array(
             'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,
@@ -2349,6 +2337,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
     
     public function angelleye_pfwma_get_product_tags() {
+        ob_start();
         $args = array(
             'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
             'posts_per_page' => -1,
@@ -2396,5 +2385,53 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         wp_send_json($all_tags);
     }
+    
+    public function angelleye_pfwma_get_categories() {
+        ob_start();
 
+        check_ajax_referer('search-categories', 'security');
+
+        if (!current_user_can('edit_products')) {
+            wp_die(-1);
+        }
+
+        $search_text = isset($_GET['term']) ? wc_clean(wp_unslash($_GET['term'])) : '';
+
+        if (!$search_text) {
+            wp_die();
+        }
+
+        $found_categories = array();
+        $args = array(
+            'taxonomy' => array('product_cat'),
+            'orderby' => 'id',
+            'order' => 'ASC',
+            'hide_empty' => true,
+            'fields' => 'all',
+            'name__like' => $search_text,
+        );
+
+        $terms = get_terms($args);
+
+        if ($terms) {
+            foreach ($terms as $term) {
+                $term->formatted_name = '';
+
+                if ($term->parent) {
+                    $ancestors = array_reverse(get_ancestors($term->term_id, 'product_cat'));
+                    foreach ($ancestors as $ancestor) {
+                        $ancestor_term = get_term($ancestor, 'product_cat');
+                        if ($ancestor_term) {
+                            $term->formatted_name .= $ancestor_term->name . ' > ';
+                        }
+                    }
+                }
+
+                $term->formatted_name .= $term->name;
+                $found_categories[$term->term_id] = $term->formatted_name;
+            }
+        }
+
+        wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
+    }
 }
