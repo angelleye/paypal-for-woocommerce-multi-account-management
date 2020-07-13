@@ -2313,6 +2313,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
     
     public function angelleye_pfwma_get_product_tags() {
+        $deep_condition = 0;
         ob_start();
         $args = array(
             'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
@@ -2328,15 +2329,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 )
             )
         );
-        if (isset($_GET['author']) && $_GET['author'] != 'all') {
+        if (isset($_GET['author']) && $_GET['author'] != 'all' && !empty($_GET['author'])) {
             $args['author'] = $_GET['author'];
+            $deep_condition = $deep_condition + 1;
         }
-        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all') {
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all' && !empty($_GET['shipping_class'])) {
             $args['tax_query'][] = array(
                 'taxonomy' => 'product_shipping_class',
                 'terms' => $_GET['shipping_class'],
                 'operator' => 'IN',
             );
+            $deep_condition = $deep_condition + 1;
         }
         if (!empty($_GET['categories_list'])) {
             $args['tax_query'][] = array(
@@ -2344,21 +2347,57 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'terms' => $_GET['categories_list'],
                 'operator' => 'IN',
             );
+            $deep_condition = $deep_condition + 1;
         }
-        $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
         $all_tags = array();
-        if (!empty($loop->posts)) {
-            foreach ($loop->posts as $key => $value) {
-                $terms = get_the_terms($value, 'product_tag');
-                if (!empty($terms)) {
-                    foreach ($terms as $terms_key => $terms_value) {
-                        if ($terms_value->count > 0) {
-                            $all_tags[$terms_value->term_id] = $terms_value->name;
+        $search_text = isset($_GET['term']) ? wc_clean(wp_unslash($_GET['term'])) : '';
+        if (!$search_text) {
+            wp_die();
+        }
+        if($deep_condition > 0)  {
+            $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
+            if (!empty($loop->posts)) {
+                foreach ($loop->posts as $key => $value) {
+                    $terms = get_the_terms($value, 'product_tag');
+                    if (!empty($terms)) {
+                        foreach ($terms as $terms_key => $terms_value) {
+                            if ($terms_value->count > 0) {
+                                if (strpos($terms_value->name, $search_text) !== false) {
+                                    $all_tags[$terms_value->term_id] = $terms_value->name;
+                                }
+                            }
                         }
                     }
                 }
             }
+        } else {
+            $args = array(
+                'taxonomy' => array('product_tag'),
+                'orderby' => 'id',
+                'order' => 'ASC',
+                'hide_empty' => true,
+                'fields' => 'all',
+                'name__like' => $search_text,
+            );
+            $terms = get_terms($args);
+            if ($terms) {
+                foreach ($terms as $term) {
+                    $term->formatted_name = '';
+                    if ($term->parent) {
+                        $ancestors = array_reverse(get_ancestors($term->term_id, 'product_tag'));
+                        foreach ($ancestors as $ancestor) {
+                            $ancestor_term = get_term($ancestor, 'product_cat');
+                            if ($ancestor_term) {
+                                $term->formatted_name .= $ancestor_term->name . ' > ';
+                            }
+                        }
+                    }
+                    $term->formatted_name .= $term->name;
+                    $all_tags[$term->term_id] = $term->formatted_name;
+                }
+            }
         }
+        
         wp_send_json($all_tags);
     }
     
