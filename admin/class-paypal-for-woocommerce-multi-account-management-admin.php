@@ -2362,7 +2362,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     if (!empty($terms)) {
                         foreach ($terms as $terms_key => $terms_value) {
                             if ($terms_value->count > 0) {
-                                if (strpos($terms_value->name, $search_text) !== false) {
+                                if (strpos(strtolower($terms_value->name), strtolower($search_text)) !== false) {
                                     $all_tags[$terms_value->term_id] = $terms_value->name;
                                 }
                             }
