@@ -2273,10 +2273,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if( isset($_GET['term']) && !empty($_GET['term'])) {
             $args['s'] = wc_clean($_GET['term']);
         }
-        if (isset($_GET['author']) && $_GET['author'] != 'all') {
+        if (isset($_GET['author']) && $_GET['author'] != 'all' && !empty($_GET['author'])) {
             $args['author'] = $_GET['author'];
         }
-        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all') {
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all' && !empty($_GET['shipping_class'])) {
             $args['tax_query'][] = array(
                 'taxonomy' => 'product_shipping_class',
                 'terms' => $_GET['shipping_class'],
