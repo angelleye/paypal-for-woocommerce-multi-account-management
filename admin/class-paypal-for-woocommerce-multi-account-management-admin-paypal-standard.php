@@ -324,7 +324,7 @@ class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
         $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
         $angelleye_multi_account_ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', true);
         if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
-            if (empty($angelleye_multi_account_ec_parallel_data_map['is_api_set']) || $angelleye_multi_account_ec_parallel_data_map['is_api_set'] == false) {
+            if (empty($angelleye_multi_account_ec_parallel_data_map['is_api_set']) || apply_filter('angelleye_pfwma_is_api_set', $angelleye_multi_account_ec_parallel_data_map['is_api_set'], $angelleye_multi_account_ec_parallel_data_map) === false) {
                 return new WP_Error('invalid_refund', __('You can not refund this order, as the credentials are not present for the order', 'paypal-for-woocommerce-multi-account-management'));
             } else {
                  return $this->angelleye_set_api_details_refund($request, $angelleye_multi_account_ec_parallel_data_map);
@@ -356,7 +356,7 @@ class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
         $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
         $angelleye_multi_account_paypal_data_map = get_post_meta($order_id, '_angelleye_multi_account_paypal_data_map', true);
         if (!empty($angelleye_multi_account_paypal_data_map)) {
-            if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && $angelleye_multi_account_paypal_data_map['is_api_set'] == true)) {
+            if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && apply_filter('angelleye_pfwma_is_api_set', $angelleye_multi_account_paypal_data_map['is_api_set'], $angelleye_multi_account_paypal_data_map) === true)) {
                 return true;
             } else {
                 return false;
@@ -373,7 +373,7 @@ class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
             if (!empty($post->ID)) {
                 $angelleye_multi_account_paypal_data_map = get_post_meta($post->ID, '_angelleye_multi_account_paypal_data_map', true);
                 if (!empty($angelleye_multi_account_paypal_data_map)) {
-                    if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && $angelleye_multi_account_paypal_data_map['is_api_set'] == true)) {
+                    if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && apply_filter('angelleye_pfwma_is_api_set', $angelleye_multi_account_paypal_data_map['is_api_set'], $angelleye_multi_account_paypal_data_map) === true)) {
                         return true;
                     } else {
                         return false;
