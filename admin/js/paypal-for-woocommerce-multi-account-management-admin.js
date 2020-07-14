@@ -80,16 +80,21 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
 
 
 jQuery('#customer_user, #pfwst_shipping_class').change(function () {
-    jQuery('#product_list').empty();
-    jQuery('#product_tags').change();
-});
-jQuery('#product_categories').change(function () {
-    jQuery('#product_tags').empty();
-    jQuery('#product_list').empty();
+    console.log('83');
+    jQuery('#product_categories').val('').trigger('change');
+    jQuery('#product_list').val('').trigger('change');
+    jQuery('#product_tags').val('').trigger('change');
+    jQuery('#product_list').val('').trigger('change');
 });
 
-jQuery('#product_tags').change(function () {
-    jQuery('#product_list').empty();
+jQuery('#product_categories').on('select2:unselect', function (e) {
+    console.log('91');
+    jQuery('#product_tags').val('').trigger('change');
+    jQuery('#product_list').val('').trigger('change');
+});
+jQuery('#product_tags').on('select2:unselect', function (e) {
+    console.log('96');
+   jQuery('#product_list').val('').trigger('change');
 });
 
 jQuery(function () {
