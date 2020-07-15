@@ -353,7 +353,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
             $option_four = !empty($microprocessing['woocommerce_paypal_express_api_condition_value']) ? $microprocessing['woocommerce_paypal_express_api_condition_value'][0] : '';
-            $option_five = '<p class="description">' . __('Select User Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
+            $option_five = '<p class="description">' . __('Select Buyer Role', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_five .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">';
             $option_five .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
             $editable_roles = array_reverse(get_editable_roles());
@@ -367,7 +367,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $option_five .= '</select>';
 
-            $option_five_one = "<p class='description'>" . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . "</p>";
+            $option_five_one = "<p class='description'>" . __('Select Seller/Product Author', 'paypal-for-woocommerce-multi-account-management') . "</p>";
             $option_five_one .= "<select class='wc-customer-search smart_forwarding_field' name='woocommerce_paypal_express_api_user' data-placeholder='" . __( 'All', 'paypal-for-woocommerce-multi-account-management'). "' data-minimum_input_length='3' data-allow_clear='true'>";
             $user_string = __( 'All', 'paypal-for-woocommerce-multi-account-management');
             if( !empty($selected_user) ) {
@@ -1548,7 +1548,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Select User Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <p class="description"><?php _e('Select Buyer Role', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user_role">
                         <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
                         <?php
@@ -1559,18 +1559,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <p class="description"><?php _e('Select Author', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <p class="description"><?php _e('Select Seller/Product Author', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="customer_user" class="wc-customer-search smart_forwarding_field" name="woocommerce_paypal_express_api_user" data-placeholder="<?php esc_attr_e('All', 'paypal-for-woocommerce-multi-account-management'); ?>" data-minimum_input_length="3" data-allow_clear="true">
                     </select>
                     <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple"  data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
-                        $category_ids = array();
                         $countries = WC()->countries->get_countries();
-
                         if ($countries) {
                             foreach ($countries as $country_key => $country_full_name) {
-                                echo '<option value="' . esc_attr($country_key) . '"' . wc_selected($country_key, $category_ids) . '>' . esc_html($country_full_name) . '</option>';
+                                echo '<option value="' . esc_attr($country_key) . '>' . esc_html($country_full_name) . '</option>';
                             }
                         }
                         ?>
@@ -1578,8 +1576,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <p class="description"><?php _e('Store country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="store_countries" name="store_countries" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
-                        $category_ids = array();
-                        $countries = WC()->countries->get_countries();
                         echo '<option value="0">All countries</option>';
                         if ($countries) {
                             foreach ($countries as $country_key => $country_full_name) {
@@ -1622,7 +1618,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <?php
                             $card_type = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
                             foreach ($card_type as $type => $card_name) {
-
                                 echo "\n\t<option value='" . esc_attr($type) . "'>$card_name</option>";
                             }
                             ?>
