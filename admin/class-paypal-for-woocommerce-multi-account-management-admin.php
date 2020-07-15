@@ -1568,7 +1568,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $countries = WC()->countries->get_countries();
                         if ($countries) {
                             foreach ($countries as $country_key => $country_full_name) {
-                                echo '<option value="' . esc_attr($country_key) . '>' . esc_html($country_full_name) . '</option>';
+                                echo "<option value='" . esc_attr($country_key) . "'>$country_full_name</option>";
                             }
                         }
                         ?>
