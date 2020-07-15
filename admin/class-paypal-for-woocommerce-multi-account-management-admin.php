@@ -95,7 +95,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $selected_role = '';
         $ec_site_owner_commission = 0;
         $microprocessing = get_post_meta($_GET['ID']);
-        echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="mainform" action="" enctype="multipart/form-data"><table class="form-table">
+        echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data"><table class="form-table">
         <tbody class="angelleye_micro_account_body">';
         $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
@@ -547,7 +547,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <div id="angelleye_paypal_marketing_table">
         <div class="angelleye_multi_account_global_setting">
-            <form method="post" id="mainform" action="" enctype="multipart/form-data">
+            <form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data">
                 <table class="form-table">
                     <tr class="angelleye_payment_load_balancer_tr">
                         <th scope="row" class="titledesc">
@@ -698,7 +698,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             ?>
             <br/>
             <div class="angelleye_multi_account_left">
-                <form method="post" id="mainform" action="" enctype="multipart/form-data">
+                <form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data">
                     <table class="form-table" id="micro_account_fields" >
                         <tbody class="angelleye_micro_account_body">
                             <?php echo $this->angelleye_multi_account_choose_payment_gateway(); ?>

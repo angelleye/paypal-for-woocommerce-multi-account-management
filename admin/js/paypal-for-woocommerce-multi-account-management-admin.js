@@ -80,7 +80,6 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
 
 
 jQuery('#customer_user, #pfwst_shipping_class').change(function () {
-    console.log('83');
     jQuery('#product_categories').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
     jQuery('#product_tags').val('').trigger('change');
@@ -88,12 +87,10 @@ jQuery('#customer_user, #pfwst_shipping_class').change(function () {
 });
 
 jQuery('#product_categories').on('select2:unselect', function (e) {
-    console.log('91');
     jQuery('#product_tags').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
 });
 jQuery('#product_tags').on('select2:unselect', function (e) {
-    console.log('96');
    jQuery('#product_list').val('').trigger('change');
 });
 
@@ -158,6 +155,35 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         event.preventDefault();
         return r;
     }
+});
+jQuery( "#angelleye_multi_account" ).submit(function( event ) {
+    console.log(jQuery("input[name='angelleye_multi_account_choose_payment_gateway']").val());
+ if( jQuery("input[name='angelleye_multi_account_choose_payment_gateway']").val() === 'paypal_express' ) {
+        var total_not_empty_fields = 0;
+        var paypal_express_field_names = [ "woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "currency_code" ];
+        jQuery.each( paypal_express_field_names, function( i, name ) {
+            console.log(name);
+            if( jQuery("input[name='"+ name +"']").val() !== '' ) {
+                console.log(name + " " + jQuery("input[name='"+ name +"']").val())
+                total_not_empty_fields = total_not_empty_fields + 1;
+                return;
+            }
+        });
+        if(total_not_empty_fields === 0) {
+            
+        }
+        console.log('test');
+    }
+  event.preventDefault();
+});
+jQuery('#angelleye_multi_account').on('submit', function (event) {
+    event.preventDefault();
+    
+    
+    
+    
+    
+    
 });
 jQuery('.enable_all_vendor_rules').on('click', function (event) {
     var r = confirm(pfwma_param.enable_all_vendor_rules_alert_message);
