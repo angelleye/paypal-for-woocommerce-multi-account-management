@@ -74,6 +74,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         add_filter("{$prefix}plugin_action_links_" . PFWMA_PLUGIN_BASENAME, array($this, 'paypal_for_woocommerce_multi_account_management_action_links'), 10, 4);
         add_filter('woocommerce_settings_tabs_array', array($this, 'angelleye_woocommerce_settings_tabs_array'), 50, 1);
         add_action('woocommerce_settings_tabs_multi_account_management', array($this, 'display_plugin_admin_page'));
+        add_filter('angelleye_pfwma_is_api_set', array($this, 'angelleye_pfwma_is_api_set'), 10, 2);
     }
 
     /**
@@ -348,6 +349,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {
         $settings_tabs['multi_account_management'] = __('PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management');
         return $settings_tabs;
+    }
+    
+    public function angelleye_pfwma_is_api_set($is_api_set, $value) {
+        if( $value['multi_account_id'] === 'default' ) {
+            return $is_api_set;
+        }
+        $microprocessing_array = get_post_meta($value['multi_account_id']);
+        if (!empty($microprocessing_array['woocommerce_paypal_express_testmode']) && $microprocessing_array['woocommerce_paypal_express_testmode'][0] == 'on') {
+            $testmode = true;
+        } else {
+            $testmode = false;
+        }
+        if ($testmode) {
+            if( !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0] && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0]))) {
+                $is_api_set = true;
+            } else {
+                $is_api_set = false;
+            }
+        } else {
+            if( !empty($microprocessing_array['woocommerce_paypal_express_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_signature'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_password'][0])) {
+                $is_api_set = true;
+            } else {
+                $is_api_set = false;
+            }
+        }
+        return $is_api_set;
     }
 
 }
