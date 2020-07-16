@@ -625,6 +625,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->shippingamt) && $this->shippingamt > 0) {
+            if (!empty($this->map_item_with_account)) {
+                $packages = WC()->shipping()->get_packages();
+                $chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
+                if(!empty($packages) && !empty($chosen_shipping_methods)) {
+                    foreach ( $packages as $package_key => $package ) {
+                        if ( isset( $chosen_shipping_methods[ $package_key ], $package['rates'][ $chosen_shipping_methods[ $package_key ] ] ) ) {
+                            $shipping_rate = $package['rates'][ $chosen_shipping_methods[ $package_key ] ];
+                            foreach ($package['contents'] as $key => $value) {
+                                $product_id = isset($value['product_id']) ? $value['product_id'] : false;
+                            }
+                            if($product_id) {
+                                if(isset($this->map_item_with_account[$product_id])) {
+                                    $this->map_item_with_account[$product_id]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($shipping_rate->cost);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             $this->shipping_array = $this->angelleye_get_extra_fee_array($this->shippingamt, $this->angelleye_needs_shipping, 'shipping');
         }
         if (isset($this->discount_amount) && $this->discount_amount > 0) {
@@ -1440,7 +1459,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         break;
                     case "shipping":
                         if (!empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
-                            $partition_array[$product_id] = $partition_array[$loop];
+                            $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
                             unset($partition_array[$loop]);
                             $loop = $loop + 1;
                         }
