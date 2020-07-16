@@ -81,7 +81,7 @@ jQuery(function ($) {
                                         term: params.term,
                                         action: $(this).data('action'),
                                         categories_list: jQuery('#product_categories').val(),
-                                        author: jQuery('#customer_user').val(),
+                                        author: jQuery('#woocommerce_paypal_express_api_user').val(),
                                         shipping_class: jQuery('#pfwst_shipping_class').val()
                                     };
                                 },
@@ -157,7 +157,7 @@ jQuery(function ($) {
                                         tag_list: jQuery('#product_tags').val(),
                                         categories_list: jQuery('#product_categories').val(),
                                         shipping_class: jQuery('#pfwst_shipping_class').val(),
-                                        author: jQuery('#customer_user').val(),
+                                        author: jQuery('#woocommerce_paypal_express_api_user').val(),
                                     };
                                 },
                                 processResults: function (data) {
