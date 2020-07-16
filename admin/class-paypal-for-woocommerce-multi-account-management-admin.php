@@ -547,7 +547,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <div id="angelleye_paypal_marketing_table">
         <div class="angelleye_multi_account_global_setting">
-            <form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data">
+            <form method="post" action="" enctype="multipart/form-data">
                 <table class="form-table">
                     <tr class="angelleye_payment_load_balancer_tr">
                         <th scope="row" class="titledesc">
