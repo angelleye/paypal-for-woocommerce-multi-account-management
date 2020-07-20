@@ -1181,7 +1181,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_style('select2');
         wp_enqueue_script('wc-enhanced-select');
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
-            'rule_with_no_condition_set_message' => __('You have not set any rules, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'),
+            'rule_with_no_condition_set_message' => __('You have not set any Trigger Conditions for this rule. Therefore, this rule will trigger for all orders from now on. Would you still like to continue?', 'paypal-for-woocommerce-multi-account-management'),
            )
         );       
 
