@@ -79,8 +79,7 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
 }).change();
 
 
-jQuery('#customer_user, #pfwst_shipping_class').change(function () {
-    console.log('83');
+jQuery('#woocommerce_paypal_express_api_user, #pfwst_shipping_class').change(function () {
     jQuery('#product_categories').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
     jQuery('#product_tags').val('').trigger('change');
@@ -88,12 +87,10 @@ jQuery('#customer_user, #pfwst_shipping_class').change(function () {
 });
 
 jQuery('#product_categories').on('select2:unselect', function (e) {
-    console.log('91');
     jQuery('#product_tags').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
 });
 jQuery('#product_tags').on('select2:unselect', function (e) {
-    console.log('96');
    jQuery('#product_list').val('').trigger('change');
 });
 
@@ -159,6 +156,28 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
+jQuery( "#angelleye_multi_account" ).submit(function( event ) {
+    if(jQuery("#is_force_submit").val() === 'yes') {
+        return;
+    }
+    var total_not_empty_fields = 0;
+    var paypal_express_field_names = [ "woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "buyer_countries", "store_countries", "pfwst_shipping_class", "product_categories", "product_tags", "product_list", "woocommerce_paypal_express_api_condition_value", "currency_code", "card_type" ];
+    jQuery.each( paypal_express_field_names, function( i, name ) {
+        if( jQuery('#' + name).val() !== '' && jQuery('#' + name).val() !== 'all' && jQuery('#' + name).val() !== '0' && jQuery('#' + name).val() !== null && jQuery('#' + name).val() !== undefined) {
+            total_not_empty_fields = total_not_empty_fields + 1;
+        } 
+    });
+    if(total_not_empty_fields === 0) {
+        event.preventDefault();
+        var r = confirm(pfwma_param.rule_with_no_condition_set_message);
+        if (r === true) {
+            var force_submit_flag = jQuery("<input>").attr("type", "hidden").attr("name", "microprocessing_save").attr("id", "is_force_submit").val("yes");
+            jQuery( "#angelleye_multi_account" ).append(force_submit_flag);
+            jQuery( "#angelleye_multi_account" ).submit();
+        }
+    } 
+});
+
 jQuery('.enable_all_vendor_rules').on('click', function (event) {
     var r = confirm(pfwma_param.enable_all_vendor_rules_alert_message);
     if (r == true) {
