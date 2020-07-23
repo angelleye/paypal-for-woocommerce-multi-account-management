@@ -161,8 +161,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_after_cart_item_quantity_update', $plugin_admin, 'update_session_data', 999);
         $this->loader->add_action('woocommerce_add_to_cart', $plugin_admin, 'update_session_data', 999);
         $this->loader->add_action('woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999);
-        $this->loader->add_action('wp_ajax_angelleye_get_product_tag_by_product_cat', $plugin_admin, 'angelleye_get_product_tag_by_product_cat', 10);
-        $this->loader->add_action('wp_ajax_angelleye_get_product_by_product_tags', $plugin_admin, 'angelleye_get_product_by_product_tags', 10);
+        $this->loader->add_action('wp_ajax_angelleye_pfwma_get_product_tags', $plugin_admin, 'angelleye_pfwma_get_product_tags', 10);
+        $this->loader->add_action('wp_ajax_angelleye_pfwma_get_products', $plugin_admin, 'angelleye_pfwma_get_products', 10);
         $this->loader->add_action('wp_ajax_angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', 10);
         $this->loader->add_action('admin_notices', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_display_push_notification', 10);
         $this->loader->add_action('angelleye_set_multi_account', $plugin_admin, 'angelleye_set_multi_account', 10, 2);
@@ -219,7 +219,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_payment_load_balancer_handle', 12, 3);
         $this->loader->add_action('update_angelleye_multi_account', $plugin_admin, 'own_update_angelleye_multi_account', 10);
         $this->loader->add_action('delete_user', $plugin_admin, 'angelleye_delete_multi_account', 10, 1);
-        
+        $this->loader->add_action('wp_ajax_angelleye_pfwma_get_products', $plugin_admin, 'angelleye_pfwma_get_products', 10);
+        $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_categories', $plugin_admin, 'angelleye_pfwma_get_categories', 10, 1);
     }
 
     /**
@@ -282,25 +283,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
 
     public function display_plugin_admin_page() {
         wp_dequeue_style('woocommerce_admin_styles');
-        // WooCommerce product categories
-        $taxonomy = 'product_cat';
-        $orderby = 'name';
-        $show_count = 0;      // 1 for yes, 0 for no
-        $pad_counts = 0;      // 1 for yes, 0 for no
-        $hierarchical = 1;      // 1 for yes, 0 for no
-        $title = '';
-        $empty = 0;
-
-        $args = array(
-            'taxonomy' => $taxonomy,
-            'orderby' => $orderby,
-            'show_count' => $show_count,
-            'pad_counts' => $pad_counts,
-            'hierarchical' => $hierarchical,
-            'title_li' => $title,
-            'hide_empty' => $empty
-        );
-        $product_cats = get_categories($args);
         $this->display_plugin_admin_page_submenu();
         echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
         $this->plugin_admin->display_admin_notice();

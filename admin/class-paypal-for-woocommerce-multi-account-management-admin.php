@@ -62,10 +62,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
      * @since    1.0.0
      */
     public function enqueue_scripts($hook_suffix) {
+      
         $suffix = defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ? '' : '.min';
         wp_register_script('jquery-blockui', WC()->plugin_url() . '/assets/js/jquery-blockui/jquery.blockUI' . $suffix . '.js', array('jquery'), '2.70', true);
         wp_enqueue_script('jquery-blockui');
-        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array('jquery'), $this->version, true);
+        wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array( 'jquery' ), $this->version, true);
+        wp_enqueue_script($this->plugin_name .'ajax', plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-ajax.js', array( 'jquery', 'selectWoo', 'wc-enhanced-select' ), $this->version, true);
         if ('plugins.php' === $hook_suffix) {
             wp_enqueue_style('deactivation-pfwma-css', plugin_dir_url(__FILE__) . 'css/deactivation-modal.css', null, $this->version);
             wp_enqueue_script('deactivation-pfwma-js', plugin_dir_url(__FILE__) . 'js/deactivation-form-modal.js', null, $this->version, true);
@@ -365,24 +367,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $option_five .= '</select>';
 
-            $option_five_one = '<p class="description">' . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-            $option_five_one .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">';
-            $option_five_one .= '<option value="all">' . __('All', 'paypal-for-woocommerce-multi-account-management') . '</option>';
-
-            $users = get_users(['role__not_in' => ['subscriber']]);
-            if (!empty($users)) {
-                foreach ($users as $user) {
+            $option_five_one = "<p class='description'>" . __('Select Author', 'paypal-for-woocommerce-multi-account-management') . "</p>";
+            $option_five_one .= "<select class='wc-customer-search smart_forwarding_field' name='woocommerce_paypal_express_api_user' data-placeholder='" . __( 'All', 'paypal-for-woocommerce-multi-account-management'). "' data-minimum_input_length='3' data-allow_clear='true'>";
+            $user_string = __( 'All', 'paypal-for-woocommerce-multi-account-management');
+            if( !empty($selected_user) ) {
+                $user = get_user_by( 'id', $selected_user );
+                if ( ! empty( $user ) ) {
                     $user_string = sprintf(
-                            esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'), $user->display_name, absint($user->ID), $user->user_email
+                        esc_html__( '%1$s (#%2$s &ndash; %3$s)', 'woocommerce' ),
+                        $user->display_name,
+                        absint( $user->ID ),
+                        $user->user_email
                     );
-                    if ($selected_user == $user->ID) {
-                        $option_five_one .= "<option selected='selected' value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
-                    } else {
-                        $option_five_one .= "<option value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
-                    }
+                    $user_string = htmlspecialchars( wp_kses_post( $user_string ) );
                 }
             }
-            $option_five_one .= '</select>';
+            $option_five_one .= "<option selected='selected' value='" . esc_attr( $selected_user ) . "' > $user_string </option>";
+            $option_five_one .= "</select>";
             $option_ten = '<p class="description">' . __('Select Priority', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_ten .= '<select class="wc-enhanced-select smart_forwarding_field" name="woocommerce_priority">';
             for ($x = 0; $x <= 100; $x++) {
@@ -442,61 +443,38 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $option_fifteen .= '</select>';
 
             $option_eight = '<p class="description"> ' . apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
-            $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any category', 'paypal-for-woocommerce-multi-account-management') . '">';
-            $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), array(
-                'hide_empty' => 1,
-                'orderby' => 'name',
-            ));
-            if (!isset($product_categories)) {
-                $product_categories = array();
-            }
-            if ($categories) {
-                foreach ($categories as $cat) {
-                    $category_lable = '';
-                    $taxonomy_obj = get_taxonomy($cat->taxonomy);
-                    if (isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
-                        $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
-                    } else {
-                        $category_lable = $cat->name;
+            $option_eight .= '<select id="product_categories" name="product_categories[]" style="width: 78%;"  class="angelleye-category-search" multiple="multiple" data-placeholder="' . __('Any category', 'paypal-for-woocommerce-multi-account-management') . '">';
+            if( !empty($product_categories) ) {
+                foreach ($product_categories as $key => $value) {
+                    $term = get_term($value);
+                    if ( $term && ! is_wp_error( $term ) ) {
+                            $option_eight .= '<option selected="selected" value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
                     }
-                    $option_eight .= '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $product_categories) . '>' . esc_html($category_lable) . '</option>';
                 }
             }
             $option_eight .= '</select>';
             $option_nine = '<p class="description">' . __('Product tags', 'paypal-for-woocommerce-multi-account-management') . '</p>';
-            $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="' . __('Any tag', 'paypal-for-woocommerce-multi-account-management') . '">';
-            if (empty($product_categories)) {
-                $tags = get_terms('product_tag', 'orderby=name&hide_empty=1');
-                if ($tags) {
-                    foreach ($tags as $tag) {
-                        $option_nine .= '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $product_tags) . '>' . esc_html($tag->name) . '</option>';
+            $option_nine .= '<select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-action="angelleye_pfwma_get_product_tags" data-placeholder="' . __('Any tag', 'paypal-for-woocommerce-multi-account-management') . '">';
+            if (!empty($product_tags)) {
+                foreach ($product_tags as $key => $value) {
+                    $term_object = get_term_by('id', $value, 'product_tag');
+                    if (!empty($term_object->name)) {
+                        $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
                     }
                 }
-            } else {
-                if (!empty($product_tags)) {
-                    foreach ($product_tags as $key => $value) {
-                        $term_object = get_term_by('id', $value, 'product_tag');
-                        if (!empty($term_object->name)) {
-                            $option_nine .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($term_object->name) . '</option>';
-                        }
-                    }
-                }
-            }
-            if (!isset($product_categories)) {
-                $product_categories = array();
             }
             $option_nine .= '</select>';
             $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
-            $option_six .= '<select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
-            $product_list = $this->angelleye_get_list_product_using_tag_cat($product_tags, $product_categories);
-            if (!empty($product_list)) {
-                foreach ($product_list as $product_list_id => $product_list_name) {
-                    $product = wc_get_product($product_list_id);
-                    if (is_object($product)) {
-                        $option_six .= '<option value="' . esc_attr($product_list_id) . '"' . wc_selected($product_list_id, $product_ids) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+            $option_six .= '<select id="product_list" class="angelleye-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-action="angelleye_pfwma_get_products" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
+            if( !empty($product_ids) ) {
+                foreach ($product_ids as $key => $value) {
+                    $product_title = get_the_title($value);
+                    if ( $product_title && ! is_wp_error( $product_title ) ) {
+                        $option_six .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($product_title) . '</option>';
                     }
                 }
             }
+            
             $option_thirteen = '<p class="description">' . __('Currency Code', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             $option_thirteen .= '<select class="wc-enhanced-select currency_code" name="currency_code">';
             $option_thirteen .= "<option value=''>All</option>";
@@ -1233,122 +1211,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     }
 
-    public function angelleye_get_product_tag_by_product_cat() {
-        $args = array(
-            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-            'post_status' => 'publish',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_type',
-                    'field' => 'slug',
-                    'terms' => array('grouped', 'external'),
-                    'operator' => 'NOT IN',
-                )
-            )
-        );
-        if (isset($_POST['author']) && $_POST['author'] != 'all') {
-            $args['author'] = $_POST['author'];
-        }
-        if (isset($_POST['shipping_class']) && $_POST['shipping_class'] != 'all') {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_shipping_class',
-                'terms' => $_POST['shipping_class'],
-                'operator' => 'IN',
-            );
-        }
-        if (!empty($_POST['categories_list'])) {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_cat',
-                'terms' => $_POST['categories_list'],
-                'operator' => 'IN',
-            );
-        }
-        $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
-        $all_tags = array();
-        $all_products = array();
-        if (!empty($loop->posts)) {
-            foreach ($loop->posts as $key => $value) {
-                $all_products[$value] = get_the_title($value);
-                $terms = get_the_terms($value, 'product_tag');
-                if (!empty($terms)) {
-                    foreach ($terms as $terms_key => $terms_value) {
-                        if ($terms_value->count > 0) {
-                            $all_tags[$terms_value->term_id] = $terms_value->name;
-                        }
-                    }
-                }
-            }
-        }
-        wp_send_json_success(
-                array(
-                    'all_tags' => $all_tags,
-                    'all_products' => $all_products
-                )
-        );
-    }
+    
 
-    public function angelleye_get_product_by_product_tags() {
-        $args = array(
-            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
-            'posts_per_page' => -1,
-            'fields' => 'ids',
-            'post_status' => 'publish',
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_type',
-                    'field' => 'slug',
-                    'terms' => array('grouped', 'external'),
-                    'operator' => 'NOT IN',
-                )
-            )
-        );
-
-        if (isset($_POST['author']) && $_POST['author'] != 'all') {
-            $args['author'] = $_POST['author'];
-        }
-
-        if (isset($_POST['shipping_class']) && $_POST['shipping_class'] != 'all') {
-            $args['tax_query'][] = array(
-                'taxonomy' => 'product_shipping_class',
-                'terms' => $_POST['shipping_class'],
-                'operator' => 'IN',
-            );
-        }
-
-        if (!empty($_POST['tag_list']) || !empty($_POST['categories_list'])) {
-            if (!empty($_POST['tag_list'])) {
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'product_tag',
-                    'terms' => $_POST['tag_list'],
-                    'operator' => 'IN'
-                );
-            }
-            if (!empty($_POST['categories_list'])) {
-                $args['tax_query'][] = array(
-                    'taxonomy' => 'product_cat',
-                    'terms' => $_POST['categories_list'],
-                    'operator' => 'IN',
-                );
-            }
-        }
-        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
-        $all_products = array();
-        if (!empty($loop->posts)) {
-            foreach ($loop->posts as $key => $value) {
-                $product_title = get_the_title($value);
-                if (!empty($product_title)) {
-                    $all_products[$value] = $product_title;
-                }
-            }
-        }
-        wp_send_json_success(
-                array(
-                    'all_products' => $all_products,
-                )
-        );
-    }
+    
 
     public function angelleye_multi_account_api_field_ui() {
         ?>
@@ -1695,22 +1560,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Select Author', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="pfwst_author" class="wc-enhanced-select smart_forwarding_field" name="woocommerce_paypal_express_api_user">
-                        <option value="all"><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
-                        <?php
-                        $blogusers = get_users(['role__not_in' => ['subscriber']]);
-                        if (!empty($blogusers)) {
-                            foreach ($blogusers as $user) {
-                                $user_string = sprintf(
-                                        esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'), $user->display_name, absint($user->ID), $user->user_email
-                                );
-                                echo "\n\t<option value='" . esc_attr($user->ID) . "'>" . htmlspecialchars(wp_kses_post($user_string)) . "</option>";
-                            }
-                        }
-                        ?>
+                    <select id="customer_user" class="wc-customer-search smart_forwarding_field" name="woocommerce_paypal_express_api_user" data-placeholder="<?php esc_attr_e('All', 'paypal-for-woocommerce-multi-account-management'); ?>" data-minimum_input_length="3" data-allow_clear="true">
                     </select>
                     <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
+                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple"  data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $category_ids = array();
                         $countries = WC()->countries->get_countries();
@@ -1751,57 +1604,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         </select>
                     <?php } ?>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>">
-                        <?php
-                        $category_ids = array();
-                        $categories = get_terms(apply_filters('angelleye_get_product_categories', array('product_cat')), array(
-                            'hide_empty' => 1,
-                            'orderby' => 'name',
-                        ));
-                        if ($categories) {
-                            foreach ($categories as $cat) {
-                                $category_lable = '';
-                                $taxonomy_obj = get_taxonomy($cat->taxonomy);
-                                if (isset($taxonomy_obj->label) & !empty($taxonomy_obj->label)) {
-                                    $category_lable = $cat->name . ' (' . $taxonomy_obj->label . ')';
-                                } else {
-                                    $category_lable = $cat->name;
-                                }
-                                echo '<option value="' . esc_attr($cat->term_id) . '"' . wc_selected($cat->term_id, $category_ids) . '>' . esc_html($category_lable) . '</option>';
-                            }
-                        }
-                        ?>
+                    <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="angelleye-category-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>" data-allow_clear="true">
                     </select>
                     <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>">
-                        <?php
-                        $category_ids = array();
-                        $tags = get_terms(array('product_tag'), 'orderby=name&hide_empty=1');
-                        if ($tags) {
-                            foreach ($tags as $tag) {
-                                echo '<option value="' . esc_attr($tag->term_id) . '"' . wc_selected($tag->term_id, $category_ids) . '>' . esc_html($tag->name) . '</option>';
-                            }
-                        }
-                        ?>
-                    </select>
+                    <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="angelleye_pfwma_get_product_tags"></select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
-                    <select id="product_list" class="product-search wc-enhanced-select" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="woocommerce_json_search_products_and_variations">
-                        <?php
-                        $args = array(
-                            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
-                            'posts_per_page' => -1,
-                            'fields' => 'ids',
-                            'post_status' => 'publish',
-                        );
-                        $loop = new WP_Query($args);
-                        if (!empty($loop->posts)) {
-                            foreach ($loop->posts as $key => $value) {
-                                echo '<option value="' . $value . '">' . get_the_title($value) . '</option>';
-                            }
-                        }
-                        ?>
-                    </select>
+                    <select class="angelleye-product-search" style="width:203px;" multiple="multiple" id="product_list" name="woocommerce_paypal_express_api_product_ids[]" data-placeholder="<?php esc_attr_e( 'Search for a product&hellip;', 'woocommerce' ); ?>" data-action="angelleye_pfwma_get_products"></select>
                     <p class="description"><?php _e('Transaction Amount', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
@@ -2444,5 +2253,200 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $this->own_update_angelleye_multi_account();
     }
+    
+    public function angelleye_pfwma_get_products() {
+        ob_start();
+        $args = array(
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_type',
+                    'field' => 'slug',
+                    'terms' => array('grouped', 'external'),
+                    'operator' => 'NOT IN',
+                )
+            )
+        );
+        if( isset($_GET['term']) && !empty($_GET['term'])) {
+            $args['s'] = wc_clean($_GET['term']);
+        }
+        if (isset($_GET['author']) && $_GET['author'] != 'all' && !empty($_GET['author'])) {
+            $args['author'] = $_GET['author'];
+        }
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all' && !empty($_GET['shipping_class'])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_shipping_class',
+                'terms' => $_GET['shipping_class'],
+                'operator' => 'IN',
+            );
+        }
+        if (!empty($_GET['tag_list']) || !empty($_GET['categories_list'])) {
+            if (!empty($_GET['tag_list'])) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_tag',
+                    'terms' => $_GET['tag_list'],
+                    'operator' => 'IN'
+                );
+            }
+            if (!empty($_GET['categories_list'])) {
+                $args['tax_query'][] = array(
+                    'taxonomy' => 'product_cat',
+                    'terms' => $_GET['categories_list'],
+                    'operator' => 'IN',
+                );
+            }
+        }
+        $loop = new WP_Query(apply_filters('angelleye_get_products_by_product_cat_and_tags', $args));
+        $all_products = array();
+        if (!empty($loop->posts)) {
+            foreach ($loop->posts as $key => $value) {
+                $product_title = get_the_title($value);
+                if (!empty($product_title)) {
+                    $all_products[$value] = $product_title;
+                }
+            }
+        }
+        wp_send_json($all_products);
+    }
+    
+    public function angelleye_pfwma_get_product_tags() {
+        $deep_condition = 0;
+        ob_start();
+        $args = array(
+            'post_type' => apply_filters('angelleye_multi_account_post_type', array('product')),
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'post_status' => 'publish',
+            'tax_query' => array(
+                array(
+                    'taxonomy' => 'product_type',
+                    'field' => 'slug',
+                    'terms' => array('grouped', 'external'),
+                    'operator' => 'NOT IN',
+                )
+            )
+        );
+        if (isset($_GET['author']) && $_GET['author'] != 'all' && !empty($_GET['author'])) {
+            $args['author'] = $_GET['author'];
+            $deep_condition = $deep_condition + 1;
+        }
+        if (isset($_GET['shipping_class']) && $_GET['shipping_class'] != 'all' && !empty($_GET['shipping_class'])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_shipping_class',
+                'terms' => $_GET['shipping_class'],
+                'operator' => 'IN',
+            );
+            $deep_condition = $deep_condition + 1;
+        }
+        if (!empty($_GET['categories_list'])) {
+            $args['tax_query'][] = array(
+                'taxonomy' => 'product_cat',
+                'terms' => $_GET['categories_list'],
+                'operator' => 'IN',
+            );
+            $deep_condition = $deep_condition + 1;
+        }
+        $all_tags = array();
+        $search_text = isset($_GET['term']) ? wc_clean(wp_unslash($_GET['term'])) : '';
+        if (!$search_text) {
+            wp_die();
+        }
+        if($deep_condition > 0)  {
+            $loop = new WP_Query(apply_filters('angelleye_get_products_and_tags_by_product_cat', $args));
+            if (!empty($loop->posts)) {
+                foreach ($loop->posts as $key => $value) {
+                    $terms = get_the_terms($value, 'product_tag');
+                    if (!empty($terms)) {
+                        foreach ($terms as $terms_key => $terms_value) {
+                            if ($terms_value->count > 0) {
+                                if (strpos(strtolower($terms_value->name), strtolower($search_text)) !== false) {
+                                    $all_tags[$terms_value->term_id] = $terms_value->name;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            $args = array(
+                'taxonomy' => array('product_tag'),
+                'orderby' => 'id',
+                'order' => 'ASC',
+                'hide_empty' => true,
+                'fields' => 'all',
+                'name__like' => $search_text,
+            );
+            $terms = get_terms($args);
+            if ($terms) {
+                foreach ($terms as $term) {
+                    $term->formatted_name = '';
+                    if ($term->parent) {
+                        $ancestors = array_reverse(get_ancestors($term->term_id, 'product_tag'));
+                        foreach ($ancestors as $ancestor) {
+                            $ancestor_term = get_term($ancestor, 'product_cat');
+                            if ($ancestor_term) {
+                                $term->formatted_name .= $ancestor_term->name . ' > ';
+                            }
+                        }
+                    }
+                    $term->formatted_name .= $term->name;
+                    $all_tags[$term->term_id] = $term->formatted_name;
+                }
+            }
+        }
+        
+        wp_send_json($all_tags);
+    }
+    
+    public function angelleye_pfwma_get_categories() {
+        ob_start();
 
+        check_ajax_referer('search-categories', 'security');
+
+        if (!current_user_can('edit_products')) {
+            wp_die(-1);
+        }
+
+        $search_text = isset($_GET['term']) ? wc_clean(wp_unslash($_GET['term'])) : '';
+
+        if (!$search_text) {
+            wp_die();
+        }
+
+        $found_categories = array();
+        $args = array(
+            'taxonomy' => array('product_cat'),
+            'orderby' => 'id',
+            'order' => 'ASC',
+            'hide_empty' => true,
+            'fields' => 'all',
+            'name__like' => $search_text,
+        );
+
+        $terms = get_terms($args);
+
+        if ($terms) {
+            foreach ($terms as $term) {
+                $term->formatted_name = '';
+
+                if ($term->parent) {
+                    $ancestors = array_reverse(get_ancestors($term->term_id, 'product_cat'));
+                    foreach ($ancestors as $ancestor) {
+                        $ancestor_term = get_term($ancestor, 'product_cat');
+                        if ($ancestor_term) {
+                            $term->formatted_name .= $ancestor_term->name . ' > ';
+                        }
+                    }
+                }
+
+                $term->formatted_name .= $term->name;
+                $found_categories[$term->term_id] = $term->formatted_name;
+            }
+        }
+
+        wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
+    }
 }
