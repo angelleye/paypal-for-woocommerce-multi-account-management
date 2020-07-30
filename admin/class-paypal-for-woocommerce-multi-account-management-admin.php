@@ -539,7 +539,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <?php
         }
         echo sprintf('<tr style="display: table-row;" valign="top">
-                                    <th scope="row" class="titledesc">
+                                    <th scope="row" class="titledesc" style="display: table-row;">
                                         <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
                                         <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="%2$s" />
                                         <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
@@ -741,7 +741,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                             <tr style="display: table-row;" valign="top">
-                                <th scope="row" class="titledesc">
+                                <th scope="row" class="titledesc" style="display: table-row;">
                                     <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
                                     <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
