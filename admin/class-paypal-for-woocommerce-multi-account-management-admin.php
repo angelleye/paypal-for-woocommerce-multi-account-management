@@ -539,12 +539,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <?php
         }
         echo sprintf('<tr style="display: table-row;" valign="top">
-                                    <th scope="row" class="titledesc" style="display: table-row;">
+                                    <td scope="row" class="titledesc">
                                         <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
                                         <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="%2$s" />
                                         <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
                                         %4$s
-                                    </th>
+                                    </td>
                                 </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
         echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
@@ -740,12 +740,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 echo $this->angelleye_multi_account_condition_ui();
                             }
                             ?>
-                            <tr style="display: table-row;" valign="top">
-                                <th scope="row" class="titledesc" style="display: table-row;">
+                            <tr valign="top">
+                                <td scope="row" class="titledesc">
                                     <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
                                     <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
-                                </th>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
