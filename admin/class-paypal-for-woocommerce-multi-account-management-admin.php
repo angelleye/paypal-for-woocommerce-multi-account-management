@@ -464,7 +464,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $option_nine .= '</select>';
             $option_six = '<p class="description">' . apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')) . '</p>';
             $option_six .= '<select id="product_list" class="angelleye-product-search" multiple="multiple" style="width: 78%;" name="woocommerce_paypal_express_api_product_ids[]" data-action="angelleye_pfwma_get_products" data-placeholder="' . esc_attr__('Any Product&hellip;', 'paypal-for-woocommerce-multi-account-management') . '">';
-            if( !empty($product_ids) ) {
+            if( !empty($product_ids) && is_array($product_ids)) {
                 foreach ($product_ids as $key => $value) {
                     $product_title = get_the_title($value);
                     if ( $product_title && ! is_wp_error( $product_title ) ) {
