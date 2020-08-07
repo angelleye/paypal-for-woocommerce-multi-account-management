@@ -2198,22 +2198,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_pfwma_disable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_disable_active_vendor_account();
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
         echo $redirect_url;
         exit();
     }
 
     public function angelleye_pfwma_enable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_enable_active_vendor_account();
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
         echo $redirect_url;
         exit();
     }
 
     public function angelleye_pfwma_display_notice() {
-        $pfwma_processed = (isset($_GET['pfwma_processed']) ) ? $_GET['pfwma_processed'] : FALSE;
-        if ($pfwma_processed) {
-            $this->message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management'), $pfwma_processed) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        if(isset($_GET['tab']) && $_GET['tab'] === 'multi_account_management' ) {
+            $message = (isset($_GET['message']) ) ? $_GET['message'] : FALSE;
+            if ($message) {
+                $this->message = $message;
+            }
         }
     }
 
@@ -2510,7 +2514,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
             }
             if(is_ajax()) {
-                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $will_create_total_rules);
+                $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $will_create_total_rules, 'paypal-for-woocommerce-multi-account-management'), $will_create_total_rules) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
                 echo $redirect_url;
                 exit();
             }
