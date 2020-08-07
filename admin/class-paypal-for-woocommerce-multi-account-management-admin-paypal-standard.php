@@ -119,6 +119,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                         unset($passed_rules);
                         continue;
                     }
+                    $billing_postcode = get_post_meta($value->ID, 'billing_postcode', true);
+                    if (!empty($billing_postcode)) {
+                        foreach ($billing_postcode as $billing_postcode_key => $billing_postcode_value) {
+                            if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal') {
+                                if (!empty($order_id) && $order_id > 0) {
+                                    $order = wc_get_order($order_id);
+                                    $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_postcode : $order->get_billing_postcode();
+                                    if (!empty($billing_postcode) && $billing_postcode == $billing_postcode_value) {
+                                        $passed_rules['billing_postcode'] = true;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['billing_postcode'] = true;
+                    }
+                    if (empty($passed_rules['billing_postcode'])) {
+                        unset($result[$key]);
+                        unset($passed_rules);
+                        continue;
+                    }
                     $store_countries = get_post_meta($value->ID, 'store_countries', true);
                     if (!empty($store_countries)) {
                         if (WC()->countries->get_base_country() != $store_countries) {

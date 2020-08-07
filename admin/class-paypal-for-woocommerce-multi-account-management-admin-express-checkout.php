@@ -217,6 +217,40 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (empty($passed_rules['buyer_countries'])) {
                         continue;
                     }
+                    $postcode = get_post_meta($value->ID, 'postcode', true);
+                    if (!empty($postcode)) {
+                        foreach ($postcode as $postcode_key => $postcode_value) {
+                            if (!empty($order_id) && $order_id > 0) {
+                                $order = wc_get_order($order_id);
+                                $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_postcode : $order->get_billing_postcode();
+                                if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
+                                    $passed_rules['postcode'] = true;
+                                }
+                            } else {
+                                $post_checkout_data = WC()->session->get('post_data');
+                                if (empty($post_checkout_data)) {
+                                    $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_billing_postcode();
+                                    if (empty($billing_postcode)) {
+                                        $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_shipping_postcode();
+                                    }
+                                    if (!empty($billing_postcode)) {
+                                        if ($billing_postcode == $postcode_value) {
+                                            $passed_rules['postcode'] = true;
+                                        }
+                                    }
+                                } else {
+                                    if (!empty($post_checkout_data['billing_postcode']) && $post_checkout_data['billing_postcode'] == $postcode_value) {
+                                        $passed_rules['postcode'] = true;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['postcode'] = true;
+                    }
+                    if (empty($passed_rules['postcode'])) {
+                        continue;
+                    }
                     $store_countries = get_post_meta($value->ID, 'store_countries', true);
                     if (!empty($store_countries)) {
                         if (WC()->countries->get_base_country() != $store_countries) {

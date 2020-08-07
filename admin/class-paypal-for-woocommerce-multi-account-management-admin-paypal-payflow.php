@@ -178,6 +178,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         continue;
                     }
 
+                    $postcode = get_post_meta($value->ID, 'postcode', true);
+                    if (!empty($postcode)) {
+                        foreach ($postcode as $postcode_key => $postcode_value) {
+                            if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+                                if (!empty($order_id) && $order_id > 0) {
+                                    $order = wc_get_order($order_id);
+                                    $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_postcode : $order->get_billing_postcode();
+                                    if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
+                                        $passed_rules['postcode'] = true;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['postcode'] = true;
+                    }
+                    if (empty($passed_rules['postcode'])) {
+                        unset($result[$key]);
+                        unset($passed_rules);
+                        continue;
+                    }
 
                     $store_countries = get_post_meta($value->ID, 'store_countries', true);
                     if (!empty($store_countries)) {
