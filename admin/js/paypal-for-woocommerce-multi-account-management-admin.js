@@ -202,3 +202,28 @@ jQuery('.enable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
+
+jQuery('.create_all_vendor_rules').on('click', function (event) {
+    var r = confirm(pfwma_param.create_all_vendor_rules_alert_message);
+    if (r == true) {
+        jQuery(".create_all_vendor_rules").block({message: null, overlayCSS: {background: "#fff", opacity: .6}});
+        var data = {
+            'action': 'pfwma_create_all_vendor_rules'
+        };
+        jQuery.post(ajaxurl, data, function (response) {
+            if ('failed' !== response)
+            {
+                var redirectUrl = response;
+                top.location.replace(redirectUrl);
+                return true;
+            } else
+            {
+                alert('Error updating records.');
+                return false;
+            }
+        });
+    } else {
+        event.preventDefault();
+        return r;
+    }
+});
