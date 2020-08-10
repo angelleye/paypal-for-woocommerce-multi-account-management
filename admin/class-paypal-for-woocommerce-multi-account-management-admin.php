@@ -789,7 +789,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
             <?php
             if ((class_exists('WCV_Vendors') || function_exists('dokan')) && $will_create_total_rules > 0) {
-                ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Create All Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <span class="woocommerce-help-tip pfwma-help" data-tip="<?php echo __('This will create rules for all existing vendors', 'paypal-for-woocommerce-multi-account-management'); ?>"></span><?php
+                ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <span class="woocommerce-help-tip pfwma-help" data-tip="<?php echo __('This will create rules for all existing vendors', 'paypal-for-woocommerce-multi-account-management'); ?>"></span><?php
             }
             if ($active_count !== false) {
                 ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
@@ -2497,7 +2497,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
     }
 
-    public function angelleye_pfwma_create_all_vendor_rules($return = true) {
+    public function angelleye_pfwma_create_all_vendor_rules() {
         try {
             if(!class_exists('Paypal_For_Woocommerce_Multi_Account_Management_Vendor')) {
                 include_once ( PFWMA_PLUGIN_DIR . '/includes/class-paypal-for-woocommerce-multi-account-management-vendor.php');

@@ -111,3 +111,10 @@ function angelleye_get_user_multi_accounts_by_paypal_email($email) {
     }
     return false;
 }
+
+function angelleye_pfwma_log($message, $level = 'info') {
+    if (function_exists('wc_get_logger')) {
+        $log = wc_get_logger();
+        $log->log($level, $message, array('source' => 'paypal-for-woocommerce-multi-account-management'));
+    }
+}
