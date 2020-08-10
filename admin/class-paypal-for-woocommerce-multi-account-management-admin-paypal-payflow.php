@@ -163,7 +163,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                 if (!empty($order_id) && $order_id > 0) {
                                     $order = wc_get_order($order_id);
                                     $billing_country = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_country : $order->get_billing_country();
+                                    $shipping_country = version_compare(WC_VERSION, '3.0', '<') ? $order->shipping_country : $order->get_shipping_country();
                                     if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
+                                        $passed_rules['buyer_countries'] = true;
+                                    } elseif(!empty($shipping_country) && $shipping_country == $buyer_countries_value) {
                                         $passed_rules['buyer_countries'] = true;
                                     }
                                 }
@@ -178,15 +181,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         continue;
                     }
 
-                    $postcode = get_post_meta($value->ID, 'postcode', true);
-                    if (!empty($postcode)) {
+                    $postcode_string = get_post_meta($value->ID, 'postcode', true);
+                    if (!empty($postcode_string)) {
+                        $postcode = explode(',', $postcode_string);
                         foreach ($postcode as $postcode_key => $postcode_value) {
                             if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
                                 if (!empty($order_id) && $order_id > 0) {
                                     $order = wc_get_order($order_id);
                                     $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_postcode : $order->get_billing_postcode();
+                                    $shipping_postcode = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_postcode : $order->get_shipping_postcode();
                                     if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
                                         $passed_rules['postcode'] = true;
+                                        break;
+                                    } elseif(!empty($shipping_postcode) && $shipping_postcode == $postcode_value) {
+                                        $passed_rules['postcode'] = true;
+                                        break;
                                     }
                                 }
                             }
