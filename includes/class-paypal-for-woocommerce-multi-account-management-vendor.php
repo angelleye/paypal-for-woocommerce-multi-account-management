@@ -115,6 +115,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         update_post_meta($post_id, $key, $value);
                     }
                     update_post_meta($post_id, 'vendor_id', $vendor_id);
+                    angelleye_pfwma_log('New vendor rule created for vendor id ' . $vendor_id);
                 }
             }
         } catch (Exception $ex) {
@@ -206,6 +207,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         update_post_meta($post_id, $key, $value);
                     }
                     update_post_meta($post_id, 'vendor_id', $vendor_id);
+                    angelleye_pfwma_log('New vendor rule created for vendor id ' . $vendor_id);
                 }
             }
         } catch (Exception $ex) {

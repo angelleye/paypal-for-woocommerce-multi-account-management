@@ -771,11 +771,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_multi_account_list() {
         $active_count = $this->angelleye_multi_account_get_count_active_vendor();
         $deactive_count = $this->angelleye_multi_account_get_count_deactive_vendor();
+        
         $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
         $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
+        $will_create_total_rules = $vendor_result->total_users - ( $active_count + $deactive_count );
+        $total_rule_text = ($will_create_total_rules > 1) ? 'rules' : 'rule';
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
             'disable_all_vendor_rules_alert_message' => sprintf(__('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
-            'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text)
+            'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text),
+            'create_all_vendor_rules_alert_message' => sprintf(__('This will Sync Existing Vendor\'s Rule, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $will_create_total_rules, $total_rule_text)
                 )
         );
         ?>
@@ -784,6 +788,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
             <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
             <?php
+            if (class_exists('WCV_Vendors')) {
+                $vendor_result = new WP_User_Query( array('role__in' => array('vendor'), 'fields' => array('ID') ) );
+            } elseif(function_exists('dokan')) {
+                $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
+            }
+            if($vendor_result->total_users > 0) {
+            ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+            }
             if ($active_count !== false) {
                 ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
@@ -2191,22 +2203,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_pfwma_disable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_disable_active_vendor_account();
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
         echo $redirect_url;
         exit();
     }
 
     public function angelleye_pfwma_enable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_enable_active_vendor_account();
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&pfwma_processed=' . $update_count);
+        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
         echo $redirect_url;
         exit();
     }
 
     public function angelleye_pfwma_display_notice() {
-        $pfwma_processed = (isset($_GET['pfwma_processed']) ) ? $_GET['pfwma_processed'] : FALSE;
-        if ($pfwma_processed) {
-            $this->message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $pfwma_processed, 'paypal-for-woocommerce-multi-account-management'), $pfwma_processed) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+        if(isset($_GET['tab']) && $_GET['tab'] === 'multi_account_management' ) {
+            $message = (isset($_GET['message']) ) ? $_GET['message'] : FALSE;
+            if ($message) {
+                $this->message = $message;
+            }
         }
     }
 
@@ -2485,4 +2501,36 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
     }
+
+    public function angelleye_pfwma_create_all_vendor_rules() {
+        try {
+            if(!class_exists('Paypal_For_Woocommerce_Multi_Account_Management_Vendor')) {
+                include_once ( PFWMA_PLUGIN_DIR . '/includes/class-paypal-for-woocommerce-multi-account-management-vendor.php');
+            }
+            if (class_exists('WCV_Vendors')) {
+                $vendor_result = new WP_User_Query( array('role__in' => array('vendor'), 'fields' => array('ID') ) );
+            } elseif(function_exists('dokan')) {
+                $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
+            }
+            $authors = $vendor_result->get_results();
+            if ( ! empty( $authors ) ) {
+                foreach ( $authors as $author ) {
+                    $vendor = new Paypal_For_Woocommerce_Multi_Account_Management_Vendor($this->plugin_name, $this->version);
+                    $vendor->angelleye_paypal_for_woocommerce_multi_account_rule_save($author->ID);
+                }
+            }
+            if(is_ajax()) {
+                $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $vendor_result->total_users, 'paypal-for-woocommerce-multi-account-management'), $vendor_result->total_users) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
+                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section&message=' . $message);
+                echo $redirect_url;
+                exit();
+            }
+        } catch (Exception $ex) {
+
+        }
+        
+
+    }
+    
+    
 }

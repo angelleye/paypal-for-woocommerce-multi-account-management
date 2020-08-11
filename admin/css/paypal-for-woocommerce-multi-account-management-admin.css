@@ -166,6 +166,9 @@ fieldset.pfwma_section_ui {
 fieldset.pfwma_section_ui legend {
     font-weight: 600;
 }
+.woocommerce-help-tip.pfwma-help {
+    vertical-align: baseline;
+}
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
          max-width: 100% !important;

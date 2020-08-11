@@ -108,7 +108,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-i18n.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-list-data.php';
-        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/angelleye-multi-account-function.php';
+        
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-vendor.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-payment-load-balancer.php';
 
@@ -206,6 +206,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         }
         $this->loader->add_action('wp_ajax_pfwma_disable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_disable_all_vendor_rules');
         $this->loader->add_action('wp_ajax_pfwma_enable_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_enable_all_vendor_rules');
+        $this->loader->add_action('wp_ajax_pfwma_create_all_vendor_rules', $plugin_admin, 'angelleye_pfwma_create_all_vendor_rules');
         $this->loader->add_action( 'admin_init', $plugin_admin, 'angelleye_pfwma_display_notice');
         $this->loader->add_action( 'admin_footer', $plugin_admin, 'angelleye_pfwma_add_deactivation_form');
         $this->loader->add_action( 'wp_ajax_angelleye_send_deactivation_pfwma', $plugin_admin, 'angelleye_pfwma_plugin_deactivation_request');

@@ -62,6 +62,8 @@ if (!function_exists('angelleye_queue_update')) {
     require_once( 'includes/angelleye-functions.php' );
 }
 
+require_once( 'includes/angelleye-multi-account-function.php' );
+
 /**
  * Plugin updates
  */

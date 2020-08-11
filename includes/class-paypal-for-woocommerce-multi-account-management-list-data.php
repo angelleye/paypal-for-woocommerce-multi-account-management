@@ -125,11 +125,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     }
 
     function column_title($item) {
-        $edit_params = array('section' => 'add_edit_account', 'page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
-        $delete_params = array('page' => $_REQUEST['page'], 'action' => 'delete', 'ID' => $item['ID']);
+        $edit_params = array('tab'=>'multi_account_management', 'section' => 'add_edit_account', 'page' => $_REQUEST['page'], 'action' => 'edit', 'ID' => $item['ID']);
+        $delete_params = array('tab'=>'multi_account_management', 'page' => $_REQUEST['page'], 'action' => 'delete', 'ID' => $item['ID']);
         $actions = array(
-            'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params))),
-            'delete' => sprintf('<a href="%s">Delete</a>', esc_url(add_query_arg($delete_params))),
+            'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
+            'delete' => sprintf('<a href="%s">Delete</a>', esc_url(add_query_arg($delete_params, admin_url('admin.php')))),
         );
         return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
