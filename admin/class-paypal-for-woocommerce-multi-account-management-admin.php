@@ -794,7 +794,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
             }
             if($vendor_result->total_users > 0) {
-            ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <span class="woocommerce-help-tip pfwma-help" data-tip="<?php echo __('This will create rules for all existing vendors', 'paypal-for-woocommerce-multi-account-management'); ?>"></span><?php
+            ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
             if ($active_count !== false) {
                 ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
