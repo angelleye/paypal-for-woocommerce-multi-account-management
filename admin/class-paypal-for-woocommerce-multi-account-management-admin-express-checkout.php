@@ -689,7 +689,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             if (!empty($this->map_item_with_account)) {
                 $packages = WC()->shipping()->get_packages();
                 $chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
-                if(!empty($packages) && !empty($chosen_shipping_methods)) {
+                if(!empty($packages) && !empty($chosen_shipping_methods) && count($packages) > 1) {
                     foreach ( $packages as $package_key => $package ) {
                         if ( isset( $chosen_shipping_methods[ $package_key ], $package['rates'][ $chosen_shipping_methods[ $package_key ] ] ) ) {
                             $shipping_rate = $package['rates'][ $chosen_shipping_methods[ $package_key ] ];
