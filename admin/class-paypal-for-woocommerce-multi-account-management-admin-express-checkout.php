@@ -324,6 +324,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if ($line_item['subtotal'] != $line_item['total']) {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = true;
                                     $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
+                                    $discount_amount = $line_item['line_subtotal'] - $line_item['line_total'];
+                                    if($discount_amount > 0) {
+                                        $this->map_item_with_account[$product_id]['discount'] = $line_item['line_subtotal'] - $line_item['line_total'];
+                                    }
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = false;
                                 }
@@ -449,6 +453,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     if ($cart_item['line_subtotal'] != $cart_item['line_total']) {
                                         $this->map_item_with_account[$product_id]['is_discountable'] = true;
                                         $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
+                                        $discount_amount = $cart_item['line_subtotal'] - $cart_item['line_total'];
+                                        if($discount_amount > 0) {
+                                            $this->map_item_with_account[$product_id]['discount'] = $cart_item['line_subtotal'] - $cart_item['line_total'];
+                                        }
                                     } else {
                                         $this->map_item_with_account[$product_id]['is_discountable'] = false;
                                     }
@@ -677,7 +685,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $this->taxamt = 0;
         }
         $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
-        $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->shippingamt) && $this->shippingamt > 0) {
             if (!empty($this->map_item_with_account)) {
                 $packages = WC()->shipping()->get_packages();
@@ -700,6 +707,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             $this->shipping_array = $this->angelleye_get_extra_fee_array($this->shippingamt, $this->angelleye_needs_shipping, 'shipping');
         }
+        $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->discount_amount) && $this->discount_amount > 0) {
             $this->discount_array = $this->angelleye_get_extra_fee_array($this->discount_amount, $this->angelleye_is_discountable, 'discount');
         }
@@ -1520,7 +1528,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         break;
                     case "discount":
                         if (!empty($item_with_account['is_discountable']) && $item_with_account['is_discountable'] === true) {
-                            $partition_array[$product_id] = $partition_array[$loop];
+                            $partition_array[$product_id] = isset($item_with_account['discount']) ? $item_with_account['discount'] : $partition_array[$loop];
                             unset($partition_array[$loop]);
                             $loop = $loop + 1;
                         }
