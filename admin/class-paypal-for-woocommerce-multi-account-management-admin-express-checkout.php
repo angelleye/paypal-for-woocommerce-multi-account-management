@@ -324,9 +324,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 if ($line_item['subtotal'] != $line_item['total']) {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = true;
                                     $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
-                                    $discount_amount = $line_item['line_subtotal'] - $line_item['line_total'];
+                                    $discount_amount = $line_item['subtotal'] - $line_item['total'];
                                     if($discount_amount > 0) {
-                                        $this->map_item_with_account[$product_id]['discount'] = $line_item['line_subtotal'] - $line_item['line_total'];
+                                        $this->map_item_with_account[$product_id]['discount'] = $discount_amount;
                                     }
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_discountable'] = false;
