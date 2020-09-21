@@ -169,6 +169,9 @@ fieldset.pfwma_section_ui legend {
 .woocommerce-help-tip.pfwma-help {
     vertical-align: baseline;
 }
+.angelleye_multi_account_left fieldset label {
+    display: block !important;
+}
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
          max-width: 100% !important;
