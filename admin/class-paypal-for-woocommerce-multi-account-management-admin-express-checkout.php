@@ -183,6 +183,33 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             continue;
                         }
                     }
+                    
+                    $checkout_custom_fields = angelleye_display_checkout_custom_field();
+                    if (!empty($checkout_custom_fields)) {
+                        foreach ($checkout_custom_fields as $field_key => $field_data) {
+                            $custom_field_value = get_post_meta($value->ID, $field_key, true);
+                            if (!empty($order_id) && $order_id > 0) {
+                                $field_order_value = get_post_meta($order_id, $field_key, true);
+                                if (!empty($field_order_value) && $field_order_value != $custom_field_value) {
+                                    continue;
+                                } 
+                            } else {
+                                $post_checkout_data = WC()->session->get('post_data');
+                                if (!empty($post_checkout_data)) {
+                                    if (!empty($post_checkout_data[$field_key]) && $post_checkout_data[$field_key] != $custom_field_value) {
+                                        continue;
+                                    }
+                                } 
+                            }
+                        }
+                        $passed_rules['custom_fields'] = true;
+                    } else {
+                        $passed_rules['custom_fields'] = true;
+                    }
+                    if (empty($passed_rules['custom_fields'])) {
+                        continue;
+                    }
+                    
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
                         foreach ($buyer_countries as $buyer_countries_key => $buyer_countries_value) {
