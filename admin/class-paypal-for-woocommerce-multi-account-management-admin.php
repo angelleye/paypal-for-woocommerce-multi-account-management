@@ -798,7 +798,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_multi_account_list() {
         $active_count = $this->angelleye_multi_account_get_count_active_vendor();
         $deactive_count = $this->angelleye_multi_account_get_count_deactive_vendor();
-        
+        if (class_exists('WCV_Vendors')) {
+            $vendor_result = new WP_User_Query( array('role__in' => array('vendor'), 'fields' => array('ID') ) );
+        } elseif(function_exists('dokan')) {
+            $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
+        }
         $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
         $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
         $will_create_total_rules = $vendor_result->total_users - ( $active_count + $deactive_count );
@@ -815,11 +819,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
             <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
             <?php
-            if (class_exists('WCV_Vendors')) {
-                $vendor_result = new WP_User_Query( array('role__in' => array('vendor'), 'fields' => array('ID') ) );
-            } elseif(function_exists('dokan')) {
-                $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
-            }
+            
             if($vendor_result->total_users > 0) {
             ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }

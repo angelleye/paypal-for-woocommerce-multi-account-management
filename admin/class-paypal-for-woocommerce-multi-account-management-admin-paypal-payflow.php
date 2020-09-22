@@ -155,6 +155,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             continue;
                         }
                     }
+                    
+                    $checkout_custom_fields = angelleye_display_checkout_custom_field();
+                    if (!empty($checkout_custom_fields)) {
+                        foreach ($checkout_custom_fields as $field_key => $field_data) {
+                            $custom_field_value = get_post_meta($value->ID, $field_key, true);
+                            if (!empty($order_id) && $order_id > 0) {
+                                $field_order_value = get_post_meta($order_id, $field_key, true);
+                                if (!empty($field_order_value) && $field_order_value == $custom_field_value) {
+                                    $passed_rules['custom_fields'] = true;
+                                } else {
+                                    $passed_rules['custom_fields'] = '';
+                                    break;
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['custom_fields'] = true;
+                    }
+                    if (empty($passed_rules['custom_fields'])) {
+                        continue;
+                    }
+                    
                     // Base Country
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
@@ -234,7 +256,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     
                     if (isset(WC()->cart) && WC()->cart->is_empty()) {
                         foreach ($order->get_items() as $cart_item_key => $values) {
-                            $product = $order->get_product_from_item($values);
+                            $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
                             $product_exists = is_object( $product );
                             if($product_exists == false) {
                                 $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
