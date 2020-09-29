@@ -540,6 +540,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $checkout_custom_fields_html .= '<legend>' . __('Checkout Custom Field Conditions', 'paypal-for-woocommerce-multi-account-management') . '</legend>';
                         foreach ($checkout_custom_fields as $key => $field) {
                             $field['return'] = true;
+                            $field['input_class'] = array('angelleye-checkout-custom-fields');
                             $value = isset($microprocessing[$key][0]) ? $microprocessing[$key][0] : '';
                             $checkout_custom_fields_html .= woocommerce_form_field( $key, $field, $value );
                         }
@@ -1250,6 +1251,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_script('wc-enhanced-select');
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
             'rule_with_no_condition_set_message' => __('You have not set any Trigger Conditions for this rule. Therefore, this rule will trigger for all orders from now on. Would you still like to continue?', 'paypal-for-woocommerce-multi-account-management'),
+            'custom_fields' => angelleye_get_checkout_custom_field_keys()
            )
         );       
 
@@ -1644,6 +1646,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $checkout_custom_fields_html .= '<legend>' . __('Checkout Custom Field Conditions', 'paypal-for-woocommerce-multi-account-management') . '</legend>';
                         foreach ($checkout_custom_fields as $key => $field) {
                             $field['return'] = true;
+                            $field['input_class'] = array('angelleye-checkout-custom-fields');
                             $checkout_custom_fields_html .= woocommerce_form_field( $key, $field, '' );
                         }
                         $checkout_custom_fields_html .= '</fieldset>';

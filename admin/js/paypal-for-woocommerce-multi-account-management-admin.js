@@ -156,6 +156,7 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
+
 jQuery( "#angelleye_multi_account" ).submit(function( event ) {
     window.onbeforeunload = null;
     if(jQuery("#is_force_submit").val() === 'yes') {
@@ -167,6 +168,17 @@ jQuery( "#angelleye_multi_account" ).submit(function( event ) {
         if( jQuery('#' + name).val() !== '' && jQuery('#' + name).val() !== 'all' && jQuery('#' + name).val() !== '0' && jQuery('#' + name).val() !== null && jQuery('#' + name).val() !== undefined) {
             total_not_empty_fields = total_not_empty_fields + 1;
         } 
+    });
+    jQuery.each( pfwma_param.custom_fields, function( i, name ) {
+        if( name === 'checkbox' || name === 'radio') {
+            if(jQuery("[name="+i+"]").is(":checked") ) {
+                total_not_empty_fields = total_not_empty_fields + 1;
+            }
+        } else {
+            if(jQuery("[name="+i+"]").val() !== '' ) {
+                total_not_empty_fields = total_not_empty_fields + 1;
+            } 
+        }
     });
     if(total_not_empty_fields === 0) {
         event.preventDefault();
