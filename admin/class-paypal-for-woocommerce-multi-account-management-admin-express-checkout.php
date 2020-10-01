@@ -1181,6 +1181,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
         }
+        WC()->cart->calculate_fees();
+        foreach (WC()->cart->get_fees() as $cart_item_key => $fee_values) {
+            $fee_item = array(
+                'name' => html_entity_decode(wc_trim_string($fee_values->name ? $fee_values->name : __('Fee', 'paypal-for-woocommerce'), 127), ENT_NOQUOTES, 'UTF-8'),
+                'desc' => '',
+                'qty' => 1,
+                'amt' => AngellEYE_Gateway_Paypal::number_format($fee_values->amount),
+                'number' => ''
+            );
+            $default_new_payments_line_item[] = $fee_item;
+            $default_item_total += $fee_values->amount;
+            $default_final_total += $fee_values->amount;
+        }
         if ($default_final_total > 0) {
             if (empty($default_pal_id)) {
                 $map_item_with_account_array['multi_account_id'] = 'default';
