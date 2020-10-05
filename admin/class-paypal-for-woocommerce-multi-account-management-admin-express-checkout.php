@@ -183,6 +183,39 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             continue;
                         }
                     }
+                    
+                    $checkout_custom_fields = angelleye_display_checkout_custom_field();
+                    if (!empty($checkout_custom_fields)) {
+                        foreach ($checkout_custom_fields as $field_key => $field_data) {
+                            $custom_field_value = get_post_meta($value->ID, $field_key, true);
+                            if (!empty($order_id) && $order_id > 0) {
+                                $field_order_value = get_post_meta($order_id, $field_key, true);
+                                if (!empty($field_order_value) && $field_order_value == $custom_field_value) {
+                                    $passed_rules['custom_fields'] = true;
+                                } else {
+                                    $passed_rules['custom_fields'] = '';
+                                    break;
+                                }
+                            } else {
+                                $post_checkout_data = WC()->session->get('post_data');
+                                if (!empty($post_checkout_data)) {
+                                    if (!empty($post_checkout_data[$field_key]) && $post_checkout_data[$field_key] == $custom_field_value) {
+                                        $passed_rules['custom_fields'] = true;
+                                    } else {
+                                        $passed_rules['custom_fields'] = '';
+                                        break;
+                                    }
+                                } 
+                            }
+                        }
+                        
+                    } else {
+                        $passed_rules['custom_fields'] = true;
+                    }
+                    if (empty($passed_rules['custom_fields'])) {
+                        continue;
+                    }
+                    
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
                         foreach ($buyer_countries as $buyer_countries_key => $buyer_countries_value) {
@@ -294,7 +327,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $order = wc_get_order($order_id);
                         foreach ($order->get_items() as $cart_item_key => $values) {
                             $line_item = $values->get_data();
-                            $product = $order->get_product_from_item($values);
+                            $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
                             $product_exists = is_object($product);
                             if ($product_exists == false) {
                                 $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
@@ -727,7 +760,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $this->final_order_grand_total = $order->get_total();
             foreach ($order->get_items() as $cart_item_key => $cart_item) {
                 $is_mismatch = false;
-                $product = $order->get_product_from_item($cart_item);
+                $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $cart_item ) : $cart_item->get_product();
                 $product_exists = is_object($product);
                 if ($product_exists == false) {
                     $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
@@ -1447,7 +1480,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_get_line_item_from_order($order, $values) {
-        $product = $order->get_product_from_item($values);
+        $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
         $product_sku = null;
         if (is_object($product)) {
             $product_sku = $product->get_sku();
@@ -1827,7 +1860,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $order = wc_get_order($order_id);
             foreach ($order->get_items() as $cart_item_key => $values) {
                 $line_item = $values->get_data();
-                $product = $order->get_product_from_item($values);
+                $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
                 $product_exists = is_object($product);
                 if ($product_exists == false) {
                     $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);

@@ -118,3 +118,47 @@ function angelleye_pfwma_log($message, $level = 'info') {
         $log->log($level, $message, array('source' => 'paypal-for-woocommerce-multi-account-management'));
     }
 }
+
+function angelleye_display_checkout_custom_field() {
+    $woo_custome_fields = array();
+    if(!function_exists('WC')) {
+        return $woo_custome_fields;
+    }
+    $woo_checkout_default_fields = array(
+        'billing' => array('billing_first_name', 'billing_last_name', 'billing_company', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_postcode', 'billing_country', 'billing_state', 'billing_email', 'billing_phone'),
+        'shipping' => array('shipping_first_name', 'shipping_last_name', 'shipping_company', 'shipping_address_1', 'shipping_address_2', 'shipping_city', 'shipping_postcode', 'shipping_country', 'shipping_state'),
+        'account' => array('account_username', 'account_password', 'account_password-2'),
+        'order' => array('order_comments')
+    );
+    $checkout_fields = WC()->checkout->get_checkout_fields();
+    foreach ($checkout_fields as $type => $checkout_field) {
+        foreach ($checkout_field as $key => $field) {
+            if (!in_array($key, $woo_checkout_default_fields[$type])) {
+                $woo_custome_fields[$key] = $field;
+            }
+        }
+    }
+    return $woo_custome_fields;
+}
+
+function angelleye_get_checkout_custom_field_keys() {
+    $woo_custome_fields = array();
+    if(!function_exists('WC')) {
+        return $woo_custome_fields;
+    }
+    $woo_checkout_default_fields = array(
+        'billing' => array('billing_first_name', 'billing_last_name', 'billing_company', 'billing_address_1', 'billing_address_2', 'billing_city', 'billing_postcode', 'billing_country', 'billing_state', 'billing_email', 'billing_phone'),
+        'shipping' => array('shipping_first_name', 'shipping_last_name', 'shipping_company', 'shipping_address_1', 'shipping_address_2', 'shipping_city', 'shipping_postcode', 'shipping_country', 'shipping_state'),
+        'account' => array('account_username', 'account_password', 'account_password-2'),
+        'order' => array('order_comments')
+    );
+    $checkout_fields = WC()->checkout->get_checkout_fields();
+    foreach ($checkout_fields as $type => $checkout_field) {
+        foreach ($checkout_field as $key => $field) {
+            if (!in_array($key, $woo_checkout_default_fields[$type])) {
+                $woo_custome_fields[$key] = $field['type'];
+            }
+        }
+    }
+    return $woo_custome_fields;
+}
