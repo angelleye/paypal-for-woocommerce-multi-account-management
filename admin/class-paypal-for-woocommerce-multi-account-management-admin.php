@@ -804,16 +804,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } elseif(function_exists('dokan')) {
             $vendor_result = new WP_User_Query( array('role__in' => array('seller'), 'fields' => array('ID') ) );
         }
-        $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
-        $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
-        $will_create_total_rules = $vendor_result->total_users - ( $active_count + $deactive_count );
-        $total_rule_text = ($will_create_total_rules > 1) ? 'rules' : 'rule';
-        wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
-            'disable_all_vendor_rules_alert_message' => sprintf(__('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
-            'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text),
-            'create_all_vendor_rules_alert_message' => sprintf(__('This will Sync Existing Vendor\'s Rule, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $will_create_total_rules, $total_rule_text)
-                )
-        );
+        if(isset($vendor_result) && is_object($vendor_result)) {
+            $active_rule_text = ($active_count > 1) ? 'rules' : 'rule';
+            $deactive_rule_text = ($deactive_count > 1) ? 'rules' : 'rule';
+            $will_create_total_rules = $vendor_result->total_users - ( $active_count + $deactive_count );
+            $total_rule_text = ($will_create_total_rules > 1) ? 'rules' : 'rule';
+            wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
+                'disable_all_vendor_rules_alert_message' => sprintf(__('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
+                'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text),
+                'create_all_vendor_rules_alert_message' => sprintf(__('This will Sync Existing Vendor\'s Rule, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $will_create_total_rules, $total_rule_text)
+                    )
+            );
+        } else {
+            
+        }
         ?>
         <div id="angelleye_paypal_marketing_table">
             <br>
@@ -821,13 +825,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
             <?php
             
-            if($vendor_result->total_users > 0) {
+            if(isset($vendor_result->total_users) && $vendor_result->total_users > 0) {
             ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor\'s Rule', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
-            if ($active_count !== false) {
+            if (isset($active_count) && $active_count !== false) {
                 ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
-            if ($deactive_count !== false) {
+            if (isset($deactive_count) && $deactive_count !== false) {
                 ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
             if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
