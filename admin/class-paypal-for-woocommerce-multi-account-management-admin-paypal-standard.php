@@ -102,15 +102,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                     if (!empty($checkout_custom_fields)) {
                         foreach ($checkout_custom_fields as $field_key => $field_data) {
                             $custom_field_value = get_post_meta($value->ID, $field_key, true);
-                            if (!empty($order_id) && $order_id > 0) {
-                                $field_order_value = get_post_meta($order_id, $field_key, true);
-                                if (!empty($field_order_value) && $field_order_value == $custom_field_value) {
-                                    $passed_rules['custom_fields'] = true;
-                                } else {
-                                    $passed_rules['custom_fields'] = '';
-                                    break;
+                            if (!empty($custom_field_value)) {
+                                if (!empty($order_id) && $order_id > 0) {
+                                    $field_order_value = get_post_meta($order_id, $field_key, true);
+                                    if (empty($field_order_value)) {
+                                        $passed_rules['custom_fields'] = true;
+                                    } elseif (!empty($field_order_value) && $field_order_value == $custom_field_value) {
+                                        $passed_rules['custom_fields'] = true;
+                                    } else {
+                                        $passed_rules['custom_fields'] = '';
+                                        break;
+                                    }
                                 }
-                            } 
+                            } else {
+                                $passed_rules['custom_fields'] = true;
+                            }
                         }
                     } else {
                         $passed_rules['custom_fields'] = true;

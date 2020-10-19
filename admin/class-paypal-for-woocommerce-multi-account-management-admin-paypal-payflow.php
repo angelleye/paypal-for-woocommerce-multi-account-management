@@ -155,19 +155,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             continue;
                         }
                     }
-                    
+
                     $checkout_custom_fields = angelleye_display_checkout_custom_field();
                     if (!empty($checkout_custom_fields)) {
                         foreach ($checkout_custom_fields as $field_key => $field_data) {
                             $custom_field_value = get_post_meta($value->ID, $field_key, true);
-                            if (!empty($order_id) && $order_id > 0) {
-                                $field_order_value = get_post_meta($order_id, $field_key, true);
-                                if (!empty($field_order_value) && $field_order_value == $custom_field_value) {
-                                    $passed_rules['custom_fields'] = true;
-                                } else {
-                                    $passed_rules['custom_fields'] = '';
-                                    break;
+                            if (!empty($custom_field_value)) {
+                                if (!empty($order_id) && $order_id > 0) {
+                                    $field_order_value = get_post_meta($order_id, $field_key, true);
+                                    if (empty($field_order_value)) {
+                                        $passed_rules['custom_fields'] = true;
+                                    } elseif (!empty($field_order_value) && $field_order_value == $custom_field_value) {
+                                        $passed_rules['custom_fields'] = true;
+                                    } else {
+                                        $passed_rules['custom_fields'] = '';
+                                        break;
+                                    }
                                 }
+                            } else {
+                                $passed_rules['custom_fields'] = true;
                             }
                         }
                     } else {
@@ -176,7 +182,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                     if (empty($passed_rules['custom_fields'])) {
                         continue;
                     }
-                    
+
                     // Base Country
                     $buyer_countries = get_post_meta($value->ID, 'buyer_countries', true);
                     if (!empty($buyer_countries)) {
@@ -188,7 +194,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                     $shipping_country = version_compare(WC_VERSION, '3.0', '<') ? $order->shipping_country : $order->get_shipping_country();
                                     if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
                                         $passed_rules['buyer_countries'] = true;
-                                    } elseif(!empty($shipping_country) && $shipping_country == $buyer_countries_value) {
+                                    } elseif (!empty($shipping_country) && $shipping_country == $buyer_countries_value) {
                                         $passed_rules['buyer_countries'] = true;
                                     }
                                 }
@@ -215,7 +221,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                     if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
                                         $passed_rules['postcode'] = true;
                                         break;
-                                    } elseif(!empty($shipping_postcode) && $shipping_postcode == $postcode_value) {
+                                    } elseif (!empty($shipping_postcode) && $shipping_postcode == $postcode_value) {
                                         $passed_rules['postcode'] = true;
                                         break;
                                     }
@@ -253,20 +259,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             }
                         }
                     }
-                    
+
                     if (isset(WC()->cart) && WC()->cart->is_empty()) {
                         foreach ($order->get_items() as $cart_item_key => $values) {
-                            $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
-                            $product_exists = is_object( $product );
-                            if($product_exists == false) {
+                            $product = version_compare(WC_VERSION, '3.0', '<') ? $order->get_product_from_item($values) : $values->get_product();
+                            $product_exists = is_object($product);
+                            if ($product_exists == false) {
                                 $product_id = apply_filters('angelleye_multi_account_get_product_id', '', $cart_item_key);
-                                if(!empty($product_id)) {
+                                if (!empty($product_id)) {
                                     $product = wc_get_product($product_id);
                                 } else {
                                     continue;
                                 }
-                            } 
-                            $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+                            }
+                            $product_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
                             // Categories
                             $woo_product_categories = wp_get_post_terms($product_id, apply_filters('angelleye_get_product_categories', array('product_cat')), array('fields' => 'ids'));
                             $woo_product_categories = angelleye_get_product_cat($woo_product_categories);
@@ -331,21 +337,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                         continue;
                                     }
                                 }
-                                
-                                $post_author_id = get_post_field( 'post_author', $product_id );
+
+                                $post_author_id = get_post_field('post_author', $product_id);
                                 $woocommerce_paypal_express_api_user = get_post_meta($value->ID, 'woocommerce_paypal_express_api_user', true);
                                 if (!empty($woocommerce_paypal_express_api_user) && $woocommerce_paypal_express_api_user != 'all') {
-                                    if($post_author_id != $woocommerce_paypal_express_api_user) {
-                                         unset($result[$key]);
+                                    if ($post_author_id != $woocommerce_paypal_express_api_user) {
+                                        unset($result[$key]);
                                         unset($passed_rules);
                                         continue;
                                     }
                                 }
-                                
+
                                 $product_shipping_class = $product->get_shipping_class_id();
                                 $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
-                                if (!empty($shipping_class) && $shipping_class != 'all' ) {
-                                    if($product_shipping_class != $shipping_class) {
+                                if (!empty($shipping_class) && $shipping_class != 'all') {
+                                    if ($product_shipping_class != $shipping_class) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }
@@ -519,7 +525,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             }
         }
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-        if(!empty($angelleye_payment_load_balancer)) {
+        if (!empty($angelleye_payment_load_balancer)) {
             $microprocessing_value = $this->angelleye_get_account_for_payflow_payment_load_balancer($gateways, $gateway_setting, $order_id);
         } elseif ($this->is_angelleye_multi_account_used($order_id)) {
             $_multi_account_api_username = $this->angelleye_get_multi_account_api_user_name($order_id);
@@ -632,8 +638,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         return $cart_contents_total;
     }
 
-    
-
     public function card_type_from_account_number($account_number) {
         $types = array(
             'visa' => '/^4/',
@@ -652,7 +656,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         }
         return null;
     }
-    
+
     public function angelleye_get_account_for_payflow_payment_load_balancer($gateways, $gateway_setting, $order_id) {
         if (!isset($gateways->testmode)) {
             return;
@@ -664,15 +668,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         }
         $is_account_found = false;
         $used_account = get_post_meta($order_id, '_multi_account_api_username_load_balancer', true);
-        if( $used_account == 'default' ) {
+        if ($used_account == 'default') {
             return;
         }
-        if( empty($used_account)) {
+        if (empty($used_account)) {
             $payflow_accounts = get_option($option_key);
-            if(!empty($payflow_accounts)) {
+            if (!empty($payflow_accounts)) {
                 foreach ($payflow_accounts as $key => $account) {
-                    if(empty($account['is_used'])) {
-                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                    if (empty($account['is_used'])) {
+                        if ($key != 'default' && false === get_post_status($key)) {
                             unset($payflow_accounts[$key]);
                         } else {
                             $account['is_used'] = 'yes';
@@ -685,13 +689,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         }
                     }
                 }
-                if($is_account_found == false) {
+                if ($is_account_found == false) {
                     foreach ($payflow_accounts as $key => $account) {
                         $account['is_used'] = '';
                         $payflow_accounts[$key] = $account;
                     }
                     foreach ($payflow_accounts as $key => $account) {
-                        if ( $key != 'default' && false === get_post_status( $key ) ) {
+                        if ($key != 'default' && false === get_post_status($key)) {
                             unset($payflow_accounts[$key]);
                         } else {
                             $account['is_used'] = 'yes';
@@ -705,12 +709,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                 }
             }
         }
-        if($used_account == 'default') {
+        if ($used_account == 'default') {
             return;
         }
-        if(!empty($used_account)) {
+        if (!empty($used_account)) {
             $post_meta = get_post_meta($used_account);
-            if( !empty($post_meta) ) {
+            if (!empty($post_meta)) {
                 $microprocessing_value = array();
                 foreach ($post_meta as $key => $value) {
                     $microprocessing_value[$key] = isset($value[0]) ? $value[0] : '';
@@ -719,4 +723,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
             }
         }
     }
+
 }
