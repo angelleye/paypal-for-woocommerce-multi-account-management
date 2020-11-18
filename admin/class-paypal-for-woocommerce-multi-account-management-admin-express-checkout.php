@@ -56,6 +56,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $final_payment_request_data;
     public $final_paypal_request;
     public $not_divided_shipping_cost;
+    public $divided_shipping_cost;
 
     /**
      * Initialize the class and set its properties.
@@ -70,6 +71,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->final_associate_account = array();
         $this->map_item_with_account = array();
         $this->is_commission_enable = false;
+        $this->divided_shipping_cost = 0;
         $this->global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', 0);
         $this->global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
         $this->global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
@@ -739,6 +741,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             if ($product_id) {
                                 if (isset($this->map_item_with_account[$product_id])) {
                                     $this->map_item_with_account[$product_id]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($shipping_rate->cost);
+                                    $this->divided_shipping_cost = $this->divided_shipping_cost + $shipping_rate->cost;
                                 }
                             }
                         }
@@ -763,8 +766,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $shipping_classes = WC()->shipping()->get_shipping_classes();
                                 if (!empty($shipping_classes)) {
                                     $found_shipping_classes = $this->angelleye_find_shipping_classes($package);
-                                    $highest_class_cost = 0;
                                     foreach ($found_shipping_classes as $shipping_class => $products) {
+                                        $highest_class_cost = 0;
                                         $shipping_class_term = get_term_by('slug', $shipping_class, 'product_shipping_class');
                                         $class_cost_string = $shipping_class_term && $shipping_class_term->term_id ? $wc_shipping_flat_rate->get_option('class_cost_' . $shipping_class_term->term_id, $wc_shipping_flat_rate->get_option('class_cost_' . $shipping_class, '')) : $wc_shipping_flat_rate->get_option('no_class_cost', '');
                                         if ('' === $class_cost_string) {
@@ -781,6 +784,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                         if ($product_id) {
                                             if (isset($this->map_item_with_account[$product_id])) {
                                                 $this->map_item_with_account[$product_id]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($highest_class_cost);
+                                                $this->divided_shipping_cost = $this->divided_shipping_cost + $highest_class_cost;
                                             }
                                         }
                                     }
@@ -790,12 +794,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     }
                 }
             }
-            if($this->not_divided_shipping_cost > 0) {
-                $this->shipping_array = $this->angelleye_get_extra_fee_array($this->not_divided_shipping_cost, $this->angelleye_needs_shipping, 'shipping');
-            } else {
-                $this->shipping_array = $this->angelleye_get_extra_fee_array($this->shippingamt, $this->angelleye_needs_shipping, 'shipping');
+            $pending_shipping_amount = 0;
+            if($this->divided_shipping_cost != $this->shippingamt) {
+                $pending_shipping_amount = AngellEYE_Gateway_Paypal::number_format($this->shippingamt - $this->divided_shipping_cost);
             }
-            
+            $this->shipping_array = $this->angelleye_get_extra_fee_array($pending_shipping_amount, $this->angelleye_needs_shipping, 'shipping');
         }
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->discount_amount) && $this->discount_amount > 0) {
