@@ -55,6 +55,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $global_ec_include_tax_shipping_in_commission;
     public $final_payment_request_data;
     public $final_paypal_request;
+    public $not_divided_shipping_cost;
+    public $divided_shipping_cost;
 
     /**
      * Initialize the class and set its properties.
@@ -69,6 +71,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->final_associate_account = array();
         $this->map_item_with_account = array();
         $this->is_commission_enable = false;
+        $this->divided_shipping_cost = 0;
         $this->global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', 0);
         $this->global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
         $this->global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
@@ -738,13 +741,64 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             if ($product_id) {
                                 if (isset($this->map_item_with_account[$product_id])) {
                                     $this->map_item_with_account[$product_id]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($shipping_rate->cost);
+                                    $this->divided_shipping_cost = $this->divided_shipping_cost + $shipping_rate->cost;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    foreach ($packages as $package_key => $package) {
+                        if (isset($chosen_shipping_methods[$package_key], $package['rates'][$chosen_shipping_methods[$package_key]])) {
+                            $shipping_rate = $package['rates'][$chosen_shipping_methods[$package_key]];
+                            if (isset($shipping_rate->method_id) && 'flat_rate' === $shipping_rate->method_id) {
+                                $wc_shipping_flat_rate = new WC_Shipping_Flat_Rate($shipping_rate->instance_id);
+                                $has_costs = false;
+                                $cost = $wc_shipping_flat_rate->get_option('cost');
+                                if ('' !== $cost) {
+                                    $has_costs = true;
+                                    $this->not_divided_shipping_cost = $this->evaluate_cost(
+                                            $cost, array(
+                                        'qty' => $wc_shipping_flat_rate->get_package_item_qty($package),
+                                        'cost' => $package['contents_cost'],
+                                            )
+                                    );
+                                }
+                                $shipping_classes = WC()->shipping()->get_shipping_classes();
+                                if (!empty($shipping_classes)) {
+                                    $found_shipping_classes = $this->angelleye_find_shipping_classes($package);
+                                    foreach ($found_shipping_classes as $shipping_class => $products) {
+                                        $highest_class_cost = 0;
+                                        $shipping_class_term = get_term_by('slug', $shipping_class, 'product_shipping_class');
+                                        $class_cost_string = $shipping_class_term && $shipping_class_term->term_id ? $wc_shipping_flat_rate->get_option('class_cost_' . $shipping_class_term->term_id, $wc_shipping_flat_rate->get_option('class_cost_' . $shipping_class, '')) : $wc_shipping_flat_rate->get_option('no_class_cost', '');
+                                        if ('' === $class_cost_string) {
+                                            continue;
+                                        }
+                                        $product_id = array_sum(wp_list_pluck($products, 'product_id'));
+                                        $class_cost = $this->evaluate_cost(
+                                                $class_cost_string, array(
+                                            'qty' => array_sum(wp_list_pluck($products, 'quantity')),
+                                            'cost' => array_sum(wp_list_pluck($products, 'line_total')),
+                                                )
+                                        );
+                                        $highest_class_cost = $class_cost > $highest_class_cost ? $class_cost : $highest_class_cost;
+                                        if ($product_id) {
+                                            if (isset($this->map_item_with_account[$product_id])) {
+                                                $this->map_item_with_account[$product_id]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($highest_class_cost);
+                                                $this->divided_shipping_cost = $this->divided_shipping_cost + $highest_class_cost;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            $this->shipping_array = $this->angelleye_get_extra_fee_array($this->shippingamt, $this->angelleye_needs_shipping, 'shipping');
+            $pending_shipping_amount = 0;
+            if($this->divided_shipping_cost != $this->shippingamt) {
+                $pending_shipping_amount = AngellEYE_Gateway_Paypal::number_format($this->shippingamt - $this->divided_shipping_cost);
+            }
+            $this->shipping_array = $this->angelleye_get_extra_fee_array($pending_shipping_amount, $this->angelleye_needs_shipping, 'shipping');
         }
         $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
         if (isset($this->discount_amount) && $this->discount_amount > 0) {
@@ -939,8 +993,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         if ($this->send_items && $is_mismatch == false) {
                             $Payment['order_items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total, $order);
-                            $Payment['shippingamt'] = $shippingamt;
-                            $Payment['taxamt'] = $taxamt;
+                            $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt, $order);
+                            $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt, $order);
                             if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
                             }
@@ -1162,8 +1216,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         if ($this->send_items && $is_mismatch == false) {
                             $Payment['order_items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
-                            $Payment['shippingamt'] = $shippingamt;
-                            $Payment['taxamt'] = $taxamt;
+                            $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt);
+                            $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt);
                             if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
                             }
@@ -1573,7 +1627,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         break;
                     case "shipping":
                         if (!empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
-                            $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                            if( isset($item_with_account['shipping_cost']) ) {
+                                $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['shipping_cost'], $this->decimals);
+                            } else {
+                                $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                            }
                             unset($partition_array[$loop]);
                             $loop = $loop + 1;
                         }
@@ -2024,6 +2082,68 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } catch (Exception $ex) {
             
         }
+    }
+
+    public function evaluate_cost($sum, $args = array()) {
+        // Add warning for subclasses.
+        if (!is_array($args) || !array_key_exists('qty', $args) || !array_key_exists('cost', $args)) {
+            wc_doing_it_wrong(__FUNCTION__, '$args must contain `cost` and `qty` keys.', '4.0.1');
+        }
+
+        include_once WC()->plugin_path() . '/includes/libraries/class-wc-eval-math.php';
+
+        // Allow 3rd parties to process shipping cost arguments.
+        $args = apply_filters('woocommerce_evaluate_shipping_cost_args', $args, $sum, $this);
+        $locale = localeconv();
+        $decimals = array(wc_get_price_decimal_separator(), $locale['decimal_point'], $locale['mon_decimal_point'], ',');
+        $this->fee_cost = $args['cost'];
+
+        // Expand shortcodes.
+        add_shortcode('fee', array($this, 'fee'));
+
+        $sum = do_shortcode(
+                str_replace(
+                        array(
+            '[qty]',
+            '[cost]',
+                        ), array(
+            $args['qty'],
+            $args['cost'],
+                        ), $sum
+                )
+        );
+
+        remove_shortcode('fee', array($this, 'fee'));
+
+        // Remove whitespace from string.
+        $sum = preg_replace('/\s+/', '', $sum);
+
+        // Remove locale from string.
+        $sum = str_replace($decimals, '.', $sum);
+
+        // Trim invalid start/end characters.
+        $sum = rtrim(ltrim($sum, "\t\n\r\0\x0B+*/"), "\t\n\r\0\x0B+-*/");
+
+        // Do the math.
+        return $sum ? WC_Eval_Math::evaluate($sum) : 0;
+    }
+
+    public function angelleye_find_shipping_classes($package) {
+        $found_shipping_classes = array();
+
+        foreach ($package['contents'] as $item_id => $values) {
+            if ($values['data']->needs_shipping()) {
+                $found_class = $values['data']->get_shipping_class();
+
+                if (!isset($found_shipping_classes[$found_class])) {
+                    $found_shipping_classes[$found_class] = array();
+                }
+
+                $found_shipping_classes[$found_class][$item_id] = $values;
+            }
+        }
+
+        return $found_shipping_classes;
     }
 
 }
