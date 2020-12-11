@@ -172,6 +172,9 @@ fieldset.pfwma_section_ui legend {
 .angelleye_multi_account_left fieldset label {
     display: block !important;
 }
+.angelleye_multi_account_left table.form-table th label {
+    min-width: 200px;
+}
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
          max-width: 100% !important;

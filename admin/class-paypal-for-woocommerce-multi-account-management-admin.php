@@ -121,7 +121,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
         if ($this->gateway_key == 'paypal_express') {
             $microprocessing_new = array();
-            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_email', 'woocommerce_paypal_express_sandbox_merchant_id', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_email', 'woocommerce_paypal_express_merchant_id', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'currency_code', 'ec_site_owner_commission', 'ec_site_owner_commission_label'));
+            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_always_trigger', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_email', 'woocommerce_paypal_express_sandbox_merchant_id', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_email', 'woocommerce_paypal_express_merchant_id', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'currency_code', 'ec_site_owner_commission', 'ec_site_owner_commission_label', 'always_trigger_commission', 'always_trigger_commission_item_label'));
             foreach ($microprocessing_key_array as $key => $value) {
                 $microprocessing_new[$value] = isset($microprocessing[$value]) ? $microprocessing[$value] : array();
             }
@@ -130,6 +130,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 switch ($microprocessing_key) {
                     case 'woocommerce_paypal_express_enable':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %2$s id="woocommerce_paypal_express_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
+                        break;
+                    case 'woocommerce_paypal_express_always_trigger':
+                        if ($angelleye_payment_load_balancer == '') {
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_always_trigger">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_always_trigger"><input class="woocommerce_paypal_express_always_trigger" name="woocommerce_paypal_express_always_trigger" %2$s id="woocommerce_paypal_express_always_trigger" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Always trigger this account', 'paypal-for-woocommerce-multi-account-management'));
+                        }
                         break;
                     case 'woocommerce_paypal_express_testmode':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_testmode_microprocessing">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_testmode_microprocessing"><input class="woocommerce_paypal_express_testmode width460" name="woocommerce_paypal_express_testmode" %2$s id="woocommerce_paypal_express_testmode_microprocessing" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'));
@@ -173,13 +178,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         break;
                     case 'ec_site_owner_commission':
                         if ($angelleye_payment_load_balancer == '') {
-                            echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr class="site_owner_commission_field"><th scope="row" class="titledesc"><label for="ec_site_owner_commission">%1$s</label></th><td class="forminp"><fieldset><input type="number" placeholder="0" name="ec_site_owner_commission" min="0" max="100" step="0.01" value="%2$s" id="ec_site_owner_commission"></fieldset></td></tr>', __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'ec_site_owner_commission_label':
                         if ($angelleye_payment_load_balancer == '') {
-                            echo sprintf('<tr><th scope="row" class="titledesc"><label for="ec_site_owner_commission_label">%1$s</label></th><td class="forminp"><fieldset><input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" value="%2$s" id="ec_site_owner_commission_label" placeholder="Commission"></fieldset></td></tr>', __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr class="site_owner_commission_field"><th scope="row" class="titledesc"><label for="ec_site_owner_commission_label">%1$s</label></th><td class="forminp"><fieldset><input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" value="%2$s" id="ec_site_owner_commission_label" placeholder="Commission"></fieldset></td></tr>', __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
+                        break;
+                    case 'always_trigger_commission':
+                        echo sprintf('<tr valign="top" class="paypal_express_always_trigger_commission_field"><th scope="row" class="titledesc"><label for="always_trigger_commission_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="always_trigger_commission" value="%2$s" id="always_trigger_commission_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        break;
+                    case 'always_trigger_commission_item_label':
+                        echo sprintf('<tr valign="top" class="paypal_express_always_trigger_commission_field"><th scope="row" class="titledesc"><label for="always_trigger_commission_item_label_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="always_trigger_commission_item_label" value="%2$s" id="always_trigger_commission_item_label_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_paypal_express_api_user_role':
                         $selected_role = $microprocessing_value[0];
@@ -519,7 +530,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $option_six .= '</select><p class="description">' . __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management') . '</p>';
             ?>
-            <tr>
+            <tr class="trigger_conditions_fields">
                 <th scope="row" class="titledesc">
                     <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                 </th>
@@ -925,7 +936,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
-            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_email', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_email', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'currency_code', 'ec_site_owner_commission', 'ec_site_owner_commission_label'));
+            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_paypal_express_enable', 'woocommerce_paypal_express_always_trigger', 'woocommerce_paypal_express_testmode', 'woocommerce_paypal_express_account_name', 'woocommerce_paypal_express_sandbox_email', 'woocommerce_paypal_express_sandbox_api_username', 'woocommerce_paypal_express_sandbox_api_password', 'woocommerce_paypal_express_sandbox_api_signature', 'woocommerce_paypal_express_email', 'woocommerce_paypal_express_api_username', 'woocommerce_paypal_express_api_password', 'woocommerce_paypal_express_api_signature', 'always_trigger_commission', 'always_trigger_commission_item_label', 'woocommerce_paypal_express_api_condition_field', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'currency_code', 'ec_site_owner_commission', 'ec_site_owner_commission_label'));
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_paypal_express_account_name']),
@@ -1290,11 +1301,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     }
 
-    
-
-    
-
     public function angelleye_multi_account_api_field_ui() {
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         ?>
         <tr valign="top" class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc">
@@ -1307,6 +1315,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
+        <?php
+        if ($angelleye_payment_load_balancer == '') { ?>
+        <tr valign="top" class="angelleye_multi_account_paypal_express_field">
+            <th scope="row" class="titledesc">
+                <label for="woocommerce_paypal_express_always_trigger"><?php echo __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+            </th>
+            <td class="forminp">
+                <fieldset>
+                    <label for="woocommerce_paypal_express_always_trigger">
+                        <input class="woocommerce_paypal_express_always_trigger" name="woocommerce_paypal_express_always_trigger" id="woocommerce_paypal_express_always_trigger" type="checkbox"><?php echo __('Always trigger this account', 'paypal-for-woocommerce-multi-account-management'); ?> </label><br>
+                </fieldset>
+            </td>
+        </tr>
+        <?php } ?>
         <tr valign="top" class="angelleye_multi_account_paypal_express_field">
             <th scope="row" class="titledesc">
                 <label for="woocommerce_paypal_express_testmode_microprocessing"><?php echo __('PayPal Sandbox', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -1418,11 +1440,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             </td>
         </tr>
         <?php
-        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        
         if ($angelleye_payment_load_balancer == '') :
             ?>
 
-            <tr class="angelleye_multi_account_paypal_express_field">
+            <tr class="angelleye_multi_account_paypal_express_field site_owner_commission_field">
                 <th scope="row" class="titledesc" >
                     <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                 </th>
@@ -1433,7 +1455,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     </fieldset>
                 </td>
             </tr>
-            <tr class="angelleye_multi_account_paypal_express_field">
+            <tr class="angelleye_multi_account_paypal_express_field site_owner_commission_field">
                 <th scope="row" class="titledesc" >
                     <label for="woocommerce_paypal_express_api_signature_microprocessing"><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                 </th>
@@ -1441,6 +1463,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <fieldset>
                         <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
                         <input type="text" class="input-text regular-input width460" name="ec_site_owner_commission_label" placeholder="Commission">
+                    </fieldset>
+                </td>
+            </tr>
+            
+            <tr class="angelleye_multi_account_paypal_express_field paypal_express_always_trigger_commission_field">
+                <th scope="row" class="titledesc" >
+                    <label for="always_trigger_commission"><?php echo __('Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                </th>
+                <td class="forminp">
+                    <fieldset>
+                        <legend class="screen-reader-text"><span><?php echo __('Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                        <input type="number" name="always_trigger_commission" min="0" max="100" step="0.01" placeholder="0">
+                    </fieldset>
+                </td>
+            </tr>
+            <tr class="angelleye_multi_account_paypal_express_field paypal_express_always_trigger_commission_field">
+                <th scope="row" class="titledesc" >
+                    <label for="always_trigger_commission_item_label"><?php echo __('Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                </th>
+                <td class="forminp">
+                    <fieldset>
+                        <legend class="screen-reader-text"><span><?php echo __('Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
+                        <input type="text" class="input-text regular-input width460" name="always_trigger_commission_item_label" placeholder="Commission">
                     </fieldset>
                 </td>
             </tr>
@@ -1606,7 +1651,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_multi_account_condition_ui() {
         ?>
-        <tr>
+        <tr class="trigger_conditions_fields">
             <th scope="row" class="titledesc">
                 <label for="woocommerce_paypal_express_api_trigger_conditions"><?php echo __('Trigger Conditions', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>

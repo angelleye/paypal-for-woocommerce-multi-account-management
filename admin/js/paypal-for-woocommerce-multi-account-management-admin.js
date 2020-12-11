@@ -86,6 +86,23 @@ jQuery('#woocommerce_paypal_express_api_user, #pfwst_shipping_class').change(fun
     jQuery('#product_list').val('').trigger('change');
 });
 
+
+jQuery('#woocommerce_paypal_express_always_trigger').change(function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery('.trigger_conditions_fields').hide();
+        jQuery('.site_owner_commission_field').hide();
+        jQuery('.paypal_express_always_trigger_commission_field').show();
+        
+    } else {
+        jQuery('.trigger_conditions_fields').show();
+        jQuery('.site_owner_commission_field').show();
+        jQuery('.paypal_express_always_trigger_commission_field').hide();
+    }
+}).change();
+
+
+
+
 jQuery('#product_categories').on('select2:unselect', function (e) {
     jQuery('#product_tags').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
