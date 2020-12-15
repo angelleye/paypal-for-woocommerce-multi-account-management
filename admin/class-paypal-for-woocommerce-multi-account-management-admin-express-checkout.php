@@ -909,7 +909,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             );
 
                             $default_new_payments_line_item[] = $Item;
-                            
+
                             if ($this->always_trigger_commission_total_percentage > 0) {
                                 if (!empty($this->discount_array[$product_id])) {
                                     $commision_item_total_raw = AngellEYE_Gateway_Paypal::number_format($item_total + $this->discount_array[$product_id]);
@@ -979,9 +979,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                                 }
-                                
                             }
-                            
+
                             if (!empty($line_item['amt'])) {
                                 $Item = array(
                                     'name' => $line_item['name'],
@@ -1457,6 +1456,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $index = $index + 1;
             }
             $new_payments = $this->final_paypal_request;
+        }
+
+        if ($this->always_trigger_commission_total_percentage > 0 && !empty($this->always_trigger_commission_accounts)) {
+            foreach ($this->always_trigger_commission_accounts as $key => $value) {
+                $this->angelleye_add_commission_payment_data();
+            }
         }
 
         if ($this->final_grand_total != $this->final_order_grand_total) {
@@ -2219,7 +2224,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
         return $found_shipping_classes;
     }
-    
+
     public function angelleye_add_commission_payment_data() {
         
     }
