@@ -909,6 +909,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             );
 
                             $default_new_payments_line_item[] = $Item;
+                            
+                            if ($this->always_trigger_commission_total_percentage > 0) {
+                                if (!empty($this->discount_array[$product_id])) {
+                                    $commision_item_total_raw = AngellEYE_Gateway_Paypal::number_format($item_total + $this->discount_array[$product_id]);
+                                } else {
+                                    $commision_item_total_raw = $item_total;
+                                }
+                                $atc_item_total = $commision_item_total_raw + $sub_total_commission;
+                                $always_trigger_commission_item_total = AngellEYE_Gateway_Paypal::number_format($atc_item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
+                                $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $always_trigger_commission_item_total, 2);
+                                $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $always_trigger_commission_item_total, 2);
+                                $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $always_trigger_commission_item_total;
+                            }
 
                             if ($item_total / $line_item['qty'] != AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order)) {
                                 $is_mismatch = true;
@@ -949,6 +962,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             }
                         } else {
 
+                            if ($this->always_trigger_commission_total_percentage > 0) {
+                                $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
+                                $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
+                                $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
+                                $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $product_commission;
+                                if ($taxamt > 0) {
+                                    $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->always_trigger_commission_total_percentage, 2);
+                                    $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
+                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
+                                    $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $tax_commission;
+                                }
+                                if ($shippingamt > 0) {
+                                    $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->always_trigger_commission_total_percentage, 2);
+                                    $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
+                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
+                                    $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
+                                }
+                                
+                            }
+                            
                             if (!empty($line_item['amt'])) {
                                 $Item = array(
                                     'name' => $line_item['name'],
@@ -1155,6 +1188,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $always_trigger_commission_item_total = AngellEYE_Gateway_Paypal::number_format($atc_item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
                                 $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $always_trigger_commission_item_total, 2);
                                 $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $always_trigger_commission_item_total, 2);
+                                $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $always_trigger_commission_item_total;
                             }
                             if ($item_total / $line_item['qty'] != AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'])) {
                                 $is_mismatch = true;
@@ -1191,15 +1225,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
                                 $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
                                 $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
+                                $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $product_commission;
                                 if ($taxamt > 0) {
                                     $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->always_trigger_commission_total_percentage, 2);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
+                                    $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $tax_commission;
                                 }
                                 if ($shippingamt > 0) {
                                     $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->always_trigger_commission_total_percentage, 2);
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
+                                    $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                                 }
                             }
                             if (!empty($this->discount_array[$product_id])) {
@@ -2181,6 +2218,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         }
 
         return $found_shipping_classes;
+    }
+    
+    public function angelleye_add_commission_payment_data() {
+        
     }
 
 }
