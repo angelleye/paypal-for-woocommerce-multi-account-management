@@ -1460,10 +1460,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
         if ($this->always_trigger_commission_total_percentage > 0 && !empty($this->always_trigger_commission_accounts)) {
             foreach ($this->always_trigger_commission_accounts as $key => $value) {
-                $this->angelleye_add_commission_payment_data();
+                $index = $index + 1;
+                $this->final_paypal_request[$index] = $this->angelleye_add_commission_payment_data($old_payments, $gateways, $key, $value);
             }
+            $new_payments = $this->final_paypal_request;
         }
-
+        
         if ($this->final_grand_total != $this->final_order_grand_total) {
             $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
@@ -2225,8 +2227,73 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return $found_shipping_classes;
     }
 
-    public function angelleye_add_commission_payment_data() {
-        
+    public function angelleye_add_commission_payment_data($old_payments, $gateways, $account_id, $item_data) {
+        $microprocessing_array = get_post_meta($account_id);
+        if ($gateways->testmode == true) {
+            if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
+                $email = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
+            } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
+                $email = $microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0];
+            } else {
+                $email = $this->angelleye_get_email_address_for_multi($account_id, $microprocessing_array, $gateways);
+            }
+            if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
+                $is_api_set = true;
+            } else {
+                $is_api_set = false;
+            }
+        } else {
+            if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
+                $email = $microprocessing_array['woocommerce_paypal_express_email'][0];
+            } elseif (isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_merchant_id'][0])) {
+                $email = $microprocessing_array['woocommerce_paypal_express_merchant_id'][0];
+            } else {
+                $email = $this->angelleye_get_email_address_for_multi($account_id, $microprocessing_array, $gateways);
+            }
+            if ($this->angelleye_is_multi_account_api_set($microprocessing_array, $gateways)) {
+                $is_api_set = true;
+            } else {
+                $is_api_set = false;
+            }
+        }
+
+        $cart_item_key = 'always';
+        $this->final_order_grand_total;
+        $commission_amt = AngellEYE_Gateway_Paypal::number_format($this->final_order_grand_total / 100 * $item_data['commission_amount_percentage'], 2);
+        $paymentrequestid_value = $cart_item_key . '-' . rand();
+        $Payment = array(
+            'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
+            'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
+            'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
+            'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
+            'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
+            'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
+            'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
+            'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
+            'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
+            'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
+            'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
+            'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
+            'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
+            'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+            'paymentaction' => 'Sale',
+            'sellerpaypalaccountid' => $email,
+            'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
+            'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt), 
+            'shippingamt' => '0.00',
+            'taxamt' => '0.00',
+        );
+        $PaymentOrderItems = array();
+        $Item = array(
+            'name' => $item_data['commission_item_label'],
+            'desc' => '',
+            'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
+            'qty' => '1',
+        );
+        array_push($PaymentOrderItems, $Item);
+        $Payment['order_items'] = $PaymentOrderItems;
+        $this->final_grand_total = $this->final_grand_total + $commission_amt;
+        return $Payment;
     }
 
 }
