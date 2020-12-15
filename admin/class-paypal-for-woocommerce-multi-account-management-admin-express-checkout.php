@@ -140,15 +140,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
-
+        $this->angelleye_is_taxable = 0;
+        $this->angelleye_needs_shipping = 0;
+        $this->angelleye_is_discountable = 0;
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 $passed_rules = array();
                 $cart_loop_pass = 0;
                 $cart_loop_not_pass = 0;
-                $this->angelleye_is_taxable = 0;
-                $this->angelleye_needs_shipping = 0;
-                $this->angelleye_is_discountable = 0;
+
                 if (!empty($value->ID)) {
                     $microprocessing_array = get_post_meta($value->ID);
                     if (isset($microprocessing_array['woocommerce_paypal_express_always_trigger'][0]) && 'on' === $microprocessing_array['woocommerce_paypal_express_always_trigger'][0]) {
@@ -359,17 +359,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
-                                $this->map_item_with_account[$product_id]['is_taxable'] = true;
-                                $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
-                                $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
+                                    $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                    $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
+                                    $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                }
                             } else {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
                             if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, $order_id, $product_id)) {
-                                $this->map_item_with_account[$product_id]['needs_shipping'] = true;
-                                $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                if ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
+                                    $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                    $this->map_item_with_account[$product_id]['needs_shipping'] = true;
+                                }
                             } else {
-                                $this->map_item_with_account[$product_id]['needs_shipping'] = true;
+                                $this->map_item_with_account[$product_id]['needs_shipping'] = false;
                             }
                             if ($order->get_total_discount() > 0) {
                                 if ($line_item['subtotal'] != $line_item['total']) {
@@ -479,31 +483,36 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     } else {
                         if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
                             foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
-
                                 $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
-                                    $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                    if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
+                                        $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                        $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                    }
                                     if (!empty($cart_item['line_tax'])) {
                                         $this->map_item_with_account[$product_id]['tax'] = $cart_item['line_tax'];
                                     } else {
                                         $this->map_item_with_account[$product_id]['tax'] = $cart_item['line_subtotal_tax'];
                                     }
-                                    $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
                                 if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, '', $product_id)) {
-                                    $this->map_item_with_account[$product_id]['needs_shipping'] = true;
-                                    $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                    if ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
+                                        $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                        $this->map_item_with_account[$product_id]['needs_shipping'] = true;
+                                    }
                                 } else {
                                     $this->map_item_with_account[$product_id]['needs_shipping'] = false;
                                 }
                                 if (WC()->cart->get_cart_discount_total() > 0) {
                                     if ($cart_item['line_subtotal'] != $cart_item['line_total']) {
-                                        $this->map_item_with_account[$product_id]['is_discountable'] = true;
-                                        $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
+                                        if ($this->map_item_with_account[$product_id]['is_discountable'] != true) {
+                                            $this->angelleye_is_discountable = $this->angelleye_is_discountable + 1;
+                                            $this->map_item_with_account[$product_id]['is_discountable'] = true;
+                                        }
                                         $discount_amount = $cart_item['line_subtotal'] - $cart_item['line_total'];
                                         if ($discount_amount > 0) {
                                             $this->map_item_with_account[$product_id]['discount'] = $cart_item['line_subtotal'] - $cart_item['line_total'];
@@ -1184,15 +1193,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
                                 if ($taxamt > 0) {
                                     $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->always_trigger_commission_total_percentage, 2);
-                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
-                                    $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $taxamt);
+                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                 }
                                 if ($shippingamt > 0) {
                                     $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->always_trigger_commission_total_percentage, 2);
-                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
-                                    $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $shippingamt);
+                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                 }
                             }
                             if (!empty($this->discount_array[$product_id])) {
