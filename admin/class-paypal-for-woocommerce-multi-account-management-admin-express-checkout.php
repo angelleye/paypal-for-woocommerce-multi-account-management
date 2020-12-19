@@ -1777,17 +1777,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $unique_transaction_data = array();
         $total_account = count($ec_parallel_data_map);
         foreach ($ec_parallel_data_map as $key => $ec_parallel_data) {
-            for ($transaction_map = 0; $transaction_map <= $total_account; $transaction_map++) {
-                if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'])) {
-                    $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'];
-                    $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
-                    if (!empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
-                        if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
-                            $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                            $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
-                        } elseif (!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
-                            wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'Payment Status', __('Not Paid', 'paypal-for-woocommerce-multi-account-management'));
+            if ($key === 'always') {
+                foreach ($ec_parallel_data as $inner_key => $always_ec_parallel_data) {
+                    for ($always_transaction_map = 0; $always_transaction_map <= ($total_account + count($ec_parallel_data)); $always_transaction_map++) {
+                        if (!empty($paypal_response['PAYMENTINFO_' . $always_transaction_map . '_PAYMENTREQUESTID'])) {
+                            $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_PAYMENTREQUESTID'];
+                            $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
+                            if (!empty($request_order_item_id[0]) && $always_ec_parallel_data['multi_account_id'] == $request_order_item_id[1]) {
+                                if (!empty($paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'])) {
+                                    $ec_parallel_data_map[$key][$always_ec_parallel_data['multi_account_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
+                                    $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
+                                } 
+                            }
+                        }
+                    }
+                }
+            } else {
+                for ($transaction_map = 0; $transaction_map <= $total_account; $transaction_map++) {
+                    if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'])) {
+                        $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'];
+                        $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
+                        if (!empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
+                            if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
+                                $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
+                                $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
+                                wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
+                            } elseif (!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
+                                wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'Payment Status', __('Not Paid', 'paypal-for-woocommerce-multi-account-management'));
+                            }
                         }
                     }
                 }
@@ -1858,6 +1875,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
                         $product = wc_get_product($value['product_id']);
                         $refund_error_message_after[] = $product->get_title();
+                    } elseif ($key === 'always') {
+                        foreach ($value as $inner_key => $inner_value) {
+                            if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
+                                $refund_error_message_after[] = __('Always trigger account API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
+                            }
+                        }
                     }
                 }
             }
@@ -1867,7 +1890,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
                 foreach ($angelleye_multi_account_ec_parallel_data_map as $key => $value) {
-                    if (!in_array($value['transaction_id'], $processed_transaction_id)) {
+                    if ($key === 'always') {
+                        foreach ($value as $inner_key => $inner_value) {
+                            $this->angelleye_express_checkout_load_paypal($inner_value, $gateway, $order_id);
+                            $processed_transaction_id[] = $inner_value['transaction_id'];
+                            if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
+                                $angelleye_multi_account_ec_parallel_data_map[$key][$inner_key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
+                                $angelleye_multi_account_ec_parallel_data_map[$key][$inner_key]['GROSSREFUNDAMT'] = $this->paypal_response['GROSSREFUNDAMT'];
+                            }
+                        }
+                    } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
                         $this->angelleye_express_checkout_load_paypal($value, $gateway, $order_id);
                         $processed_transaction_id[] = $value['transaction_id'];
                         if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
@@ -2270,7 +2302,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
         }
 
-        $cart_item_key = 'always';
+        $this->map_item_with_account['always'][$account_id] = array();
+        $this->map_item_with_account['always'][$account_id]['multi_account_id'] = $account_id;
+        $this->map_item_with_account['always'][$account_id]['email'] = $email;
+        $this->map_item_with_account['always'][$account_id]['is_api_set'] = $is_api_set;
+        $this->map_item_with_account['always'][$account_id]['sellerpaypalaccountid'] = $email;
+
+        $cart_item_key = 'always-' . $account_id;
         $this->final_order_grand_total;
         $commission_amt = AngellEYE_Gateway_Paypal::number_format($this->final_order_grand_total / 100 * $item_data['commission_amount_percentage'], 2);
         $paymentrequestid_value = $cart_item_key . '-' . rand();
