@@ -187,7 +187,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         break;
                     case 'always_trigger_commission':
-                        echo sprintf('<tr valign="top" class="paypal_express_always_trigger_commission_field"><th scope="row" class="titledesc"><label for="always_trigger_commission_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="always_trigger_commission" value="%2$s" id="always_trigger_commission_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        echo sprintf('<tr valign="top" class="paypal_express_always_trigger_commission_field"><th scope="row" class="titledesc"><label for="always_trigger_commission_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" min="0" max="99" step="0.01" name="always_trigger_commission" value="%2$s" id="always_trigger_commission_microprocessing" style="" placeholder="" type="number"></fieldset></td></tr>', __('Commission %', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'always_trigger_commission_item_label':
                         echo sprintf('<tr valign="top" class="paypal_express_always_trigger_commission_field"><th scope="row" class="titledesc"><label for="always_trigger_commission_item_label_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="always_trigger_commission_item_label" value="%2$s" id="always_trigger_commission_item_label_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Commission Item Label', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
@@ -1469,7 +1469,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <td class="forminp">
                     <fieldset>
                         <legend class="screen-reader-text"><span><?php echo __('Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                        <input type="number" name="always_trigger_commission" min="0" max="100" step="0.01" placeholder="0">
+                        <input type="number" name="always_trigger_commission" min="0" max="99" step="0.01" placeholder="0">
                     </fieldset>
                 </td>
             </tr>
