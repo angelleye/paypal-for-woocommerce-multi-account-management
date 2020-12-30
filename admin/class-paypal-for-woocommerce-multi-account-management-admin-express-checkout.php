@@ -629,13 +629,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
         }
         $payment_action = array('set_express_checkout', 'get_express_checkout_details', 'do_express_checkout_payment');
-        if (!empty($_GET['pp_action']) && ( in_array($_GET['pp_action'], $payment_action))) {
-            $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-            if ($angelleye_payment_load_balancer != '') {
-                return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
-            } else {
-                return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
-            }
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if ($angelleye_payment_load_balancer != '') {
+            return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
+        } else {
+            return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
         }
         return $request;
     }
