@@ -154,7 +154,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (isset($microprocessing_array['woocommerce_paypal_express_always_trigger'][0]) && 'on' === $microprocessing_array['woocommerce_paypal_express_always_trigger'][0]) {
                         $this->always_trigger_commission_accounts[$value->ID]['commission_amount_percentage'] = $microprocessing_array['always_trigger_commission'][0];
                         $this->always_trigger_commission_total_percentage = $this->always_trigger_commission_total_percentage + $microprocessing_array['always_trigger_commission'][0];
-                        $this->always_trigger_commission_accounts[$value->ID]['commission_item_label'] = $microprocessing_array['always_trigger_commission_item_label'][0];
+                        $this->always_trigger_commission_accounts[$value->ID]['commission_item_label'] = !empty($microprocessing_array['always_trigger_commission_item_label'][0]) ? $microprocessing_array['always_trigger_commission_item_label'][0] : 'commission';
                         continue;
                     }
                     if (!empty($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) && isset($microprocessing_array['woocommerce_paypal_express_api_condition_value'][0])) {
