@@ -92,12 +92,15 @@ jQuery('#woocommerce_paypal_express_always_trigger').change(function () {
         jQuery('.trigger_conditions_fields').hide();
         jQuery('.site_owner_commission_field').hide();
         jQuery("#always_trigger_commission_microprocessing").prop('required',true);
+        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required',true);
+        
         jQuery('.paypal_express_always_trigger_commission_field').show();
     } else {
         jQuery('.trigger_conditions_fields').show();
         jQuery('.site_owner_commission_field').show();
         jQuery('.paypal_express_always_trigger_commission_field').hide();
         jQuery("#always_trigger_commission_microprocessing").prop('required',false);
+        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required',false);
     }
 }).change();
 
