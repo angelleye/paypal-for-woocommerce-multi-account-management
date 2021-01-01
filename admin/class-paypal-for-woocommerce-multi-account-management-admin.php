@@ -600,9 +600,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $angelleye_payment_load_balancer = !empty($_POST['angelleye_payment_load_balancer']) ? $_POST['angelleye_payment_load_balancer'] : '';
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
+            $disable_trigger_account = $this->angelleye_disable_always_trigger_accounts();
         }
         if (!empty($this->message)) {
             echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
+        }
+        if($disable_trigger_account > 0) {
+            echo '<div id="message" class="notice notice-error inline is-dismissible"><p><strong>' . esc_html(__('Always-On (Always Trigger) Feature Has Been Disabled as It Is Not Supported with Payment Balancer Mode.', 'paypal-for-woocommerce-multi-account-management')) . '</strong></p></div>';
         }
         $global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', '');
         $global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
@@ -2628,6 +2632,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         return $default_keys;
+    }
+    
+    
+    
+    public function angelleye_disable_always_trigger_accounts() {
+        $args = array(
+            'post_type' => 'microprocessing',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => 'woocommerce_paypal_express_always_trigger',
+                    'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_enable',
+                    'value' => 'on',
+                    'compare' => '='
+                )
+            ),
+            'fields' => 'ids'
+        );
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            foreach ($query->posts as $key => $post_id) {
+                update_post_meta($post_id, 'woocommerce_paypal_express_enable', '');
+            }
+        }
+        return $query->found_posts;
     }
 
 }
