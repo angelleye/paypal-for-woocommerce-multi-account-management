@@ -588,6 +588,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_settings_fields() {
+        $disable_trigger_account = 0;
         if (!empty($_POST['global_commission_microprocessing_save'])) {
             update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));
             update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
@@ -600,13 +601,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $angelleye_payment_load_balancer = !empty($_POST['angelleye_payment_load_balancer']) ? $_POST['angelleye_payment_load_balancer'] : '';
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
-            $disable_trigger_account = $this->angelleye_disable_always_trigger_accounts();
+            if(!empty($angelleye_payment_load_balancer)) {
+                $disable_trigger_account = $this->angelleye_disable_always_trigger_accounts();
+            }
         }
         if (!empty($this->message)) {
             echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
         }
         if($disable_trigger_account > 0) {
-            echo '<div id="message" class="notice notice-error inline is-dismissible"><p><strong>' . esc_html(__('Always-On (Always Trigger) Feature Has Been Disabled as It Is Not Supported with Payment Balancer Mode.', 'paypal-for-woocommerce-multi-account-management')) . '</strong></p></div>';
+            echo '<div id="message" class="notice notice-warning inline is-dismissible"><p><strong>' . esc_html(__('Always-On (Always Trigger) Feature Has Been Disabled as It Is Not Supported with Payment Balancer Mode.', 'paypal-for-woocommerce-multi-account-management')) . '</strong></p></div>';
         }
         $global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', '');
         $global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
@@ -2645,6 +2648,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 array(
                     'key' => 'woocommerce_paypal_express_always_trigger',
                     'compare' => 'EXISTS'
+                ),
+                array(
+                    'key' => 'woocommerce_paypal_express_always_trigger',
+                    'value' => 'on',
+                    'compare' => '='
                 ),
                 array(
                     'key' => 'woocommerce_paypal_express_enable',
