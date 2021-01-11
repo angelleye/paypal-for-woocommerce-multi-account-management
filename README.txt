@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 5.0
-Tested up to: 5.5.3
-Stable tag: 3.0.12
+Tested up to: 5.6
+Stable tag: 3.0.13
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,6 +28,10 @@ If you are selling both high priced and low priced products on your site, you ma
 This plugin allows you to configure multiple accounts and provide rules for when to use each account based on order data.
 
 == Changelog ==
+
+= 3.0.13 - 01.11.2021 =
+* Fix - Resolves Multi-Account split does not work unless smart buttons are enabled. ([PFWMA-200](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/79))
+* Feature - Adds Create rules that will always be triggered. ([PFWMA-185](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/78))
 
 = 3.0.12 - 11.19.2020 =
 * Fix - Resolves Shipping Cost issue. ([PFWMA-194](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/77))
