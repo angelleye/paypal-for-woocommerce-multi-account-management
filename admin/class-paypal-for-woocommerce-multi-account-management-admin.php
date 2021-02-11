@@ -127,6 +127,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $microprocessing = $microprocessing_new;
             foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+                if(!isset($microprocessing_value[0])) {
+                    $microprocessing_value[0] = '';
+                }
                 switch ($microprocessing_key) {
                     case 'woocommerce_paypal_express_enable':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_express_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_express_enable"><input class="woocommerce_paypal_express_enable" name="woocommerce_paypal_express_enable" %2$s id="woocommerce_paypal_express_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
@@ -226,6 +229,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         } else if ($this->gateway_key == 'paypal') {
             foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+                if(!isset($microprocessing_value[0])) {
+                    $microprocessing_value[0] = '';
+                }
                 switch ($microprocessing_key) {
                     case 'woocommerce_paypal_enable':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_enable"><input class="woocommerce_paypal_enable" name="woocommerce_paypal_enable" %2$s id="woocommerce_paypal_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
@@ -291,6 +297,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         } else if ($this->gateway_key == 'paypal_pro_payflow') {
             foreach ($microprocessing as $microprocessing_key => $microprocessing_value) {
+                if(!isset($microprocessing_value[0])) {
+                    $microprocessing_value[0] = '';
+                }
                 switch ($microprocessing_key) {
                     case 'woocommerce_paypal_pro_payflow_enable':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_paypal_pro_payflow_enable">%1$s</label></th><td class="forminp"><fieldset><label for="woocommerce_paypal_pro_payflow_enable"><input class="woocommerce_paypal_pro_payflow_enable" name="woocommerce_paypal_pro_payflow_enable" %2$s id="woocommerce_paypal_pro_payflow_enable" type="checkbox"> %3$s</label><br></fieldset></td></tr>', __('Enable / Disable', 'paypal-for-woocommerce-multi-account-management'), ($microprocessing_value[0] == 'on') ? 'checked' : '', __('Enable Account', 'paypal-for-woocommerce-multi-account-management'));
