@@ -737,7 +737,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
             $total_tax = WC()->cart->get_total_tax();
             if (isset($total_tax) && $total_tax > 0) {
-                $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_is_taxable, 'tax');
+                $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
             }
         } else {
             $this->taxamt = 0;
@@ -747,7 +747,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             if (!empty($this->map_item_with_account)) {
                 $packages = WC()->shipping()->get_packages();
                 $chosen_shipping_methods = WC()->session->get('chosen_shipping_methods');
-                if (!empty($packages) && !empty($chosen_shipping_methods) && count($packages) > 1) {
+                if (( class_exists('WC_Shipping_Per_Product_Init') || function_exists('woocommerce_per_product_shipping') ) && isset($chosen_shipping_methods[0]) && 'per_product' == $chosen_shipping_methods[0]) {
+                    foreach ($packages as $package_key => $package) {
+                        foreach ($package['contents'] as $key => $product) {
+                            $rule = '';
+                            if (!empty($product['variation_id'])) {
+                                $rule = woocommerce_per_product_shipping_get_matching_rule($product['variation_id'], $package);
+                            }
+                            if (empty($rule)) {
+                                $rule = woocommerce_per_product_shipping_get_matching_rule($product['product_id'], $package);
+                            }
+                            if ( ! empty( $rule ) ) {
+                                $item_shipping_cost = 0;
+                                $item_shipping_cost += $rule->rule_item_cost * $product['quantity'];
+                                $item_shipping_cost += $rule->rule_cost;
+                                
+                                    $this->map_item_with_account[$product['product_id']]['shipping_cost'] = AngellEYE_Gateway_Paypal::number_format($item_shipping_cost);
+                                    $this->divided_shipping_cost = $this->divided_shipping_cost + $item_shipping_cost;
+                                
+                            }
+                        }
+                    }
+                } elseif (!empty($packages) && !empty($chosen_shipping_methods) && count($packages) > 1) {
                     foreach ($packages as $package_key => $package) {
                         if (isset($chosen_shipping_methods[$package_key], $package['rates'][$chosen_shipping_methods[$package_key]])) {
                             $shipping_rate = $package['rates'][$chosen_shipping_methods[$package_key]];
@@ -1775,21 +1796,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             foreach ($this->map_item_with_account as $product_id => $item_with_account) {
                 switch ($type) {
                     case "tax":
-                        if (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
+                        if (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true && !empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
                             $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['tax'], $this->decimals);
                             unset($partition_array[$loop]);
                             $loop = $loop + 1;
+                        } elseif (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
+                            $partition_array[$product_id] = round($item_with_account['tax'], $this->decimals);
                         }
                         break;
                     case "shipping":
                         if (!empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
                             if (isset($item_with_account['shipping_cost'])) {
                                 $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['shipping_cost'], $this->decimals);
+                                unset($partition_array[$loop]);
+                                $loop = $loop + 1;
                             } else {
                                 $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
                             }
-                            unset($partition_array[$loop]);
-                            $loop = $loop + 1;
                         }
                         break;
                     case "discount":
