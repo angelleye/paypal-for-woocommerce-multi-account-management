@@ -1371,8 +1371,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['taxamt'] = $Payment['taxamt'];
                             }
                         }
-                        array_push($new_payments, $Payment);
-                        $loop = $loop + 1;
+                        if($final_total > 0) {
+                            array_push($new_payments, $Payment);
+                            $loop = $loop + 1;
+                        } else {
+                            unset($this->final_payment_request_data[$sellerpaypalaccountid]);
+                        }
                     } else {
 
 
