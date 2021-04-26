@@ -307,12 +307,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                     if (empty($_GET['section'])) {
                         echo 'current';
                     }
-                    ?>"><?php echo __('All PayPal Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> |</li>
+                    ?>"><?php echo __('All PayPal Accounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> |</li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="<?php
                     if (!empty($_GET['section']) && $_GET['section'] == 'add_edit_account') {
                         echo 'current';
                     }
-                    ?>"><?php echo __('Add / Edit Acounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
+                    ?>"><?php echo __('Add / Edit Accounts', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=settings')); ?>" class="<?php
                     if (!empty($_GET['section']) && $_GET['section'] == 'settings') {
                         echo 'current';
