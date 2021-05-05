@@ -473,7 +473,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (!empty($existing_zones)) {
                     $option_fifteen_one .= '<option value="all">All Shipping Zones</option>';
                     foreach ($existing_zones as $key => $zone_name) {
-                        $option_fifteen_one .= '<option value="' . esc_attr($zone_name['zone_name']) . '"' . wc_selected($zone_name['zone_name'], $shipping_zone) . '>' . esc_html($zone_name['zone_name']) . '</option>';
+                        $option_fifteen_one .= '<option value="' . esc_attr($zone_name['id']) . '"' . wc_selected($zone_name['id'], $shipping_zone) . '>' . esc_html($zone_name['zone_name']) . '</option>';
                     }
                 }
                 $option_fifteen_one .= '</select>';
@@ -1760,7 +1760,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             echo '<option value="all">All Shipping Zones</option>';
                             if (!empty($existing_zones)) {
                                 foreach ($existing_zones as $key => $zone_name) {
-                                    echo '<option value="' . esc_attr($zone_name['zone_name']) . '">' . esc_html($zone_name['zone_name']) . '</option>';
+                                    echo '<option value="' . esc_attr($zone_name['id']) . '">' . esc_html($zone_name['zone_name']) . '</option>';
                                 }
                             }
                             ?>
