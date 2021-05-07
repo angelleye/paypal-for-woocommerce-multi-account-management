@@ -347,6 +347,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                         continue;
                                     }
                                 }
+                                
+                                if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+                                    $mul_shipping_zone = get_post_meta($value->ID, 'shipping_zone', true);
+                                    if (!empty($mul_shipping_zone) && $mul_shipping_zone != 'all') {
+                                        $shipping_packages =  WC()->cart->get_shipping_packages();
+                                        if( !empty($shipping_packages) ) {
+                                            $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
+                                            $zone_id = $woo_shipping_zone->get_id();
+                                            if ($zone_id != $mul_shipping_zone) {
+                                                $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
 
                                 $product_shipping_class = $product->get_shipping_class_id();
                                 $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
