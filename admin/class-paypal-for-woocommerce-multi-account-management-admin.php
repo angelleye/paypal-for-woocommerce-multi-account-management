@@ -609,6 +609,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $angelleye_payment_load_balancer = !empty($_POST['angelleye_payment_load_balancer']) ? $_POST['angelleye_payment_load_balancer'] : '';
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
+            $angelleye_smart_commission = !empty($_POST['angelleye_smart_commission']) ? $_POST['angelleye_smart_commission'] : '';
+            update_option('angelleye_smart_commission', wc_clean($angelleye_smart_commission));
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
             if(!empty($angelleye_payment_load_balancer)) {
                 $disable_trigger_account = $this->angelleye_disable_always_trigger_accounts();
@@ -625,6 +627,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        $angelleye_smart_commission = get_option('angelleye_smart_commission', '');
         $global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
         ?>
         <div id="angelleye_paypal_marketing_table">
@@ -643,6 +646,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     </label>
                                     <p class="description">
         <?php echo __('Cycle through a series of accounts to balance the load of payment volume across each account. <a href="https://www.angelleye.com/paypal-for-woocommerce-multi-account-management-setup-guide/#load-balancer" target="_blank">Read more</a>', 'paypal-for-woocommerce'); ?>
+                                    </p>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr class="angelleye_smart_commission_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_smart_commission" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="angelleye_smart_commission"><input class="angelleye_smart_commission" type="checkbox" name="angelleye_smart_commission" id="angelleye_smart_commission" <?php echo ($angelleye_smart_commission == 'on') ? 'checked' : '' ?>><?php echo __('Smart Commission', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                    <p class="description">
+                                        <?php echo __('', 'paypal-for-woocommerce'); ?>
                                     </p>
                                 </fieldset>
                             </td>

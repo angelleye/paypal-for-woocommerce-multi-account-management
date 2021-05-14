@@ -62,6 +62,15 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
 jQuery('#angelleye_payment_load_balancer').change(function () {
     if (jQuery(this).is(':checked')) {
         jQuery('.angelleye_multi_account_paypal_express_field').hide();
+        jQuery('.angelleye_smart_commission_tr').hide();
+    } else {
+        jQuery('.angelleye_multi_account_paypal_express_field').show();
+        jQuery('.angelleye_smart_commission_tr').show();
+    }
+}).change();
+jQuery('#angelleye_smart_commission').change(function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery('.angelleye_multi_account_paypal_express_field').hide();
     } else {
         jQuery('.angelleye_multi_account_paypal_express_field').show();
     }
