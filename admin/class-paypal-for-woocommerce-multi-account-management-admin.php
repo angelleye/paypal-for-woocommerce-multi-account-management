@@ -663,7 +663,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
+                        <tr class="global_ec_site_owner_commission_tr">
                             <th scope="row" class="titledesc">
                                 <label for="global_ec_site_owner_commission" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                             </th>
@@ -673,7 +673,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
+                        <tr class="global_ec_site_owner_commission_label_tr">
                             <th scope="row" class="titledesc">
                                 <label for="global_ec_site_owner_commission_label" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                             </th>
@@ -683,7 +683,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
+                        <tr class="global_ec_include_tax_shipping_in_commission_tr">
                             <th scope="row" class="titledesc">
                                 <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                             </th>
