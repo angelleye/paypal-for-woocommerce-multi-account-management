@@ -420,6 +420,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
 
+                            if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+                                $mul_shipping_zone = get_post_meta($value->ID, 'shipping_zone', true);
+                                if (!empty($mul_shipping_zone) && $mul_shipping_zone != 'all') {
+                                    $shipping_packages =  WC()->cart->get_shipping_packages();
+                                    if( !empty($shipping_packages) ) {
+                                        $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
+                                        $zone_id = $woo_shipping_zone->get_id();
+                                        if ($zone_id != $mul_shipping_zone) {
+                                            $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                            
                             $product_shipping_class = $product->get_shipping_class_id();
                             $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
                             if (!empty($shipping_class) && $shipping_class != 'all') {
@@ -428,6 +443,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
+                            
 
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
 
@@ -558,6 +574,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     if ($post_author_id != $woocommerce_paypal_express_api_user) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
+                                    }
+                                }
+                                
+                                $mul_shipping_zone = get_post_meta($value->ID, 'shipping_zone', true);
+                                if (!empty($mul_shipping_zone) && $mul_shipping_zone != 'all') {
+                                    $shipping_packages =  WC()->cart->get_shipping_packages();
+                                    if( !empty($shipping_packages) ) {
+                                        $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
+                                        $zone_id = $woo_shipping_zone->get_id();
+                                        if ($zone_id != $mul_shipping_zone) {
+                                            $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                            continue;
+                                        }
                                     }
                                 }
 
