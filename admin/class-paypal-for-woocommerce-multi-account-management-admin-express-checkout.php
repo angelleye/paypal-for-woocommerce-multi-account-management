@@ -420,6 +420,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 }
                             }
 
+                            if (isset(WC()->cart) && sizeof(WC()->cart->get_cart()) > 0) {
+                                $mul_shipping_zone = get_post_meta($value->ID, 'shipping_zone', true);
+                                if (!empty($mul_shipping_zone) && $mul_shipping_zone != 'all') {
+                                    $shipping_packages =  WC()->cart->get_shipping_packages();
+                                    if( !empty($shipping_packages) ) {
+                                        $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
+                                        $zone_id = $woo_shipping_zone->get_id();
+                                        if ($zone_id != $mul_shipping_zone) {
+                                            $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                            continue;
+                                        }
+                                    }
+                                }
+                            }
+                            
                             $product_shipping_class = $product->get_shipping_class_id();
                             $shipping_class = get_post_meta($value->ID, 'shipping_class', true);
                             if (!empty($shipping_class) && $shipping_class != 'all') {
@@ -428,6 +443,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
+                            
 
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
 
@@ -558,6 +574,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     if ($post_author_id != $woocommerce_paypal_express_api_user) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
+                                    }
+                                }
+                                
+                                $mul_shipping_zone = get_post_meta($value->ID, 'shipping_zone', true);
+                                if (!empty($mul_shipping_zone) && $mul_shipping_zone != 'all') {
+                                    $shipping_packages =  WC()->cart->get_shipping_packages();
+                                    if( !empty($shipping_packages) ) {
+                                        $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
+                                        $zone_id = $woo_shipping_zone->get_id();
+                                        if ($zone_id != $mul_shipping_zone) {
+                                            $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                            continue;
+                                        }
                                     }
                                 }
 
@@ -719,6 +748,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     }
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+        $order = wc_get_order($order_id);
         $this->send_items = $gateways->send_items;
         $this->map_item_with_account = apply_filters('angelleye_ec_parallel_parameter', $this->map_item_with_account);
         $new_payments = array();
@@ -734,15 +764,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             unset($request['SECFields']['customerservicenumber']);
         }
         if (wc_tax_enabled()) {
-            $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
-            $total_tax = WC()->cart->get_total_tax();
-            if (isset($total_tax) && $total_tax > 0) {
-                $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
+            if(WC()->cart->is_empty()) {
+                $this->taxamt = round($order->get_shipping_tax(), $this->decimals);
+                $total_tax = $order->get_total_tax();
+                if (isset($total_tax) && $total_tax > 0) {
+                    $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
+                } 
+            } else {
+               $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
+                $total_tax = WC()->cart->get_total_tax();
+                if (isset($total_tax) && $total_tax > 0) {
+                    $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
+                }
             }
         } else {
             $this->taxamt = 0;
         }
-        $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
+        
+        
+        if(WC()->cart->is_empty()) {
+            $this->shippingamt = round($order->get_shipping_total(), $this->decimals);
+        } else {
+            $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
+        }
         if (isset($this->shippingamt) && $this->shippingamt > 0) {
             if (!empty($this->map_item_with_account)) {
                 $packages = WC()->shipping()->get_packages();
@@ -837,10 +881,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             }
             $this->shipping_array = $this->angelleye_get_extra_fee_array($pending_shipping_amount, $this->angelleye_needs_shipping, 'shipping');
         }
-        $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
-        if (isset($this->discount_amount) && $this->discount_amount > 0) {
-            $this->discount_array = $this->angelleye_get_extra_fee_array($this->discount_amount, $this->angelleye_is_discountable, 'discount');
+        if(WC()->cart->is_empty()) {
+            $this->discount_amount = round($order->get_discount_total(), $this->decimals);
+            if (isset($this->discount_amount) && $this->discount_amount > 0) {
+                $this->discount_array = $this->angelleye_get_extra_fee_array($this->discount_amount, $this->angelleye_is_discountable, 'discount');
+            }
+        } else {
+            $this->discount_amount = round(WC()->cart->get_cart_discount_total(), $this->decimals);
+            if (isset($this->discount_amount) && $this->discount_amount > 0) {
+                $this->discount_array = $this->angelleye_get_extra_fee_array($this->discount_amount, $this->angelleye_is_discountable, 'discount');
+            }
         }
+        
         $loop = 1;
         $default_item_total = 0;
         $default_final_total = 0;
