@@ -639,11 +639,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $temp_role = array();
             if(!empty($angelleye_smart_commission['role'])) {
                 foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
-                    if (array_key_exists($ro_value,$temp_role)) {
+                    if(!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
+                        if (array_key_exists($ro_value,$temp_role)) {
+                            unset($angelleye_smart_commission['commission'][$ro_key]);
+                            unset($angelleye_smart_commission['role'][$ro_key]);
+                            unset($angelleye_smart_commission['item_label'][$ro_key]);
+                        } else {
+                            $temp_role[$ro_value] = $ro_value;
+                        }
+                    } else {
                         unset($angelleye_smart_commission['commission'][$ro_key]);
                         unset($angelleye_smart_commission['role'][$ro_key]);
-                    } else {
-                        $temp_role[$ro_value] = $ro_value;
+                        unset($angelleye_smart_commission['item_label'][$ro_key]);
                     }
                 }
             }
@@ -688,6 +695,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
+                        <tr class="global_ec_include_tax_shipping_in_commission_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="global_ec_include_tax_shipping_in_commission">
+                                        <input class="global_ec_include_tax_shipping_in_commission" type="checkbox" name="global_ec_include_tax_shipping_in_commission" id="global_ec_include_tax_shipping_in_commission" <?php echo ($global_ec_include_tax_shipping_in_commission == 'on') ? 'checked' : '' ?>>
+                                        <?php echo __('Include sales tax and shipping amounts in commission calculations', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </label>
+                                    <p class="description">
+                                        <?php echo __('', 'paypal-for-woocommerce'); ?>
+                                    </p>
+                                </fieldset>
+                            </td>
+                        </tr>
                         <tr class="angelleye_smart_commission_tr">
                             <th scope="row" class="titledesc">
                                 <label for="angelleye_smart_commission" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -721,27 +744,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        <tr class="global_ec_include_tax_shipping_in_commission_tr">
-                            <th scope="row" class="titledesc">
-                                <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <label for="global_ec_include_tax_shipping_in_commission">
-                                        <input class="global_ec_include_tax_shipping_in_commission" type="checkbox" name="global_ec_include_tax_shipping_in_commission" id="global_ec_include_tax_shipping_in_commission" <?php echo ($global_ec_include_tax_shipping_in_commission == 'on') ? 'checked' : '' ?>>
-                                        <?php echo __('Include sales tax and shipping amounts in commission calculations', 'paypal-for-woocommerce-multi-account-management'); ?>
-                                    </label>
-                                    <p class="description">
-                                        <?php echo __('', 'paypal-for-woocommerce'); ?>
-                                    </p>
-                                </fieldset>
-                            </td>
-                        </tr>
+                        
                     </table>
-                    <table class="form-table">
+                    <table class="form-table angelleye_smart_commission_tt">
                         <tr>
                             <th scope="row" class="titledesc">
-                                <label for="angelleye_smart_commission['regular_smart_commission']" class="commission">Regular commission rate %</label>
+                                <label for="angelleye_smart_commission['regular_smart_commission']" class="commission"><?php echo __('Regular commission rate %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                             </th>
                             <td class="forminp">
                                 <fieldset>
@@ -751,18 +759,24 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </td>
                         </tr>
                     </table>
-                    <div>
+                    <div class="angelleye_smart_commission_tt">
                         <div style="max-width:600px;">
-                            <button class="angelleye_add_new_smart_commission_role button" style="float: right;margin-bottom: 13px;">Add New Role</button>
+                            <button class="angelleye_add_new_smart_commission_role button" style="float: right;margin-bottom: 13px;"><?php echo __('Add New Smart Commission Rule', 'paypal-for-woocommerce-multi-account-management'); ?></button>
                         </div>
                         <table class="widefat" style="max-width:600px;" id="angelleye_smart_commission_table">
                             <thead>
                                 <tr>
                                     <th>
-                                        User Role
+                                        <?php echo __('Buyer Role', 'paypal-for-woocommerce-multi-account-management'); ?>
                                     </th>
                                     <th>
-                                        Commission Rate %
+                                        <?php echo __('Commission Rate %', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Item Label', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Action', 'paypal-for-woocommerce-multi-account-management'); ?>
                                     </th>
                                 </tr>
                             </thead>
@@ -781,7 +795,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             </select>
                                         </td>
                                         <td>
-                                            <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0">
+                                            <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label">
+                                        </td>
+                                        <td>
+                                            <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                         </td>
                                     </tr>
                                     <?php
@@ -805,7 +825,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                                 </select>
                                             </td>
                                             <td>
-                                                <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0" value="<?php echo isset($angelleye_smart_commission['commission'][$role_key]) ? $angelleye_smart_commission['commission'][$role_key] : '' ?>">
+                                                <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0" value="<?php echo isset($angelleye_smart_commission['commission'][$role_key]) ? $angelleye_smart_commission['commission'][$role_key] : '' ?>">
+                                            </td>
+                                            <td>
+                                                <input type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['item_label'][$role_key]) ? $angelleye_smart_commission['item_label'][$role_key] : '' ?>">
+                                            </td>
+                                            <td>
+                                                <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                             </td>
                                         </tr>
                                         <?php
@@ -816,10 +842,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <tfoot>
                                 <tr>
                                     <th>
-                                        User Role
+                                        <?php echo __('Buyer Role', 'paypal-for-woocommerce-multi-account-management'); ?>
                                     </th>
                                     <th>
-                                        Commission Rate %
+                                        <?php echo __('Commission Rate %', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Item Label', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Action', 'paypal-for-woocommerce-multi-account-management'); ?>
                                     </th>
                                 </tr>
                             </tfoot>

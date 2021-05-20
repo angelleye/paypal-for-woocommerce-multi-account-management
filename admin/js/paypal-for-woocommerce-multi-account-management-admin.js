@@ -61,28 +61,38 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
 
 jQuery('#angelleye_payment_load_balancer').change(function () {
     if (jQuery(this).is(':checked')) {
-        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr').hide();
+        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
     } else {
-        jQuery('.angelleye_smart_commission_tr').show();
+        jQuery('.angelleye_smart_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').show();
         if (jQuery('#angelleye_smart_commission').is(':checked')) {
-            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').hide();
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').hide();
+            jQuery('.angelleye_smart_commission_tt').show();
         } else {
-            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').show();
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').show();
+            jQuery('.angelleye_smart_commission_tt').hide();
         }
     }
 }).change();
 jQuery('#angelleye_smart_commission').change(function () {
     if(jQuery('#angelleye_payment_load_balancer').is(':checked')) {
-        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr').hide();
+        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
     } else {
         if (jQuery(this).is(':checked')) {
-            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').hide();
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').hide();
+            jQuery('.angelleye_smart_commission_tt').show();
         } else {
-            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').show();
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').show();
+            jQuery('.angelleye_smart_commission_tt').hide();
         }
     }
 }).change();
-
+jQuery(document).on('click', 'td a.angelleye_smart_commission_delete', function () {
+    if (!confirm("Do you want to delete?")) {
+        return false;
+    } else {
+        jQuery(this).closest("tr").remove();
+    }
+});
 jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
     angelleye_multi_account_choose_payment_hide_show_field();
     if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_pro_payflow') {
