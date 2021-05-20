@@ -758,12 +758,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
                             </td>
                         </tr>
+                        <tr>
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_smart_commission['regular_smart_commission_item_label']" class="commission"><?php echo __('Regular Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <input style="width:300px;" type="text" name=angelleye_smart_commission[regular_smart_commission_item_label]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['regular_smart_commission_item_label']) ? $angelleye_smart_commission['regular_smart_commission_item_label'] : '' ?>">
+                                </fieldset>
+
+                            </td>
+                        </tr>
                     </table>
-                    <div class="angelleye_smart_commission_tt">
-                        <div style="max-width:600px;">
+                    <div class="angelleye_smart_commission_tt" style="max-width:870px;">
+                        <div style="">
                             <button class="angelleye_add_new_smart_commission_role button" style="float: right;margin-bottom: 13px;"><?php echo __('Add New Smart Commission Rule', 'paypal-for-woocommerce-multi-account-management'); ?></button>
                         </div>
-                        <table class="widefat" style="max-width:600px;" id="angelleye_smart_commission_table">
+                        <table class="widefat" style="" id="angelleye_smart_commission_table">
                             <thead>
                                 <tr>
                                     <th>
@@ -798,7 +809,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                             <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0">
                                         </td>
                                         <td>
-                                            <input type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label">
+                                            <input style="width:300px;" type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label">
                                         </td>
                                         <td>
                                             <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
@@ -828,7 +839,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                                 <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0" value="<?php echo isset($angelleye_smart_commission['commission'][$role_key]) ? $angelleye_smart_commission['commission'][$role_key] : '' ?>">
                                             </td>
                                             <td>
-                                                <input type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['item_label'][$role_key]) ? $angelleye_smart_commission['item_label'][$role_key] : '' ?>">
+                                                <input style="width:300px;" type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['item_label'][$role_key]) ? $angelleye_smart_commission['item_label'][$role_key] : '' ?>">
                                             </td>
                                             <td>
                                                 <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
