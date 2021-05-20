@@ -193,7 +193,10 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
-
+jQuery( "#angelleye_multi_account_global_setting" ).submit(function( event ) {
+    window.onbeforeunload = null;
+    jQuery('angelleye_multi_account_global_setting').sumit();
+});
 jQuery( "#angelleye_multi_account" ).submit(function( event ) {
     window.onbeforeunload = null;
     if(jQuery("#is_force_submit").val() === 'yes') {
@@ -252,7 +255,6 @@ jQuery('.enable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
-
 jQuery('.create_all_vendor_rules').on('click', function (event) {
     var r = confirm(pfwma_param.create_all_vendor_rules_alert_message);
     if (r == true) {
@@ -276,4 +278,13 @@ jQuery('.create_all_vendor_rules').on('click', function (event) {
         event.preventDefault();
         return r;
     }
+});
+jQuery('.angelleye_add_new_smart_commission_role').on('click', function (event) {
+   event.preventDefault();
+   var $tableBody = jQuery('#angelleye_smart_commission_table').find("tbody"),
+        $trLast = $tableBody.find("tr:last"),
+        $trNew = $trLast.clone();
+    $trNew.find( 'input' ).val( '' );
+    $trNew.find("option").prop("selected", false).trigger( "change" );
+    $trLast.after($trNew);
 });
