@@ -85,7 +85,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $user = new WP_User($customer_id);
                 if (!empty($user->roles) && is_array($user->roles)) {
                     foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
-                        if($user->roles === $ro_value) {
+                        if (in_array($ro_value, (array) $user->roles, true)) {
                             $this->global_ec_site_owner_commission = $angelleye_smart_commission['commission'][$ro_key];
                             $this->global_ec_site_owner_commission_label = $angelleye_smart_commission['item_label'][$ro_key];
                         } 
