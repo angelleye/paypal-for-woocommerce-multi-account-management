@@ -91,11 +91,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         } 
                     }
                 }
-                if(empty($this->global_ec_site_owner_commission_label)) {
-                    if( isset($angelleye_smart_commission['regular_smart_commission']) ) {
-                        $this->global_ec_site_owner_commission = $angelleye_smart_commission['regular_smart_commission'];
-                        $this->global_ec_site_owner_commission_label = $angelleye_smart_commission['regular_smart_commission_item_label'];
-                    }
+            }
+            if(empty($this->global_ec_site_owner_commission_label)) {
+                if( isset($angelleye_smart_commission['regular_smart_commission']) ) {
+                    $this->global_ec_site_owner_commission = $angelleye_smart_commission['regular_smart_commission'];
+                    $this->global_ec_site_owner_commission_label = $angelleye_smart_commission['regular_smart_commission_item_label'];
                 }
             }
         } else {
