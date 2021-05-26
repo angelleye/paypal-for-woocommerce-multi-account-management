@@ -464,7 +464,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
 
             $option_fourteen .= '</select>';
-            
+
             $option_fifteen_one = '';
             if (wc_shipping_enabled()) {
                 $option_fifteen_one = '<p class="description">' . __('Shipping Zones', 'paypal-for-woocommerce-multi-account-management') . '</p>';
@@ -478,7 +478,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 }
                 $option_fifteen_one .= '</select>';
             }
-            
+
             $option_fifteen = '';
             if (wc_shipping_enabled()) {
                 $option_fifteen = '<p class="description">' . __('Shipping Class', 'paypal-for-woocommerce-multi-account-management') . '</p>';
@@ -622,6 +622,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_settings_fields() {
+        $GLOBALS['hide_save_button'] = true;
         $disable_trigger_account = 0;
         if (!empty($_POST['global_commission_microprocessing_save'])) {
             update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));
@@ -634,6 +635,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $angelleye_payment_load_balancer = !empty($_POST['angelleye_payment_load_balancer']) ? $_POST['angelleye_payment_load_balancer'] : '';
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
+            $angelleye_smart_commission = !empty($_POST['angelleye_smart_commission']) ? $_POST['angelleye_smart_commission'] : '';
+            $temp_role = array();
+            if(!empty($angelleye_smart_commission['role'])) {
+                foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
+                    if(!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
+                        if (array_key_exists($ro_value,$temp_role)) {
+                            unset($angelleye_smart_commission['commission'][$ro_key]);
+                            unset($angelleye_smart_commission['role'][$ro_key]);
+                            unset($angelleye_smart_commission['item_label'][$ro_key]);
+                        } else {
+                            $temp_role[$ro_value] = $ro_value;
+                        }
+                    } else {
+                        unset($angelleye_smart_commission['commission'][$ro_key]);
+                        unset($angelleye_smart_commission['role'][$ro_key]);
+                        unset($angelleye_smart_commission['item_label'][$ro_key]);
+                    }
+                }
+            }
+            update_option('angelleye_smart_commission', wc_clean($angelleye_smart_commission));
+
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
             if (!empty($angelleye_payment_load_balancer)) {
                 $disable_trigger_account = $this->angelleye_disable_always_trigger_accounts();
@@ -650,11 +672,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         $global_automatic_rule_creation_testmode = get_option('global_automatic_rule_creation_testmode', '');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        $angelleye_smart_commission = get_option('angelleye_smart_commission', '');
         $global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
         ?>
         <div id="angelleye_paypal_marketing_table">
             <div class="angelleye_multi_account_global_setting">
-                <form method="post" action="" enctype="multipart/form-data">
+                <form id="angelleye_multi_account_global_setting" method="post" action="" enctype="multipart/form-data">
                     <table class="form-table">
                         <tr class="angelleye_payment_load_balancer_tr">
                             <th scope="row" class="titledesc">
@@ -672,27 +695,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
-                            <th scope="row" class="titledesc">
-                                <label for="global_ec_site_owner_commission" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <input type="number" name="global_ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0" class="commission" value="<?php echo!empty($global_ec_site_owner_commission) ? $global_ec_site_owner_commission : ''; ?>">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
-                            <th scope="row" class="titledesc">
-                                <label for="global_ec_site_owner_commission_label" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
-                            </th>
-                            <td class="forminp">
-                                <fieldset>
-                                    <input type="text" class="input-text regular-input commission" name="global_ec_site_owner_commission_label" placeholder="Commission" value="<?php echo!empty($global_ec_site_owner_commission_label) ? $global_ec_site_owner_commission_label : ''; ?>">
-                                </fieldset>
-                            </td>
-                        </tr>
-                        <tr class="angelleye_multi_account_paypal_express_field">
+                        <tr class="global_ec_include_tax_shipping_in_commission_tr">
                             <th scope="row" class="titledesc">
                                 <label for="angelleye_payment_load_balancer" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
                             </th>
@@ -708,7 +711,163 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
+                        <tr class="angelleye_smart_commission_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_smart_commission" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="angelleye_smart_commission"><input class="angelleye_smart_commission" type="checkbox" name="angelleye_smart_commission[enable]" id="angelleye_smart_commission" <?php echo (isset($angelleye_smart_commission['enable']) && $angelleye_smart_commission['enable'] == 'on') ? 'checked' : '' ?>><?php echo __('Smart Commission', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                                    <p class="description">
+                                        <?php echo __('', 'paypal-for-woocommerce'); ?>
+                                    </p>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr class="global_ec_site_owner_commission_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="global_ec_site_owner_commission" class="commission"><?php echo __('Global Site Owner Commission %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <input type="number" name="global_ec_site_owner_commission" min="0" max="100" step="0.01" placeholder="0" class="commission" value="<?php echo!empty($global_ec_site_owner_commission) ? $global_ec_site_owner_commission : ''; ?>">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr class="global_ec_site_owner_commission_label_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="global_ec_site_owner_commission_label" class="commission"><?php echo __('Global Site Owner Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <input type="text" class="input-text regular-input commission" name="global_ec_site_owner_commission_label" placeholder="Commission" value="<?php echo!empty($global_ec_site_owner_commission_label) ? $global_ec_site_owner_commission_label : ''; ?>">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        
                     </table>
+                    <table class="form-table angelleye_smart_commission_tt">
+                        <tr>
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_smart_commission['regular_smart_commission']" class="commission"><?php echo __('Regular commission rate %', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <input type="number" style="width:100px;" name=angelleye_smart_commission[regular_smart_commission]" min="0" max="99" step="0.01" placeholder="0" value="<?php echo isset($angelleye_smart_commission['regular_smart_commission']) ? $angelleye_smart_commission['regular_smart_commission'] : '' ?>">
+                                </fieldset>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row" class="titledesc">
+                                <label for="angelleye_smart_commission['regular_smart_commission_item_label']" class="commission"><?php echo __('Regular Commission Item Label', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <input style="width:300px;" type="text" name=angelleye_smart_commission[regular_smart_commission_item_label]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['regular_smart_commission_item_label']) ? $angelleye_smart_commission['regular_smart_commission_item_label'] : '' ?>">
+                                </fieldset>
+
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="angelleye_smart_commission_tt" style="max-width:870px;">
+                        <div style="">
+                            <button class="angelleye_add_new_smart_commission_role button" style="float: right;margin-bottom: 13px;"><?php echo __('Add New Smart Commission Rule', 'paypal-for-woocommerce-multi-account-management'); ?></button>
+                        </div>
+                        <table class="widefat" style="" id="angelleye_smart_commission_table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <?php echo __('Buyer Role', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Commission Rate %', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Item Label', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Action', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (!isset($angelleye_smart_commission['role'])) { ?>
+                                    <tr>
+                                        <td>
+                                            <select name="angelleye_smart_commission[role][]">
+                                                <?php
+                                                $editable_roles = array_reverse(get_editable_roles());
+                                                foreach ($editable_roles as $role => $details) {
+                                                    $name = translate_user_role($details['name']);
+                                                    echo "\n\t<option value='" . esc_attr($role) . "'>$name</option>";
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0">
+                                        </td>
+                                        <td>
+                                            <input style="width:300px;" type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label">
+                                        </td>
+                                        <td>
+                                            <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                } else {
+                                    foreach ($angelleye_smart_commission['role'] as $role_key => $angelleye_smart_commission_role) {
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                <select name="angelleye_smart_commission[role][]">
+                                                    <?php
+                                                    $editable_roles = array_reverse(get_editable_roles());
+                                                    foreach ($editable_roles as $role => $details) {
+                                                        $name = translate_user_role($details['name']);
+                                                        if ($role === $angelleye_smart_commission_role) {
+                                                            echo "\n\t<option selected='selected' value='" . esc_attr($role) . "'>$name</option>";
+                                                        } else {
+                                                            echo "\n\t<option value='" . esc_attr($role) . "'>$name</option>";
+                                                        }
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="angelleye_smart_commission[commission][]" min="0" max="99" step="0.01" placeholder="0.0" value="<?php echo isset($angelleye_smart_commission['commission'][$role_key]) ? $angelleye_smart_commission['commission'][$role_key] : '' ?>">
+                                            </td>
+                                            <td>
+                                                <input style="width:300px;" type="text" name="angelleye_smart_commission[item_label][]" placeholder="Item Label" value="<?php echo isset($angelleye_smart_commission['item_label'][$role_key]) ? $angelleye_smart_commission['item_label'][$role_key] : '' ?>">
+                                            </td>
+                                            <td>
+                                                <a class="angelleye_smart_commission_delete" title="<?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?>"><?php echo __('Delete', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
+                                }
+                                ?>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>
+                                        <?php echo __('Buyer Role', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Commission Rate %', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Item Label', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                    <th>
+                                        <?php echo __('Action', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                     <?php
                     if (function_exists('dokan')) {
                         echo '<h2>' . __('Dokan Settings', 'paypal-for-woocommerce-multi-account-management') . '</h2>';
@@ -746,13 +905,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             </th>
                             <td class="forminp">
                                 <fieldset>
-                                    <input name="global_commission_microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                                    <input id="global_commission_microprocessing_save" name="global_commission_microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
                                     <a href="?page=wc-settings&tab=multi_account_management&section=list" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
                                 </fieldset>
                             </td>
                         </tr>
                     </table>
+
                 </form>
             </div>
         </div>

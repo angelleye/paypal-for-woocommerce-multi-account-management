@@ -61,12 +61,38 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
 
 jQuery('#angelleye_payment_load_balancer').change(function () {
     if (jQuery(this).is(':checked')) {
-        jQuery('.angelleye_multi_account_paypal_express_field').hide();
+        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
     } else {
-        jQuery('.angelleye_multi_account_paypal_express_field').show();
+        jQuery('.angelleye_smart_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').show();
+        if (jQuery('#angelleye_smart_commission').is(':checked')) {
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').hide();
+            jQuery('.angelleye_smart_commission_tt').show();
+        } else {
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').show();
+            jQuery('.angelleye_smart_commission_tt').hide();
+        }
     }
 }).change();
-
+jQuery('#angelleye_smart_commission').change(function () {
+    if(jQuery('#angelleye_payment_load_balancer').is(':checked')) {
+        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
+    } else {
+        if (jQuery(this).is(':checked')) {
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').hide();
+            jQuery('.angelleye_smart_commission_tt').show();
+        } else {
+            jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').show();
+            jQuery('.angelleye_smart_commission_tt').hide();
+        }
+    }
+}).change();
+jQuery(document).on('click', 'td a.angelleye_smart_commission_delete', function () {
+    if (!confirm("Do you want to delete?")) {
+        return false;
+    } else {
+        jQuery(this).closest("tr").remove();
+    }
+});
 jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
     angelleye_multi_account_choose_payment_hide_show_field();
     if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_pro_payflow') {
@@ -177,7 +203,10 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
-
+jQuery( "#angelleye_multi_account_global_setting" ).submit(function( event ) {
+    window.onbeforeunload = null;
+    jQuery('angelleye_multi_account_global_setting').sumit();
+});
 jQuery( "#angelleye_multi_account" ).submit(function( event ) {
     window.onbeforeunload = null;
     if(jQuery("#is_force_submit").val() === 'yes') {
@@ -236,7 +265,6 @@ jQuery('.enable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
-
 jQuery('.create_all_vendor_rules').on('click', function (event) {
     var r = confirm(pfwma_param.create_all_vendor_rules_alert_message);
     if (r == true) {
@@ -260,4 +288,13 @@ jQuery('.create_all_vendor_rules').on('click', function (event) {
         event.preventDefault();
         return r;
     }
+});
+jQuery('.angelleye_add_new_smart_commission_role').on('click', function (event) {
+   event.preventDefault();
+   var $tableBody = jQuery('#angelleye_smart_commission_table').find("tbody"),
+        $trLast = $tableBody.find("tr:last"),
+        $trNew = $trLast.clone();
+    $trNew.find( 'input' ).val( '' );
+    $trNew.find("option").prop("selected", false).trigger( "change" );
+    $trLast.after($trNew);
 });

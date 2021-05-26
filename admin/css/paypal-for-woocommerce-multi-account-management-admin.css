@@ -84,7 +84,7 @@
 }
 .notice.notice-success.angelleye-notice {
     font: 13px "Open Sans", sans-serif;
-        line-height: normal;
+    line-height: normal;
 }
 .angelleye-notice-message {
     color: #23282D;
@@ -175,11 +175,16 @@ fieldset.pfwma_section_ui legend {
 .angelleye_multi_account_left table.form-table th label {
     min-width: 200px;
 }
+td a.angelleye_smart_commission_delete {
+    color: #a00;
+    cursor: pointer;
+}
+
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {
-         max-width: 100% !important;
-          width: 100%;
-          
+        max-width: 100% !important;
+        width: 100%;
+
     } 
     .micro_account_fields {
         max-width: 100% !important;

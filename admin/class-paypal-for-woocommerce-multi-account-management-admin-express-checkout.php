@@ -76,8 +76,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $this->map_item_with_account = array();
         $this->is_commission_enable = false;
         $this->divided_shipping_cost = 0;
-        $this->global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', 0);
-        $this->global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
+        $angelleye_smart_commission = get_option('angelleye_smart_commission', '');
+        $this->global_ec_site_owner_commission = 0;
+        $this->global_ec_site_owner_commission_label = '';
+        if(isset($angelleye_smart_commission['enable']) && $angelleye_smart_commission['enable'] == 'on') {
+            if (is_user_logged_in() && !empty($angelleye_smart_commission['role'])) {
+                $customer_id = get_current_user_id();
+                $user = new WP_User($customer_id);
+                if (!empty($user->roles) && is_array($user->roles)) {
+                    foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
+                        if (in_array($ro_value, (array) $user->roles, true)) {
+                            $this->global_ec_site_owner_commission = $angelleye_smart_commission['commission'][$ro_key];
+                            $this->global_ec_site_owner_commission_label = $angelleye_smart_commission['item_label'][$ro_key];
+                        } 
+                    }
+                }
+            }
+            if(empty($this->global_ec_site_owner_commission_label)) {
+                if( isset($angelleye_smart_commission['regular_smart_commission']) ) {
+                    $this->global_ec_site_owner_commission = $angelleye_smart_commission['regular_smart_commission'];
+                    $this->global_ec_site_owner_commission_label = $angelleye_smart_commission['regular_smart_commission_item_label'];
+                }
+            }
+        } else {
+            $this->global_ec_site_owner_commission = get_option('global_ec_site_owner_commission', 0);
+            $this->global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
+        }
         $this->global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
         $is_zdp_currency = in_array(get_woocommerce_currency(), $this->zdp_currencies);
         if ($is_zdp_currency) {
