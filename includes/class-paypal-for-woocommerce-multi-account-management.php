@@ -177,7 +177,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $paypal_payflow, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
         $this->loader->add_filter('angelleye_is_account_ready_to_paid', $express_checkout, 'angelleye_is_account_ready_to_paid', 10, 2);
         $this->loader->add_filter('angelleye_woocommerce_express_checkout_set_express_checkout_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 5);
-        $this->loader->add_filter('angelleye_woocommerce_express_checkout_do_express_checkout_payment_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 4);
+        $this->loader->add_filter('angelleye_woocommerce_express_checkout_do_express_checkout_payment_request_args', $express_checkout, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_express', 11, 5);
         $this->loader->add_action('angelleye_express_checkout_order_data', $express_checkout, 'own_angelleye_express_checkout_order_data', 10, 2);
         $this->loader->add_filter('woocommerce_payment_gateway_supports', $express_checkout, 'own_woocommerce_payment_gateway_supports', 10, 3);
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_not_used', $express_checkout, 'own_angelleye_is_express_checkout_parallel_payment_not_used', 10, 2);
