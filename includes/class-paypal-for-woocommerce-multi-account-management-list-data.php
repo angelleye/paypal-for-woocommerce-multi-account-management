@@ -228,8 +228,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         if (isset($_REQUEST['order'])) {
             $args['order'] = $_REQUEST['order'];
         }
-        $paypal_express_api_mode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
-        $paypal_pro_payflow_api_mode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+        if(class_exists('WC_Gateway_PayPal_Express_AngellEYE')) {
+            $paypal_express = angelleye_wc_gateway('paypal_express');
+            if(!empty($paypal_express)) {
+                $paypal_express_api_mode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
+            } else {
+                $paypal_express_api_mode = 'yes';
+            }
+        } else {
+            $paypal_express_api_mode = 'yes';
+        }
+        if(class_exists('WC_Gateway_PayPal_Pro_PayFlow_AngellEYE')) {
+            $paypal_pro_payflow = angelleye_wc_gateway('paypal_pro_payflow');
+            if(!empty($paypal_pro_payflow)) {
+                $paypal_pro_payflow_api_mode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+            } else {
+                $paypal_pro_payflow_api_mode = 'yes';
+            }
+        } else {
+            $paypal_pro_payflow_api_mode = 'yes';
+        }
         $paypal_express_seq = 1;
         $payflow_seq = 1;
         
