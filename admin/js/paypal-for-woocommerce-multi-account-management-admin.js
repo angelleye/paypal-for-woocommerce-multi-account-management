@@ -61,9 +61,9 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
 
 jQuery('#angelleye_payment_load_balancer').change(function () {
     if (jQuery(this).is(':checked')) {
-        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
+        jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt, .global_sales_tax_handle_tr').hide();
     } else {
-        jQuery('.angelleye_smart_commission_tr, .global_ec_include_tax_shipping_in_commission_tr').show();
+        jQuery('.angelleye_smart_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .global_sales_tax_handle_tr').show();
         if (jQuery('#angelleye_smart_commission').is(':checked')) {
             jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr').hide();
             jQuery('.angelleye_smart_commission_tt').show();

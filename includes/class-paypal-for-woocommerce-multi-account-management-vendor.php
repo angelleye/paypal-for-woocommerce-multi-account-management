@@ -109,7 +109,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'shipping_class' => 'all',
                         'currency_code' => '',
                         'ec_site_owner_commission' => '',
-                        'ec_site_owner_commission_label' => ''
+                        'ec_site_owner_commission_label' => '',
+                        //'pfwma_sales_tax_handle' => '',
                     );
                     foreach ($microprocessing_key_array as $key => $value) {
                         update_post_meta($post_id, $key, $value);
@@ -201,7 +202,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         'shipping_class' => 'all',
                         'currency_code' => '',
                         'ec_site_owner_commission' => '',
-                        'ec_site_owner_commission_label' => ''
+                        'ec_site_owner_commission_label' => '',
+                        //'pfwma_sales_tax_handle' => '',
                     );
                     foreach ($microprocessing_key_array as $key => $value) {
                         update_post_meta($post_id, $key, $value);

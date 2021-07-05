@@ -179,6 +179,7 @@ td a.angelleye_smart_commission_delete {
     color: #a00;
     cursor: pointer;
 }
+.global_sales_tax_handle_tr fieldset label {width: 100%;}
 
 @media screen and (max-width: 782px) {
     .angelleye_multi_account_left {

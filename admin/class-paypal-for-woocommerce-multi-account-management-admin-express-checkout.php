@@ -383,11 +383,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
-                                if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
-                                    $this->map_item_with_account[$product_id]['is_taxable'] = true;
-                                    $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
-                                    $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
-                                }
+	                            $pfwma_global_sales_tax_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
+	                            if( !empty($pfwma_global_sales_tax_handle) && $pfwma_global_sales_tax_handle == 'vendor' ) {
+		                            if ( $this->map_item_with_account[ $product_id ]['is_taxable'] != true ) {
+			                            $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
+			                            $this->map_item_with_account[ $product_id ]['tax']        = $line_item['total_tax'];
+			                            $this->angelleye_is_taxable                               = $this->angelleye_is_taxable + 1;
+		                            } else {
+			                            $this->map_item_with_account[$product_id]['is_taxable'] = false;
+		                            }
+	                            }
                             } else {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
@@ -527,15 +532,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
-                                    if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
-                                        $this->map_item_with_account[$product_id]['is_taxable'] = true;
-                                        $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
-                                    }
-                                    if (!empty($cart_item['line_tax'])) {
-                                        $this->map_item_with_account[$product_id]['tax'] = $cart_item['line_tax'];
+	                                $pfwma_global_sales_tax_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
+
+	                                if ( ! empty( $pfwma_global_sales_tax_handle ) && $pfwma_global_sales_tax_handle == 'vendor' ) {
+
+		                                if ( $this->map_item_with_account[ $product_id ]['is_taxable'] != true ) {
+			                                $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
+			                                $this->angelleye_is_taxable                               = $this->angelleye_is_taxable + 1;
+		                                }
+		                                if ( ! empty( $cart_item['line_tax'] ) ) {
+			                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_tax'];
+		                                } else {
+			                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_subtotal_tax'];
+		                                }
                                     } else {
-                                        $this->map_item_with_account[$product_id]['tax'] = $cart_item['line_subtotal_tax'];
-                                    }
+		                                $this->map_item_with_account[$product_id]['is_taxable'] = false;
+	                                }
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
