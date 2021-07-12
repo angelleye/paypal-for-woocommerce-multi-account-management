@@ -17,7 +17,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
     }
 
     public function angelleye_synce_express_checkout_account() {
-        $testmode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
+        if(class_exists('WC_Gateway_PayPal_Express_AngellEYE')) {
+            $paypal_express = angelleye_wc_gateway('paypal_express');
+            if(!empty($paypal_express)) {
+                $testmode = angelleye_wc_gateway('paypal_express')->get_option('testmode', '');
+            } else {
+                $testmode = 'yes';
+            }
+        } else {
+            $testmode = 'yes';
+        }
         if ($testmode == 'yes') {
             $environment = 'on';
             $option_key = 'angelleye_multi_ec_payment_load_balancer_sandbox';
@@ -107,7 +116,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
     }
 
     public function angelleye_synce_payflow_account() {
-        $testmode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+        if(class_exists('WC_Gateway_PayPal_Pro_PayFlow_AngellEYE')) {
+            $paypal_pro_payflow = angelleye_wc_gateway('paypal_pro_payflow');
+            if(!empty($paypal_pro_payflow)) {
+                $testmode = angelleye_wc_gateway('paypal_pro_payflow')->get_option('testmode', '');
+            } else {
+                $testmode = 'yes';
+            }
+        } else {
+            $testmode = 'yes';
+        }
         if ($testmode == 'yes') {
             $environment = 'on';
             $option_key = 'angelleye_multi_payflow_payment_load_balancer_sandbox';
