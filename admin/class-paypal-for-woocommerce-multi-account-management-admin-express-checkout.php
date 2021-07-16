@@ -33,6 +33,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $gateway_key;
     public $map_item_with_account;
     public $angelleye_is_taxable;
+	public $sales_tax_account_handle = 'owner';
     public $angelleye_is_discountable;
     public $angelleye_needs_shipping;
     public $zdp_currencies = array('HUF', 'JPY', 'TWD');
@@ -383,16 +384,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
-	                            $pfwma_global_sales_tax_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
-	                            if( !empty($pfwma_global_sales_tax_handle) && $pfwma_global_sales_tax_handle == 'vendor' ) {
-		                            if ( $this->map_item_with_account[ $product_id ]['is_taxable'] != true ) {
-			                            $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
-			                            $this->map_item_with_account[ $product_id ]['tax']        = $line_item['total_tax'];
-			                            $this->angelleye_is_taxable                               = $this->angelleye_is_taxable + 1;
-		                            } else {
-			                            $this->map_item_with_account[$product_id]['is_taxable'] = false;
-		                            }
-	                            }
+	                            $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
+	                            $this->map_item_with_account[ $product_id ]['tax'] = $line_item['total_tax'];
+	                            $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+	                            $this->sales_tax_account_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
+
                             } else {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
@@ -532,22 +528,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
-	                                $pfwma_global_sales_tax_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
 
-	                                if ( ! empty( $pfwma_global_sales_tax_handle ) && $pfwma_global_sales_tax_handle == 'vendor' ) {
+	                                $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
+	                                $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
 
-		                                if ( $this->map_item_with_account[ $product_id ]['is_taxable'] != true ) {
-			                                $this->map_item_with_account[ $product_id ]['is_taxable'] = true;
-			                                $this->angelleye_is_taxable                               = $this->angelleye_is_taxable + 1;
-		                                }
-		                                if ( ! empty( $cart_item['line_tax'] ) ) {
-			                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_tax'];
-		                                } else {
-			                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_subtotal_tax'];
-		                                }
-                                    } else {
-		                                $this->map_item_with_account[$product_id]['is_taxable'] = false;
+	                                if ( ! empty( $cart_item['line_tax'] ) ) {
+		                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_tax'];
+	                                } else {
+		                                $this->map_item_with_account[ $product_id ]['tax'] = $cart_item['line_subtotal_tax'];
 	                                }
+
+	                                $this->sales_tax_account_handle = get_option( 'pfwma_global_sales_tax_handle', 'owner' );
+
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
@@ -973,7 +965,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $item_total = $item_total - $this->discount_array[$product_id];
                         }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
-                        $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
+
+	                    $taxamt = 0;
+	                    if( $this->sales_tax_account_handle == 'vendor' ) {
+		                    $taxamt = isset( $this->tax_array[ $product_id ] ) ? $this->tax_array[ $product_id ] : '0.00';
+	                    } elseif ( $this->sales_tax_account_handle == 'owner' ) {
+		                    $default_taxamt = !empty($cart_item['line_tax']) ? $cart_item['line_tax'] : 0;
+		                    $taxamt = 0;
+	                    }
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt, $order);
                         $is_commission_not_enabled = false;
                         $PaymentOrderItems = array();
@@ -987,12 +986,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $default_item_total = $default_item_total + $product_commission;
 
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
-                                if ($taxamt > 0) {
+                                if ($taxamt > 0 && $this->sales_tax_account_handle == 'vendor' ) {
                                     $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $tax_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $default_item_total = $default_item_total + $tax_commission;
+                                } elseif ( $this->sales_tax_account_handle == 'owner' ) {
+	                                $default_final_total = $default_final_total + $default_taxamt;
                                 }
                                 if ($shippingamt > 0) {
                                     $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
@@ -1282,7 +1283,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $item_total = $item_total - $this->discount_array[$product_id];
                         }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
-                        $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
+	                    $taxamt = 0;
+                        if( $this->sales_tax_account_handle == 'vendor' ) {
+	                        $taxamt = isset( $this->tax_array[ $product_id ] ) ? $this->tax_array[ $product_id ] : '0.00';
+                        } elseif ( $this->sales_tax_account_handle == 'owner' ) {
+	                        $default_taxamt = !empty($cart_item['line_tax']) ? $cart_item['line_tax'] : 0;
+	                        $taxamt = 0;
+                        }
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
                         $is_commission_not_enabled = false;
                         if (isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true) {
@@ -1294,12 +1301,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
                             $default_item_total = $default_item_total + $product_commission;
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
-                                if ($taxamt > 0) {
+                                if ($taxamt > 0 && $this->sales_tax_account_handle == 'vendor' ) {
                                     $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $tax_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $default_item_total = $default_item_total + $tax_commission;
+                                } elseif ( $this->sales_tax_account_handle == 'owner' ) {
+	                                $default_final_total = $default_final_total + $default_taxamt;
                                 }
                                 if ($shippingamt > 0) {
                                     $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
@@ -1654,6 +1663,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         if ($this->final_grand_total != $this->final_order_grand_total) {
             $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
+
                 if (isset($new_payments[0]['amt']) && $new_payments[0]['amt'] > 1) {
                     $new_payments[0]['amt'] = $new_payments[0]['amt'] + $Difference;
                     $item_names = array();
