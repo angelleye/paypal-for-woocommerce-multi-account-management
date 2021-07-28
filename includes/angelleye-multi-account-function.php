@@ -41,7 +41,7 @@ function angelleye_get_closest_amount($array, $value) {
 function angelleye_wc_gateway($gateway) {
     global $woocommerce;
     $gateways = $woocommerce->payment_gateways->payment_gateways();
-    return $gateways[$gateway];
+    return isset($gateways[$gateway]) ? $gateways[$gateway] : array();
 }
 
 function angelleye_is_vendor_account_exist($vendor_id) {

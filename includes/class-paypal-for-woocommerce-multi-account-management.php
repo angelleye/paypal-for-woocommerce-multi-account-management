@@ -60,7 +60,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         if (defined('PFWMA_VERSION')) {
             $this->version = PFWMA_VERSION;
         } else {
-            $this->version = '3.1.0';
+            $this->version = '3.1.2';
         }
         $this->plugin_name = 'paypal-for-woocommerce-multi-account-management';
         $this->load_dependencies();
@@ -275,7 +275,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
      */
     public function paypal_for_woocommerce_multi_account_management_action_links($actions, $plugin_file, $plugin_data, $context) {
         $custom_actions = array(
-            'configure' => sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=list'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
+            'configure' => sprintf('<a href="%s">%s</a>', admin_url('admin.php?page=wc-settings&tab=multi_account_management'), __('Configure', 'paypal-for-woocommerce-multi-account-management')),
             'docs' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/category/docs/paypal-for-woocommerce-multi-account-management-documentation/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=docs_link&utm_campaign=plugin', __('Docs', 'paypal-for-woocommerce-multi-account-management')),
             'support' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/support/?utm_source=paypal-for-woocommerce-multi-account&utm_medium=support_link&utm_campaign=plugin', __('Support', 'paypal-for-woocommerce-multi-account-management')),
             'review' => sprintf('<a href="%s" target="_blank">%s</a>', 'https://www.angelleye.com/product/paypal-for-woocommerce-multi-account-management?utm_source=paypal-for-woocommerce-multi-account&utm_medium=review_link&utm_campaign=plugin', __('Write a Review', 'paypal-for-woocommerce-multi-account-management')),
@@ -288,13 +288,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->display_plugin_admin_page_submenu();
         echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
         $this->plugin_admin->display_admin_notice();
-        if (!empty($_GET['section']) && $_GET['section'] === 'list') {
-             $this->plugin_admin->angelleye_multi_account_list();
-        } elseif (!empty($_GET['section']) && $_GET['section'] === 'add_edit_account') {
+       if (!empty($_GET['section']) && $_GET['section'] === 'add_edit_account') {
             $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
         } elseif (!empty($_GET['section']) && $_GET['section'] === 'settings') {
             $this->plugin_admin->angelleye_multi_account_settings_fields();
-        }
+        } else {
+             $this->plugin_admin->angelleye_multi_account_list();
+        } 
+        
         
         
     }
@@ -304,7 +305,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         </form>
         <div class="wrap">
             <ul class="subsubsub">
-                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=list')); ?>" class="<?php
+                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management')); ?>" class="<?php
                     if (empty($_GET['section'])) {
                         echo 'current';
                     }
@@ -331,7 +332,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     }
 
     public function angelleye_woocommerce_settings_tabs_array($settings_tabs) {
-        $settings_tabs['multi_account_management&section=list'] = __('PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management');
+        $settings_tabs['multi_account_management'] = __('PayPal Multi-Account Setup', 'paypal-for-woocommerce-multi-account-management');
         return $settings_tabs;
     }
     

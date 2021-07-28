@@ -613,7 +613,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     <td scope="row" class="titledesc">
                                         <input name="is_edit" class="button-primary woocommerce-save-button" type="hidden" value="%1$s" />
                                         <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="%2$s" />
-                                        <a href="?page=wc-settings&tab=multi_account_management&section=list" class="button-primary button">%3$s</a>
+                                        <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button">%3$s</a>
                                         %4$s
                                     </td>
                                 </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
@@ -906,7 +906,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <td class="forminp">
                                 <fieldset>
                                     <input id="global_commission_microprocessing_save" name="global_commission_microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
-                                    <a href="?page=wc-settings&tab=multi_account_management&section=list" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
                                 </fieldset>
                             </td>
@@ -982,7 +982,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             <tr valign="top">
                                 <td scope="row" class="titledesc">
                                     <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
-                                    <a href="?page=wc-settings&tab=multi_account_management&section=list" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
                                     <?php wp_nonce_field('microprocessing_save'); ?>
                                 </td>
                             </tr>
@@ -1449,7 +1449,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $gateway = 'paypal_for_wooCommerce_for_multi_account_management';
         }
         ?>
-        <a href="?page=wc-settings&tab=multi_account_management&section=list" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+        <a href="?page=wc-settings&tab=multi_account_management" class="nav-tab <?php echo $gateway == 'paypal_for_wooCommerce_for_multi_account_management' ? 'nav-tab-active' : ''; ?>"><?php echo __('Multi-Account Management', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
     }
 
     public function display_admin_notice() {
@@ -2509,7 +2509,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_pfwma_disable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_disable_active_vendor_account();
         $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=list&message=' . $message);
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
         echo $redirect_url;
         exit();
     }
@@ -2517,7 +2517,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_pfwma_enable_all_vendor_rules() {
         $update_count = $this->angelleye_multi_account_enable_active_vendor_account();
         $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $update_count, 'paypal-for-woocommerce-multi-account-management'), $update_count) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
-        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=list&message=' . $message);
+        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
         echo $redirect_url;
         exit();
     }
@@ -2826,7 +2826,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             if (is_ajax()) {
                 $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management') . sprintf(_n('%s record ', '%s records ', $vendor_result->total_users, 'paypal-for-woocommerce-multi-account-management'), $vendor_result->total_users) . __('processed.', 'paypal-for-woocommerce-multi-account-management');
-                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=list&message=' . $message);
+                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
                 echo $redirect_url;
                 exit();
             }
