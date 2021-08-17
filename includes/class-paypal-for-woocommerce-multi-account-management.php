@@ -371,7 +371,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             if ( ! $order instanceof \WC_Order ) {
                 return;
             }
-            if ( 'dokan-stripe-connect' !== $order->get_payment_method() ) {
+            if ( 'paypal_express' !== $order->get_payment_method() ) {
                 return;
             }
             $gateway_controller = WC_Payment_Gateways::instance();
