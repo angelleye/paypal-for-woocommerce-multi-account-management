@@ -385,6 +385,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                 throw new Exception( __( 'The payment gateway for this order does not support automatic refunds.', 'woocommerce' ) );
             }
             $gateway->process_refund( $order->get_id(), null, null );
+            WC_AJAX::refund_line_items();
+            $order->update_status( 'refunded' );
+            return true;
         } catch (Exception $ex) {
 
         }
