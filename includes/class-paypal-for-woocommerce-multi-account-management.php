@@ -75,6 +75,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         add_filter('woocommerce_settings_tabs_array', array($this, 'angelleye_woocommerce_settings_tabs_array'), 50, 1);
         add_action('woocommerce_settings_tabs_multi_account_management', array($this, 'display_plugin_admin_page'));
         add_filter('angelleye_pfwma_is_api_set', array($this, 'angelleye_pfwma_is_api_set'), 10, 2);
+        add_action('dokan_refund_request_created', array($this, 'angelleye_multi_account_dokan_process_refund'), 10, 1);
     }
 
     /**
@@ -360,6 +361,39 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             }
         }
         return $is_api_set;
+    }
+
+    public function angelleye_multi_account_dokan_process_refund($refund) {
+        global $wpdb;
+        try {
+            if ( ! $refund instanceof \WeDevs\DokanPro\Refund\Refund ) {
+                return;
+            }
+            $order = wc_get_order( $refund->get_order_id() );
+            if ( ! $order instanceof \WC_Order ) {
+                return;
+            }
+            if ( 'paypal_express' !== $order->get_payment_method() ) {
+                return;
+            }
+            $gateway_controller = WC_Payment_Gateways::instance();
+            $all_gateways       = $gateway_controller->payment_gateways();
+            $payment_method     = $order->get_payment_method();
+            $gateway            = isset( $all_gateways[ $payment_method ] ) ? $all_gateways[ $payment_method ] : false;
+            if ( ! $gateway ) {
+                throw new Exception( __( 'The payment gateway for this order does not exist.', 'woocommerce' ) );
+            }
+            if ( ! $gateway->supports( 'refunds' ) ) {
+                throw new Exception( __( 'The payment gateway for this order does not support automatic refunds.', 'woocommerce' ) );
+            }
+            $gateway->process_refund( $order->get_id(), null, null );
+            WC_AJAX::refund_line_items();
+            $order->update_status( 'refunded' );
+            $wpdb->delete( $wpdb->dokan_refund, [ 'order_id' => $order->get_id() ] );
+            return true;
+        } catch (Exception $ex) {
+
+        }
     }
 
 }
