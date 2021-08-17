@@ -363,6 +363,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     }
 
     public function angelleye_multi_account_dokan_process_refund($refund) {
+        global $wpdb;
         try {
             if ( ! $refund instanceof \WeDevs\DokanPro\Refund\Refund ) {
                 return;
@@ -387,6 +388,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $gateway->process_refund( $order->get_id(), null, null );
             WC_AJAX::refund_line_items();
             $order->update_status( 'refunded' );
+            $wpdb->delete( $wpdb->dokan_refund, [ 'order_id' => $order->get_id() ] );
             return true;
         } catch (Exception $ex) {
 
