@@ -1215,7 +1215,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 'number' => $line_item['number'],
                                 'qty' => $line_item['qty']
                             );
-                            array_push($PaymentOrderItems, $Item);
+                            array_push($default_new_payments_line_item, $Item);
                             $Item = array(
                                 'name' => 'Discount',
                                 'desc' => 'Discount Amount',
@@ -1492,7 +1492,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 'number' => $line_item['number'],
                                 'qty' => $line_item['qty']
                             );
-                            array_push($PaymentOrderItems, $Item);
+                            array_push($default_new_payments_line_item, $Item);
                             $Item = array(
                                 'name' => 'Discount',
                                 'desc' => 'Discount Amount',
