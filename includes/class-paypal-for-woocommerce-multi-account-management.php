@@ -188,6 +188,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         //$this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
         $this->loader->add_action('woocommerce_create_refund', $express_checkout, 'own_woocommerce_create_refund', 10, 2);
         $this->loader->add_filter('angelleye_multi_account_need_shipping', $express_checkout, 'own_angelleye_multi_account_need_shipping', 10, 3);
+        $this->loader->add_action( 'dokan_refund_approve_before_insert', $express_checkout, 'angelleye_multi_account_dokan_refund_approve', 10, 3 );
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         if( $global_automatic_rule_creation_enable == 'on' ) {
             $vendor = new Paypal_For_Woocommerce_Multi_Account_Management_Vendor($this->get_plugin_name(), $this->get_version());
