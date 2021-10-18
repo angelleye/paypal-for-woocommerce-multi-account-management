@@ -95,11 +95,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                     }
                 }
                 $express_checkout_accounts[$post_id]['is_api_set'] = $bool;
-                $express_checkout_accounts[$post_id]['email'] = $email;
+                if(apply_filters('angelleye_is_account_ready_to_paid', true, $email) === true) {
+                    $express_checkout_accounts[$post_id]['email'] = $email;
+                } else {
+                    update_post_meta($post_id, 'woocommerce_paypal_express_enable', '');
+                    unset($express_checkout_accounts[$post_id]);
+                }
+                
             }
         }
         update_option($option_key, $express_checkout_accounts);
-        set_transient($cache_key, $express_checkout_accounts, 6 * HOUR_IN_SECONDS);
+        set_transient($cache_key, $express_checkout_accounts, 24 * HOUR_IN_SECONDS);
     }
 
     public function angelleye_is_multi_account_api_set($microprocessing_array, $environment) {
@@ -182,5 +188,4 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
         update_option($option_key, $payflow_accounts);
         set_transient($cache_key, $payflow_accounts, 6 * HOUR_IN_SECONDS);
     }
-
 }
