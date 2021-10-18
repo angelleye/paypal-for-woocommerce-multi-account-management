@@ -703,7 +703,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if ($angelleye_payment_load_balancer != '') {
             if ($is_force_validate === 'yes') {
-                $this->angelleye_unset_multi_account_dataset();
+                $this->angelleye_unset_multi_account_dataset($gateways);
             }
             return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
         } else {
@@ -712,8 +712,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return $request;
     }
 
-    public function angelleye_unset_multi_account_dataset() {
+    public function angelleye_unset_multi_account_dataset($gateways) {
         try {
+            if (isset($gateways) || isset($gateways->testmode)) {
+                 if ($gateways->testmode == true) {
+                    $session_key_account = 'angelleye_sandbox_payment_load_balancer_ec_account';
+                } else {
+                    $session_key_account = 'angelleye_payment_load_balancer_ec_account';
+                }
+                $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
+                if(!empty($angelleye_payment_load_balancer_account) && isset($angelleye_payment_load_balancer_account['multi_account_id']) && $angelleye_payment_load_balancer_account['multi_account_id'] !== 'default') {
+                    update_post_meta($angelleye_payment_load_balancer_account['multi_account_id'], 'woocommerce_paypal_express_enable', '');
+                }
+            } 
             delete_transient('angelleye_multi_ec_payment_load_balancer_synce_sandbox');
             delete_transient('angelleye_multi_ec_payment_load_balancer_synce');
             WC()->session->set('multi_account_api_username', '');
@@ -726,6 +737,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ec_account');
             WC()->session->set('angelleye_payment_load_balancer_ec_account', '');
             WC()->session->__unset('angelleye_payment_load_balancer_ec_account');
+            
+            
         } catch (Exception $ex) {
             
         }
@@ -2714,7 +2727,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
         }
-
     }
-
 }
