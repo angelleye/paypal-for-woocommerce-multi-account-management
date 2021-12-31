@@ -1866,7 +1866,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         ?>
                     </select>
                     <p class="description"><?php _e('Buyer country', 'paypal-for-woocommerce-multi-account-management'); ?></p>
-                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select" multiple="multiple"  data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
+                    <select id="buyer_countries" name="buyer_countries[]" style="width: 78%;"  class="wc-enhanced-select pfwma_buyer_countries" multiple="multiple"  data-placeholder="<?php esc_attr_e('All countries', 'paypal-for-woocommerce-multi-account-management'); ?>">
                         <?php
                         $countries = WC()->countries->get_countries();
                         if ($countries) {
@@ -1875,6 +1875,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                         }
                         ?>
+                    </select>
+                    
+                    <p class="description"><?php _e('Buyer states', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                    <select id="buyer_states" name="buyer_states[]" style="width: 78%;"  class="wc-enhanced-select pfwma_buyer_states" multiple="multiple"  data-placeholder="<?php esc_attr_e('Select Buyer Country First - All states', 'paypal-for-woocommerce-multi-account-management'); ?>">
                     </select>
                     <p class="description"><?php _e('Buyer Postal/Zip Code', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <input type="text" id="postcode" name="postcode" class="input-text regular-input width460" placeholder="<?php esc_attr_e('Enter Postal/Zip Code (comma separated) e.g. 90210, 99000', 'paypal-for-woocommerce-multi-account-management'); ?>">
@@ -2805,6 +2809,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
 
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
+    }
+    
+    
+    public function angelleye_pfwma_get_buyer_states() {
+        ob_start();
+        if (!current_user_can('edit_products')) {
+            wp_die(-1);
+        }
+        $state_list = array();
+        $countries_states = WC()->countries->get_states();
+        if(isset($_POST['country_list']) && !empty($_POST['country_list'])) {
+            foreach ($countries_states as $countries_states_key => $countries_states_value) {
+                if(in_array($countries_states_key, $_POST['country_list'])) {
+                    foreach ($countries_states_value as $state_key => $state_full_name) {
+                        $state_list[$state_key] = $state_full_name;
+                    }
+                }
+            }
+        } else {
+            wp_die('failed');
+        }
+        
+        wp_send_json(apply_filters('woocommerce_json_search_found_categories', $state_list));
     }
 
     public function angelleye_pfwma_create_all_vendor_rules() {
