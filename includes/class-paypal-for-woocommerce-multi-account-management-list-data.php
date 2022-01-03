@@ -55,6 +55,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         $other_condition = '<p class="description">' . sprintf('When Buyer country is %s', implode(',', $buyer_countries)) . '</p>';
                     }
                 }
+                $buyer_states = get_post_meta($item['ID'], 'buyer_states', true);
+                if ($buyer_states) {
+                    if ($buyer_states != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Buyer state is %s', implode(',', $buyer_states)) . '</p>';
+                    }
+                }
                 $postcode = get_post_meta($item['ID'], 'postcode', true);
                 if (!empty($postcode)) {
                     $other_condition .= '<p class="description">' . sprintf('When Buyer Postal/Zip Code %s', $postcode) . '</p>';
