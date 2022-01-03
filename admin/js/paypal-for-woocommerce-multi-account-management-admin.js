@@ -137,9 +137,27 @@ jQuery('#product_categories').on('select2:unselect', function (e) {
     jQuery('#product_tags').val('').trigger('change');
     jQuery('#product_list').val('').trigger('change');
 });
+jQuery('#buyer_countries').on('change', function (e) {
+    jQuery('#buyer_states').empty();
+    jQuery('#buyer_states').val('').trigger('change');
+    var data = {
+        'action': 'angelleye_pfwma_get_buyer_states',
+        'country_list': jQuery('#buyer_countries').val(),
+    };
+    jQuery.post(ajaxurl, data, function (response) {
+        if ('failed' !== response) {
+            jQuery.each(response,function(key, value) {
+                jQuery('#buyer_states').append('<option value=' + key + '>' + value + '</option>'); 
+            });
+            jQuery('#buyer_states').trigger('change');
+        } 
+    });
+});
+
 jQuery('#product_tags').on('select2:unselect', function (e) {
    jQuery('#product_list').val('').trigger('change');
 });
+
 
 jQuery(function () {
     jQuery('[id^=angelleye_notification]').each(function (i) {
@@ -213,7 +231,7 @@ jQuery( "#angelleye_multi_account" ).submit(function( event ) {
         return true;
     }
     var total_not_empty_fields = 0;
-    var paypal_express_field_names = [ "woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "buyer_countries", "store_countries", "pfwst_shipping_class", "product_categories", "product_tags", "product_list", "woocommerce_paypal_express_api_condition_value", "currency_code", "card_type", "postcode" ];
+    var paypal_express_field_names = [ "woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "buyer_countries", "buyer_states", "store_countries", "pfwst_shipping_class", "product_categories", "product_tags", "product_list", "woocommerce_paypal_express_api_condition_value", "currency_code", "card_type", "postcode" ];
     jQuery.each( paypal_express_field_names, function( i, name ) {
         if( jQuery('#' + name).val() !== '' && jQuery('#' + name).val() !== 'all' && jQuery('#' + name).val() !== '0' && jQuery('#' + name).val() !== null && jQuery('#' + name).val() !== undefined) {
             total_not_empty_fields = total_not_empty_fields + 1;
