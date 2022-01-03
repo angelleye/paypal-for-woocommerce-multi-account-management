@@ -225,6 +225,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('delete_user', $plugin_admin, 'angelleye_delete_multi_account', 10, 1);
         $this->loader->add_action('wp_ajax_angelleye_pfwma_get_products', $plugin_admin, 'angelleye_pfwma_get_products', 10);
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_categories', $plugin_admin, 'angelleye_pfwma_get_categories', 10, 1);
+        $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_buyer_states', $plugin_admin, 'angelleye_pfwma_get_buyer_states', 10, 1);
     }
 
     /**

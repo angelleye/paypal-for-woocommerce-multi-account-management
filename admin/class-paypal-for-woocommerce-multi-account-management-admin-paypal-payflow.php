@@ -208,6 +208,32 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                         unset($passed_rules);
                         continue;
                     }
+                    
+                    
+                    $buyer_states = get_post_meta($value->ID, 'buyer_states', true);
+                    if (!empty($buyer_states)) {
+                        foreach ($buyer_states as $buyer_states_key => $buyer_states_value) {
+                            if (!empty($gateway_setting->id) && $gateway_setting->id == 'paypal_pro_payflow') {
+                                if (!empty($order_id) && $order_id > 0) {
+                                    $order = wc_get_order($order_id);
+                                    $billing_state = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_state : $order->get_billing_state();
+                                    $shipping_state = version_compare(WC_VERSION, '3.0', '<') ? $order->shipping_state : $order->get_shipping_state();
+                                    if (!empty($billing_state) && $billing_state == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                    } elseif (!empty($shipping_state) && $shipping_state == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['buyer_states'] = true;
+                    }
+                    if (empty($passed_rules['buyer_states'])) {
+                        unset($result[$key]);
+                        unset($passed_rules);
+                        continue;
+                    }
 
                     $postcode_string = get_post_meta($value->ID, 'postcode', true);
                     if (!empty($postcode_string)) {

@@ -302,6 +302,56 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                     if (empty($passed_rules['buyer_countries'])) {
                         continue;
                     }
+                    
+                    
+                    
+                    $buyer_states = get_post_meta($value->ID, 'buyer_states', true);
+                    if (!empty($buyer_states)) {
+                        foreach ($buyer_states as $buyer_states_key => $buyer_states_value) {
+                            if (!empty($order_id) && $order_id > 0) {
+                                $order = wc_get_order($order_id);
+                                $billing_state = version_compare(WC_VERSION, '3.0', '<') ? $order->billing_state : $order->get_billing_state();
+                                $shipping_state = version_compare(WC_VERSION, '3.0', '<') ? $order->shipping_state : $order->get_shipping_state();
+                                if (!empty($billing_state) && $billing_state == $buyer_states_value) {
+                                    $passed_rules['buyer_states'] = true;
+                                    break;
+                                } elseif (!empty($shipping_state) && $shipping_state == $buyer_states_value) {
+                                    $passed_rules['buyer_states'] = true;
+                                    break;
+                                }
+                            } else {
+                                $post_checkout_data = WC()->session->get('post_data');
+                                if (empty($post_checkout_data)) {
+                                    $billing_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_billing_state();
+                                    $shipping_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_shipping_state();
+                                    if (!empty($billing_state) && $billing_state == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                        break;
+                                    } elseif (!empty($shipping_state) && $shipping_state == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                        break;
+                                    }
+                                } else {
+                                    if (!empty($post_checkout_data['billing_state']) && $post_checkout_data['billing_state'] == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                        break;
+                                    } elseif (!empty($post_checkout_data['shipping_state']) && $post_checkout_data['shipping_state'] == $buyer_states_value) {
+                                        $passed_rules['buyer_states'] = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $passed_rules['buyer_states'] = true;
+                    }
+                    if (empty($passed_rules['buyer_states'])) {
+                        continue;
+                    }
+                    
+                    
+                    
+                    
                     $postcode_string = get_post_meta($value->ID, 'postcode', true);
                     if (!empty($postcode_string)) {
                         $postcode = explode(',', $postcode_string);
