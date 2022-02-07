@@ -100,7 +100,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         <tbody class="angelleye_micro_account_body">';
         $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
-            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''));
+            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'angelleye_ppcp' => __('PayPal Complete Payments', ''));
         } else {
             //$gateway_list = array('paypal' => __('PayPal Standard', ''));
         }
