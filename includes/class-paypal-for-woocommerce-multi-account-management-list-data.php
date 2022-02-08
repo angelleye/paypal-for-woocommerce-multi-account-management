@@ -119,11 +119,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
                 $status_pf = get_post_meta($item['ID'], 'woocommerce_paypal_pro_payflow_enable', true);
                 $status_pal = get_post_meta($item['ID'], 'woocommerce_paypal_enable', true);
+                $status_ppcp = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_enable', true);
                 if ($status == 'on') {
                     return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                 } else if ($status_pf == 'on') {
                     return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                 } else if ($status_pal == 'on') {
+                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                } else if ($status_ppcp == 'on') {
                     return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                 } else {
                     return __('Disabled', 'paypal-for-woocommerce-multi-account-management');
