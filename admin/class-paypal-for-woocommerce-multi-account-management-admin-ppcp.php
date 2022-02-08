@@ -302,9 +302,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if (empty($passed_rules['buyer_countries'])) {
                         continue;
                     }
-                    
-                    
-                    
+
+
+
                     $buyer_states = get_post_meta($value->ID, 'buyer_states', true);
                     if (!empty($buyer_states)) {
                         foreach ($buyer_states as $buyer_states_key => $buyer_states_value) {
@@ -348,10 +348,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if (empty($passed_rules['buyer_states'])) {
                         continue;
                     }
-                    
-                    
-                    
-                    
+
+
+
+
                     $postcode_string = get_post_meta($value->ID, 'postcode', true);
                     if (!empty($postcode_string)) {
                         $postcode = explode(',', $postcode_string);
@@ -765,16 +765,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_unset_multi_account_dataset($gateways) {
         try {
             if (isset($gateways) || isset($gateways->testmode)) {
-                 if ($gateways->testmode == true) {
+                if ($gateways->testmode == true) {
                     $session_key_account = 'angelleye_sandbox_payment_load_balancer_ec_account';
                 } else {
                     $session_key_account = 'angelleye_payment_load_balancer_ec_account';
                 }
                 $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
-                if(!empty($angelleye_payment_load_balancer_account) && isset($angelleye_payment_load_balancer_account['multi_account_id']) && $angelleye_payment_load_balancer_account['multi_account_id'] !== 'default') {
+                if (!empty($angelleye_payment_load_balancer_account) && isset($angelleye_payment_load_balancer_account['multi_account_id']) && $angelleye_payment_load_balancer_account['multi_account_id'] !== 'default') {
                     update_post_meta($angelleye_payment_load_balancer_account['multi_account_id'], 'woocommerce_paypal_express_enable', '');
                 }
-            } 
+            }
             delete_transient('angelleye_multi_ec_payment_load_balancer_synce_sandbox');
             delete_transient('angelleye_multi_ec_payment_load_balancer_synce');
             WC()->session->set('multi_account_api_username', '');
@@ -787,8 +787,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ec_account');
             WC()->session->set('angelleye_payment_load_balancer_ec_account', '');
             WC()->session->__unset('angelleye_payment_load_balancer_ec_account');
-            
-            
         } catch (Exception $ex) {
             
         }
@@ -2662,16 +2660,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $paypal = new Angelleye_PayPal_WC($PayPalConfig);
         $SECFields = array(
             'token' => '',
-            'returnurl' => 'https://www.google.com/', 
-            'cancelurl' => 'https://www.google.com/', 
+            'returnurl' => 'https://www.google.com/',
+            'cancelurl' => 'https://www.google.com/',
         );
         $Payments = array();
         $Payment = array(
             'amt' => '1.00',
-            'currencycode' => 'USD', 
-            'invnum' => time().'testing',
+            'currencycode' => 'USD',
+            'invnum' => time() . 'testing',
             'paymentaction' => 'Sale',
-            'paymentrequestid' => time() .'-id',
+            'paymentrequestid' => time() . '-id',
             'sellerpaypalaccountid' => $email
         );
         array_push($Payments, $Payment);
@@ -2680,12 +2678,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'Payments' => $Payments
         );
         $paypal_response = $paypal->SetExpressCheckout($PayPalRequest);
-        if( isset($paypal_response['ACK']) && 'Success' === $paypal_response['ACK']) {
+        if (isset($paypal_response['ACK']) && 'Success' === $paypal_response['ACK']) {
             return true;
         }
         return false;
     }
-    
+
     public function angelleye_multi_account_dokan_refund_approve($refund, $args, $vendor_refund) {
         $parent_order_id = '';
         $order = wc_get_order($refund->get_order_id());
@@ -2778,4 +2776,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
         }
     }
+
 }
