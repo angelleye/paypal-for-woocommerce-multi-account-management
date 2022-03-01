@@ -227,6 +227,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_categories', $plugin_admin, 'angelleye_pfwma_get_categories', 10, 1);
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_buyer_states', $plugin_admin, 'angelleye_pfwma_get_buyer_states', 10, 1);
         $angelleye_ppcp = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP($this->get_plugin_name(), $this->get_version());
+        $this->loader->add_filter('angelleye_ppcp_merchant_id', $angelleye_ppcp, 'angelleye_ppcp_get_merchant_id', 10, 1);
     }
 
     /**

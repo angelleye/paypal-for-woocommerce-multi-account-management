@@ -24,8 +24,8 @@ function angelleye_multi_account_paypal_express_hide_show_field() {
     }
 }
 function angelleye_multi_account_angelleye_ppcp_hide_show_field() {
-    var sandbox_pal = jQuery('#woocommerce_angelleye_ppcp_sandbox_email, #woocommerce_angelleye_ppcp_sandbox_client_id, #woocommerce_angelleye_ppcp_sandbox_secret').closest('tr');
-    var production_pal = jQuery('#woocommerce_angelleye_ppcp_email, #woocommerce_angelleye_ppcp_client_id, #woocommerce_angelleye_ppcp_secret').closest('tr');
+    var sandbox_pal = jQuery('#woocommerce_angelleye_ppcp_sandbox_merchant_id, #woocommerce_angelleye_ppcp_sandbox_client_id, #woocommerce_angelleye_ppcp_sandbox_secret').closest('tr');
+    var production_pal = jQuery('#woocommerce_angelleye_ppcp_merchant_id, #woocommerce_angelleye_ppcp_client_id, #woocommerce_angelleye_ppcp_secret').closest('tr');
     if (jQuery('#woocommerce_angelleye_ppcp_testmode_microprocessing').is(':checked')) {
         sandbox_pal.show();
         production_pal.hide();
