@@ -62,6 +62,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $always_trigger_commission_total_percentage;
     public $all_commision_line_item;
     public $settings;
+    public $is_sandbox;
 
     /**
      * Initialize the class and set its properties.
@@ -114,6 +115,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
         }
         $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
+        $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
     }
 
     public function angelleye_get_account_for_ppcp_parallel_payments($gateways, $gateway_setting, $order_id, $request) {
@@ -126,6 +128,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $current_user_roles[] = 'all';
             }
         }
+
         $this->final_associate_account = array();
         $order_total = $this->angelleye_get_total($order_id);
         $args = array(
@@ -147,7 +150,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 ),
                 array(
                     'key' => 'woocommerce_angelleye_ppcp_testmode',
-                    'value' => ($gateways->testmode == true) ? 'on' : '',
+                    'value' => ($this->is_sandbox) ? 'on' : '',
                     'compare' => '='
                 ),
                 array(
@@ -521,7 +524,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             } else {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                             }
-                            if ($gateways->testmode == true) {
+                            if ($this->is_sandbox == true) {
                                 if (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0])) {
                                     $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
                                 } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
@@ -663,7 +666,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                                 }
-                                if ($gateways->testmode == true) {
+                                if ($this->is_sandbox == true) {
                                     if (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0])) {
                                         $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
@@ -720,8 +723,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_unset_multi_account_dataset($gateways) {
         try {
-            if (isset($gateways) || isset($gateways->testmode)) {
-                if ($gateways->testmode == true) {
+            if (isset($gateways) || isset($this->is_sandbox)) {
+                if ($this->is_sandbox == true) {
                     $session_key_account = 'angelleye_sandbox_payment_load_balancer_ec_account';
                 } else {
                     $session_key_account = 'angelleye_payment_load_balancer_ec_account';
@@ -1739,12 +1742,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             if ($map_item_with_account_array['multi_account_id'] == 'default') {
                 $angelleye_express_checkout_default_pal = get_option('angelleye_express_checkout_default_pal', false);
                 if (!empty($angelleye_express_checkout_default_pal)) {
-                    if (isset($angelleye_express_checkout_default_pal['Sandbox']) && $angelleye_express_checkout_default_pal['Sandbox'] == $gateways->testmode && isset($angelleye_express_checkout_default_pal['APIUsername']) && $angelleye_express_checkout_default_pal['APIUsername'] == $gateways->api_username) {
+                    if (isset($angelleye_express_checkout_default_pal['Sandbox']) && $angelleye_express_checkout_default_pal['Sandbox'] == $this->is_sandbox && isset($angelleye_express_checkout_default_pal['APIUsername']) && $angelleye_express_checkout_default_pal['APIUsername'] == $gateways->api_username) {
                         return $angelleye_express_checkout_default_pal['PAL'];
                     }
                 }
                 $PayPalConfig = array(
-                    'Sandbox' => $gateways->testmode,
+                    'Sandbox' => $this->is_sandbox,
                     'APIUsername' => $gateways->api_username,
                     'APIPassword' => $gateways->api_password,
                     'APISignature' => $gateways->api_signature
@@ -1757,7 +1760,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 if (isset($PayPalResult['ACK']) && $PayPalResult['ACK'] == 'Success') {
                     if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
                         $merchant_account_id = $PayPalResult['PAL'];
-                        update_option('angelleye_express_checkout_default_pal', array('Sandbox' => $gateways->testmode, 'APIUsername' => $gateways->api_username, 'PAL' => $merchant_account_id));
+                        update_option('angelleye_express_checkout_default_pal', array('Sandbox' => $this->is_sandbox, 'APIUsername' => $gateways->api_username, 'PAL' => $merchant_account_id));
                         return $merchant_account_id;
                     }
                 }
@@ -1766,16 +1769,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_get_email_address_for_multi($account_id, $microprocessing_array, $gateways) {
-        if ($gateways->testmode) {
+        if ($this->is_sandbox) {
             $PayPalConfig = array(
-                'Sandbox' => $gateways->testmode,
+                'Sandbox' => $this->is_sandbox,
                 'APIUsername' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0],
                 'APIPassword' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0],
                 'APISignature' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0]
             );
         } else {
             $PayPalConfig = array(
-                'Sandbox' => $gateways->testmode,
+                'Sandbox' => $this->is_sandbox,
                 'APIUsername' => $microprocessing_array['woocommerce_paypal_express_api_username'][0],
                 'APIPassword' => $microprocessing_array['woocommerce_paypal_express_api_signature'][0],
                 'APISignature' => $microprocessing_array['woocommerce_paypal_express_api_password'][0]
@@ -1790,7 +1793,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if (isset($PayPalResult['ACK']) && $PayPalResult['ACK'] == 'Success') {
             if (isset($PayPalResult['PAL']) && !empty($PayPalResult['PAL'])) {
                 $merchant_account_id = $PayPalResult['PAL'];
-                if ($gateways->testmode) {
+                if ($this->is_sandbox) {
                     update_post_meta($account_id, 'woocommerce_paypal_express_sandbox_merchant_id', $merchant_account_id);
                 } else {
                     update_post_meta($account_id, 'woocommerce_paypal_express_merchant_id', $merchant_account_id);
@@ -1949,7 +1952,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_is_multi_account_api_set($microprocessing_array, $gateways) {
-        if ($gateways->testmode) {
+        if ($this->is_sandbox) {
             if (!empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0])) {
                 return true;
             }
@@ -2316,12 +2319,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request) {
-        if (!isset($gateways->testmode)) {
+        if (!isset($this->is_sandbox)) {
             return;
         }
         $found_account = false;
         $found_email = '';
-        if ($gateways->testmode == true) {
+        if ($this->is_sandbox == true) {
             $option_key = 'angelleye_multi_ec_payment_load_balancer_sandbox';
             $session_key = 'angelleye_sandbox_payment_load_balancer_ec_email';
             $session_key_account = 'angelleye_sandbox_payment_load_balancer_ec_account';
@@ -2479,7 +2482,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_add_commission_payment_data($old_payments, $gateways, $account_id, $item_data) {
         $microprocessing_array = get_post_meta($account_id);
-        if ($gateways->testmode == true) {
+        if ($this->is_sandbox == true) {
             if (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0])) {
                 $email = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
             } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
