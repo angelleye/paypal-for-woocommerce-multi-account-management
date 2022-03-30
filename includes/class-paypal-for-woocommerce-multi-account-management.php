@@ -175,7 +175,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
         $angelleye_ppcp = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP($this->get_plugin_name(), $this->get_version());
         $this->loader->add_filter('angelleye_ppcp_merchant_id', $angelleye_ppcp, 'angelleye_ppcp_get_merchant_id', 10, 1);
+        $this->loader->add_filter('angelleye_ppcp_request_args', $angelleye_ppcp, 'angelleye_ppcp_request_multi_account', 10, 3);
         //$paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
+        
+        
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $paypal_payflow, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
         $this->loader->add_filter('angelleye_is_account_ready_to_paid', $express_checkout, 'angelleye_is_account_ready_to_paid', 10, 2);
@@ -191,6 +194,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_create_refund', $express_checkout, 'own_woocommerce_create_refund', 10, 2);
         $this->loader->add_filter('angelleye_multi_account_need_shipping', $express_checkout, 'own_angelleye_multi_account_need_shipping', 10, 3);
         $this->loader->add_action( 'dokan_refund_approve_before_insert', $express_checkout, 'angelleye_multi_account_dokan_refund_approve', 10, 3 );
+        
+        
+        
         $global_automatic_rule_creation_enable = get_option('global_automatic_rule_creation_enable', '');
         if( $global_automatic_rule_creation_enable == 'on' ) {
             $vendor = new Paypal_For_Woocommerce_Multi_Account_Management_Vendor($this->get_plugin_name(), $this->get_version());
