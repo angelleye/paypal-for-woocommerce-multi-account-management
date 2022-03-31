@@ -128,7 +128,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $current_user_roles[] = 'all';
             }
         }
-
         $this->final_associate_account = array();
         $order_total = $this->angelleye_get_total($order_id);
         $args = array(
@@ -232,18 +231,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                         $passed_rules['custom_fields'] = '';
                                         break;
                                     }
-                                } else {
-                                    $post_checkout_data = WC()->session->get('post_data');
-                                    if (!empty($post_checkout_data)) {
-                                        if (empty($post_checkout_data[$field_key])) {
-                                            $passed_rules['custom_fields'] = true;
-                                        } elseif (!empty($post_checkout_data[$field_key]) && $post_checkout_data[$field_key] == $custom_field_value) {
-                                            $passed_rules['custom_fields'] = true;
-                                        } else {
-                                            $passed_rules['custom_fields'] = '';
-                                            break;
-                                        }
-                                    }
                                 }
                             } else {
                                 $passed_rules['custom_fields'] = true;
@@ -271,25 +258,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     break;
                                 }
                             } else {
-                                $post_checkout_data = WC()->session->get('post_data');
-                                if (empty($post_checkout_data)) {
-                                    $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_billing_country();
-                                    $shipping_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_shipping_country();
-                                    if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                        break;
-                                    } elseif (!empty($shipping_country) && $shipping_country == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                        break;
-                                    }
-                                } else {
-                                    if (!empty($post_checkout_data['billing_country']) && $post_checkout_data['billing_country'] == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                        break;
-                                    } elseif (!empty($post_checkout_data['shipping_country']) && $post_checkout_data['shipping_country'] == $buyer_countries_value) {
-                                        $passed_rules['buyer_countries'] = true;
-                                        break;
-                                    }
+
+                                $billing_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_billing_country();
+                                $shipping_country = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_country() : WC()->customer->get_shipping_country();
+                                if (!empty($billing_country) && $billing_country == $buyer_countries_value) {
+                                    $passed_rules['buyer_countries'] = true;
+                                    break;
+                                } elseif (!empty($shipping_country) && $shipping_country == $buyer_countries_value) {
+                                    $passed_rules['buyer_countries'] = true;
+                                    break;
                                 }
                             }
                         }
@@ -314,25 +291,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     break;
                                 }
                             } else {
-                                $post_checkout_data = WC()->session->get('post_data');
-                                if (empty($post_checkout_data)) {
-                                    $billing_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_billing_state();
-                                    $shipping_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_shipping_state();
-                                    if (!empty($billing_state) && $billing_state == $buyer_states_value) {
-                                        $passed_rules['buyer_states'] = true;
-                                        break;
-                                    } elseif (!empty($shipping_state) && $shipping_state == $buyer_states_value) {
-                                        $passed_rules['buyer_states'] = true;
-                                        break;
-                                    }
-                                } else {
-                                    if (!empty($post_checkout_data['billing_state']) && $post_checkout_data['billing_state'] == $buyer_states_value) {
-                                        $passed_rules['buyer_states'] = true;
-                                        break;
-                                    } elseif (!empty($post_checkout_data['shipping_state']) && $post_checkout_data['shipping_state'] == $buyer_states_value) {
-                                        $passed_rules['buyer_states'] = true;
-                                        break;
-                                    }
+
+                                $billing_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_billing_state();
+                                $shipping_state = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_state() : WC()->customer->get_shipping_state();
+                                if (!empty($billing_state) && $billing_state == $buyer_states_value) {
+                                    $passed_rules['buyer_states'] = true;
+                                    break;
+                                } elseif (!empty($shipping_state) && $shipping_state == $buyer_states_value) {
+                                    $passed_rules['buyer_states'] = true;
+                                    break;
                                 }
                             }
                         }
@@ -358,8 +325,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     break;
                                 }
                             } else {
-                                $post_checkout_data = WC()->session->get('post_data');
-                                if (empty($post_checkout_data)) {
+                               
                                     $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_billing_postcode();
                                     $shipping_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_shipping_postcode();
                                     if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
@@ -369,15 +335,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                         $passed_rules['postcode'] = true;
                                         break;
                                     }
-                                } else {
-                                    if (!empty($post_checkout_data['billing_postcode']) && $post_checkout_data['billing_postcode'] == $postcode_value) {
-                                        $passed_rules['postcode'] = true;
-                                        break;
-                                    } elseif (!empty($post_checkout_data['shipping_postcode']) && $post_checkout_data['shipping_postcode'] == $postcode_value) {
-                                        $passed_rules['postcode'] = true;
-                                        break;
-                                    }
-                                }
+                                
                             }
                         }
                     } else {
@@ -708,7 +666,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_ppcp_request_multi_account($request = null, $action, $order_id = null) {
-
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if ($angelleye_payment_load_balancer != '') {
             if ($is_force_validate === 'yes') {
@@ -815,7 +772,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
         $order = wc_get_order($order_id);
-        $this->send_items = $gateways->send_items;
+        $this->send_items = true;
         $this->map_item_with_account = apply_filters('angelleye_ec_parallel_parameter', $this->map_item_with_account);
         $new_payments = array();
         $this->final_payment_request_data = array();
@@ -1635,10 +1592,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     }
                 }
             }
-
-
-
-
             array_push($new_payments, $new_default_payment);
         }
 
@@ -1666,7 +1619,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             $new_payments = $this->final_paypal_request;
         }
-
         if ($this->always_trigger_commission_total_percentage > 0 && !empty($this->always_trigger_commission_accounts)) {
             foreach ($this->always_trigger_commission_accounts as $key => $value) {
                 $index = $index + 1;
@@ -1681,7 +1633,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             $new_payments = $this->final_paypal_request;
         }
-
         if ($this->final_grand_total != $this->final_order_grand_total) {
             $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
@@ -3105,9 +3056,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_ppcp_get_merchant_id($default_merchant_id) {
         $merchant_id_list = $this->angelleye_get_list_merchant_ids($default_merchant_id);
-        if (!empty($merchant_id_list)) {
-            $merchant_id_list = implode(', ', $merchant_id_list);
-        }
         return $merchant_id_list;
     }
 
