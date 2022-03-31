@@ -321,15 +321,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     break;
                                 }
                             } else {
-                                    $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_billing_postcode();
-                                    $shipping_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_shipping_postcode();
-                                    if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
-                                        $passed_rules['postcode'] = true;
-                                        break;
-                                    } elseif (!empty($shipping_postcode) && $shipping_postcode == $postcode_value) {
-                                        $passed_rules['postcode'] = true;
-                                        break;
-                                    }
+                                $billing_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_billing_postcode();
+                                $shipping_postcode = version_compare(WC_VERSION, '3.0', '<') ? WC()->customer->get_postcode() : WC()->customer->get_shipping_postcode();
+                                if (!empty($billing_postcode) && $billing_postcode == $postcode_value) {
+                                    $passed_rules['postcode'] = true;
+                                    break;
+                                } elseif (!empty($shipping_postcode) && $shipping_postcode == $postcode_value) {
+                                    $passed_rules['postcode'] = true;
+                                    break;
+                                }
                             }
                         }
                     } else {
@@ -2987,4 +2987,5 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $merchant_id_list = $this->angelleye_get_list_merchant_ids($default_merchant_id);
         return $merchant_id_list;
     }
+
 }
