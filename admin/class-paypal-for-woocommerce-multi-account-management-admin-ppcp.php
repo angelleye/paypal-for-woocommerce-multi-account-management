@@ -118,7 +118,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
     }
 
-    public function angelleye_get_account_for_ppcp_parallel_payments($gateways, $gateway_setting, $order_id, $request) {
+    public function angelleye_get_account_for_ppcp_parallel_payments($request = null, $action, $order_id = null) {
         global $user_ID;
         $current_user_roles = array();
         if (is_user_logged_in()) {
@@ -653,7 +653,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 unset($passed_rules);
             }
             if (isset($result) && count($result) > 0 && ((isset($this->map_item_with_account) && count($this->map_item_with_account)) || (isset($this->always_trigger_commission_accounts) && count($this->always_trigger_commission_accounts)))) {
-                return $this->angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id);
+                return $this->angelleye_modified_ec_parallel_parameter($request, $action, $order_id);
             }
         }
         return $request;
@@ -667,7 +667,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
         } else {
-            return $this->angelleye_get_account_for_ppcp_parallel_payments($gateways, $gateway_setting, $order_id, $request);
+            return $this->angelleye_get_account_for_ppcp_parallel_payments($request, $action, $order_id = null);
         }
         return $request;
     }
@@ -764,21 +764,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $cart_contents_total;
     }
 
-    public function angelleye_modified_ec_parallel_parameter($request, $gateways, $order_id) {
+    public function angelleye_modified_ec_parallel_parameter($request, $action, $order_id) {
         $order = wc_get_order($order_id);
         $this->send_items = true;
         $this->map_item_with_account = apply_filters('angelleye_ec_parallel_parameter', $this->map_item_with_account);
         $new_payments = array();
         $this->final_payment_request_data = array();
         $default_new_payments_line_item = array();
-        if (!empty($request['Payments'])) {
-            $old_payments = $request['Payments'];
-            unset($request['Payments']);
+        if (!empty($request['body']['purchase_units']['0'])) {
+            $old_purchase_units = $request['body']['purchase_units']['0'];
+            unset($request['body']['purchase_units']['0']);
         } else {
-            $old_payments = array();
-        }
-        if (!empty($request['SECFields']['customerservicenumber'])) {
-            unset($request['SECFields']['customerservicenumber']);
+            $old_purchase_units = array();
         }
         if (wc_tax_enabled()) {
             if (WC()->cart->is_empty()) {
@@ -797,8 +794,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         } else {
             $this->taxamt = 0;
         }
-
-
         if (WC()->cart->is_empty()) {
             $this->shippingamt = round($order->get_shipping_total(), $this->decimals);
         } else {
@@ -1085,8 +1080,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             }
                         }
                         $custom_param = '';
-                        if (isset($old_payments[0]['custom'])) {
-                            $custom_param = json_decode($old_payments[0]['custom'], true);
+                        if (isset($old_purchase_units[0]['custom_id'])) {
+                            $custom_param = json_decode($old_purchase_units[0]['custom_id'], true);
                             $custom_param['order_item_id'] = $cart_item_key;
                             $custom_param = json_encode($custom_param);
                         } else {
@@ -1096,22 +1091,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
                             'amt' => $final_total,
-                            'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'custom' => $custom_param,
-                            'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
-                            'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-                            'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-                            'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-                            'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-                            'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-                            'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-                            'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-                            'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-                            'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-                            'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                            'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
+                            'custom_id' => $custom_param,
+                            'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
+                            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
+                            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
+                            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
+                            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
+                            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
                             'paymentaction' => 'Sale',
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
-                            'paymentrequestid' => $cart_item_key . '-' . rand()
+                            'paymentrequestid' => $cart_item_key . '-' . rand(),
+                            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
                         );
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
@@ -1119,14 +1115,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $this->final_payment_request_data[$sellerpaypalaccountid] = $Payment;
                         }
                         if ($this->send_items && $is_mismatch == false) {
-                            $Payment['order_items'] = $PaymentOrderItems;
+                            $Payment['items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total, $order);
                             $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt, $order);
                             $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt, $order);
-                            if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
-                                $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
+                            if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['items'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['items'] = array();
                             }
-                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'], $PaymentOrderItems);
+                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['items'], $PaymentOrderItems);
                             if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] + $Payment['itemamt'];
                             } else {
@@ -1368,22 +1364,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
                             'amt' => $final_total,
-                            'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                            'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-                            'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '',
-                            'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-                            'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-                            'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-                            'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-                            'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-                            'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-                            'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-                            'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-                            'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-                            'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                            'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
+                            'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
+                            'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] : '',
+                            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
+                            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
+                            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
+                            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
+                            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
                             'paymentaction' => 'Sale',
                             'sellerpaypalaccountid' => $sellerpaypalaccountid,
-                            'paymentrequestid' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] : '' . $cart_item_key
+                            'paymentrequestid' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] : '' . $cart_item_key,
+                            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
                         );
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
@@ -1391,14 +1388,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $this->final_payment_request_data[$sellerpaypalaccountid] = $Payment;
                         }
                         if ($this->send_items && $is_mismatch == false) {
-                            $Payment['order_items'] = $PaymentOrderItems;
+                            $Payment['items'] = $PaymentOrderItems;
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
                             $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt);
                             $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt);
-                            if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'])) {
-                                $this->final_payment_request_data[$sellerpaypalaccountid]['order_items'] = array();
+                            if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['items'])) {
+                                $this->final_payment_request_data[$sellerpaypalaccountid]['items'] = array();
                             }
-                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['order_items'], $PaymentOrderItems);
+                            array_push($this->final_payment_request_data[$sellerpaypalaccountid]['items'], $PaymentOrderItems);
                             if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['itemamt'] + $Payment['itemamt'];
                             } else {
@@ -1507,22 +1504,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $this->final_grand_total = $this->final_grand_total + $default_final_total;
             $new_default_payment = array(
                 'amt' => AngellEYE_Gateway_Paypal::number_format($default_final_total),
-                'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-                'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-                'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
-                'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-                'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-                'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-                'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-                'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-                'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-                'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-                'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-                'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-                'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+                'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
+                'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
+                'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
+                'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
+                'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
+                'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
+                'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
+                'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
                 'paymentaction' => 'Sale',
                 'sellerpaypalaccountid' => $default_pal_id,
-                'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true)
+                'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
+                'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
             );
             if (!empty($this->final_payment_request_data[$default_pal_id]['amt'])) {
                 $this->final_payment_request_data[$default_pal_id]['amt'] = $this->final_payment_request_data[$default_pal_id]['amt'] + $new_default_payment['amt'];
@@ -1531,14 +1529,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             if ($this->send_items) {
                 if (!empty($default_new_payments_line_item)) {
-                    $new_default_payment['order_items'] = $default_new_payments_line_item;
+                    $new_default_payment['items'] = $default_new_payments_line_item;
                     $new_default_payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($default_item_total);
                     $new_default_payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($default_shippingamt);
                     $new_default_payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($default_taxamt);
-                    if (empty($this->final_payment_request_data[$default_pal_id]['order_items'])) {
-                        $this->final_payment_request_data[$default_pal_id]['order_items'] = array();
+                    if (empty($this->final_payment_request_data[$default_pal_id]['items'])) {
+                        $this->final_payment_request_data[$default_pal_id]['items'] = array();
                     }
-                    array_push($this->final_payment_request_data[$default_pal_id]['order_items'], $default_new_payments_line_item);
+                    array_push($this->final_payment_request_data[$default_pal_id]['items'], $default_new_payments_line_item);
                     if (!empty($this->final_payment_request_data[$default_pal_id]['itemamt'])) {
                         $this->final_payment_request_data[$default_pal_id]['itemamt'] = $this->final_payment_request_data[$default_pal_id]['itemamt'] + $new_default_payment['itemamt'];
                     } else {
@@ -1562,16 +1560,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $this->final_paypal_request = array();
             $index = 0;
             foreach ($this->final_payment_request_data as $email_id => $vendor_payment) {
-                if (!empty($vendor_payment['order_items'])) {
+                if (!empty($vendor_payment['items'])) {
                     $this->final_paypal_request[$index] = $vendor_payment;
-                    unset($this->final_paypal_request[$index]['order_items']);
+                    unset($this->final_paypal_request[$index]['items']);
                     $first_inner_index = 0;
-                    foreach ($vendor_payment['order_items'] as $first_key => $first_order_item) {
+                    foreach ($vendor_payment['items'] as $first_key => $first_order_item) {
                         foreach ($first_order_item as $second_key => $second_order_item) {
-                            if (empty($this->final_paypal_request[$index]['order_items'])) {
-                                $this->final_paypal_request[$index]['order_items'] = array();
+                            if (empty($this->final_paypal_request[$index]['items'])) {
+                                $this->final_paypal_request[$index]['items'] = array();
                             }
-                            $this->final_paypal_request[$index]['order_items'][$first_inner_index] = $second_order_item;
+                            $this->final_paypal_request[$index]['items'][$first_inner_index] = $second_order_item;
                             $first_inner_index = $first_inner_index + 1;
                         }
                     }
@@ -1585,13 +1583,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($this->always_trigger_commission_total_percentage > 0 && !empty($this->always_trigger_commission_accounts)) {
             foreach ($this->always_trigger_commission_accounts as $key => $value) {
                 $index = $index + 1;
-                $this->final_paypal_request[$index] = $this->angelleye_add_commission_payment_data($old_payments, $gateways, $key, $value);
+                $this->final_paypal_request[$index] = $this->angelleye_add_commission_payment_data($old_purchase_units, $gateways, $key, $value);
             }
             if (count($this->map_item_with_account) === 1 && $this->final_grand_total != $this->final_order_grand_total) {
                 $Difference = round($this->final_order_grand_total - $this->final_grand_total, $this->decimals);
                 if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
                     $index = $index + 1;
-                    $this->final_paypal_request[$index] = $this->angelleye_after_commition_remain_part_to_web_admin($old_payments, $gateways, $Difference);
+                    $this->final_paypal_request[$index] = $this->angelleye_after_commition_remain_part_to_web_admin($old_purchase_units, $gateways, $Difference);
                 }
             }
             $new_payments = $this->final_paypal_request;
@@ -1602,19 +1600,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 if (isset($new_payments[0]['amt']) && $new_payments[0]['amt'] > 1) {
                     $new_payments[0]['amt'] = $new_payments[0]['amt'] + $Difference;
                     $item_names = array();
-                    if (!empty($new_payments[0]['order_items'])) {
-                        $first_line_item = $new_payments[0]['order_items'];
+                    if (!empty($new_payments[0]['items'])) {
+                        $first_line_item = $new_payments[0]['items'];
                     }
                     if (!empty($first_line_item)) {
-                        unset($new_payments[0]['order_items']);
-                        $new_payments[0]['order_items'] = array();
+                        unset($new_payments[0]['items']);
+                        $new_payments[0]['items'] = array();
                         $new_payments[0]['itemamt'] = $new_payments[0]['amt'];
                         foreach ($first_line_item as $key => $value) {
                             $item_names[] = $value['name'] . ' x ' . $value['qty'];
                         }
                         $item_details = implode(', ', $item_names);
                         $item_details = html_entity_decode(wc_trim_string($item_details ? wp_strip_all_tags($item_details) : __('Item', 'paypal-for-woocommerce-multi-account-management'), 127), ENT_NOQUOTES, 'UTF-8');
-                        $new_payments[0]['order_items'][0] = array(
+                        $new_payments[0]['items'][0] = array(
                             'name' => $item_details,
                             'desc' => '',
                             'amt' => $new_payments[0]['amt'],
@@ -1627,12 +1625,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
         }
         if (!empty($new_payments)) {
-            $request['Payments'] = $new_payments;
+            $request['body']['purchase_units'] = $new_payments;
             if (!empty($order_id) && !empty($this->map_item_with_account) && $this->angelleye_is_multi_account_used($this->map_item_with_account)) {
                 update_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', $this->map_item_with_account);
             }
         } else {
-            $request['Payments'] = $old_payments;
+            $request['body']['purchase_units'] = $old_purchase_units;
         }
         return $request;
     }
@@ -1698,6 +1696,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'APISignature' => $microprocessing_array['woocommerce_paypal_express_api_password'][0]
             );
         }
+        
+        wp_remote_get($url, $args);
+        
+        
         if (!class_exists('Angelleye_PayPal_WC')) {
             require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
         }
@@ -2369,7 +2371,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $found_shipping_classes;
     }
 
-    public function angelleye_add_commission_payment_data($old_payments, $gateways, $account_id, $item_data) {
+    public function angelleye_add_commission_payment_data($old_purchase_units, $gateways, $account_id, $item_data) {
         $microprocessing_array = get_post_meta($account_id);
         if ($this->is_sandbox == true) {
             if (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0])) {
@@ -2409,25 +2411,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $paymentrequestid_value = $cart_item_key . '-' . rand();
         $Payment = array(
             'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
-            'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-            'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-            'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
-            'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-            'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-            'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-            'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-            'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-            'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-            'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-            'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-            'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-            'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+            'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
+            'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
+            'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
+            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
+            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
+            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
+            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
+            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
             'paymentaction' => 'Sale',
             'sellerpaypalaccountid' => $email,
             'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
             'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
         );
         $PaymentOrderItems = array();
         $Item = array(
@@ -2437,12 +2440,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'qty' => '1',
         );
         array_push($PaymentOrderItems, $Item);
-        $Payment['order_items'] = $PaymentOrderItems;
+        $Payment['items'] = $PaymentOrderItems;
         $this->final_grand_total = $this->final_grand_total + $commission_amt;
         return $Payment;
     }
 
-    public function angelleye_after_commition_remain_part_to_web_admin($old_payments, $gateways, $amount) {
+    public function angelleye_after_commition_remain_part_to_web_admin($old_purchase_units, $gateways, $amount) {
         $map_item_with_account_array['multi_account_id'] = 'default';
         $email = $this->angelleye_get_email_address($map_item_with_account_array, $gateways);
         $is_api_set = true;
@@ -2456,24 +2459,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $paymentrequestid_value = $cart_item_key . '-' . rand();
         $Payment = array(
             'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
-            'currencycode' => isset($old_payments[0]['currencycode']) ? $old_payments[0]['currencycode'] : '',
-            'custom' => isset($old_payments[0]['custom']) ? $old_payments[0]['custom'] : '',
-            'invnum' => isset($old_payments[0]['invnum']) ? $old_payments[0]['invnum'] . '-' . $cart_item_key : '',
-            'notifyurl' => isset($old_payments[0]['notifyurl']) ? $old_payments[0]['notifyurl'] : '',
-            'shiptoname' => isset($old_payments[0]['shiptoname']) ? $old_payments[0]['shiptoname'] : '',
-            'shiptostreet' => isset($old_payments[0]['shiptostreet']) ? $old_payments[0]['shiptostreet'] : '',
-            'shiptostreet2' => isset($old_payments[0]['shiptostreet2']) ? $old_payments[0]['shiptostreet2'] : '',
-            'shiptocity' => isset($old_payments[0]['shiptocity']) ? $old_payments[0]['shiptocity'] : '',
-            'shiptostate' => isset($old_payments[0]['shiptostate']) ? $old_payments[0]['shiptostate'] : '',
-            'shiptozip' => isset($old_payments[0]['shiptozip']) ? $old_payments[0]['shiptozip'] : '',
-            'shiptocountrycode' => isset($old_payments[0]['shiptocountrycode']) ? $old_payments[0]['shiptocountrycode'] : '',
-            'shiptophonenum' => isset($old_payments[0]['shiptophonenum']) ? $old_payments[0]['shiptophonenum'] : '',
-            'notetext' => isset($old_payments[0]['notetext']) ? $old_payments[0]['notetext'] : '',
+            'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
+            'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
+            'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
+            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
+            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
+            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
+            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
+            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
             'paymentaction' => 'Sale',
             'sellerpaypalaccountid' => $email,
             'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
         );
         $this->final_grand_total = $this->final_grand_total + $commission_amt;
         return $Payment;
@@ -2510,7 +2514,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $Payment = array(
             'amt' => '1.00',
             'currencycode' => 'USD',
-            'invnum' => time() . 'testing',
+            'invoice_id' => time() . 'testing',
             'paymentaction' => 'Sale',
             'paymentrequestid' => time() . '-id',
             'sellerpaypalaccountid' => $email
