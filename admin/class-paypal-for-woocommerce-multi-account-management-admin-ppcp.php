@@ -1094,20 +1094,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
-                            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
-                            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
-                            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
-                            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
-                            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
-                            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
-                            'paymentaction' => 'Sale',
-                            'sellerpaypalaccountid' => $sellerpaypalaccountid,
-                            'paymentrequestid' => $cart_item_key . '-' . rand(),
-                            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
+                            'shipping' => array(
+                                'name' => array(
+                                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                                ),
+                                'address' => array(
+                                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                                )
+                            ),
+                            'payee' => array('merchant_id' => $sellerpaypalaccountid),
+                            'reference_id' => $sellerpaypalaccountid,
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
                         );
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
@@ -1367,20 +1368,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
                             'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
                             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] : '',
-                            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
-                            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
-                            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
-                            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
-                            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
-                            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
-                            'paymentaction' => 'Sale',
-                            'sellerpaypalaccountid' => $sellerpaypalaccountid,
-                            'paymentrequestid' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] : '' . $cart_item_key,
-                            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
+                            'payee' => array('merchant_id' => $sellerpaypalaccountid),
+                            'reference_id' => $sellerpaypalaccountid,
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
+                            'shipping' => array(
+                                'name' => array(
+                                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                                ),
+                                'address' => array(
+                                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                                )
+                            )
                         );
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
@@ -1507,20 +1509,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
                 'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
                 'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
-                'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
-                'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
-                'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
-                'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
-                'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
-                'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
-                'paymentaction' => 'Sale',
-                'sellerpaypalaccountid' => $default_pal_id,
-                'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
-                'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
+                'payee' => array('merchant_id' => $default_pal_id),
+                'reference_id' => $default_pal_id,
+                'soft_descriptor' => $old_purchase_units['soft_descriptor'],
+                'shipping' => array(
+                    'name' => array(
+                        'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                    ),
+                    'address' => array(
+                        'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                        'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                        'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                        'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                        'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                    )
+                )
             );
             if (!empty($this->final_payment_request_data[$default_pal_id]['amt'])) {
                 $this->final_payment_request_data[$default_pal_id]['amt'] = $this->final_payment_request_data[$default_pal_id]['amt'] + $new_default_payment['amt'];
@@ -1696,10 +1699,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'APISignature' => $microprocessing_array['woocommerce_paypal_express_api_password'][0]
             );
         }
-        
+
         wp_remote_get($url, $args);
-        
-        
+
         if (!class_exists('Angelleye_PayPal_WC')) {
             require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
         }
@@ -2408,29 +2410,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $cart_item_key = 'always-' . $account_id;
         $this->final_order_grand_total;
         $commission_amt = AngellEYE_Gateway_Paypal::number_format($this->final_order_grand_total / 100 * $item_data['commission_amount_percentage'], 2);
-        $paymentrequestid_value = $cart_item_key . '-' . rand();
         $Payment = array(
             'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
             'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
             'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
-            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
-            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
-            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
-            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
-            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
-            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
-            'paymentaction' => 'Sale',
-            'sellerpaypalaccountid' => $email,
-            'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
+            'shipping' => array(
+                'name' => array(
+                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                ),
+                'address' => array(
+                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                )
+            ),
+            'payee' => array('merchant_id' => $email),
+            'reference_id' => $email,
             'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
+            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
         );
         $PaymentOrderItems = array();
         $Item = array(
@@ -2456,28 +2458,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->map_item_with_account['always'][$account_id]['sellerpaypalaccountid'] = $email;
         $cart_item_key = 'efault';
         $commission_amt = AngellEYE_Gateway_Paypal::number_format($amount, 2);
-        $paymentrequestid_value = $cart_item_key . '-' . rand();
         $Payment = array(
             'amt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
             'currencycode' => isset($old_purchase_units[0]['currencycode']) ? $old_purchase_units[0]['currencycode'] : '',
             'custom_id' => isset($old_purchase_units[0]['custom_id']) ? $old_purchase_units[0]['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
-            'notifyurl' => isset($old_purchase_units[0]['notifyurl']) ? $old_purchase_units[0]['notifyurl'] : '',
-            'shiptoname' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : '',
-            'shiptostreet' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-            'shiptostreet2' => isset($old_purchase_units[0]['shiptostreet2']) ? $old_purchase_units[0]['shiptostreet2'] : '',
-            'shiptocity' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-            'shiptostate' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-            'shiptozip' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-            'shiptocountrycode' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
-            'shiptophonenum' => isset($old_purchase_units[0]['shiptophonenum']) ? $old_purchase_units[0]['shiptophonenum'] : '',
-            'notetext' => isset($old_purchase_units[0]['notetext']) ? $old_purchase_units[0]['notetext'] : '',
-            'paymentaction' => 'Sale',
-            'sellerpaypalaccountid' => $email,
-            'paymentrequestid' => !empty($paymentrequestid_value) ? $paymentrequestid_value : uniqid(rand(), true),
+            'shipping' => array(
+                'name' => array(
+                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                ),
+                'address' => array(
+                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
+                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
+                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
+                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
+                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                )
+            ),
+            'payee' => array('merchant_id' => $email),
+            'reference_id' => $email,
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units[0]['soft_descriptor']
+            'soft_descriptor' => $old_purchase_units['soft_descriptor']
         );
         $this->final_grand_total = $this->final_grand_total + $commission_amt;
         return $Payment;
