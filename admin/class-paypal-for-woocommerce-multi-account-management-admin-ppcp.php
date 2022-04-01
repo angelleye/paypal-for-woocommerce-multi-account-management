@@ -181,7 +181,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -189,7 +189,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -197,7 +197,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -698,7 +698,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             WC()->session->set('angelleye_payment_load_balancer_ec_account', '');
             WC()->session->__unset('angelleye_payment_load_balancer_ec_account');
         } catch (Exception $ex) {
-            
+
         }
     }
 
@@ -1096,14 +1096,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
                             'shipping' => array(
                                 'name' => array(
-                                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                                    'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
                                 'address' => array(
-                                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                                    'address_line_1' => isset($old_purchase_units['shipping']['address']['address_line_1']) ? $old_purchase_units['shipping']['address']['address_line_1'] : '',
+                                    'admin_area_2' => isset($old_purchase_units['shipping']['address']['admin_area_2']) ? $old_purchase_units['shipping']['address']['admin_area_2'] : '',
+                                    'admin_area_1' => isset($old_purchase_units['shipping']['address']['admin_area_1']) ? $old_purchase_units['shipping']['address']['admin_area_1'] : '',
+                                    'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
+                                    'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
                             ),
                             'payee' => array('merchant_id' => $sellerpaypalaccountid),
@@ -1373,14 +1373,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'soft_descriptor' => $old_purchase_units['soft_descriptor'],
                             'shipping' => array(
                                 'name' => array(
-                                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                                    'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
                                 'address' => array(
-                                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                                    'address_line_1' => isset($old_purchase_units['shipping']['address']['address_line_1']) ? $old_purchase_units['shipping']['address']['address_line_1'] : '',
+                                    'admin_area_2' => isset($old_purchase_units['shipping']['address']['admin_area_2']) ? $old_purchase_units['shipping']['address']['admin_area_2'] : '',
+                                    'admin_area_1' => isset($old_purchase_units['shipping']['address']['admin_area_1']) ? $old_purchase_units['shipping']['address']['admin_area_1'] : '',
+                                    'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
+                                    'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
                             )
                         );
@@ -1514,14 +1514,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'soft_descriptor' => $old_purchase_units['soft_descriptor'],
                 'shipping' => array(
                     'name' => array(
-                        'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                        'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                     ),
                     'address' => array(
-                        'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                        'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                        'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                        'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                        'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                        'address_line_1' => isset($old_purchase_units['shipping']['address']['address_line_1']) ? $old_purchase_units['shipping']['address']['address_line_1'] : '',
+                        'admin_area_2' => isset($old_purchase_units['shipping']['address']['admin_area_2']) ? $old_purchase_units['shipping']['address']['admin_area_2'] : '',
+                        'admin_area_1' => isset($old_purchase_units['shipping']['address']['admin_area_1']) ? $old_purchase_units['shipping']['address']['admin_area_1'] : '',
+                        'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
+                        'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                     )
                 )
             );
@@ -2043,7 +2043,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return false;
         } catch (Exception $ex) {
-            
+
         }
     }
 
@@ -2327,7 +2327,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return $bool;
         } catch (Exception $ex) {
-            
+
         }
     }
 
@@ -2417,14 +2417,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
             'shipping' => array(
                 'name' => array(
-                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                    'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
                 'address' => array(
-                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                    'address_line_1' => isset($old_purchase_units['shipping']['address']['address_line_1']) ? $old_purchase_units['shipping']['address']['address_line_1'] : '',
+                    'admin_area_2' => isset($old_purchase_units['shipping']['address']['admin_area_2']) ? $old_purchase_units['shipping']['address']['admin_area_2'] : '',
+                    'admin_area_1' => isset($old_purchase_units['shipping']['address']['admin_area_1']) ? $old_purchase_units['shipping']['address']['admin_area_1'] : '',
+                    'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
+                    'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
             ),
             'payee' => array('merchant_id' => $email),
@@ -2465,14 +2465,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'invoice_id' => isset($old_purchase_units[0]['invoice_id']) ? $old_purchase_units[0]['invoice_id'] . '-' . $cart_item_key : '',
             'shipping' => array(
                 'name' => array(
-                    'full_name' => isset($old_purchase_units[0]['shiptoname']) ? $old_purchase_units[0]['shiptoname'] : ''
+                    'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
                 'address' => array(
-                    'address_line_1' => isset($old_purchase_units[0]['shiptostreet']) ? $old_purchase_units[0]['shiptostreet'] : '',
-                    'admin_area_2' => isset($old_purchase_units[0]['shiptocity']) ? $old_purchase_units[0]['shiptocity'] : '',
-                    'admin_area_1' => isset($old_purchase_units[0]['shiptostate']) ? $old_purchase_units[0]['shiptostate'] : '',
-                    'postal_code' => isset($old_purchase_units[0]['shiptozip']) ? $old_purchase_units[0]['shiptozip'] : '',
-                    'country_code' => isset($old_purchase_units[0]['shiptocountrycode']) ? $old_purchase_units[0]['shiptocountrycode'] : '',
+                    'address_line_1' => isset($old_purchase_units['shipping']['address']['address_line_1']) ? $old_purchase_units['shipping']['address']['address_line_1'] : '',
+                    'admin_area_2' => isset($old_purchase_units['shipping']['address']['admin_area_2']) ? $old_purchase_units['shipping']['address']['admin_area_2'] : '',
+                    'admin_area_1' => isset($old_purchase_units['shipping']['address']['admin_area_1']) ? $old_purchase_units['shipping']['address']['admin_area_1'] : '',
+                    'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
+                    'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
             ),
             'payee' => array('merchant_id' => $email),
@@ -2728,7 +2728,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2736,7 +2736,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2744,7 +2744,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
