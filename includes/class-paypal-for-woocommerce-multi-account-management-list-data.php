@@ -315,13 +315,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     }
                     $account_data[$key]['title'] = !empty($meta_data['woocommerce_angelleye_ppcp_account_name'][0]) ? $meta_data['woocommerce_angelleye_ppcp_account_name'][0] : '';
                     if ($account_data[$key]['mode'] == 'Sandbox') {
-                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0]) ? $meta_data['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0] : '';
+                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0] : '';
                         if ($is_enable == true && $paypal_express_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
                             $paypal_express_seq = $paypal_express_seq + 1;
                         }
                     } else {
-                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_merchant_id'][0]) ? $meta_data['woocommerce_angelleye_ppcp_merchant_id'][0] : '';
+                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_email_address'][0] : '';
                         if ($is_enable == true && $paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
                             $paypal_express_seq = $paypal_express_seq + 1;

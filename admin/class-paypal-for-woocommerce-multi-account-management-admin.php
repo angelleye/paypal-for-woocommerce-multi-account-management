@@ -237,8 +237,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $microprocessing_new = array();
             $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_angelleye_ppcp_enable',
                 'woocommerce_angelleye_ppcp_always_trigger', 'woocommerce_angelleye_ppcp_testmode',
-                'woocommerce_angelleye_ppcp_account_name', 'woocommerce_angelleye_ppcp_sandbox_merchant_id',
-                'woocommerce_angelleye_ppcp_sandbox_client_id', 'woocommerce_angelleye_ppcp_sandbox_secret', 'woocommerce_angelleye_ppcp_merchant_id',
+                'woocommerce_angelleye_ppcp_account_name', 'woocommerce_angelleye_ppcp_sandbox_email_address',
+                'woocommerce_angelleye_ppcp_sandbox_client_id', 'woocommerce_angelleye_ppcp_sandbox_secret', 'woocommerce_angelleye_ppcp_email_address',
                 'woocommerce_angelleye_ppcp_client_id', 'woocommerce_angelleye_ppcp_secret', 'ppcp_always_trigger_commission', 'ppcp_always_trigger_commission_item_label', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'buyer_states', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'shipping_zone', 'currency_code', 'ppcp_site_owner_commission', 'ppcp_site_owner_commission_label'));
             foreach ($microprocessing_key_array as $key => $value) {
                 $microprocessing_new[$value] = isset($microprocessing[$value]) ? $microprocessing[$value] : array();
@@ -263,12 +263,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'woocommerce_angelleye_ppcp_account_name':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_account_name" value="%2$s" id="woocommerce_angelleye_ppcp_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
-                    case 'woocommerce_angelleye_ppcp_sandbox_merchant_id':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_merchant_id">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_merchant_id" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_merchant_id" style="" type="text"></fieldset></td></tr>', __('Merchant ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    case 'woocommerce_angelleye_ppcp_sandbox_email_address':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" type="text"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
-                    case 'woocommerce_angelleye_ppcp_sandbox_merchant_id':
+                    case 'woocommerce_angelleye_ppcp_sandbox_email_address':
                         if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_merchant_id" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_client_id':
@@ -277,12 +277,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'woocommerce_angelleye_ppcp_sandbox_secret':
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_secret">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_secret" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_secret" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('Sandbox Secret', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
-                    case 'woocommerce_angelleye_ppcp_merchant_id':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_merchant_id">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_merchant_id" value="%2$s" id="woocommerce_angelleye_ppcp_merchant_id" style="" type="text"></fieldset></td></tr>', __('Merchant ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                    case 'woocommerce_angelleye_ppcp_email_address':
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" type="text"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
-                    case 'woocommerce_angelleye_ppcp_merchant_id':
+                    case 'woocommerce_angelleye_ppcp_email_address':
                         if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_merchant_id_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_merchant_id" value="%2$s" id="woocommerce_angelleye_ppcp_merchant_id_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_client_id':
@@ -1339,7 +1339,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             if (empty($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'microprocessing_save')) {
                 die(__('Action failed. Please refresh the page and retry.', 'paypal-for-woocommerce-multi-account-management'));
             }
-            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_angelleye_ppcp_enable', 'woocommerce_angelleye_ppcp_always_trigger', 'woocommerce_angelleye_ppcp_testmode', 'woocommerce_angelleye_ppcp_account_name', 'woocommerce_angelleye_ppcp_sandbox_merchant_id', 'woocommerce_angelleye_ppcp_sandbox_client_id', 'woocommerce_angelleye_ppcp_sandbox_secret', 'woocommerce_angelleye_ppcp_merchant_id', 'woocommerce_angelleye_ppcp_client_id', 'woocommerce_angelleye_ppcp_secret', 'ppcp_always_trigger_commission', 'ppcp_always_trigger_commission_item_label', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'buyer_states', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'shipping_zone', 'currency_code', 'ppcp_site_owner_commission', 'ppcp_site_owner_commission_label'));
+            $microprocessing_key_array = apply_filters('angelleye_multi_account_keys', array('woocommerce_angelleye_ppcp_enable', 'woocommerce_angelleye_ppcp_always_trigger', 'woocommerce_angelleye_ppcp_testmode', 'woocommerce_angelleye_ppcp_account_name', 'woocommerce_angelleye_ppcp_sandbox_email_address', 'woocommerce_angelleye_ppcp_sandbox_client_id', 'woocommerce_angelleye_ppcp_sandbox_secret', 'woocommerce_angelleye_ppcp_email_address', 'woocommerce_angelleye_ppcp_client_id', 'woocommerce_angelleye_ppcp_secret', 'ppcp_always_trigger_commission', 'ppcp_always_trigger_commission_item_label', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_sign', 'woocommerce_paypal_express_api_condition_value', 'woocommerce_paypal_express_api_user_role', 'woocommerce_paypal_express_api_user', 'woocommerce_paypal_express_api_product_ids', 'product_categories', 'product_tags', 'buyer_countries', 'buyer_states', 'postcode', 'woocommerce_priority', 'angelleye_multi_account_choose_payment_gateway', 'store_countries', 'shipping_class', 'shipping_zone', 'currency_code', 'ppcp_site_owner_commission', 'ppcp_site_owner_commission_label'));
             if (empty($_POST['is_edit'])) {
                 $my_post = array(
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_angelleye_ppcp_account_name']),
@@ -1378,9 +1378,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             if (!empty($merchant_account_id)) {
                 if (isset($_POST['woocommerce_angelleye_ppcp_testmode']) && 'on' == $_POST['woocommerce_angelleye_ppcp_testmode']) {
-                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_sandbox_merchant_id', $merchant_account_id);
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_sandbox_email_address', $merchant_account_id);
                 } else {
-                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_merchant_id', $merchant_account_id);
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_email_address', $merchant_account_id);
                 }
             }
             ?>
@@ -2599,12 +2599,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
             <th scope="row" class="titledesc">
-                <label for="woocommerce_angelleye_ppcp_sandbox_merchant_id"><?php echo __('Merchant ID', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                <label for="woocommerce_angelleye_ppcp_sandbox_email_address"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_merchant_id" id="woocommerce_angelleye_ppcp_sandbox_merchant_id" style="" type="text">
+                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" type="text">
                 </fieldset>
             </td>
         </tr>
@@ -2630,11 +2630,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
             <th scope="row" class="titledesc">
-                <label for="woocommerce_angelleye_ppcp_merchant_id"><?php echo __('Merchant ID', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                <label for="woocommerce_angelleye_ppcp_email_address"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
             <td class="forminp">
                 <fieldset>
-                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_merchant_id" id="woocommerce_angelleye_ppcp_merchant_id" style="">
+                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" id="woocommerce_angelleye_ppcp_email_address" style="">
                 </fieldset>
             </td>
         </tr>
