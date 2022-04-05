@@ -63,6 +63,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $all_commision_line_item;
     public $settings;
     public $is_sandbox;
+    public $invoice_prefix;
 
     /**
      * Initialize the class and set its properties.
@@ -116,6 +117,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
         $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
         $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
+        $this->invoice_prefix = $this->settings->get('invoice_prefix', 'WC-PPCP');
     }
 
     public function angelleye_get_account_for_ppcp_parallel_payments($request = null, $action, $order_id = null) {
@@ -667,7 +669,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return $this->angelleye_get_account_for_ec_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
         } else {
-            return $this->angelleye_get_account_for_ppcp_parallel_payments($request, $action, $order_id = null);
+            return $this->angelleye_get_account_for_ppcp_parallel_payments($request, $action, $order_id);
         }
         return $request;
     }
@@ -1677,26 +1679,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $request['body']['purchase_units'] = $old_purchase_units;
             }
         } elseif ($action === 'update_order') {
+            $patch_request = array();
             $order = wc_get_order($order_id);
             $old_wc = version_compare(WC_VERSION, '3.0', '<');
             if (!empty($new_payments)) {
                 foreach ($new_payments as $key_new_payments => $value_new_payments) {
                     if (!empty($value_new_payments['itemamt'])) {
                         $update_amount_request['item_total'] = array(
-                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'currency_code' => angelleye_ppcp_get_currency($order_id),
                             'value' => $value_new_payments['itemamt']
                         );
                     }
                     if (!empty($value_new_payments['shippingamt'])) {
                         $update_amount_request['shipping'] = array(
-                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'currency_code' => angelleye_ppcp_get_currency($order_id),
                             'value' => $value_new_payments['shippingamt']
                         );
                     }
 
                     if (!empty($value_new_payments['taxamt'])) {
                         $update_amount_request['tax_total'] = array(
-                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'currency_code' => angelleye_ppcp_get_currency($order_id),
                             'value' => $value_new_payments['taxamt']
                         );
                     }
@@ -1706,7 +1709,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         'path' => "/purchase_units/@reference_id=='$reference_id'/amount",
                         'value' =>
                         array(
-                            'currency_code' => $old_wc ? $order->get_order_currency() : $order->get_currency(),
+                            'currency_code' => angelleye_ppcp_get_currency($order_id),
                             'value' => $value_new_payments['amt'],
                             'breakdown' => $update_amount_request
                         ),
@@ -1732,12 +1735,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $shipping_country = $old_wc ? $order->billing_country : $order->get_billing_country();
                         }
                         $shipping_address_request = array(
-                            'address_line_1' => $shipping_address_1,
-                            'address_line_2' => $shipping_address_2,
-                            'admin_area_2' => $shipping_city,
-                            'admin_area_1' => $shipping_state,
-                            'postal_code' => $shipping_postcode,
-                            'country_code' => $shipping_country,
+                            'address_line_1' => 'G504, Gala Haven',
+                            'address_line_2' => '',
+                            'admin_area_2' => 'Ahmedabad',
+                            'admin_area_1' => 'GJ',
+                            'postal_code' => '382481',
+                            'country_code' => 'IN',
                         );
                         if (!empty($shipping_address_request['address_line_1']) && !empty($shipping_address_request['country_code'])) {
                             $angelleye_ppcp_is_shipping_added = angelleye_ppcp_get_session('angelleye_ppcp_is_shipping_added', false);
@@ -1756,15 +1759,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $patch_request[] = array(
                         'op' => 'replace',
                         'path' => "/purchase_units/@reference_id=='$reference_id'/invoice_id",
-                        'value' => $this->invoice_prefix . str_replace("#", "", $order->get_order_number())
+                        'value' => $this->invoice_prefix . substr(md5(microtime()),rand(0,26),2) . str_replace("#", "", $order->get_order_number())
                     );
                     $patch_request[] = array(
                         'op' => 'replace',
                         'path' => "/purchase_units/@reference_id=='$reference_id'/custom_id",
-                        'value' => $this->invoice_prefix . str_replace("#", "", $order->get_order_number())
+                        'value' => $this->invoice_prefix . substr(md5(microtime()),rand(0,26),2) . str_replace("#", "", $order->get_order_number())
                     );
                 }
             }
+            return $patch_request;
         }
         return $request;
     }
