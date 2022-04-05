@@ -1677,45 +1677,37 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $request['body']['purchase_units'] = $old_purchase_units;
             }
         } elseif ($action === 'update_order') {
+            $order = wc_get_order($order_id);
+            $old_wc = version_compare(WC_VERSION, '3.0', '<');
             if (!empty($new_payments)) {
                 foreach ($new_payments as $key_new_payments => $value_new_payments) {
-                    if (isset($cart['total_item_amount']) && $cart['total_item_amount'] > 0) {
+                    if (!empty($value_new_payments['itemamt'])) {
                         $update_amount_request['item_total'] = array(
-                            'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $cart['total_item_amount'],
+                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'value' => $value_new_payments['itemamt']
                         );
                     }
-                    if (isset($cart['discount']) && $cart['discount'] > 0) {
-                        $update_amount_request['discount'] = array(
-                            'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $cart['discount'],
-                        );
-                    }
-                    if (isset($cart['shipping']) && $cart['shipping'] > 0) {
+                    if (!empty($value_new_payments['shippingamt'])) {
                         $update_amount_request['shipping'] = array(
-                            'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $cart['shipping'],
+                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'value' => $value_new_payments['shippingamt']
                         );
                     }
-                    if (isset($cart['ship_discount_amount']) && $cart['ship_discount_amount'] > 0) {
-                        $update_amount_request['shipping_discount'] = array(
-                            'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => angelleye_ppcp_round($cart['ship_discount_amount'], $decimals),
-                        );
-                    }
-                    if (isset($cart['order_tax']) && $cart['order_tax'] > 0) {
+
+                    if (!empty($value_new_payments['taxamt'])) {
                         $update_amount_request['tax_total'] = array(
-                            'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $cart['order_tax'],
+                            'currency_code' => $old_purchase_units['amount']['currency_code'],
+                            'value' => $value_new_payments['taxamt']
                         );
                     }
+                    $reference_id = $value_new_payments['reference_id'];
                     $patch_request[] = array(
                         'op' => 'replace',
                         'path' => "/purchase_units/@reference_id=='$reference_id'/amount",
                         'value' =>
                         array(
                             'currency_code' => $old_wc ? $order->get_order_currency() : $order->get_currency(),
-                            'value' => $cart['order_total'],
+                            'value' => $value_new_payments['amt'],
                             'breakdown' => $update_amount_request
                         ),
                     );
