@@ -64,6 +64,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $settings;
     public $is_sandbox;
     public $invoice_prefix;
+    public $client_id;
+    public $secret_id;
 
     /**
      * Initialize the class and set its properties.
@@ -118,6 +120,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
         $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
         $this->invoice_prefix = $this->settings->get('invoice_prefix', 'WC-PPCP');
+        $this->sandbox_client_id = $this->settings->get('sandbox_client_id', '');
+        $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
+        $this->live_client_id = $this->settings->get('api_client_id', '');
+        $this->live_secret_id = $this->settings->get('api_secret', '');
+        if ($this->is_sandbox) {
+            $this->client_id = $this->sandbox_client_id;
+            $this->secret_id = $this->sandbox_secret_id;
+        } else {
+            $this->client_id = $this->live_client_id;
+            $this->secret_id = $this->live_secret_id;
+        }
     }
 
     public function angelleye_get_account_for_ppcp_parallel_payments($request = null, $action, $order_id = null) {
@@ -664,10 +677,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_ppcp_request_multi_account($request = null, $action, $order_id = null) {
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if ($angelleye_payment_load_balancer != '') {
-            if ($is_force_validate === 'yes') {
-                $this->angelleye_unset_multi_account_dataset($gateways);
-            }
-            return $this->angelleye_get_account_for_ppcp_payment_load_balancer($gateways, $gateway_setting, $order_id, $request);
+            return $this->angelleye_get_account_for_ppcp_payment_load_balancer($request, $action, $order_id);
         } else {
             return $this->angelleye_get_account_for_ppcp_parallel_payments($request, $action, $order_id);
         }
@@ -1759,12 +1769,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $patch_request[] = array(
                         'op' => 'replace',
                         'path' => "/purchase_units/@reference_id=='$reference_id'/invoice_id",
-                        'value' => $this->invoice_prefix . substr(md5(microtime()),rand(0,26),2) . str_replace("#", "", $order->get_order_number())
+                        'value' => $this->invoice_prefix . substr(md5(microtime()), rand(0, 26), 2) . str_replace("#", "", $order->get_order_number())
                     );
                     $patch_request[] = array(
                         'op' => 'replace',
                         'path' => "/purchase_units/@reference_id=='$reference_id'/custom_id",
-                        'value' => $this->invoice_prefix . substr(md5(microtime()),rand(0,26),2) . str_replace("#", "", $order->get_order_number())
+                        'value' => $this->invoice_prefix . substr(md5(microtime()), rand(0, 26), 2) . str_replace("#", "", $order->get_order_number())
                     );
                 }
             }
@@ -2366,7 +2376,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function angelleye_get_account_for_ppcp_payment_load_balancer($gateways, $gateway_setting, $order_id, $request) {
+    public function angelleye_get_account_for_ppcp_payment_load_balancer($request = null, $action, $order_id = null) {
         if (!isset($this->is_sandbox)) {
             return;
         }
@@ -2384,39 +2394,39 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $found_email = WC()->session->get($session_key);
         if (empty($found_email)) {
             $found_email = '';
-            $express_checkout_accounts = get_option($option_key);
-            if (!empty($express_checkout_accounts)) {
-                foreach ($express_checkout_accounts as $key => $account) {
+            $ppcp_accounts = get_option($option_key);
+            if (!empty($ppcp_accounts)) {
+                foreach ($ppcp_accounts as $key => $account) {
                     if (empty($account['is_used'])) {
                         if ($key != 'default' && false === get_post_status($key)) {
-                            unset($express_checkout_accounts[$key]);
+                            unset($ppcp_accounts[$key]);
                         } else {
                             $found_email = $account['email'];
                             WC()->session->set($session_key, $account['email']);
                             $account['is_used'] = 'yes';
-                            $express_checkout_accounts[$key] = $account;
+                            $ppcp_accounts[$key] = $account;
                             WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $express_checkout_accounts);
+                            update_option($option_key, $ppcp_accounts);
                             $found_account = true;
                             break;
                         }
                     }
                 }
                 if ($found_account == false) {
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($ppcp_accounts as $key => $account) {
                         $account['is_used'] = '';
-                        $express_checkout_accounts[$key] = $account;
+                        $ppcp_accounts[$key] = $account;
                     }
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($ppcp_accounts as $key => $account) {
                         if ($key != 'default' && false === get_post_status($key)) {
-                            unset($express_checkout_accounts[$key]);
+                            unset($ppcp_accounts[$key]);
                         } else {
                             $found_email = $account['email'];
                             WC()->session->set($session_key, $account['email']);
                             $account['is_used'] = 'yes';
-                            $express_checkout_accounts[$key] = $account;
+                            $ppcp_accounts[$key] = $account;
                             WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $express_checkout_accounts);
+                            update_option($option_key, $ppcp_accounts);
                             $found_account = true;
                             break;
                         }
@@ -3088,9 +3098,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($found_email != 'default') {
             $merchant_ids[$found_email] = $found_email;
         } else {
-            $merchant_id_array = get_option('angelleye_express_checkout_default_pal');
-            if (!empty($merchant_id_array) && !empty($merchant_id_array['PAL'])) {
-                $merchant_ids[$merchant_id_array['PAL']] = $merchant_id_array['PAL'];
+            $user_info = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id);
+            $body = wp_remote_retrieve_body($user_info);
+            $response = !empty($body) ? json_decode($body, true) : '';
+            if (!empty($response['emails'][0]['value'])) {
+                return $merchant_ids[$response['emails'][0]['value']] = $response['emails'][0]['value'];
             }
         }
         return $merchant_ids;
