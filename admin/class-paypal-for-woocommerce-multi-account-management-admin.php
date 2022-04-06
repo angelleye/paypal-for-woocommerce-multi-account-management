@@ -264,11 +264,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_account_name" value="%2$s" id="woocommerce_angelleye_ppcp_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_email_address':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" type="text"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_email_address':
                         if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address_microprocessing" style="" placeholder="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_client_id':
@@ -278,11 +278,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_secret">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_secret" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_secret" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('Sandbox Secret', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_email_address':
-                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" type="text"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email" ></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_email_address':
                         if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address_microprocessing" style="" placeholder="" type="text" readonly></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address_microprocessing" style="" placeholder="" type="text" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('Merchant Account ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_client_id':
@@ -2604,7 +2604,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <td class="forminp">
                 <fieldset>
                     <legend class="screen-reader-text"><span><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
-                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" type="text">
+                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" placeholder="you@youremail.com" type="email">
                 </fieldset>
             </td>
         </tr>
@@ -2634,7 +2634,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             </th>
             <td class="forminp">
                 <fieldset>
-                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" id="woocommerce_angelleye_ppcp_email_address" style="">
+                    <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email">
                 </fieldset>
             </td>
         </tr>
