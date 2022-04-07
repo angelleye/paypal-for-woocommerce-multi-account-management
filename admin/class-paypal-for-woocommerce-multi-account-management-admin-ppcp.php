@@ -1745,12 +1745,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $shipping_country = $old_wc ? $order->billing_country : $order->get_billing_country();
                         }
                         $shipping_address_request = array(
-                            'address_line_1' => 'G504, Gala Haven',
-                            'address_line_2' => '',
-                            'admin_area_2' => 'Ahmedabad',
-                            'admin_area_1' => 'GJ',
-                            'postal_code' => '382481',
-                            'country_code' => 'IN',
+                            'address_line_1' => $shipping_address_1,
+                            'address_line_2' => $shipping_address_2,
+                            'admin_area_2' => $shipping_city,
+                            'admin_area_1' => $shipping_state,
+                            'postal_code' => $shipping_postcode,
+                            'country_code' => $shipping_country,
                         );
                         if (!empty($shipping_address_request['address_line_1']) && !empty($shipping_address_request['country_code'])) {
                             $angelleye_ppcp_is_shipping_added = angelleye_ppcp_get_session('angelleye_ppcp_is_shipping_added', false);
@@ -2437,7 +2437,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
         if (!empty($request)) {
             if ($found_email != 'default') {
-                $request['Payments'][0]['sellerpaypalaccountid'] = $found_email;
+                $request['body']['purchase_units'][0]['email_address']['merchant_id'] = $found_email;
                 if (!empty($order_id)) {
                     $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
                     update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
