@@ -1108,7 +1108,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-                            'shipping' => array(
+                            'payee' => array('email_address' => $sellerpaypalaccountid),
+                            'reference_id' => $sellerpaypalaccountid,
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                        );
+                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                            $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
@@ -1119,11 +1124,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
-                            ),
-                            'payee' => array('email_address' => $sellerpaypalaccountid),
-                            'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
-                        );
+                            );
+                        }
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
                         } else {
@@ -1384,8 +1386,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] : '',
                             'payee' => array('email_address' => $sellerpaypalaccountid),
                             'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-                            'shipping' => array(
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                        );
+                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                            $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
@@ -1396,8 +1400,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
-                            )
-                        );
+                            );
+                        }
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
                         } else {
@@ -1525,8 +1529,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
                 'payee' => array('email_address' => $default_pal_id),
                 'reference_id' => $default_pal_id,
-                'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-                'shipping' => array(
+                'soft_descriptor' => $old_purchase_units['soft_descriptor']
+            );
+            if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                $new_default_payment['shipping'] = array(
                     'name' => array(
                         'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                     ),
@@ -1537,8 +1543,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                         'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                     )
-                )
-            );
+                );
+            }
             if (!empty($this->final_payment_request_data[$default_pal_id]['amt'])) {
                 $this->final_payment_request_data[$default_pal_id]['amt'] = $this->final_payment_request_data[$default_pal_id]['amt'] + $new_default_payment['amt'];
             } else {
@@ -1684,9 +1690,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     unset($value_new_payments['taxamt']);
                     $request['body']['purchase_units'][$key_new_payments] = $value_new_payments;
                 }
-                if (!empty($order_id) && !empty($this->map_item_with_account) && $this->angelleye_is_multi_account_used($this->map_item_with_account)) {
-                    update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $this->map_item_with_account);
-                }
             } else {
                 $request['body']['purchase_units'] = $old_purchase_units;
             }
@@ -1779,6 +1782,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         'value' => $this->invoice_prefix . substr(md5(microtime()), rand(0, 26), 2) . str_replace("#", "", $order->get_order_number())
                     );
                 }
+            }
+            if (!empty($order_id) && !empty($this->map_item_with_account) && $this->angelleye_is_multi_account_used($this->map_item_with_account)) {
+                update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $this->map_item_with_account);
             }
             return $patch_request;
         }
@@ -1984,7 +1990,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return false;
     }
 
-    public function own_angelleye_express_checkout_order_data($paypal_response, $order_id) {
+    public function own_angelleye_ppcp_order_data($paypal_response, $order_id) {
         $order = wc_get_order($order_id);
         $ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
         if (empty($ec_parallel_data_map)) {
@@ -2084,7 +2090,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_express_checkout_parallel_payment_not_used($bool, $order_id) {
+    public function own_angelleye_is_ppcp_parallel_payment_not_used($bool, $order_id) {
         $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
         if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
             return false;
@@ -2092,7 +2098,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_express_checkout_parallel_payment_handle($bool, $order_id, $gateway) {
+    public function own_angelleye_is_ppcp_parallel_payment_handle($bool, $order_id, $gateway) {
         try {
             $processed_transaction_id = array();
             $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
@@ -2120,7 +2126,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                     if ($key === 'always') {
                         foreach ($value as $inner_key => $inner_value) {
-                            $this->angelleye_express_checkout_load_paypal($inner_value, $gateway, $order_id);
+                            $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
                             $processed_transaction_id[] = $inner_value['transaction_id'];
                             if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
                                 $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
@@ -2128,7 +2134,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             }
                         }
                     } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
-                        $this->angelleye_express_checkout_load_paypal($value, $gateway, $order_id);
+                        $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                         $processed_transaction_id[] = $value['transaction_id'];
                         if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
@@ -2154,7 +2160,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
     }
 
-    public function angelleye_express_checkout_load_paypal($value, $gateway, $order_id) {
+    public function angelleye_ppcp_load_paypal($value, $gateway, $order_id) {
         if (!empty($value['multi_account_id'])) {
             if ($value['multi_account_id'] == 'default') {
                 $testmode = 'yes' === $gateway->get_option('testmode', 'yes');
@@ -2417,7 +2423,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_express_checkout_payment_load_balancer_handle($bool, $order_id, $gateway) {
+    public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway) {
         try {
             $processed_transaction_id = array();
             $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
@@ -2426,7 +2432,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
                     $_transaction_id = get_post_meta($order_id, '_transaction_id', true);
                     $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
-                    $this->angelleye_express_checkout_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
+                    $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
                     return true;
                 } else {
                     return new WP_Error('invalid_refund', $refund_error_message_pre);
@@ -2520,7 +2526,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-            'shipping' => array(
+            'payee' => array('email_address' => $email),
+            'reference_id' => $email,
+            'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
+            'shippingamt' => '0.00',
+            'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
+        );
+        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+            $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
@@ -2531,14 +2545,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
-            ),
-            'payee' => array('email_address' => $email),
-            'reference_id' => $email,
-            'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
-            'shippingamt' => '0.00',
-            'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-        );
+            );
+        }
         $PaymentOrderItems = array();
         $Item = array(
             'name' => $item_data['commission_item_label'],
@@ -2568,7 +2576,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-            'shipping' => array(
+            'payee' => array('email_address' => $email),
+            'reference_id' => $email,
+            'shippingamt' => '0.00',
+            'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+        );
+        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+            $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
@@ -2579,13 +2594,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
-            ),
-            'payee' => array('email_address' => $email),
-            'reference_id' => $email,
-            'shippingamt' => '0.00',
-            'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor']
-        );
+            );
+        }
         $this->final_grand_total = $this->final_grand_total + $commission_amt;
         return $Payment;
     }
@@ -2704,7 +2714,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (isset($value['product_id']) && $product_id == $value['product_id']) {
                             if ($key === 'always') {
                                 foreach ($value as $inner_key => $inner_value) {
-                                    $this->angelleye_express_checkout_load_paypal($inner_value, $gateway, $order_id);
+                                    $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
                                     $processed_transaction_id[] = $inner_value['transaction_id'];
                                     if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
                                         $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
@@ -2712,7 +2722,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     }
                                 }
                             } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
-                                $this->angelleye_express_checkout_load_paypal($value, $gateway, $order_id);
+                                $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                                 $processed_transaction_id[] = $value['transaction_id'];
                                 if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
@@ -3011,39 +3021,39 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $found_email = WC()->session->get($session_key);
         if (empty($found_email)) {
             $found_email = '';
-            $express_checkout_accounts = get_option($option_key);
-            if (!empty($express_checkout_accounts)) {
-                foreach ($express_checkout_accounts as $key => $account) {
+            $ppcp_accounts = get_option($option_key);
+            if (!empty($ppcp_accounts)) {
+                foreach ($ppcp_accounts as $key => $account) {
                     if (empty($account['is_used'])) {
                         if ($key != 'default' && false === get_post_status($key)) {
-                            unset($express_checkout_accounts[$key]);
+                            unset($ppcp_accounts[$key]);
                         } else {
                             $found_email = $account['email'];
                             WC()->session->set($session_key, $account['email']);
                             $account['is_used'] = 'yes';
-                            $express_checkout_accounts[$key] = $account;
+                            $ppcp_accounts[$key] = $account;
                             WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $express_checkout_accounts);
+                            update_option($option_key, $ppcp_accounts);
                             $found_account = true;
                             break;
                         }
                     }
                 }
                 if ($found_account == false) {
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($ppcp_accounts as $key => $account) {
                         $account['is_used'] = '';
-                        $express_checkout_accounts[$key] = $account;
+                        $ppcp_accounts[$key] = $account;
                     }
-                    foreach ($express_checkout_accounts as $key => $account) {
+                    foreach ($ppcp_accounts as $key => $account) {
                         if ($key != 'default' && false === get_post_status($key)) {
-                            unset($express_checkout_accounts[$key]);
+                            unset($ppcp_accounts[$key]);
                         } else {
                             $found_email = $account['email'];
                             WC()->session->set($session_key, $account['email']);
                             $account['is_used'] = 'yes';
-                            $express_checkout_accounts[$key] = $account;
+                            $ppcp_accounts[$key] = $account;
                             WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $express_checkout_accounts);
+                            update_option($option_key, $ppcp_accounts);
                             $found_account = true;
                             break;
                         }
