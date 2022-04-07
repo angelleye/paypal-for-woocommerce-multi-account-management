@@ -1108,7 +1108,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-                            'shipping' => array(
+                            'payee' => array('email_address' => $sellerpaypalaccountid),
+                            'reference_id' => $sellerpaypalaccountid,
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                        );
+                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                            $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
@@ -1119,11 +1124,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
-                            ),
-                            'payee' => array('email_address' => $sellerpaypalaccountid),
-                            'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
-                        );
+                            );
+                        }
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
                         } else {
@@ -1384,8 +1386,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] : '',
                             'payee' => array('email_address' => $sellerpaypalaccountid),
                             'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-                            'shipping' => array(
+                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                        );
+                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                            $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                                 ),
@@ -1396,8 +1400,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                                 )
-                            )
-                        );
+                            );
+                        }
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
                         } else {
@@ -1525,8 +1529,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
                 'payee' => array('email_address' => $default_pal_id),
                 'reference_id' => $default_pal_id,
-                'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-                'shipping' => array(
+                'soft_descriptor' => $old_purchase_units['soft_descriptor']
+            );
+            if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                $new_default_payment['shipping'] = array(
                     'name' => array(
                         'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                     ),
@@ -1537,8 +1543,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                         'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                     )
-                )
-            );
+                );
+            }
             if (!empty($this->final_payment_request_data[$default_pal_id]['amt'])) {
                 $this->final_payment_request_data[$default_pal_id]['amt'] = $this->final_payment_request_data[$default_pal_id]['amt'] + $new_default_payment['amt'];
             } else {
@@ -2520,7 +2526,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-            'shipping' => array(
+            'payee' => array('email_address' => $email),
+            'reference_id' => $email,
+            'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
+            'shippingamt' => '0.00',
+            'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
+        );
+        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+            $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
@@ -2531,14 +2545,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
-            ),
-            'payee' => array('email_address' => $email),
-            'reference_id' => $email,
-            'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
-            'shippingamt' => '0.00',
-            'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
-        );
+            );
+        }
         $PaymentOrderItems = array();
         $Item = array(
             'name' => $item_data['commission_item_label'],
@@ -2568,7 +2576,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-            'shipping' => array(
+            'payee' => array('email_address' => $email),
+            'reference_id' => $email,
+            'shippingamt' => '0.00',
+            'taxamt' => '0.00',
+            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+        );
+        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+            $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
                 ),
@@ -2579,13 +2594,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     'postal_code' => isset($old_purchase_units['shipping']['address']['postal_code']) ? $old_purchase_units['shipping']['address']['postal_code'] : '',
                     'country_code' => isset($old_purchase_units['shipping']['address']['country_code']) ? $old_purchase_units['shipping']['address']['country_code'] : '',
                 )
-            ),
-            'payee' => array('email_address' => $email),
-            'reference_id' => $email,
-            'shippingamt' => '0.00',
-            'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor']
-        );
+            );
+        }
         $this->final_grand_total = $this->final_grand_total + $commission_amt;
         return $Payment;
     }
