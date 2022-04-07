@@ -1701,6 +1701,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ec_account');
         WC()->session->set('angelleye_payment_load_balancer_ec_account', '');
         WC()->session->__unset('angelleye_payment_load_balancer_ec_account');
+        WC()->session->set('angelleye_sandbox_payment_load_balancer_ppcp_email', '');
+        WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ppcp_email');
+        WC()->session->set('angelleye_sandbox_payment_load_balancer_ppcp_account', '');
+        WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ppcp_account');
     }
 
     public function angelleye_multi_account_api_field_ui() {
