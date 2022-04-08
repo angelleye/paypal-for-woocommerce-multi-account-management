@@ -1996,68 +1996,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if (empty($ec_parallel_data_map)) {
             return false;
         }
-        for ($payment = 0; $payment <= 10; $payment++) {
-            if (!empty($paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID'])) {
-                $order->add_order_note(sprintf(__('PayPal Express payment Transaction ID: %s', 'paypal-for-woocommerce-multi-account-management'), isset($paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID']) ? $paypal_response['PAYMENTINFO_' . $payment . '_TRANSACTIONID'] : ''));
-            } elseif (!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
-                $long_message = !empty($paypal_response['PAYMENTINFO_' . $payment . '_LONGMESSAGE']) ? $paypal_response['PAYMENTINFO_' . $payment . '_LONGMESSAGE'] : '';
-                if (!empty($long_message)) {
-                    $order->add_order_note($long_message);
-                }
-            } else {
-                break;
-            }
-        }
         $unique_transaction_data = array();
-        $total_account = count($ec_parallel_data_map);
-        foreach ($ec_parallel_data_map as $key => $ec_parallel_data) {
-            if ($key === 'always') {
-                foreach ($ec_parallel_data as $inner_key => $always_ppcp_parallel_data) {
-                    for ($always_transaction_map = 0; $always_transaction_map <= ($total_account + count($ec_parallel_data)); $always_transaction_map++) {
-                        if (!empty($paypal_response['PAYMENTINFO_' . $always_transaction_map . '_PAYMENTREQUESTID'])) {
-                            $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_PAYMENTREQUESTID'];
-                            $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
-                            if (!empty($request_order_item_id[0]) && $always_ppcp_parallel_data['multi_account_id'] == $request_order_item_id[1]) {
-                                if (!empty($paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'])) {
-                                    $ec_parallel_data_map[$key][$always_ppcp_parallel_data['multi_account_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
-                                    $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
-                                }
-                            }
+        foreach ($paypal_response['purchase_units'] as $key => $payments) {
+            if (!empty($paypal_response['purchase_units'][$key]['reference_id'])) {
+                if ($this->angelleye_ppcp_is_payer_email_exist($paypal_response['purchase_units'][$key]['reference_id'], $ec_parallel_data_map)) {
+                    foreach ($ec_parallel_data_map as $key => $parallel_data_map) {
+                        if (!empty($parallel_data_map['email']) && $parallel_data_map['email'] === $paypal_response['purchase_units'][$key]['reference_id']) {
+                            $ec_parallel_data_map[$parallel_data_map['product_id']]['transaction_id'] = $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id'];
+                            $unique_transaction_data[] = $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id'];
+                            wc_update_order_item_meta($parallel_data_map['order_item_id'], '_transaction_id', $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id']);
                         }
                     }
-                }
-            } else {
-                for ($transaction_map = 0; $transaction_map <= $total_account; $transaction_map++) {
-                    if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'])) {
-                        $PAYMENTREQUESTID_array = $paypal_response['PAYMENTINFO_' . $transaction_map . '_PAYMENTREQUESTID'];
-                        $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
-                        if (!empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
-                            if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
-                                $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                                $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
-                                wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
-                            } elseif (!empty($paypal_response['PAYMENTINFO_' . $payment . '_ERRORCODE'])) {
-                                wc_update_order_item_meta($ec_parallel_data['order_item_id'], 'Payment Status', __('Not Paid', 'paypal-for-woocommerce-multi-account-management'));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        $total_paypal_transaction = $total_account + 1;
-        if (!empty($ec_parallel_data_map)) {
-            for ($transaction = 0; $transaction <= count($ec_parallel_data); $transaction++) {
-                if (isset($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID']) && !empty($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'])) {
-                    if (!in_array($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'], $unique_transaction_data)) {
-                        $ec_parallel_data_map['primary']['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'];
-                        $ec_parallel_data_map['primary']['multi_account_id'] = 'default';
-                    }
+                } else {
+                    $ec_parallel_data_map['primary']['transaction_id'] = $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id'];
+                    $ec_parallel_data_map['primary']['multi_account_id'] = 'default';
                 }
             }
         }
         if (!empty($ec_parallel_data_map)) {
             update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $ec_parallel_data_map);
         }
+    }
+
+    public function angelleye_ppcp_is_payer_email_exist($paypal_email, $ec_parallel_data_map) {
+        foreach ($ec_parallel_data_map as $key => $parallel_data_map) {
+            if (!empty($parallel_data_map['email']) && $parallel_data_map['email'] === $paypal_email) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function angelleye_get_map_item_data($request_param_part_data, $ec_parallel_data_map) {

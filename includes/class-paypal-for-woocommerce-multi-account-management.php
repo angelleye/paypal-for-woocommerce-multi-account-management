@@ -176,6 +176,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $angelleye_ppcp = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP($this->get_plugin_name(), $this->get_version());
         $this->loader->add_filter('angelleye_ppcp_merchant_id', $angelleye_ppcp, 'angelleye_ppcp_get_merchant_id', 10, 1);
         $this->loader->add_filter('angelleye_ppcp_request_args', $angelleye_ppcp, 'angelleye_ppcp_request_multi_account', 10, 3);
+        $this->loader->add_action('angelleye_ppcp_order_data', $angelleye_ppcp, 'own_angelleye_ppcp_order_data', 10, 2);
         //$paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
         
         
