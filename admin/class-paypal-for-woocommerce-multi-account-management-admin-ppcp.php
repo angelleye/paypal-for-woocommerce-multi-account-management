@@ -1960,7 +1960,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         foreach ($paypal_response['purchase_units'] as $key => $payments) {
             if (!empty($paypal_response['purchase_units'][$key]['reference_id'])) {
                 if ($this->angelleye_ppcp_is_payer_email_exist($paypal_response['purchase_units'][$key]['reference_id'], $ec_parallel_data_map)) {
-                    foreach ($ec_parallel_data_map as $key => $parallel_data_map) {
+                    foreach ($ec_parallel_data_map as $multi_key => $parallel_data_map) {
                         if (!empty($parallel_data_map['email']) && $parallel_data_map['email'] === $paypal_response['purchase_units'][$key]['reference_id']) {
                             $ec_parallel_data_map[$parallel_data_map['product_id']]['transaction_id'] = $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id'];
                             $unique_transaction_data[] = $paypal_response['purchase_units'][$key]['payments']['captures'][0]['id'];
@@ -2005,7 +2005,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                         if (isset($value['multi_account_id']) && $value['multi_account_id'] == 'default') {
                             return true;
-                        } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $value['is_api_set'], $value) === true)) {
+                        } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $value['is_api_set'], $value) === true)) {
                             return true;
                         }
                     }
@@ -2033,12 +2033,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
-                    if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
+                    if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
                         $product = wc_get_product($value['product_id']);
                         $refund_error_message_after[] = $product->get_title();
                     } elseif ($key === 'always') {
                         foreach ($value as $inner_key => $inner_value) {
-                            if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
+                            if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
                                 $refund_error_message_after[] = __('Always trigger account API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
                             }
                         }
@@ -2356,7 +2356,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
             $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
             if (!empty($angelleye_payment_load_balancer_account)) {
-                if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
+                if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
                     $_transaction_id = get_post_meta($order_id, '_transaction_id', true);
                     $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
                     $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
@@ -2569,12 +2569,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                         $product_id = get_metadata('order_item', $order_item_id_key, '_product_id', true);
                         if (isset($value['product_id']) && $product_id == $value['product_id']) {
-                            if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
+                            if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
                                 $product = wc_get_product($value['product_id']);
                                 $refund_error_message_after[] = $product->get_title();
                             } elseif ($key === 'always') {
                                 foreach ($value as $inner_key => $inner_value) {
-                                    if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
+                                    if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
                                         $refund_error_message_after[] = __('Always trigger account API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
                                     }
                                 }

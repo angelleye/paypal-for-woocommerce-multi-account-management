@@ -184,6 +184,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_multi_account_need_shipping', $angelleye_ppcp, 'own_angelleye_multi_account_need_shipping', 10, 3);
         $this->loader->add_action( 'dokan_refund_approve_before_insert', $angelleye_ppcp, 'angelleye_multi_account_dokan_refund_approve', 10, 3 );
         $this->loader->add_filter('angelleye_ppcp_is_account_ready_to_paid', $angelleye_ppcp, 'angelleye_ppcp_is_account_ready_to_paid', 10, 2);
+        $this->loader->add_filter('angelleye_ppcp_pfwma_is_api_set', $angelleye_ppcp, 'angelleye_is_multi_account_api_set', 10, 2);
         //$paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $paypal_payflow, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
