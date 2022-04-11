@@ -196,7 +196,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -204,7 +204,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -212,7 +212,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -710,7 +710,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             WC()->session->set('angelleye_payment_load_balancer_ppcp_account', '');
             WC()->session->__unset('angelleye_payment_load_balancer_ppcp_account');
         } catch (Exception $ex) {
-
+            
         }
     }
 
@@ -1937,7 +1937,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $partition_array;
     }
 
-    public function angelleye_is_multi_account_api_set($microprocessing_array) {
+    public function angelleye_is_multi_account_api_set($bool, $microprocessing_array) {
         if ($this->is_sandbox) {
             if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0])) {
                 return true;
@@ -1996,7 +1996,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return false;
     }
 
-    public function own_woocommerce_payment_gateway_supports($bool, $feature, $current) {
+    public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
         global $post;
         if ($feature === 'refunds' && $bool === true && $current->id === 'angelleye_ppcp') {
             if (!empty($post->ID)) {
@@ -2005,7 +2005,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                         if (isset($value['multi_account_id']) && $value['multi_account_id'] == 'default') {
                             return true;
-                        } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $value['is_api_set'], $value) === true)) {
+                        } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && $value['is_api_set'] === true)) {
                             return true;
                         }
                     }
@@ -2033,7 +2033,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
-                    if (!empty($value['product_id']) && isset($value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $value['is_api_set'], $value) === false) {
+                    if (!empty($value['product_id']) && isset($value['is_api_set']) && $value['is_api_set'] === false) {
                         $product = wc_get_product($value['product_id']);
                         $refund_error_message_after[] = $product->get_title();
                     } elseif ($key === 'always') {
@@ -2083,7 +2083,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return false;
         } catch (Exception $ex) {
-
+            
         }
     }
 
@@ -2114,27 +2114,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $testmode = false;
                 }
                 if ($testmode) {
-                    $PayPalConfig = array(
-                        'Sandbox' => $testmode,
-                        'APIUsername' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0],
-                        'APIPassword' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0],
-                        'APISignature' => $microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0]
-                    );
+                    $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0];
+                    $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0];
                 } else {
-                    $PayPalConfig = array(
-                        'Sandbox' => $testmode,
-                        'APIUsername' => $microprocessing_array['woocommerce_paypal_express_api_username'][0],
-                        'APIPassword' => $microprocessing_array['woocommerce_paypal_express_api_signature'][0],
-                        'APISignature' => $microprocessing_array['woocommerce_paypal_express_api_password'][0]
-                    );
+                    $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0];
+                    $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_secret'][0];
                 }
             }
-            if (!empty($PayPalConfig)) {
-                if (!class_exists('Angelleye_PayPal_WC')) {
-                    require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
+            if (!empty($client_id) && !empty($secret_id)) {
+                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
                 }
-                $this->paypal = new Angelleye_PayPal_WC($PayPalConfig);
-                $this->angelleye_process_refund($order_id, $value);
+                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+                $payment_request->angelleye_ppcp_multi_account_refund_order($order_id, $value['transaction_id'], $testmode, $client_id, $secret_id);
             }
         }
     }
@@ -2367,7 +2359,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return $bool;
         } catch (Exception $ex) {
-
+            
         }
     }
 
@@ -2722,7 +2714,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2730,7 +2722,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2738,7 +2730,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-
+                                    
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
