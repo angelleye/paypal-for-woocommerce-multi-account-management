@@ -256,7 +256,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                 }
 
                 $ppcp_accounts[$post_id]['is_api_set'] = $bool;
-                if (apply_filters('angelleye_is_account_ready_to_paid', true, $email) === true) {
+                if (apply_filters('angelleye_ppcp_is_account_ready_to_paid', true, $email) === true) {
                     $ppcp_accounts[$post_id]['email'] = $email;
                 } else {
                     update_post_meta($post_id, 'woocommerce_angelleye_ppcp_enable', '');

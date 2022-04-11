@@ -196,7 +196,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -204,7 +204,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -212,7 +212,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0]) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -701,8 +701,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             delete_transient('angelleye_multi_ppcp_payment_load_balancer_synce_sandbox');
             delete_transient('angelleye_multi_ppcp_payment_load_balancer_synce');
-            WC()->session->set('multi_account_api_username', '');
-            WC()->session->__unset('multi_account_api_username');
             WC()->session->set('angelleye_sandbox_payment_load_balancer_ppcp_email', '');
             WC()->session->__unset('angelleye_sandbox_payment_load_balancer_ppcp_email');
             WC()->session->set('angelleye_payment_load_balancer_ppcp_email', '');
@@ -712,46 +710,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             WC()->session->set('angelleye_payment_load_balancer_ppcp_account', '');
             WC()->session->__unset('angelleye_payment_load_balancer_ppcp_account');
         } catch (Exception $ex) {
-            
-        }
-    }
 
-    public function angelleye_get_multi_account_details_by_api_user_name($gateway_setting, $_multi_account_api_username) {
-        $microprocessing = array();
-        if (!empty($gateway_setting->id) && $gateway_setting->id == 'angelleye_ppcp') {
-            $args = array(
-                'post_type' => 'microprocessing',
-                'meta_query' => array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'woocommerce_paypal_express_sandbox_api_username',
-                        'value' => $_multi_account_api_username,
-                        'compare' => '='
-                    ),
-                    array(
-                        'key' => 'woocommerce_paypal_express_api_username',
-                        'value' => $_multi_account_api_username,
-                        'compare' => '='
-                    )
-                )
-            );
         }
-        if (!empty($args)) {
-            $query = new WP_Query();
-            $result = $query->query($args);
-            $total_posts = $query->found_posts;
-            if ($total_posts > 0) {
-                foreach ($result as $key => $value) {
-                    if (!empty($value->ID)) {
-                        $microprocessing_array = get_post_meta($value->ID);
-                        foreach ($microprocessing_array as $key => $value) {
-                            $microprocessing[$key] = $value[0];
-                        }
-                    }
-                }
-            }
-        }
-        return $microprocessing;
     }
 
     public function angelleye_get_total($order_id) {
@@ -1979,11 +1939,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_is_multi_account_api_set($microprocessing_array) {
         if ($this->is_sandbox) {
-            if (!empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_password'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_signature'][0])) {
+            if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0])) {
                 return true;
             }
         } else {
-            if (!empty($microprocessing_array['woocommerce_paypal_express_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_signature'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_password'][0])) {
+            if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_secret'][0])) {
                 return true;
             }
         }
@@ -2068,7 +2028,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function own_angelleye_is_ppcp_parallel_payment_handle($bool, $order_id, $gateway) {
         try {
             $processed_transaction_id = array();
-            $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
+            $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
             $refund_error_message_after = array();
             $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
@@ -2123,7 +2083,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return false;
         } catch (Exception $ex) {
-            
+
         }
     }
 
@@ -2393,7 +2353,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway) {
         try {
             $processed_transaction_id = array();
-            $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
+            $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
             $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
             if (!empty($angelleye_payment_load_balancer_account)) {
                 if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
@@ -2407,7 +2367,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             return $bool;
         } catch (Exception $ex) {
-            
+
         }
     }
 
@@ -2567,52 +2527,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $Payment;
     }
 
-    public function angelleye_is_account_ready_to_paid($bool, $email) {
-        $gateway = angelleye_wc_gateway('angelleye_ppcp');
-        $testmode = 'yes' === $gateway->get_option('testmode', 'yes');
-        if ($testmode === true) {
-            $PayPalConfig = array(
-                'Sandbox' => $testmode,
-                'APIUsername' => $gateway->get_option('sandbox_api_username'),
-                'APIPassword' => $gateway->get_option('sandbox_api_password'),
-                'APISignature' => $gateway->get_option('sandbox_api_signature')
-            );
-        } else {
-            $PayPalConfig = array(
-                'Sandbox' => $testmode,
-                'APIUsername' => $gateway->get_option('api_username'),
-                'APIPassword' => $gateway->get_option('api_password'),
-                'APISignature' => $gateway->get_option('api_signature')
-            );
-        }
-        if (!class_exists('Angelleye_PayPal_WC')) {
-            require_once( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/classes/lib/angelleye/paypal-php-library/includes/paypal.class.php' );
-        }
-        $paypal = new Angelleye_PayPal_WC($PayPalConfig);
-        $SECFields = array(
-            'token' => '',
-            'returnurl' => 'https://www.google.com/',
-            'cancelurl' => 'https://www.google.com/',
-        );
-        $Payments = array();
-        $Payment = array(
-            'amt' => '1.00',
-            'currencycode' => 'USD',
-            'invoice_id' => time() . 'testing',
-            'paymentaction' => 'Sale',
-            'paymentrequestid' => time() . '-id',
-            'sellerpaypalaccountid' => $email
-        );
-        array_push($Payments, $Payment);
-        $PayPalRequest = array(
-            'SECFields' => $SECFields,
-            'Payments' => $Payments
-        );
-        $paypal_response = $paypal->SetExpressCheckout($PayPalRequest);
-        if (isset($paypal_response['ACK']) && 'Success' === $paypal_response['ACK']) {
-            return true;
-        }
-        return false;
+    public function angelleye_ppcp_is_account_ready_to_paid($bool, $email) {
+        return angelleye_ppcp_account_ready_to_paid($this->is_sandbox, $this->client_id, $this->secret_id, $email);
     }
 
     public function angelleye_multi_account_dokan_refund_approve($refund, $args, $vendor_refund) {
@@ -2639,7 +2555,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $parent_order_id = $order->get_parent_id() ? $order->get_parent_id() : $order->get_id();
         }
         $processed_transaction_id = array();
-        $refund_error_message_pre = __('We can not refund this order as the Express Checkout API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
+        $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
         $refund_error_message_after = array();
         if (!empty($parent_order_id)) {
             $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($parent_order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
@@ -2806,7 +2722,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         switch ($microprocessing_array['woocommerce_paypal_express_api_condition_sign'][0]) {
                             case 'equalto':
                                 if ($order_total == $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2814,7 +2730,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'lessthan':
                                 if ($order_total < $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
@@ -2822,7 +2738,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 break;
                             case 'greaterthan':
                                 if ($order_total > $microprocessing_array['woocommerce_paypal_express_api_condition_value'][0] || isset(WC()->cart) && WC()->cart->is_empty()) {
-                                    
+
                                 } else {
                                     unset($result[$key]);
                                     unset($passed_rules);
