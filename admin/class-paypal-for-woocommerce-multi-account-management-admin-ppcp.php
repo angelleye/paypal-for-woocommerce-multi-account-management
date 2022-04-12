@@ -66,6 +66,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $invoice_prefix;
     public $client_id;
     public $secret_id;
+    public $merchant_id;
 
     /**
      * Initialize the class and set its properties.
@@ -124,12 +125,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
         $this->live_client_id = $this->settings->get('api_client_id', '');
         $this->live_secret_id = $this->settings->get('api_secret', '');
+        $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
+        $this->live_merchant_id = $this->settings->get('live_merchant_id', '');
         if ($this->is_sandbox) {
             $this->client_id = $this->sandbox_client_id;
             $this->secret_id = $this->sandbox_secret_id;
+            $this->merchant_id = $this->sandbox_merchant_id;
         } else {
             $this->client_id = $this->live_client_id;
             $this->secret_id = $this->live_secret_id;
+            $this->merchant_id = $this->live_merchant_id;
         }
     }
 
@@ -1068,10 +1073,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-                            'payee' => array('email_address' => $sellerpaypalaccountid),
                             'reference_id' => $sellerpaypalaccountid,
                             'soft_descriptor' => $old_purchase_units['soft_descriptor']
                         );
+                        if (is_email($sellerpaypalaccountid)) {
+                            $Payment['payee'] = array('email_address' => $sellerpaypalaccountid);
+                        } else {
+                            $Payment['payee'] = array('merchant_id' => $sellerpaypalaccountid);
+                        }
                         if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
                             $Payment['shipping'] = array(
                                 'name' => array(
@@ -1344,10 +1353,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] : '',
-                            'payee' => array('email_address' => $sellerpaypalaccountid),
                             'reference_id' => $sellerpaypalaccountid,
                             'soft_descriptor' => $old_purchase_units['soft_descriptor']
                         );
+                        if (is_email($sellerpaypalaccountid)) {
+                            $Payment['payee'] = array('email_address' => $sellerpaypalaccountid);
+                        } else {
+                            $Payment['payee'] = array('merchant_id' => $sellerpaypalaccountid);
+                        }
                         if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
                             $Payment['shipping'] = array(
                                 'name' => array(
@@ -1487,10 +1500,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                 'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
                 'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
-                'payee' => array('email_address' => $default_pal_id),
                 'reference_id' => $default_pal_id,
                 'soft_descriptor' => $old_purchase_units['soft_descriptor']
             );
+            if (is_email($default_pal_id)) {
+                $new_default_payment['payee'] = array('email_address' => $default_pal_id);
+            } else {
+                $new_default_payment['payee'] = array('merchant_id' => $default_pal_id);
+            }
             if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
                 $new_default_payment['shipping'] = array(
                     'name' => array(
@@ -1768,7 +1785,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_get_email_address($map_item_with_account_array) {
         if (!empty($map_item_with_account_array['multi_account_id'])) {
             if ($map_item_with_account_array['multi_account_id'] == 'default') {
-                $emails = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id);
+                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+                }
+                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+                $emails = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
                 return $emails;
             }
         }
@@ -1782,7 +1803,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0];
             $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_secret'][0];
         }
-        $emails = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $client_id, $secret_id);
+        if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+            include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+        }
+        $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+        $emails = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $client_id, $secret_id, $merchant_id = '');
         if (!empty($emails)) {
             if ($this->is_sandbox) {
                 update_post_meta($account_id, 'woocommerce_angelleye_ppcp_sandbox_email_address', $emails);
@@ -2317,7 +2342,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
         if (!empty($request)) {
             if ($found_email != 'default') {
-                $request['body']['purchase_units'][0]['payee']['email_address'] = $found_email;
+                if (is_email($found_email)) {
+                    $request['body']['purchase_units'][0]['payee']['email_address'] = $found_email;
+                } else {
+                    $request['body']['purchase_units'][0]['payee']['merchant_id'] = $found_email;
+                }
                 if (!empty($order_id)) {
                     $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
                     update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
@@ -2445,6 +2474,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'taxamt' => '0.00',
             'soft_descriptor' => $old_purchase_units['soft_descriptor'],
         );
+        if (is_email($email)) {
+            $Payment['payee'] = array('email_address' => $email);
+        } else {
+            $Payment['payee'] = array('merchant_id' => $email);
+        }
         if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
             $Payment['shipping'] = array(
                 'name' => array(
@@ -2494,6 +2528,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'taxamt' => '0.00',
             'soft_descriptor' => $old_purchase_units['soft_descriptor']
         );
+        if (is_email($email)) {
+            $Payment['payee'] = array('email_address' => $email);
+        } else {
+            $Payment['payee'] = array('merchant_id' => $email);
+        }
         if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
             $Payment['shipping'] = array(
                 'name' => array(
@@ -2628,11 +2667,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (!empty($value['email'])) {
                             $merchant_emails[$value['email']] = $value['email'];
                             if (isset($value['is_commission_enable']) && $value['is_commission_enable'] === true) {
-                                $emails = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id);
+                                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+                                }
+                                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+                                $emails = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
                                 $merchant_emails[$emails] = $emails;
                             }
                         } elseif (isset($value['multi_account_id']) && 'default' === $value['multi_account_id']) {
-                            $emails = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id);
+                            if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                                include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+                            }
+                            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+                            $emails = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
                             $merchant_emails[$emails] = $emails;
                         }
                     }
@@ -2932,7 +2979,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($found_email != 'default') {
             $merchant_ids[$found_email] = $found_email;
         } else {
-            $emails = angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id);
+            if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+            }
+            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+            $emails = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
             return $emails;
         }
         return $merchant_ids;
