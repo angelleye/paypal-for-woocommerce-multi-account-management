@@ -2090,21 +2090,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_ppcp_load_paypal($value, $gateway, $order_id) {
         if (!empty($value['multi_account_id'])) {
             if ($value['multi_account_id'] == 'default') {
-                $testmode = 'yes' === $gateway->get_option('testmode', 'yes');
-                if ($testmode === true) {
-                    $PayPalConfig = array(
-                        'Sandbox' => $testmode,
-                        'APIUsername' => $gateway->get_option('sandbox_api_username'),
-                        'APIPassword' => $gateway->get_option('sandbox_api_password'),
-                        'APISignature' => $gateway->get_option('sandbox_api_signature')
-                    );
+                if ($this->is_sandbox) {
+                    $client_id = $this->sandbox_client_id;
+                    $secret_id = $this->sandbox_secret_id;
+                    $testmode = true;
                 } else {
-                    $PayPalConfig = array(
-                        'Sandbox' => $testmode,
-                        'APIUsername' => $gateway->get_option('api_username'),
-                        'APIPassword' => $gateway->get_option('api_password'),
-                        'APISignature' => $gateway->get_option('api_signature')
-                    );
+                    $client_id = $this->live_client_id;
+                    $secret_id = $this->live_secret_id;
+                    $testmode = false;
                 }
             } elseif ($value['is_api_set'] === true) {
                 $microprocessing_array = get_post_meta($value['multi_account_id']);
