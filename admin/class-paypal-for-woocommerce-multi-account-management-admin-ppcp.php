@@ -1937,7 +1937,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $partition_array;
     }
 
-    public function angelleye_is_multi_account_api_set($bool, $microprocessing_array) {
+    public function angelleye_is_multi_account_api_set($microprocessing_array) {
         if ($this->is_sandbox) {
             if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0])) {
                 return true;
