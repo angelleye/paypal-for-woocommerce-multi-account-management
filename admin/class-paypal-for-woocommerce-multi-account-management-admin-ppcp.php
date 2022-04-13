@@ -2139,50 +2139,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_secret'][0];
                 }
             }
+            if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
+                include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
+            }
+            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
             if (!empty($client_id) && !empty($secret_id)) {
-                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-                }
-                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
                 $payment_request->angelleye_ppcp_multi_account_refund_order($order_id, $value['transaction_id'], $testmode, $client_id, $secret_id);
+            } else {
+                $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value['transaction_id'], $testmode);
             }
-        }
-    }
-
-    public function angelleye_process_refund($order_id, $value) {
-        $order = wc_get_order($order_id);
-        WC_Gateway_PayPal_Express_AngellEYE::log('Begin Refund');
-        $transaction_id = $value['transaction_id'];
-        if (!$order || empty($transaction_id)) {
-            return false;
-        }
-        WC_Gateway_PayPal_Express_AngellEYE::log('Transaction ID: ' . print_r($transaction_id, true));
-        if ($reason) {
-            if (255 < strlen($reason)) {
-                $reason = substr($reason, 0, 252) . '...';
-            }
-            $reason = html_entity_decode($reason, ENT_NOQUOTES, 'UTF-8');
-        }
-        $RTFields = array(
-            'transactionid' => $transaction_id,
-            'refundtype' => 'Full',
-            'currencycode' => version_compare(WC_VERSION, '3.0', '<') ? $order->get_order_currency() : $order->get_currency(),
-            'note' => '',
-        );
-        $PayPalRequestData = array('RTFields' => $RTFields);
-        WC_Gateway_PayPal_Express_AngellEYE::log('Refund Request: ' . print_r($PayPalRequestData, true));
-        $this->paypal_response = $this->paypal->RefundTransaction($PayPalRequestData);
-        AngellEYE_Gateway_Paypal::angelleye_paypal_for_woocommerce_curl_error_handler($this->paypal_response, $methos_name = 'RefundTransaction', $gateway = 'PayPal Express Checkout', $this->gateway->error_email_notify);
-        WC_Gateway_PayPal_Express_AngellEYE::log('Test Mode: ' . $this->testmode);
-        WC_Gateway_PayPal_Express_AngellEYE::log('Endpoint: ' . $this->gateway->API_Endpoint);
-        $PayPalRequest = isset($this->paypal_response['RAWREQUEST']) ? $this->paypal_response['RAWREQUEST'] : '';
-        $PayPalResponse = isset($this->paypal_response['RAWRESPONSE']) ? $this->paypal_response['RAWRESPONSE'] : '';
-        WC_Gateway_PayPal_Express_AngellEYE::log('Request: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalRequest)), true));
-        WC_Gateway_PayPal_Express_AngellEYE::log('Response: ' . print_r($this->paypal->NVPToArray($this->paypal->MaskAPIResult($PayPalResponse)), true));
-        if ($this->paypal->APICallSuccessful($this->paypal_response['ACK'])) {
-            $this->final_refund_amt = $this->final_refund_amt + $this->paypal_response['GROSSREFUNDAMT'];
-            $order->add_order_note(sprintf(__('Refund Transaction ID: %s ,  Refund amount: %s', 'paypal-for-woocommerce-multi-account-management'), $this->paypal_response['REFUNDTRANSACTIONID'], $this->paypal_response['GROSSREFUNDAMT']));
-            update_post_meta($order_id, 'Refund Transaction ID', $this->paypal_response['REFUNDTRANSACTIONID']);
         }
     }
 
