@@ -1388,30 +1388,41 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     }
                 }
             }
+            $testmode = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_testmode', true);
+            if ($testmode === 'on') {
+                $sandbox = true;
+            } else {
+                $sandbox = false;
+            }
             if (!empty($_POST['is_edit'])) {
-                $testmode = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_testmode', true);
-                $board_status_sandbox = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
-                $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
-                if($testmode === 'on' && $board_status_sandbox === '') {
-                    $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
-                    exit();
-                } elseif($board_status_live === '') {
-                    $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
-                    exit();
+                if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                    $board_status_sandbox = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
+                    $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
+                    if ($testmode === 'on' && $board_status_sandbox === '') {
+                        $this->send_paypal_seller_onboard_invitation_email($post_id);
+                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                        exit();
+                    } elseif ($board_status_live === '') {
+                        $this->send_paypal_seller_onboard_invitation_email($post_id);
+                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                        exit();
+                    }
                 }
                 wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
                 exit();
             } else {
-                if ( metadata_exists( 'post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' ) === false ) {
-                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', '');
+                if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                    if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox') === false) {
+                        update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', '');
+                    }
+                    if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live') === false) {
+                        update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
+                    }
+                    $this->send_paypal_seller_onboard_invitation_email($post_id);
+                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                } else {
+                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
                 }
-                if ( metadata_exists( 'post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live' ) === false ) {
-                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
-                }
-                $this->send_paypal_seller_onboard_invitation_email($post_id);
-                wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
                 exit();
             }
         }
@@ -3301,6 +3312,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if ($sandbox) {
             $this->sandbox_client_id = $this->settings->get('sandbox_client_id', '');
             $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
+            $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
             if (!empty($this->sandbox_client_id) && !empty($this->sandbox_secret_id)) {
                 return false;
             } else if (!empty($this->sandbox_merchant_id)) {
@@ -3311,6 +3323,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             $this->live_client_id = $this->settings->get('api_client_id', '');
             $this->live_secret_id = $this->settings->get('api_secret', '');
+            $this->live_merchant_id = $this->settings->get('merchant_id', '');
             if (!empty($this->live_client_id) && !empty($this->live_secret_id)) {
                 return false;
             } else if (!empty($this->live_merchant_id)) {
