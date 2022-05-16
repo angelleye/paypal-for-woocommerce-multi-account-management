@@ -129,12 +129,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 } else if ($status_ppcp == 'on') {
                     $ppcp_testmode = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_testmode', true);
                     if(!empty($ppcp_testmode) && $ppcp_testmode === 'on') {
-                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
+                        $sandbox = true;
                     } else {
-                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
+                        $sandbox = false;
                     }
-                    if(empty($board_status)) {
-                        return __('Pending Seller Onboard', 'paypal-for-woocommerce-multi-account-management');
+                    if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                        if($sandbox) {
+                            $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
+                        } else {
+                            $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
+                        }
+                        if(empty($board_status)) {
+                            return __('Pending Seller Onboard', 'paypal-for-woocommerce-multi-account-management');
+                        } else {
+                            return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                        }
                     } else {
                         return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                     }
