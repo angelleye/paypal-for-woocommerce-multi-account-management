@@ -133,7 +133,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     } else {
                         $sandbox = false;
                     }
-                    if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                    if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
                         if($sandbox) {
                             $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
                         } else {

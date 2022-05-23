@@ -270,12 +270,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_client_id':
-                        if ($this->angelleye_is_ppcp_third_party_enable($sandbox = true) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') {
+                        if (angelleye_is_ppcp_third_party_enable($sandbox = true) === false && angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_client_id">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_client_id" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_client_id" style="" placeholder="Optional" type="text"></fieldset></td></tr>', __('Sandbox Client ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_secret':
-                        if ($this->angelleye_is_ppcp_third_party_enable($sandbox = true) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') {
+                        if (angelleye_is_ppcp_third_party_enable($sandbox = true) === false && angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_secret">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_secret" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_secret" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('Sandbox Secret', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
@@ -287,12 +287,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_client_id':
-                        if ($this->angelleye_is_ppcp_third_party_enable($sandbox = false) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') {
+                        if (angelleye_is_ppcp_third_party_enable($sandbox = false) === false && angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_client_id">%1$s</label><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_client_id" value="%2$s" id="woocommerce_angelleye_ppcp_client_id" style="" placeholder="Optional" type="text"></fieldset></td></tr>', __('PayPal Client ID', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'woocommerce_angelleye_ppcp_secret':
-                        if ($this->angelleye_is_ppcp_third_party_enable($sandbox = false) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') {
+                        if (angelleye_is_ppcp_third_party_enable($sandbox = false) === false && angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') {
                             echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_secret">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_secret" value="%2$s" id="woocommerce_angelleye_ppcp_secret" style="" placeholder="Optional" type="password"></fieldset></td></tr>', __('PayPal Secret', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
@@ -1395,7 +1395,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $sandbox = false;
             }
             if (!empty($_POST['is_edit'])) {
-                if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
                     $board_status_sandbox = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
                     $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
                     if ($testmode === 'on' && $board_status_sandbox === '') {
@@ -1411,7 +1411,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
                 exit();
             } else {
-                if ($this->angelleye_is_ppcp_third_party_enable($sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
+                if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
                     if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox') === false) {
                         update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', '');
                     }
@@ -2643,7 +2643,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
-        <?php if ($this->angelleye_is_ppcp_third_party_enable($sandbox = true) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') { ?>
+        <?php if (angelleye_is_ppcp_third_party_enable($sandbox = true) === false && angelleye_is_ppcp_third_party_enable($sandbox = true) !== '') { ?>
             <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
                 <th scope="row" class="titledesc">
                     <label for="woocommerce_angelleye_ppcp_sandbox_client_id"><?php echo __('Sandbox Client ID', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -2675,7 +2675,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 </fieldset>
             </td>
         </tr>
-        <?php if ($this->angelleye_is_ppcp_third_party_enable($sandbox = false) === false && $this->angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') { ?>
+        <?php if (angelleye_is_ppcp_third_party_enable($sandbox = false) === false && angelleye_is_ppcp_third_party_enable($sandbox = false) !== '') { ?>
             <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
                 <th scope="row" class="titledesc">
                     <label for="woocommerce_angelleye_ppcp_client_id"><?php echo __('PayPal Client ID', 'paypal-for-woocommerce-multi-account-management'); ?></label>
@@ -3302,36 +3302,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
         }
         return $query->found_posts;
-    }
-
-    public function angelleye_is_ppcp_third_party_enable($sandbox) {
-        if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
-            include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
-        }
-        $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
-        if ($sandbox) {
-            $this->sandbox_client_id = $this->settings->get('sandbox_client_id', '');
-            $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
-            $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
-            if (!empty($this->sandbox_client_id) && !empty($this->sandbox_secret_id)) {
-                return false;
-            } else if (!empty($this->sandbox_merchant_id)) {
-                return true;
-            } else {
-                return '';
-            }
-        } else {
-            $this->live_client_id = $this->settings->get('api_client_id', '');
-            $this->live_secret_id = $this->settings->get('api_secret', '');
-            $this->live_merchant_id = $this->settings->get('merchant_id', '');
-            if (!empty($this->live_client_id) && !empty($this->live_secret_id)) {
-                return false;
-            } else if (!empty($this->live_merchant_id)) {
-                return true;
-            } else {
-                return '';
-            }
-        }
     }
 
     public function send_paypal_seller_onboard_invitation_email($post_id) {

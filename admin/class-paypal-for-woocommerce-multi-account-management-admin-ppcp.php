@@ -178,7 +178,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 )
             )
         );
-        if ($this->angelleye_is_ppcp_third_party_enable($this->is_sandbox) === true && $this->angelleye_is_ppcp_third_party_enable($this->is_sandbox) !== '') {
+        if (angelleye_is_ppcp_third_party_enable($this->is_sandbox) === true && angelleye_is_ppcp_third_party_enable($this->is_sandbox) !== '') {
             array_push($args['meta_query'], array(
                 'key' => ($this->is_sandbox) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
                 'value' => 'yes',
@@ -2710,7 +2710,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 )
             )
         );
-        if ($this->angelleye_is_ppcp_third_party_enable($testmode) === true && $this->angelleye_is_ppcp_third_party_enable($testmode) !== '') {
+        if (angelleye_is_ppcp_third_party_enable($testmode) === true && angelleye_is_ppcp_third_party_enable($testmode) !== '') {
             array_push($args['meta_query'], array(
                 'key' => ($testmode) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
                 'value' => 'yes',
@@ -2999,36 +2999,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_ppcp_get_merchant_id($default_merchant_id) {
         $merchant_id_list = $this->angelleye_get_list_merchant_ids($default_merchant_id);
         return $merchant_id_list;
-    }
-
-    public function angelleye_is_ppcp_third_party_enable($sandbox) {
-        if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
-            include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
-        }
-        $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
-        if ($sandbox) {
-            $this->sandbox_client_id = $this->settings->get('sandbox_client_id', '');
-            $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
-            $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
-            if (!empty($this->sandbox_client_id) && !empty($this->sandbox_secret_id)) {
-                return false;
-            } else if (!empty($this->sandbox_merchant_id)) {
-                return true;
-            } else {
-                return '';
-            }
-        } else {
-            $this->live_client_id = $this->settings->get('api_client_id', '');
-            $this->live_secret_id = $this->settings->get('api_secret', '');
-            $this->live_merchant_id = $this->settings->get('merchant_id', '');
-            if (!empty($this->live_client_id) && !empty($this->live_secret_id)) {
-                return false;
-            } else if (!empty($this->live_merchant_id)) {
-                return true;
-            } else {
-                return '';
-            }
-        }
     }
 
 }
