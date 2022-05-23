@@ -1085,11 +1085,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_ui() {
+        if (!empty($_GET['on_board_request_send'])) {
+            $this->email_message = __('PayPal Seller Onboarding email sent.', 'paypal-for-woocommerce-multi-account-management');
+        }
         if (!empty($_GET['success'])) {
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
-        }
-        if (!empty($_GET['on_board_request_send'])) {
-            $this->email_message = __('PayPal seller onboard email sent.', 'paypal-for-woocommerce-multi-account-management');
         }
         if (!empty($_GET['deleted'])) {
             $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
@@ -1400,11 +1400,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
                     if ($testmode === 'on' && $board_status_sandbox === '') {
                         $this->send_paypal_seller_onboard_invitation_email($post_id);
-                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                         exit();
                     } elseif ($board_status_live === '') {
                         $this->send_paypal_seller_onboard_invitation_email($post_id);
-                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                        wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                         exit();
                     }
                 }
@@ -1419,7 +1419,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
                     }
                     $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true, 'on_board_request_send' => true)));
+                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                 } else {
                     wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
                 }
@@ -3336,7 +3336,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function send_paypal_seller_onboard_invitation_email($post_id) {
         $emails = WC()->mailer()->get_emails();
-        if (!empty($emails)) {
+        if (!empty($emails) && isset($emails['WC_Email_PayPal_Onboard_Seller_Invitation'])) {
             $emails['WC_Email_PayPal_Onboard_Seller_Invitation']->trigger($post_id);
         }
     }
