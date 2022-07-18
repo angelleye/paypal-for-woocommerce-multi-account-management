@@ -2666,8 +2666,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         $paypal = new Angelleye_PayPal_WC($PayPalConfig);
         $SECFields = array(
             'token' => '',
-            'returnurl' => 'https://www.google.com/',
-            'cancelurl' => 'https://www.google.com/',
+            'returnurl' => 'https://www.paypal.com/checkoutnow/error',
+            'cancelurl' => 'https://www.paypal.com/checkoutnow/error',
         );
         $Payments = array();
         $Payment = array(
