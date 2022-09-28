@@ -210,7 +210,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = maybe_unserialize($microprocessing_value[0]);
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -284,7 +284,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = maybe_unserialize($microprocessing_value[0]);
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -361,7 +361,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = !empty(maybe_unserialize($microprocessing_value[0])) ? maybe_unserialize($microprocessing_value[0]) : '';
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -467,7 +467,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $countries_states = WC()->countries->get_states();
             foreach ($countries_states as $countries_states_key => $countries_states_value) {
-                if(in_array($countries_states_key, $buyer_countries)) {
+                if (in_array($countries_states_key, $buyer_countries)) {
                     foreach ($countries_states_value as $state_key => $state_full_name) {
                         $option_seven_zero .= '<option value="' . esc_attr($state_key) . '"' . wc_selected($state_key, $buyer_states) . '>' . esc_html($state_full_name) . '</option>';
                     }
@@ -661,10 +661,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
             $angelleye_smart_commission = !empty($_POST['angelleye_smart_commission']) ? $_POST['angelleye_smart_commission'] : '';
             $temp_role = array();
-            if(!empty($angelleye_smart_commission['role'])) {
+            if (!empty($angelleye_smart_commission['role'])) {
                 foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
-                    if(!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
-                        if (array_key_exists($ro_value,$temp_role)) {
+                    if (!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
+                        if (array_key_exists($ro_value, $temp_role)) {
                             unset($angelleye_smart_commission['commission'][$ro_key]);
                             unset($angelleye_smart_commission['role'][$ro_key]);
                             unset($angelleye_smart_commission['item_label'][$ro_key]);
@@ -768,7 +768,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        
+
                     </table>
                     <table class="form-table angelleye_smart_commission_tt">
                         <tr>
@@ -2687,9 +2687,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
-                $product_title = get_the_title($value);
-                if (!empty($product_title)) {
-                    $all_products[$value] = $product_title;
+                $product_detail = wc_get_product($value);
+                if ('variable' === $product_detail->get_type()) {
+                    $all_products[$value] = $product_detail->get_name();
+                    if (count($product_detail->get_children()) > 0) {
+                        foreach ($product_detail->get_children() as $children_key => $children_id) {
+                            $all_products[$children_id] = get_the_title($children_id);
+                        }
+                    }
+                } else {
+                    $product_title = get_the_title($value);
+                    if (!empty($product_title)) {
+                        $all_products[$value] = $product_title;
+                    }
                 }
             }
         }
@@ -2833,8 +2843,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
     }
-    
-    
+
     public function angelleye_pfwma_get_buyer_states() {
         ob_start();
         if (!current_user_can('edit_products')) {
@@ -2842,9 +2851,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $state_list = array();
         $countries_states = WC()->countries->get_states();
-        if(isset($_POST['country_list']) && !empty($_POST['country_list'])) {
+        if (isset($_POST['country_list']) && !empty($_POST['country_list'])) {
             foreach ($countries_states as $countries_states_key => $countries_states_value) {
-                if(in_array($countries_states_key, $_POST['country_list'])) {
+                if (in_array($countries_states_key, $_POST['country_list'])) {
                     foreach ($countries_states_value as $state_key => $state_full_name) {
                         $state_list[$state_key] = $state_full_name;
                     }
@@ -2853,7 +2862,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             wp_die('failed');
         }
-        
+
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $state_list));
     }
 
