@@ -210,7 +210,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = maybe_unserialize($microprocessing_value[0]);
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -284,7 +284,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = maybe_unserialize($microprocessing_value[0]);
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -361,7 +361,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     case 'buyer_countries':
                         $buyer_countries = !empty(maybe_unserialize($microprocessing_value[0])) ? maybe_unserialize($microprocessing_value[0]) : '';
                         break;
-                     case 'buyer_states':
+                    case 'buyer_states':
                         $buyer_states = maybe_unserialize($microprocessing_value[0]);
                         break;
                     case 'postcode':
@@ -467,7 +467,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             }
             $countries_states = WC()->countries->get_states();
             foreach ($countries_states as $countries_states_key => $countries_states_value) {
-                if(in_array($countries_states_key, $buyer_countries)) {
+                if (in_array($countries_states_key, $buyer_countries)) {
                     foreach ($countries_states_value as $state_key => $state_full_name) {
                         $option_seven_zero .= '<option value="' . esc_attr($state_key) . '"' . wc_selected($state_key, $buyer_states) . '>' . esc_html($state_full_name) . '</option>';
                     }
@@ -661,10 +661,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_option('angelleye_payment_load_balancer', wc_clean($angelleye_payment_load_balancer));
             $angelleye_smart_commission = !empty($_POST['angelleye_smart_commission']) ? $_POST['angelleye_smart_commission'] : '';
             $temp_role = array();
-            if(!empty($angelleye_smart_commission['role'])) {
+            if (!empty($angelleye_smart_commission['role'])) {
                 foreach ($angelleye_smart_commission['role'] as $ro_key => $ro_value) {
-                    if(!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
-                        if (array_key_exists($ro_value,$temp_role)) {
+                    if (!empty($angelleye_smart_commission['commission'][$ro_key]) && !empty($angelleye_smart_commission['role'][$ro_key]) && !empty($angelleye_smart_commission['item_label'][$ro_key])) {
+                        if (array_key_exists($ro_value, $temp_role)) {
                             unset($angelleye_smart_commission['commission'][$ro_key]);
                             unset($angelleye_smart_commission['role'][$ro_key]);
                             unset($angelleye_smart_commission['item_label'][$ro_key]);
@@ -768,7 +768,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </fieldset>
                             </td>
                         </tr>
-                        
+
                     </table>
                     <table class="form-table angelleye_smart_commission_tt">
                         <tr>
@@ -1071,8 +1071,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
                 $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
                 $table->prepare_items();
+                if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+                    echo '<span class="subtitle">';
+                    printf(
+                            /* translators: %s: Search query. */
+                            __('Search results for: %s'),
+                            '<strong>' . $_REQUEST['s'] . '</strong>'
+                    );
+                    echo '</span>';
+                }
+
                 echo '<form id="account-filter" method="post">';
-                echo sprintf('<input type="hidden" name="page" value="%1$s" />', $_REQUEST['page']);
+                ?>
+                <input type="hidden" name="post_type" value="microprocessing" />
+                <?php
+                $table->search_box(__('Search Accounts'), 'link');
+
                 $table->display();
                 echo '</form>';
             }
@@ -1939,7 +1953,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <?php if (wc_shipping_enabled()) { ?>
+                        <?php if (wc_shipping_enabled()) { ?>
                         <p class="description"><?php _e('Shipping Zones', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select id="pfwst_shipping_zone" name="shipping_zone" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All Shipping Zones', 'paypal-for-woocommerce-multi-account-management'); ?>">
                             <?php
@@ -1952,8 +1966,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    <?php } ?>
-                    <?php if (wc_shipping_enabled()) { ?>
+        <?php } ?>
+                        <?php if (wc_shipping_enabled()) { ?>
                         <p class="description"><?php _e('Shipping Class', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select id="pfwst_shipping_class" name="shipping_class" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All Shipping Class', 'paypal-for-woocommerce-multi-account-management'); ?>">
                             <?php
@@ -1967,11 +1981,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    <?php } ?>
+        <?php } ?>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
                     <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="angelleye-category-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>" data-allow_clear="true">
                     </select>
-                    <?php ?>
+        <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="angelleye_pfwma_get_product_tags"></select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
@@ -2483,6 +2497,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'posts_per_page' => -1,
+            'suppress_filters' => true,
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
@@ -2510,6 +2525,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'posts_per_page' => -1,
+            'suppress_filters' => true,
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
@@ -2833,8 +2849,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $found_categories));
     }
-    
-    
+
     public function angelleye_pfwma_get_buyer_states() {
         ob_start();
         if (!current_user_can('edit_products')) {
@@ -2842,9 +2857,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         $state_list = array();
         $countries_states = WC()->countries->get_states();
-        if(isset($_POST['country_list']) && !empty($_POST['country_list'])) {
+        if (isset($_POST['country_list']) && !empty($_POST['country_list'])) {
             foreach ($countries_states as $countries_states_key => $countries_states_value) {
-                if(in_array($countries_states_key, $_POST['country_list'])) {
+                if (in_array($countries_states_key, $_POST['country_list'])) {
                     foreach ($countries_states_value as $state_key => $state_full_name) {
                         $state_list[$state_key] = $state_full_name;
                     }
@@ -2853,7 +2868,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         } else {
             wp_die('failed');
         }
-        
+
         wp_send_json(apply_filters('woocommerce_json_search_found_categories', $state_list));
     }
 
