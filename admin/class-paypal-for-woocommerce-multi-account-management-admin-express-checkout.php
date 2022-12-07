@@ -517,12 +517,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     continue;
                                 }
                             }
-
-
                             $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
-
+                            $cart_products_id = array();
+                            if(isset($line_item['variation_id'])) {
+                                $cart_products_id[] = $line_item['variation_id'];
+                            }
+                            $cart_products_id[] = $product_id;
                             if (!empty($product_ids)) {
-                                if (!array_intersect((array) $product_id, $product_ids)) {
+                                if (!array_intersect((array) $cart_products_id, $product_ids)) {
                                     $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                     continue;
                                 }
@@ -635,8 +637,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     }
                                 }
                                 $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                                $cart_products_id = array();
+                                if(isset($cart_item['variation_id'])) {
+                                    $cart_products_id[] = $cart_item['variation_id'];
+                                }
+                                $cart_products_id[] = $product_id;
                                 if (!empty($product_ids)) {
-                                    if (!array_intersect((array) $product_id, $product_ids)) {
+                                    if (!array_intersect((array) $cart_products_id, $product_ids)) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
                                         continue;
                                     }

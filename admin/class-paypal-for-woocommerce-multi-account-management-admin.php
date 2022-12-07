@@ -2703,9 +2703,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
-                $product_title = get_the_title($value);
-                if (!empty($product_title)) {
-                    $all_products[$value] = $product_title;
+                $product_detail = wc_get_product($value);
+                if ('variable' === $product_detail->get_type()) {
+                    $all_products[$value] = $product_detail->get_name();
+                    if (count($product_detail->get_children()) > 0) {
+                        foreach ($product_detail->get_children() as $children_key => $children_id) {
+                            $all_products[$children_id] = get_the_title($children_id);
+                        }
+                    }
+                } else {
+                    $product_title = get_the_title($value);
+                    if (!empty($product_title)) {
+                        $all_products[$value] = $product_title;
+                    }
                 }
             }
         }
