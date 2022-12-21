@@ -1,3 +1,6 @@
+jQuery(function ($) {
+    console.log(pfwma_param);
+});
 
 jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function () {
     angelleye_multi_account_paypal_express_hide_show_field();
@@ -74,7 +77,7 @@ jQuery('#angelleye_payment_load_balancer').change(function () {
     }
 }).change();
 jQuery('#angelleye_smart_commission').change(function () {
-    if(jQuery('#angelleye_payment_load_balancer').is(':checked')) {
+    if (jQuery('#angelleye_payment_load_balancer').is(':checked')) {
         jQuery('.global_ec_site_owner_commission_label_tr, .global_ec_site_owner_commission_tr, .global_ec_include_tax_shipping_in_commission_tr, .angelleye_smart_commission_tr, .angelleye_smart_commission_tt').hide();
     } else {
         if (jQuery(this).is(':checked')) {
@@ -117,16 +120,16 @@ jQuery('#woocommerce_paypal_express_always_trigger').change(function () {
     if (jQuery(this).is(':checked')) {
         jQuery('.trigger_conditions_fields').hide();
         jQuery('.site_owner_commission_field').hide();
-        jQuery("#always_trigger_commission_microprocessing").prop('required',true);
-        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required',true);
-        
+        jQuery("#always_trigger_commission_microprocessing").prop('required', true);
+        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required', true);
+
         jQuery('.paypal_express_always_trigger_commission_field').show();
     } else {
         jQuery('.trigger_conditions_fields').show();
         jQuery('.site_owner_commission_field').show();
         jQuery('.paypal_express_always_trigger_commission_field').hide();
-        jQuery("#always_trigger_commission_microprocessing").prop('required',false);
-        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required',false);
+        jQuery("#always_trigger_commission_microprocessing").prop('required', false);
+        jQuery("#always_trigger_commission_item_label_microprocessing").prop('required', false);
     }
 }).change();
 
@@ -146,16 +149,16 @@ jQuery('#buyer_countries').on('change', function (e) {
     };
     jQuery.post(ajaxurl, data, function (response) {
         if ('failed' !== response) {
-            jQuery.each(response,function(key, value) {
-                jQuery('#buyer_states').append('<option value=' + key + '>' + value + '</option>'); 
+            jQuery.each(response, function (key, value) {
+                jQuery('#buyer_states').append('<option value=' + key + '>' + value + '</option>');
             });
             jQuery('#buyer_states').trigger('change');
-        } 
+        }
     });
 });
 
 jQuery('#product_tags').on('select2:unselect', function (e) {
-   jQuery('#product_list').val('').trigger('change');
+    jQuery('#product_list').val('').trigger('change');
 });
 
 
@@ -221,42 +224,45 @@ jQuery('.disable_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
-jQuery( "#angelleye_multi_account_global_setting" ).submit(function( event ) {
+jQuery("#angelleye_multi_account_global_setting").submit(function (event) {
     window.onbeforeunload = null;
-    jQuery('angelleye_multi_account_global_setting').sumit();
+    jQuery('angelleye_multi_account_global_setting').submit();
 });
-jQuery( "#angelleye_multi_account" ).submit(function( event ) {
+jQuery("#angelleye_multi_account").submit(function (event) {
     window.onbeforeunload = null;
-    if(jQuery("#is_force_submit").val() === 'yes') {
+    if (jQuery("#is_force_submit").val() === 'yes') {
         return true;
     }
-    var total_not_empty_fields = 0;
-    var paypal_express_field_names = [ "woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "buyer_countries", "buyer_states", "store_countries", "pfwst_shipping_class", "product_categories", "product_tags", "product_list", "woocommerce_paypal_express_api_condition_value", "currency_code", "card_type", "postcode" ];
-    jQuery.each( paypal_express_field_names, function( i, name ) {
-        if( jQuery('#' + name).val() !== '' && jQuery('#' + name).val() !== 'all' && jQuery('#' + name).val() !== '0' && jQuery('#' + name).val() !== null && jQuery('#' + name).val() !== undefined) {
-            total_not_empty_fields = total_not_empty_fields + 1;
-        } 
-    });
-    jQuery.each( pfwma_param.custom_fields, function( i, name ) {
-        if( name === 'checkbox' || name === 'radio') {
-            if(jQuery("[name="+i+"]").is(":checked") ) {
+    if (pfwma_param.is_angelleye_payment_load_balancer_enable === 'no') {
+        var total_not_empty_fields = 0;
+        var paypal_express_field_names = ["woocommerce_priority", "woocommerce_paypal_express_api_user_role", "woocommerce_paypal_express_api_user", "buyer_countries", "buyer_states", "store_countries", "pfwst_shipping_class", "product_categories", "product_tags", "product_list", "woocommerce_paypal_express_api_condition_value", "currency_code", "card_type", "postcode"];
+        jQuery.each(paypal_express_field_names, function (i, name) {
+            if (jQuery('#' + name).val() !== '' && jQuery('#' + name).val() !== 'all' && jQuery('#' + name).val() !== '0' && jQuery('#' + name).val() !== null && jQuery('#' + name).val() !== undefined) {
                 total_not_empty_fields = total_not_empty_fields + 1;
             }
-        } else {
-            if(jQuery("[name="+i+"]").val() !== '' ) {
-                total_not_empty_fields = total_not_empty_fields + 1;
-            } 
+        });
+        jQuery.each(pfwma_param.custom_fields, function (i, name) {
+            if (name === 'checkbox' || name === 'radio') {
+                if (jQuery("[name=" + i + "]").is(":checked")) {
+                    total_not_empty_fields = total_not_empty_fields + 1;
+                }
+            } else {
+                if (jQuery("[name=" + i + "]").val() !== '') {
+                    total_not_empty_fields = total_not_empty_fields + 1;
+                }
+            }
+        });
+        if (total_not_empty_fields === 0) {
+            event.preventDefault();
+            var r = confirm(pfwma_param.rule_with_no_condition_set_message);
+            if (r === true) {
+                var force_submit_flag = jQuery("<input>").attr("type", "hidden").attr("name", "microprocessing_save").attr("id", "is_force_submit").val("yes");
+                jQuery("#angelleye_multi_account").append(force_submit_flag);
+                jQuery("#angelleye_multi_account").submit();
+            }
         }
-    });
-    if(total_not_empty_fields === 0) {
-        event.preventDefault();
-        var r = confirm(pfwma_param.rule_with_no_condition_set_message);
-        if (r === true) {
-            var force_submit_flag = jQuery("<input>").attr("type", "hidden").attr("name", "microprocessing_save").attr("id", "is_force_submit").val("yes");
-            jQuery( "#angelleye_multi_account" ).append(force_submit_flag);
-            jQuery( "#angelleye_multi_account" ).submit();
-        }
-    } 
+    }
+
 });
 
 jQuery('.enable_all_vendor_rules').on('click', function (event) {
@@ -308,11 +314,11 @@ jQuery('.create_all_vendor_rules').on('click', function (event) {
     }
 });
 jQuery('.angelleye_add_new_smart_commission_role').on('click', function (event) {
-   event.preventDefault();
-   var $tableBody = jQuery('#angelleye_smart_commission_table').find("tbody"),
-        $trLast = $tableBody.find("tr:last"),
-        $trNew = $trLast.clone();
-    $trNew.find( 'input' ).val( '' );
-    $trNew.find("option").prop("selected", false).trigger( "change" );
+    event.preventDefault();
+    var $tableBody = jQuery('#angelleye_smart_commission_table').find("tbody"),
+            $trLast = $tableBody.find("tr:last"),
+            $trNew = $trLast.clone();
+    $trNew.find('input').val('');
+    $trNew.find("option").prop("selected", false).trigger("change");
     $trLast.after($trNew);
 });

@@ -1501,9 +1501,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_script('selectWoo');
         wp_enqueue_style('select2');
         wp_enqueue_script('wc-enhanced-select');
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if(!empty($angelleye_payment_load_balancer)) {
+            $angelleye_payment_load_balancer = 'yes';
+        } else {
+            $angelleye_payment_load_balancer = 'no';
+        }
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
             'rule_with_no_condition_set_message' => __('You have not set any Trigger Conditions for this rule. Therefore, this rule will trigger for all orders from now on. Would you still like to continue?', 'paypal-for-woocommerce-multi-account-management'),
-            'custom_fields' => angelleye_get_checkout_custom_field_keys()
+            'custom_fields' => angelleye_get_checkout_custom_field_keys(),
+            'is_angelleye_payment_load_balancer_enable' => $angelleye_payment_load_balancer
                 )
         );
 
