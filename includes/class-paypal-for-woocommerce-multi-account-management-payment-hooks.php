@@ -18,7 +18,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Hooks {
 
     public function setupMetaBoxes()
     {
-        add_meta_box('angelleye_admin_order_multi_account_order_summary', __('Multi Account Payments Summary', 'paypal-for-woocommerce'), array($this, 'multi_account_order_summary'), 'shop_order', 'side', 'default');
+        add_meta_box('angelleye_admin_order_multi_account_order_summary', __('Multi-Account Summary', 'paypal-for-woocommerce'), array($this, 'multi_account_order_summary'), 'shop_order', 'side', 'default');
     }
 
     public function multi_account_order_summary($post)

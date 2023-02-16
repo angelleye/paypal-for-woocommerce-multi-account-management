@@ -1099,7 +1099,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <div id="angelleye_paypal_marketing_table">
         <br>
-        <h1 class="wp-heading-inline"><?php echo __('Payment History by Account', ''); ?></h1>
+        <h1 class="wp-heading-inline"><?php echo __('PayPal Payment Distribution Report', ''); ?></h1>
         <?php
         if (class_exists('PFWMA_Payments_History_List')) {
             $table = new PFWMA_Payments_History_List();
