@@ -1209,6 +1209,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_WP_List_Table {
 			wp_nonce_field( 'bulk-' . $this->_args['plural'] );
 		}
 		?>
+        <?php if ('top' === $which) $this->views(); ?>
 	<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
 		<?php if ( $this->has_items() ) : ?>

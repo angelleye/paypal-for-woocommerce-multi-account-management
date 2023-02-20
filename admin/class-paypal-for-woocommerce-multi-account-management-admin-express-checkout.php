@@ -61,6 +61,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public $always_trigger_commission_accounts_line_items;
     public $always_trigger_commission_total_percentage;
     public $all_commision_line_item;
+    public array $final_payment_summary;
 
     /**
      * Initialize the class and set its properties.
@@ -544,6 +545,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                             }
                             if ($gateways->testmode == true) {
+                                $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0] : null;
+                                if (empty($paypal_email)) {
+                                    $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0] : null;
+                                }
+                                $this->map_item_with_account[$product_id]['multi_account_identifier'] = $paypal_email;
+
                                 if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                     $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
                                 } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
@@ -557,6 +564,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                 }
                             } else {
+                                $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_email'][0] : null;
+                                if (empty($paypal_email)) {
+                                    $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_api_username'][0] : null;
+                                }
+                                $this->map_item_with_account[$product_id]['multi_account_identifier'] = $paypal_email;
+
                                 if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
                                     $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_email'][0];
                                 } elseif (isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_merchant_id'][0])) {
@@ -695,6 +708,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                                 }
                                 if ($gateways->testmode == true) {
+                                    $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0] : null;
+                                    if (empty($paypal_email)) {
+                                        $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0] : null;
+                                    }
+                                    $this->map_item_with_account[$product_id]['multi_account_identifier'] = $paypal_email;
                                     if (isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0])) {
                                         $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0])) {
@@ -708,6 +726,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                         $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                     }
                                 } else {
+                                    $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_email'][0] : null;
+                                    if (empty($paypal_email)) {
+                                        $paypal_email = isset($microprocessing_array['woocommerce_paypal_express_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_api_username'][0] : null;
+                                    }
+                                    $this->map_item_with_account[$product_id]['multi_account_identifier'] = $paypal_email;
                                     if (isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0])) {
                                         $this->map_item_with_account[$product_id]['email'] = $microprocessing_array['woocommerce_paypal_express_email'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_paypal_express_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_merchant_id'][0])) {
@@ -766,7 +789,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         } else {
             return $this->angelleye_get_account_for_ec_parallel_payments($gateways, $gateway_setting, $order_id, $request);
         }
-        return $request;
     }
 
     public function angelleye_unset_multi_account_dataset($gateways) {
@@ -1770,6 +1792,23 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $request['Payments'] = $new_payments;
             if (!empty($order_id) && !empty($this->map_item_with_account) && $this->angelleye_is_multi_account_used($this->map_item_with_account)) {
                 update_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', $this->map_item_with_account);
+
+                $this->final_payment_summary = [];
+                $identifierFinder = function ($sellerId, $mapAccountList) {
+                    foreach ($mapAccountList as $item) {
+                        if ($item['email'] == $sellerId) {
+                            return $item['multi_account_identifier'];
+                        }
+                    }
+                    return 'default';
+                };
+                foreach ($this->final_payment_request_data as $paymentId => $paymentData) {
+                    $this->final_payment_summary[$paymentId] = ['amount' => $paymentData['amt'], 'paid_to' => $paymentData['sellerpaypalaccountid'],
+                        'mac_identifier' => $identifierFinder($paymentData['sellerpaypalaccountid'], $this->map_item_with_account)
+                    ];
+                }
+
+                update_post_meta($order_id, '_angelleye_multi_account_ec_payment_summary', $this->final_payment_summary);
             }
         } else {
             $request['Payments'] = $old_payments;
@@ -2018,8 +2057,54 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return false;
     }
 
+    public function update_total_amount_received_by_accounts($order, $amount, $account_email = null, $merchant_id = null)
+    {
+        $main_identifier = empty($account_email) ? $merchant_id : $account_email;
+        if (empty($main_identifier)) {
+            $main_identifier = 'other';
+        }
+        global $wpdb;
+        $is_sandbox = get_post_meta($order->get_id(), 'is_sandbox', true);
+        if ($is_sandbox == 1)
+            $main_identifier = 'sandbox-' . $main_identifier;
+        $total_row = $wpdb->get_row($wpdb->prepare("select * from {$wpdb->posts} where post_type = 'multi_ac_totals' and post_title = %s", $main_identifier));
+        if ($total_row) {
+            wp_update_post(['post_content' => floatval($total_row->post_content) + $amount, 'ID' => $total_row->ID,
+                'post_status' => 'publish']);
+        } else {
+            wp_insert_post([
+                'post_title' => $main_identifier,
+                'post_type' => 'multi_ac_totals',
+                'post_content' => $amount,
+                'post_status' => 'publish'
+            ]);
+        }
+    }
+
     public function own_angelleye_express_checkout_order_data($paypal_response, $order_id) {
         $order = wc_get_order($order_id);
+        $order->add_order_note(json_encode($paypal_response));
+
+        if (!$this->own_angelleye_is_payment_load_balancer_not_used(true, $order_id)) {
+            $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
+            $always_transaction_map = 0;
+            if (!isset($angelleye_payment_load_balancer_account['multi_account_identifier'])) {
+                $angelleye_payment_load_balancer_account['multi_account_identifier'] = $angelleye_payment_load_balancer_account['email'];
+            }
+            if ($angelleye_payment_load_balancer_account['multi_account_identifier'] == 'default') {
+                $angelleye_payment_load_balancer_account['multi_account_identifier'] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SELLERPAYPALACCOUNTID'];
+                $angelleye_payment_load_balancer_account['email'] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID'];
+            }
+            $this->final_payment_summary = [];
+            $this->final_payment_summary[$paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID']] = ['amount' => $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_AMT'], 'paid_to' => $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID'],
+                'mac_identifier' => $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SELLERPAYPALACCOUNTID']
+            ];
+            update_post_meta($order_id, '_angelleye_multi_account_ec_payment_summary', $this->final_payment_summary);
+
+            $this->update_total_amount_received_by_accounts($order, $this->final_payment_summary[$paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID']]['amount'], $this->final_payment_summary[$paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID']]['mac_identifier'], $this->final_payment_summary[$paypal_response['PAYMENTINFO_' . $always_transaction_map . '_SECUREMERCHANTACCOUNTID']]['paid_to']);
+            return true;
+        }
+
         $ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', true);
         if (empty($ec_parallel_data_map)) {
             return false;
@@ -2047,6 +2132,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                             $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
                             if (!empty($request_order_item_id[0]) && $always_ec_parallel_data['multi_account_id'] == $request_order_item_id[1]) {
                                 if (!empty($paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'])) {
+                                    $this->update_total_amount_received_by_accounts($order, $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_AMT'], $ec_parallel_data_map[$key][$always_ec_parallel_data['multi_account_id']]['multi_account_identifier'], $ec_parallel_data_map[$key][$always_ec_parallel_data['multi_account_id']]['sellerpaypalaccountid']);
                                     $ec_parallel_data_map[$key][$always_ec_parallel_data['multi_account_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
                                     $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $always_transaction_map . '_TRANSACTIONID'];
                                 }
@@ -2061,6 +2147,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                         $request_order_item_id = explode('-', $PAYMENTREQUESTID_array);
                         if (!empty($request_order_item_id[0]) && $ec_parallel_data['order_item_id'] == $request_order_item_id[0]) {
                             if (!empty($paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'])) {
+                                $this->update_total_amount_received_by_accounts($order, $paypal_response['PAYMENTINFO_' . $transaction_map . '_AMT'], $ec_parallel_data_map[$ec_parallel_data['product_id']]['multi_account_identifier'], $ec_parallel_data_map[$ec_parallel_data['product_id']]['sellerpaypalaccountid']);
                                 $ec_parallel_data_map[$ec_parallel_data['product_id']]['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
                                 $unique_transaction_data[] = $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID'];
                                 wc_update_order_item_meta($ec_parallel_data['order_item_id'], '_transaction_id', $paypal_response['PAYMENTINFO_' . $transaction_map . '_TRANSACTIONID']);
@@ -2077,6 +2164,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             for ($transaction = 0; $transaction <= count($ec_parallel_data); $transaction++) {
                 if (isset($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID']) && !empty($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'])) {
                     if (!in_array($paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'], $unique_transaction_data)) {
+                        $this->update_total_amount_received_by_accounts($order, $paypal_response['PAYMENTINFO_' . $transaction . '_AMT'], '', $paypal_response['PAYMENTINFO_' . $transaction . '_SELLERPAYPALACCOUNTID']);
                         $ec_parallel_data_map['primary']['transaction_id'] = $paypal_response['PAYMENTINFO_' . $transaction . '_TRANSACTIONID'];
                         $ec_parallel_data_map['primary']['multi_account_id'] = 'default';
                     }
@@ -2436,6 +2524,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 $request['Payments'][0]['sellerpaypalaccountid'] = $found_email;
                 if (!empty($order_id)) {
                     $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
+                    update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
+                }
+            } else {
+                if (!empty($order_id)) {
+                    $angelleye_payment_load_balancer_account = ['multi_account_id' => 'default', 'is_used' => 'yes', 'is_api_set' => 1, 'email' => '',
+                        'multi_account_identifier' => 'default'];
                     update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
                 }
             }

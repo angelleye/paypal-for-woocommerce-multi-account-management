@@ -108,7 +108,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-i18n.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-wp-list-table.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-list-data.php';
-        
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-pfwma-payments-history-list.php';
+
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-payment-hooks.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-vendor.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/class-paypal-for-woocommerce-multi-account-management-payment-load-balancer.php';
 
@@ -169,6 +171,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
 
+        $order_summary = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Hooks($this->get_plugin_name(), $this->get_version());
+        $this->loader->add_action('add_meta_boxes', $order_summary, 'setupMetaBoxes', 11, 3);
 
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
@@ -290,16 +294,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->display_plugin_admin_page_submenu();
         echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
         $this->plugin_admin->display_admin_notice();
-       if (!empty($_GET['section']) && $_GET['section'] === 'add_edit_account') {
-            $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
-        } elseif (!empty($_GET['section']) && $_GET['section'] === 'settings') {
-            $this->plugin_admin->angelleye_multi_account_settings_fields();
-        } else {
-             $this->plugin_admin->angelleye_multi_account_list();
-        } 
-        
-        
-        
+        $section = !empty($_GET['section']) ? $_GET['section'] : '';
+        switch ($section) {
+            case 'add_edit_account':
+                $this->plugin_admin->angelleye_paypal_for_woocommerce_general_settings_tab_content();
+                break;
+            case 'settings':
+                $this->plugin_admin->angelleye_multi_account_settings_fields();
+                break;
+            case 'total_payments':
+                $this->plugin_admin->angelleye_multi_account_total_payments();
+                break;
+            default:
+                $this->plugin_admin->angelleye_multi_account_list();
+        }
     }
 
     public function display_plugin_admin_page_submenu() {
@@ -321,7 +329,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                     if (!empty($_GET['section']) && $_GET['section'] == 'settings') {
                         echo 'current';
                     }
-                    ?>"><?php echo __('Settings', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>
+                    ?>"><?php echo __('Settings', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a> | </li>
+                <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=total_payments')); ?>" class="<?php
+                    if (!empty($_GET['section']) && $_GET['section'] == 'total_payments') {
+                        echo 'current';
+                    }
+                    ?>"><?php echo __('Account Payments Log', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>
             </ul>
             <br class="clear">
             <?php

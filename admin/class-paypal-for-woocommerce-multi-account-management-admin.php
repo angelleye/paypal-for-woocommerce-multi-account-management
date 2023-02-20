@@ -1094,6 +1094,38 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $this->angelleye_pfwma_display_marketing_sidebar();
     }
 
+    public function angelleye_multi_account_total_payments()
+    {
+        ?>
+        <div id="angelleye_paypal_marketing_table">
+        <br>
+        <h1 class="wp-heading-inline"><?php echo __('PayPal Payment Distribution Report', ''); ?></h1>
+        <?php
+        if (class_exists('PFWMA_Payments_History_List')) {
+            $table = new PFWMA_Payments_History_List();
+            $table->prepare_items();
+            if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+                echo '<span class="subtitle">';
+                printf(
+                /* translators: %s: Search query. */
+                    __('Search results for: %s'),
+                    '<strong>' . $_REQUEST['s'] . '</strong>'
+                );
+                echo '</span>';
+            }
+
+            echo '<form id="account-filter" method="post">';
+            ?>
+            <input type="hidden" name="post_type" value="microprocessing" />
+            <?php
+
+            $table->display();
+            echo '</form>';
+        } ?>
+        </div>
+        <?php
+    }
+
     public function angelleye_save_multi_account_data() {
         if (!empty($_POST['microprocessing_save'])) {
             if (empty($_REQUEST['_wpnonce']) || !wp_verify_nonce($_REQUEST['_wpnonce'], 'microprocessing_save')) {
