@@ -29,7 +29,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
-= 3.2.0 - 12.21.2022 =
+= 3.2.0 - 02.20.2023 =
 * Feature - Show the split payment summary on the order details page. ([PFWMA-293](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/113))
 * Feature - New tab to show the total payments received by the PayPal accounts. ([PFWMA-293](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/113))
 
