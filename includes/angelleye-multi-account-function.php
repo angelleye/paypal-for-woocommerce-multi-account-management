@@ -164,11 +164,18 @@ function angelleye_get_checkout_custom_field_keys() {
         'account' => array('account_username', 'account_password', 'account_password-2'),
         'order' => array('order_comments')
     );
-    $checkout_fields = WC()->checkout->get_checkout_fields();
+
+    /**
+     * Adds isset() and is_array() to avoid errors when the data is not a clean array.
+     * Resolves PFWMA-294
+     * support@angelleye.com
+     */
     foreach ($checkout_fields as $type => $checkout_field) {
-        foreach ($checkout_field as $key => $field) {
-            if (!in_array($key, $woo_checkout_default_fields[$type])) {
-                $woo_custome_fields[$key] = $field['type'];
+        if (isset($woo_checkout_default_fields[$type]) && is_array($woo_checkout_default_fields[$type])) {
+            foreach ($checkout_field as $key => $field) {
+                if (!in_array($key, $woo_checkout_default_fields[$type])) {
+                    $woo_custome_fields[$key] = $field;
+                }
             }
         }
     }
