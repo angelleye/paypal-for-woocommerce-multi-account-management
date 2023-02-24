@@ -20,9 +20,9 @@
  * Text Domain:       paypal-for-woocommerce-multi-account-management
  * Domain Path:       /languages
  * Requires at least: 5.0
- * Tested up to: 5.8.2
+ * Tested up to: 6.1.1
  * WC requires at least: 3.0.0
- * WC tested up to: 6.0.0
+ * WC tested up to: 7.4.0
  */
 // If this file is called directly, abort.
 if (!defined('WPINC')) {
