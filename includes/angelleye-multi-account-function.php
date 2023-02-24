@@ -121,7 +121,7 @@ function angelleye_pfwma_log($message, $level = 'info') {
 
 function angelleye_display_checkout_custom_field() {
     $woo_custome_fields = array();
-    if(!function_exists('WC')) {
+    if (!function_exists('WC')) {
         return $woo_custome_fields;
     }
     $woo_checkout_default_fields = array(
@@ -150,12 +150,11 @@ function angelleye_display_checkout_custom_field() {
     }
 
     return $woo_custome_fields;
-
 }
 
 function angelleye_get_checkout_custom_field_keys() {
     $woo_custome_fields = array();
-    if(!function_exists('WC')) {
+    if (!function_exists('WC')) {
         return $woo_custome_fields;
     }
     $woo_checkout_default_fields = array(
@@ -170,6 +169,9 @@ function angelleye_get_checkout_custom_field_keys() {
      * Resolves PFWMA-294
      * support@angelleye.com
      */
+    
+    $checkout_fields = WC()->checkout->get_checkout_fields();
+
     foreach ($checkout_fields as $type => $checkout_field) {
         if (isset($woo_checkout_default_fields[$type]) && is_array($woo_checkout_default_fields[$type])) {
             foreach ($checkout_field as $key => $field) {
