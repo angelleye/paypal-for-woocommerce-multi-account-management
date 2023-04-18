@@ -759,7 +759,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return $request;
     }
 
-    public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($request = null, $gateways, $current = null, $order_id = null, $is_force_validate = 'no') {
+    public function angelleye_paypal_for_woocommerce_multi_account_api_paypal_express($request = null, $gateways = null, $current = null, $order_id = null, $is_force_validate = 'no') {
         if (empty($request)) {
             return;
         }

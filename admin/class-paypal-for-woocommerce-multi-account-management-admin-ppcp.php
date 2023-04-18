@@ -138,7 +138,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
     }
 
-    public function angelleye_get_account_for_ppcp_parallel_payments($request = null, $action, $order_id = null) {
+    public function angelleye_get_account_for_ppcp_parallel_payments($request = null, $action = null, $order_id = null) {
         global $user_ID;
         $current_user_roles = array();
         if (is_user_logged_in()) {
@@ -686,7 +686,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $request;
     }
 
-    public function angelleye_ppcp_request_multi_account($request = null, $action, $order_id = null) {
+    public function angelleye_ppcp_request_multi_account($request = null, $action = null, $order_id = null) {
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if ($angelleye_payment_load_balancer != '') {
             if ($action != 'update_order') {
@@ -2253,7 +2253,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function angelleye_get_account_for_ppcp_payment_load_balancer($request = null, $action, $order_id = null) {
+    public function angelleye_get_account_for_ppcp_payment_load_balancer($request = null, $action = null, $order_id = null) {
         if (!isset($this->is_sandbox)) {
             return;
         }
