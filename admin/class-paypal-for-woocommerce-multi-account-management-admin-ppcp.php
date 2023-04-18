@@ -2914,45 +2914,40 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $session_key = 'angelleye_payment_load_balancer_ppcp_email';
             $session_key_account = 'angelleye_payment_load_balancer_ppcp_account';
         }
-        $found_merchant_id = WC()->session->get($session_key);
-        if (empty($found_merchant_id)) {
-            $found_merchant_id = '';
-            $ppcp_accounts = get_option($option_key);
-            if (!empty($ppcp_accounts)) {
-                foreach ($ppcp_accounts as $key => $account) {
-                    if (empty($account['is_used'])) {
-                        if ($key != 'default' && false === get_post_status($key)) {
-                            unset($ppcp_accounts[$key]);
-                        } else {
-                            $found_merchant_id = $account['merchant_id'];
-                            WC()->session->set($session_key, $account['merchant_id']);
-                            $account['is_used'] = 'yes';
-                            $ppcp_accounts[$key] = $account;
-                            WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $ppcp_accounts);
-                            $found_account = true;
-                            break;
-                        }
+        $found_merchant_id = '';
+        $ppcp_accounts = get_option($option_key);
+        if (!empty($ppcp_accounts)) {
+            foreach ($ppcp_accounts as $key => $account) {
+                if (empty($account['is_used'])) {
+                    if ($key != 'default' && false === get_post_status($key)) {
+                        unset($ppcp_accounts[$key]);
+                    } else {
+                        $found_merchant_id = $account['merchant_id'];
+
+                        $account['is_used'] = 'yes';
+                        $ppcp_accounts[$key] = $account;
+
+                        update_option($option_key, $ppcp_accounts);
+                        $found_account = true;
+                        break;
                     }
                 }
-                if ($found_account == false) {
-                    foreach ($ppcp_accounts as $key => $account) {
-                        $account['is_used'] = '';
+            }
+            if ($found_account == false) {
+                foreach ($ppcp_accounts as $key => $account) {
+                    $account['is_used'] = '';
+                    $ppcp_accounts[$key] = $account;
+                }
+                foreach ($ppcp_accounts as $key => $account) {
+                    if ($key != 'default' && false === get_post_status($key)) {
+                        unset($ppcp_accounts[$key]);
+                    } else {
+                        $found_merchant_id = $account['merchant_id'];
+                        $account['is_used'] = 'yes';
                         $ppcp_accounts[$key] = $account;
-                    }
-                    foreach ($ppcp_accounts as $key => $account) {
-                        if ($key != 'default' && false === get_post_status($key)) {
-                            unset($ppcp_accounts[$key]);
-                        } else {
-                            $found_merchant_id = $account['merchant_id'];
-                            WC()->session->set($session_key, $account['merchant_id']);
-                            $account['is_used'] = 'yes';
-                            $ppcp_accounts[$key] = $account;
-                            WC()->session->set($session_key_account, $account);
-                            update_option($option_key, $ppcp_accounts);
-                            $found_account = true;
-                            break;
-                        }
+                        update_option($option_key, $ppcp_accounts);
+                        $found_account = true;
+                        break;
                     }
                 }
             }
