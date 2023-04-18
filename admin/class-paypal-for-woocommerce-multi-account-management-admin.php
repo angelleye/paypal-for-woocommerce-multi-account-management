@@ -1199,13 +1199,59 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
                 $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
                 $table->prepare_items();
+                if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+                    echo '<span class="subtitle">';
+                    printf(
+                            /* translators: %s: Search query. */
+                            __('Search results for: %s'),
+                            '<strong>' . $_REQUEST['s'] . '</strong>'
+                    );
+                    echo '</span>';
+                }
+
                 echo '<form id="account-filter" method="post">';
-                echo sprintf('<input type="hidden" name="page" value="%1$s" />', $_REQUEST['page']);
+                ?>
+                <input type="hidden" name="post_type" value="microprocessing" />
+                <?php
+                $table->search_box(__('Search Accounts'), 'link');
+
                 $table->display();
                 echo '</form>';
             }
             ?> </div> <?php
         $this->angelleye_pfwma_display_marketing_sidebar();
+    }
+
+    public function angelleye_multi_account_total_payments()
+    {
+        ?>
+        <div id="angelleye_paypal_marketing_table">
+        <br>
+        <h1 class="wp-heading-inline"><?php echo __('PayPal Payment Distribution Report', ''); ?></h1>
+        <?php
+        if (class_exists('PFWMA_Payments_History_List')) {
+            $table = new PFWMA_Payments_History_List();
+            $table->prepare_items();
+            if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+                echo '<span class="subtitle">';
+                printf(
+                /* translators: %s: Search query. */
+                    __('Search results for: %s'),
+                    '<strong>' . $_REQUEST['s'] . '</strong>'
+                );
+                echo '</span>';
+            }
+
+            echo '<form id="account-filter" method="post">';
+            ?>
+            <input type="hidden" name="post_type" value="microprocessing" />
+            <?php
+
+            $table->display();
+            echo '</form>';
+        } ?>
+        </div>
+        <?php
     }
 
     public function angelleye_save_multi_account_data() {
@@ -1698,9 +1744,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_script('selectWoo');
         wp_enqueue_style('select2');
         wp_enqueue_script('wc-enhanced-select');
+        $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+        if(!empty($angelleye_payment_load_balancer)) {
+            $angelleye_payment_load_balancer = 'yes';
+        } else {
+            $angelleye_payment_load_balancer = 'no';
+        }
         wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
             'rule_with_no_condition_set_message' => __('You have not set any Trigger Conditions for this rule. Therefore, this rule will trigger for all orders from now on. Would you still like to continue?', 'paypal-for-woocommerce-multi-account-management'),
-            'custom_fields' => angelleye_get_checkout_custom_field_keys()
+            'custom_fields' => angelleye_get_checkout_custom_field_keys(),
+            'is_angelleye_payment_load_balancer_enable' => $angelleye_payment_load_balancer
                 )
         );
 
@@ -2154,7 +2207,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         }
                         ?>
                     </select>
-                    <?php if (wc_shipping_enabled()) { ?>
+                        <?php if (wc_shipping_enabled()) { ?>
                         <p class="description"><?php _e('Shipping Zones', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select id="pfwst_shipping_zone" name="shipping_zone" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All Shipping Zones', 'paypal-for-woocommerce-multi-account-management'); ?>">
                             <?php
@@ -2167,8 +2220,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    <?php } ?>
-                    <?php if (wc_shipping_enabled()) { ?>
+        <?php } ?>
+                        <?php if (wc_shipping_enabled()) { ?>
                         <p class="description"><?php _e('Shipping Class', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select id="pfwst_shipping_class" name="shipping_class" style="width: 78%;"  class="wc-enhanced-select" data-placeholder="<?php esc_attr_e('All Shipping Class', 'paypal-for-woocommerce-multi-account-management'); ?>">
                             <?php
@@ -2182,11 +2235,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             }
                             ?>
                         </select>
-                    <?php } ?>
+        <?php } ?>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_category_label', __('Product categories', 'paypal-for-woocommerce-multi-account-management')); ?></p>
                     <select id="product_categories" name="product_categories[]" style="width: 78%;"  class="angelleye-category-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any category', 'paypal-for-woocommerce-multi-account-management'); ?>" data-allow_clear="true">
                     </select>
-                    <?php ?>
+        <?php ?>
                     <p class="description"><?php _e('Product tags', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                     <select id="product_tags" name="product_tags[]" style="width: 78%;"  class="angelleye-product-tag-search" multiple="multiple" data-placeholder="<?php esc_attr_e('Any tag', 'paypal-for-woocommerce-multi-account-management'); ?>" data-action="angelleye_pfwma_get_product_tags"></select>
                     <p class="description"><?php echo apply_filters('angelleye_multi_account_display_products_label', __('Products', 'paypal-for-woocommerce-multi-account-management')); ?></p>
@@ -2861,6 +2914,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'posts_per_page' => -1,
+            'suppress_filters' => true,
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
@@ -2888,6 +2942,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $args = array(
             'post_type' => 'microprocessing',
             'posts_per_page' => -1,
+            'suppress_filters' => true,
             'meta_query' => array(
                 'relation' => 'AND',
                 array(
@@ -3065,9 +3120,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $all_products = array();
         if (!empty($loop->posts)) {
             foreach ($loop->posts as $key => $value) {
-                $product_title = get_the_title($value);
-                if (!empty($product_title)) {
-                    $all_products[$value] = $product_title;
+                $product_detail = wc_get_product($value);
+                if ('variable' === $product_detail->get_type()) {
+                    $all_products[$value] = $product_detail->get_name();
+                    if (count($product_detail->get_children()) > 0) {
+                        foreach ($product_detail->get_children() as $children_key => $children_id) {
+                            $all_products[$children_id] = get_the_title($children_id);
+                        }
+                    }
+                } else {
+                    $product_title = get_the_title($value);
+                    if (!empty($product_title)) {
+                        $all_products[$value] = $product_title;
+                    }
                 }
             }
         }

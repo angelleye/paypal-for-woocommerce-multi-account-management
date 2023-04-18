@@ -228,6 +228,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                     }
                     
                     foreach ($order->get_items() as $cart_item_key => $values) {
+                        $line_item = $values->get_data();
                         $product = version_compare( WC_VERSION, '3.0', '<' ) ? $order->get_product_from_item( $values ) : $values->get_product();
                         $product_exists = is_object( $product );
                         if($product_exists == false) {
@@ -259,8 +260,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
                             }
                         }
                         $product_ids = get_post_meta($value->ID, 'woocommerce_paypal_express_api_product_ids', true);
+                        $cart_products_id = array();
+                        if(isset($line_item['variation_id'])) {
+                            $cart_products_id[] = $cart_item['variation_id'];
+                        }
+                        $cart_products_id[] = $product_id;                                
                         if (!empty($product_ids)) {
-                            if (!array_intersect((array) $product_id, $product_ids)) {
+                            if (!array_intersect((array) $cart_products_id, $product_ids)) {
                                 unset($result[$key]);
                                 unset($passed_rules);
                                 continue;

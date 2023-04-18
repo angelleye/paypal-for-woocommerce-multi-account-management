@@ -163,6 +163,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
             'delete' => sprintf('<a href="%s">Delete</a>', esc_url(add_query_arg($delete_params, admin_url('admin.php')))),
         );
+        $trash_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'action' => 'trash', 'ID' => $item['ID']);
+        $restore_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'action' => 'restore', 'ID' => $item['ID']);
+
+        if ($this->isTrashedView()) {
+            $actions = array(
+                'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
+                'restore' => sprintf('<a href="%s">Restore</a>', esc_url(add_query_arg($restore_params, admin_url('admin.php')))),
+                'delete' => sprintf('<a href="%s">Delete</a>', esc_url(add_query_arg($delete_params, admin_url('admin.php'))))
+            );
+        } else {
+            $actions = array(
+                'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
+                'trash' => sprintf('<a href="%s">Trash</a>', esc_url(add_query_arg($trash_params, admin_url('admin.php')))),
+            );
+        }
         return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
         );
     }
@@ -195,33 +210,80 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
     }
 
     function get_bulk_actions() {
-        $actions = array(
-            'delete' => __('Delete', 'paypal-for-woocommerce-multi-account-management')
-        );
+        if ($this->isTrashedView()) {
+            $actions = array(
+                'delete' => __('Delete', 'paypal-for-woocommerce-multi-account-management')
+            );
+        } else {
+            $actions = array(
+                'trash' => __('Trash', 'paypal-for-woocommerce-multi-account-management')
+            );
+        }
         return $actions;
     }
 
+    private function trashAccount($postId)
+    {
+        wp_trash_post($postId);
+    }
+
+    private function deleteAccount($postId)
+    {
+        wp_delete_post($postId, true);
+    }
+
+    private function unTrashPost($postId)
+    {
+        wp_publish_post($postId);
+    }
+
     function process_bulk_action() {
-        if ('delete' === $this->current_action()) {
+        $deleteRedirect = function ($action = 'deleted') {
+            do_action('update_angelleye_multi_account');
+            $redirect_url = remove_query_arg(array('action', 'ID'));
+            wp_redirect(add_query_arg($action, true, $redirect_url));
+            switch ($action) {
+                case 'restored':
+                    $message = 'Account restored successfully.';
+                    break;
+                case 'trashed':
+                    $message = 'Account trashed successfully.';
+                    break;
+                default:
+                    $message = 'Account permanently deleted.';
+            }
+            $this->message = __($message, 'paypal-for-woocommerce-multi-account-management');
+            exit();
+        };
+        if ('trash' === $this->current_action()) {
+            if (!empty($_POST['account'])) {
+                foreach ($_POST['account'] as $key => $postId) {
+                    $this->trashAccount($postId);
+                }
+            } elseif (!empty($_GET['ID'])) {
+                $this->trashAccount($_GET['ID']);
+            }
+            $deleteRedirect('trashed');
+        } else if ('delete' === $this->current_action()) {
             if (!empty($_POST['account'])) {
                 $account = $_POST['account'];
-                foreach ($account as $key => $value) {
-                    wp_delete_post($value, true);
+                foreach ($account as $key => $postId) {
+                    $this->deleteAccount($postId);
                 }
-                do_action('update_angelleye_multi_account');
-                $redirect_url = remove_query_arg(array('action', 'ID'));
-                wp_redirect(add_query_arg('deleted', true, $redirect_url));
-                $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
-                exit();
+            } elseif (!empty($_GET['ID'])) {
+                $this->deleteAccount($_GET['ID']);
             }
-            if (!empty($_GET['action']) && 'delete' == $_GET['action'] && !empty($_GET['ID'])) {
-                wp_delete_post($_GET['ID'], true);
-                do_action('update_angelleye_multi_account');
-                $redirect_url = remove_query_arg(array('action', 'ID'));
-                $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
-                wp_redirect(add_query_arg('deleted', true, $redirect_url));
-                exit();
+            $deleteRedirect();
+        } else if ('restore' === $this->current_action()) {
+            if (!empty($_POST['account'])) {
+                $account = $_POST['account'];
+                foreach ($account as $key => $postId) {
+                    $this->unTrashPost($postId);
+                }
+            } elseif (!empty($_GET['ID'])) {
+                $this->unTrashPost($_GET['ID']);
             }
+            $deleteRedirect('restored');
         }
     }
 
@@ -249,7 +311,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'post_type' => 'microprocessing',
             'numberposts' => -1,
             'order' => $order_by,
+            'suppress_filters' => false
         );
+
+        if (isset($_REQUEST['filter_entity']) && $_REQUEST['filter_entity'] == 'trashed') {
+            $args['post_status'] = 'trash';
+        }
+
         if (isset($_REQUEST['orderby'])) {
             $args['orderby'] = $_REQUEST['orderby'];
         }
@@ -278,14 +346,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         }
         $paypal_express_seq = 1;
         $payflow_seq = 1;
-
         $seq_text = __('Payment Seq #', 'paypal-for-woocommerce-multi-account-management');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-        $posts = get_posts($args);
+        if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+            $posts = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT p1.post_id FROM {$wpdb->postmeta} p1, {$wpdb->posts}  WHERE wp_posts.ID = p1.post_id AND wp_posts.post_type = 'microprocessing' AND p1.meta_value LIKE %s", '%' . wc_clean($_REQUEST['s']) . '%'));
+        } else {
+            $posts = get_posts($args);
+        }
         if (!empty($posts)) {
             foreach ($posts as $key => $value) {
-                $account_data[$key]['ID'] = $value->ID;
-                $meta_data = get_post_meta($value->ID);
+                $account_data[$key]['ID'] = isset($value->ID) ? $value->ID : $value;
+                $meta_data = get_post_meta(isset($value->ID) ? $value->ID : $value);
                 $meta_data['angelleye_multi_account_choose_payment_gateway'][0] = empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) ? 'paypal_express' : $meta_data['angelleye_multi_account_choose_payment_gateway'][0];
                 if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'paypal_express') {
                     $is_enable = false;
@@ -313,34 +384,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         if (empty($account_data[$key]['api_user_name'])) {
                             $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_paypal_express_email'][0]) ? $meta_data['woocommerce_paypal_express_email'][0] : '';
                         }
-                        if ($is_enable == true && $paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
-                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
-                            $paypal_express_seq = $paypal_express_seq + 1;
-                        }
-                    }
-                    if (!empty($meta_data['vendor_id'][0]) && $angelleye_payment_load_balancer === '') {
-                        $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . __('Vendor Rule - Auto Generated', 'paypal-for-woocommerce-multi-account-management') . '</span></mark>';
-                    }
-                } else if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'angelleye_ppcp') {
-                    $is_enable = false;
-                    if (!empty($meta_data['woocommerce_angelleye_ppcp_testmode']) && $meta_data['woocommerce_angelleye_ppcp_testmode'][0] == 'on') {
-                        $account_data[$key]['mode'] = 'Sandbox';
-                    } else {
-                        $account_data[$key]['mode'] = 'Live';
-                    }
-
-                    if (!empty($meta_data['woocommerce_angelleye_ppcp_enable'][0]) && $meta_data['woocommerce_angelleye_ppcp_enable'][0] == 'on') {
-                        $is_enable = true;
-                    }
-                    $account_data[$key]['title'] = !empty($meta_data['woocommerce_angelleye_ppcp_account_name'][0]) ? $meta_data['woocommerce_angelleye_ppcp_account_name'][0] : '';
-                    if ($account_data[$key]['mode'] == 'Sandbox') {
-                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0] : '';
-                        if ($is_enable == true && $paypal_express_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
-                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
-                            $paypal_express_seq = $paypal_express_seq + 1;
-                        }
-                    } else {
-                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_email_address'][0] : '';
                         if ($is_enable == true && $paypal_express_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
                             $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $paypal_express_seq . '</span></mark>';
                             $paypal_express_seq = $paypal_express_seq + 1;
@@ -415,6 +458,69 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'per_page' => $per_page,
             'total_pages' => ceil($total_items / $per_page)
         ));
+    }
+
+    private function count_posts($postType = 'post')
+    {
+        global $wpdb;
+        $cache_key = _count_posts_cache_key( $postType );
+
+        $counts = wp_cache_get( $cache_key, 'counts' );
+        if ( false !== $counts ) {
+            // We may have cached this before every status was registered.
+            foreach ( get_post_stati() as $status ) {
+                if ( ! isset( $counts->{$status} ) ) {
+                    $counts->{$status} = 0;
+                }
+            }
+
+            return $counts;
+        }
+
+        $query = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts} WHERE post_type = %s GROUP BY post_status";
+        $results = (array) $wpdb->get_results( $wpdb->prepare( $query, $postType ), ARRAY_A );
+        $counts  = array_fill_keys( get_post_stati(), 0 );
+
+        foreach ( $results as $row ) {
+            $counts[ $row['post_status'] ] = $row['num_posts'];
+        }
+
+        $counts = (object) $counts;
+        wp_cache_set( $cache_key, $counts, 'counts' );
+
+        return $counts;
+    }
+
+    protected function get_views()
+    {
+        global $wpdb;
+        $views = array();
+        $current = ( !empty($_REQUEST['filter_entity']) ? $_REQUEST['filter_entity'] : 'all');
+
+        //All link
+        $published_posts = $trashed_posts = 0;
+        $count_posts = $this->count_posts('microprocessing');
+
+        if ( $count_posts ) {
+            $published_posts = $count_posts->publish;
+            $trashed_posts = $count_posts->trash;
+        }
+
+        $class = ($current == 'all' ? ' class="current"' :'');
+        $all_url = remove_query_arg('filter_entity');
+        $views['all'] = "<a href='{$all_url }' {$class} >All ($published_posts)</a>";
+
+        //Trash link
+        $foo_url = add_query_arg('filter_entity', 'trashed');
+        $class = ($current == 'trashed' ? ' class="current"' :'');
+        $views['pending'] = "<a href='{$foo_url}' {$class} >Trashed ($trashed_posts)</a>";
+
+        return $views;
+    }
+
+    private function isTrashedView()
+    {
+        return isset($_REQUEST['filter_entity']) && $_REQUEST['filter_entity'] == 'trashed';
     }
 
 }

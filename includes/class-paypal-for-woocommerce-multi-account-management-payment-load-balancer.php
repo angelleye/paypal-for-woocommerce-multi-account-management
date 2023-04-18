@@ -81,6 +81,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
                 }
                 $microprocessing_array = get_post_meta($post_id);
                 $bool = $this->angelleye_is_multi_account_api_set($microprocessing_array, $environment);
+                if ($environment) {
+                    $multi_account_identifier = isset($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_email'][0] : null;
+                    if (empty($multi_account_identifier)) {
+                        $multi_account_identifier = isset($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_api_username'][0] : null;
+                    }
+                } else {
+                    $multi_account_identifier = isset($microprocessing_array['woocommerce_paypal_express_email'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_email'][0]) ? $microprocessing_array['woocommerce_paypal_express_email'][0] : null;
+                    if (empty($multi_account_identifier)) {
+                        $multi_account_identifier = isset($microprocessing_array['woocommerce_paypal_express_api_username'][0]) && !empty($microprocessing_array['woocommerce_paypal_express_api_username'][0]) ? $microprocessing_array['woocommerce_paypal_express_api_username'][0] : null;
+                    }
+                }
+
+                $express_checkout_accounts[$post_id]['multi_account_identifier'] = $multi_account_identifier;
+
                 if ($bool) {
                     if ($environment) {
                         $email = isset($microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0]) ? $microprocessing_array['woocommerce_paypal_express_sandbox_merchant_id'][0] : '';

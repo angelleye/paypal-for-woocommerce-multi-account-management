@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 5.0
 Tested up to: 5.8.2
-Stable tag: 3.1.6
+Stable tag: 3.2.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,6 +28,23 @@ If you are selling both high priced and low priced products on your site, you ma
 This plugin allows you to configure multiple accounts and provide rules for when to use each account based on order data.
 
 == Changelog ==
+
+= 3.2.1 - 02.23.2023 =
+* Fix - Checks for clean array data before looping through it. ([PFWMA-294](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/114))
+
+= 3.2.0 - 02.20.2023 =
+* Feature - Show the split payment summary on the order details page. ([PFWMA-293](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/113))
+* Feature - New tab to show the total payments received by the PayPal accounts. ([PFWMA-293](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/113))
+
+= 3.1.9 - 12.21.2022 =
+* Fix - Resolves Js validation for Load Balancer. ([PFWMA-289](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/112))
+
+= 3.1.8 - 12.07.2022 =
+* Feature - Adds Rules based on Variable Product Variations. ([PFWMA-172](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/110))
+* Tweak - Rule Manager Improvements. ([PFWMA-281](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/111))
+
+= 3.1.7 - 07.19.2022 =
+ * Fix - Resolves Classic EC - Taxes are not passing correctly to PayPal when secondary rule is triggered. ([PFWMA-283](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/109))
 
 = 3.1.6 - 01.03.2021 =
 * Feature - Adds Rules Based on State. ([PFWMA-266](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/104))
