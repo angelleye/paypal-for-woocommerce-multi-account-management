@@ -128,18 +128,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                     return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                 } else if ($status_ppcp == 'on') {
                     $ppcp_testmode = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_testmode', true);
-                    if(!empty($ppcp_testmode) && $ppcp_testmode === 'on') {
+                    if (!empty($ppcp_testmode) && $ppcp_testmode === 'on') {
                         $sandbox = true;
                     } else {
                         $sandbox = false;
                     }
                     if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
-                        if($sandbox) {
+                        if ($sandbox) {
                             $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
                         } else {
                             $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
                         }
-                        if(empty($board_status)) {
+                        if (empty($board_status)) {
                             return __('Pending Seller Onboard', 'paypal-for-woocommerce-multi-account-management');
                         } else {
                             return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
@@ -222,18 +222,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         return $actions;
     }
 
-    private function trashAccount($postId)
-    {
+    private function trashAccount($postId) {
         wp_trash_post($postId);
     }
 
-    private function deleteAccount($postId)
-    {
+    private function deleteAccount($postId) {
         wp_delete_post($postId, true);
     }
 
-    private function unTrashPost($postId)
-    {
+    private function unTrashPost($postId) {
         wp_publish_post($postId);
     }
 
@@ -416,6 +413,30 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                             $payflow_seq = $payflow_seq + 1;
                         }
                     }
+                } else if (!empty($meta_data['angelleye_multi_account_choose_payment_gateway'][0]) && $meta_data['angelleye_multi_account_choose_payment_gateway'][0] == 'angelleye_ppcp') {
+                    $is_enable = false;
+                    if (!empty($meta_data['woocommerce_angelleye_ppcp_testmode']) && $meta_data['woocommerce_angelleye_ppcp_testmode'][0] == 'on') {
+                        $account_data[$key]['mode'] = 'Sandbox';
+                    } else {
+                        $account_data[$key]['mode'] = 'Live';
+                    }
+                    if (!empty($meta_data['woocommerce_angelleye_ppcp_enable'][0]) && $meta_data['woocommerce_angelleye_ppcp_enable'][0] == 'on') {
+                        $is_enable = true;
+                    }
+                    $account_data[$key]['title'] = !empty($meta_data['woocommerce_angelleye_ppcp_account_name'][0]) ? $meta_data['woocommerce_angelleye_ppcp_account_name'][0] : '';
+                    if ($account_data[$key]['mode'] == 'Sandbox') {
+                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'][0] : '';
+                        if ($is_enable == true && $angelleye_ppcp_api_mode == 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $ppcp_seq . '</span></mark>';
+                            $ppcp_seq = $ppcp_seq + 1;
+                        }
+                    } else {
+                        $account_data[$key]['api_user_name'] = !empty($meta_data['woocommerce_angelleye_ppcp_email_address'][0]) ? $meta_data['woocommerce_angelleye_ppcp_email_address'][0] : '';
+                        if ($is_enable == true && $angelleye_ppcp_api_mode != 'yes' && $angelleye_payment_load_balancer != '') {
+                            $account_data[$key]['api_user_name'] .= '<br>' . '<mark class="angelleye_tag"><span>' . $seq_text . $ppcp_seq . '</span></mark>';
+                            $ppcp_seq = $ppcp_seq + 1;
+                        }
+                    }
                 } else {
                     if (!empty($meta_data['woocommerce_paypal_testmode']) && $meta_data['woocommerce_paypal_testmode'][0] == 'on') {
                         $account_data[$key]['mode'] = 'Sandbox';
@@ -460,16 +481,15 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         ));
     }
 
-    private function count_posts($postType = 'post')
-    {
+    private function count_posts($postType = 'post') {
         global $wpdb;
-        $cache_key = _count_posts_cache_key( $postType );
+        $cache_key = _count_posts_cache_key($postType);
 
-        $counts = wp_cache_get( $cache_key, 'counts' );
-        if ( false !== $counts ) {
+        $counts = wp_cache_get($cache_key, 'counts');
+        if (false !== $counts) {
             // We may have cached this before every status was registered.
-            foreach ( get_post_stati() as $status ) {
-                if ( ! isset( $counts->{$status} ) ) {
+            foreach (get_post_stati() as $status) {
+                if (!isset($counts->{$status})) {
                     $counts->{$status} = 0;
                 }
             }
@@ -478,48 +498,46 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         }
 
         $query = "SELECT post_status, COUNT( * ) AS num_posts FROM {$wpdb->posts} WHERE post_type = %s GROUP BY post_status";
-        $results = (array) $wpdb->get_results( $wpdb->prepare( $query, $postType ), ARRAY_A );
-        $counts  = array_fill_keys( get_post_stati(), 0 );
+        $results = (array) $wpdb->get_results($wpdb->prepare($query, $postType), ARRAY_A);
+        $counts = array_fill_keys(get_post_stati(), 0);
 
-        foreach ( $results as $row ) {
-            $counts[ $row['post_status'] ] = $row['num_posts'];
+        foreach ($results as $row) {
+            $counts[$row['post_status']] = $row['num_posts'];
         }
 
         $counts = (object) $counts;
-        wp_cache_set( $cache_key, $counts, 'counts' );
+        wp_cache_set($cache_key, $counts, 'counts');
 
         return $counts;
     }
 
-    protected function get_views()
-    {
+    protected function get_views() {
         global $wpdb;
         $views = array();
-        $current = ( !empty($_REQUEST['filter_entity']) ? $_REQUEST['filter_entity'] : 'all');
+        $current = (!empty($_REQUEST['filter_entity']) ? $_REQUEST['filter_entity'] : 'all');
 
         //All link
         $published_posts = $trashed_posts = 0;
         $count_posts = $this->count_posts('microprocessing');
 
-        if ( $count_posts ) {
+        if ($count_posts) {
             $published_posts = $count_posts->publish;
             $trashed_posts = $count_posts->trash;
         }
 
-        $class = ($current == 'all' ? ' class="current"' :'');
+        $class = ($current == 'all' ? ' class="current"' : '');
         $all_url = remove_query_arg('filter_entity');
         $views['all'] = "<a href='{$all_url }' {$class} >All ($published_posts)</a>";
 
         //Trash link
         $foo_url = add_query_arg('filter_entity', 'trashed');
-        $class = ($current == 'trashed' ? ' class="current"' :'');
+        $class = ($current == 'trashed' ? ' class="current"' : '');
         $views['pending'] = "<a href='{$foo_url}' {$class} >Trashed ($trashed_posts)</a>";
 
         return $views;
     }
 
-    private function isTrashedView()
-    {
+    private function isTrashedView() {
         return isset($_REQUEST['filter_entity']) && $_REQUEST['filter_entity'] == 'trashed';
     }
 
