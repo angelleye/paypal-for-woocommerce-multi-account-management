@@ -70,6 +70,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         wp_enqueue_script('jquery-blockui');
         wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-admin.js', array('jquery'), $this->version, true);
         wp_enqueue_script($this->plugin_name . 'ajax', plugin_dir_url(__FILE__) . 'js/paypal-for-woocommerce-multi-account-management-ajax.js', array('jquery', 'selectWoo', 'wc-enhanced-select'), $this->version, true);
+        wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array());
         if ('plugins.php' === $hook_suffix) {
             wp_enqueue_style('deactivation-pfwma-css', plugin_dir_url(__FILE__) . 'css/deactivation-modal.css', null, $this->version);
             wp_enqueue_script('deactivation-pfwma-js', plugin_dir_url(__FILE__) . 'js/deactivation-form-modal.js', null, $this->version, true);
@@ -1179,7 +1180,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     )
             );
         } else {
-            
+            wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array());
         }
         ?>
         <div id="angelleye_paypal_marketing_table">
