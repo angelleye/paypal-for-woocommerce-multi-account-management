@@ -341,8 +341,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
         } else {
             $paypal_pro_payflow_api_mode = 'yes';
         }
+        if (class_exists('WC_Gateway_PPCP_AngellEYE')) {
+            $angelleye_ppcp = angelleye_wc_gateway('angelleye_ppcp');
+            if (!empty($angelleye_ppcp)) {
+                $angelleye_ppcp_api_mode = angelleye_wc_gateway('angelleye_ppcp')->get_option('testmode', '');
+            } else {
+                $angelleye_ppcp_api_mode = 'yes';
+            }
+        } else {
+            $angelleye_ppcp_api_mode = 'yes';
+        }
         $paypal_express_seq = 1;
         $payflow_seq = 1;
+        $ppcp_seq = 1;
         $seq_text = __('Payment Seq #', 'paypal-for-woocommerce-multi-account-management');
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {

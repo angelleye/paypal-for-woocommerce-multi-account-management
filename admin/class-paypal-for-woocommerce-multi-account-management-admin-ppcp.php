@@ -401,7 +401,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                             $this->map_item_with_account[$product_id]['order_item_id'] = $cart_item_key;
                             if ($product->is_taxable()) {
-                                if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
+                                if(!isset($this->map_item_with_account[$product_id]['is_taxable'])) {
+                                    $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                    $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
+                                    $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                } elseif ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = true;
                                     $this->map_item_with_account[$product_id]['tax'] = $line_item['total_tax'];
                                     $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
@@ -410,7 +414,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $this->map_item_with_account[$product_id]['is_taxable'] = false;
                             }
                             if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, $order_id, $product_id)) {
-                                if ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
+                                if(!isset($this->map_item_with_account[$product_id]['needs_shipping'])) {
+                                    $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                    $this->map_item_with_account[$product_id]['needs_shipping'] = true;
+                                } elseif ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
                                     $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
                                     $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                 }
@@ -539,7 +546,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $product = wc_get_product($product_id);
                                 $this->map_item_with_account[$product_id]['product_id'] = $product_id;
                                 if ($product->is_taxable()) {
-                                    if ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
+                                    if(!isset($this->map_item_with_account[$product_id]['is_taxable'])) {
+                                        $this->map_item_with_account[$product_id]['is_taxable'] = true;
+                                        $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
+                                    } elseif ($this->map_item_with_account[$product_id]['is_taxable'] != true) {
                                         $this->map_item_with_account[$product_id]['is_taxable'] = true;
                                         $this->angelleye_is_taxable = $this->angelleye_is_taxable + 1;
                                     }
@@ -552,7 +562,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $this->map_item_with_account[$product_id]['is_taxable'] = false;
                                 }
                                 if ($product->needs_shipping() && apply_filters('angelleye_multi_account_need_shipping', true, '', $product_id)) {
-                                    if ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
+                                    if (!isset($this->map_item_with_account[$product_id]['needs_shipping'])) {
+                                        $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
+                                        $this->map_item_with_account[$product_id]['needs_shipping'] = true;
+                                    } elseif ($this->map_item_with_account[$product_id]['needs_shipping'] != true) {
                                         $this->angelleye_needs_shipping = $this->angelleye_needs_shipping + 1;
                                         $this->map_item_with_account[$product_id]['needs_shipping'] = true;
                                     }
@@ -1065,7 +1078,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 array_push($PaymentOrderItems, $Item);
                             }
                         }
-                        $custom_param = '';
+                        $custom_param = array();
                         if (isset($old_purchase_units['custom_id'])) {
                             $custom_param = json_decode($old_purchase_units['custom_id'], true);
                             $custom_param['order_item_id'] = $cart_item_key;
@@ -1081,7 +1094,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
                             'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                            'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : ''
                         );
                         if (is_email($sellerpaypalaccountid)) {
                             $Payment['payee'] = array('email_address' => $sellerpaypalaccountid);
@@ -1361,7 +1374,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] : '',
                             'reference_id' => $sellerpaypalaccountid,
-                            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                            'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : ''
                         );
                         if (is_email($sellerpaypalaccountid)) {
                             $Payment['payee'] = array('email_address' => $sellerpaypalaccountid);
@@ -1508,7 +1521,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
                 'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
                 'reference_id' => $default_pal_id,
-                'soft_descriptor' => $old_purchase_units['soft_descriptor']
+                'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : ''
             );
             if (is_email($default_pal_id)) {
                 $new_default_payment['payee'] = array('email_address' => $default_pal_id);
@@ -2446,7 +2459,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'itemamt' => AngellEYE_Gateway_Paypal::number_format($commission_amt),
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor'],
+            'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : '',
         );
         if (is_email($merchant_id)) {
             $Payment['payee'] = array('email_address' => $merchant_id);
@@ -2500,7 +2513,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             'reference_id' => $merchant_id,
             'shippingamt' => '0.00',
             'taxamt' => '0.00',
-            'soft_descriptor' => $old_purchase_units['soft_descriptor']
+            'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : ''
         );
         if (is_email($merchant_id)) {
             $Payment['payee'] = array('email_address' => $merchant_id);
