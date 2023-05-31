@@ -490,16 +490,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 }
                             }
                             $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
-                            if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                            if (isset($microprocessing_array['ppcp_site_owner_commission'][0]) && !empty($microprocessing_array['ppcp_site_owner_commission'][0]) && $microprocessing_array['ppcp_site_owner_commission'][0] > 0) {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                 $this->is_commission_enable = true;
-                                $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($microprocessing_array['ec_site_owner_commission_label'][0]) ? $microprocessing_array['ec_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                                $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                                $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($microprocessing_array['ppcp_site_owner_commission_label'][0]) ? $microprocessing_array['ppcp_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                                $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $microprocessing_array['ppcp_site_owner_commission'][0];
                             } elseif ($this->global_ec_site_owner_commission > 0) {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                 $this->is_commission_enable = true;
-                                $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                                $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $this->global_ec_site_owner_commission;
+                                $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                                $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $this->global_ec_site_owner_commission;
                             } else {
                                 $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                             }
@@ -632,16 +632,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     }
                                 }
                                 $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
-                                if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                                if (isset($microprocessing_array['ppcp_site_owner_commission'][0]) && !empty($microprocessing_array['ppcp_site_owner_commission'][0]) && $microprocessing_array['ppcp_site_owner_commission'][0] > 0) {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                     $this->is_commission_enable = true;
-                                    $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($microprocessing_array['ec_site_owner_commission_label'][0]) ? $microprocessing_array['ec_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                                    $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                                    $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($microprocessing_array['ppcp_site_owner_commission_label'][0]) ? $microprocessing_array['ppcp_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                                    $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $microprocessing_array['ppcp_site_owner_commission'][0];
                                 } elseif ($this->global_ec_site_owner_commission > 0) {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                                     $this->is_commission_enable = true;
-                                    $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                                    $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $this->global_ec_site_owner_commission;
+                                    $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                                    $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $this->global_ec_site_owner_commission;
                                 } else {
                                     $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                                 }
@@ -941,21 +941,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
-                            $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], $order);
+                            $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], $order);
                             $default_final_total = $default_final_total + $product_commission;
                             $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission, $order);
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission, $order);
                             $default_item_total = $default_item_total + $product_commission;
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
                                 if ($taxamt > 0) {
-                                    $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
+                                    $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $tax_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $default_item_total = $default_item_total + $tax_commission;
                                 }
                                 if ($shippingamt > 0) {
-                                    $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
+                                    $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $shippingamt_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
@@ -966,7 +966,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $sub_total_commission = $product_commission;
                             }
                             $Item = array(
-                                'name' => $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'],
+                                'name' => $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'],
                                 'desc' => $line_item['name'],
                                 'amt' => $sub_total_commission,
                                 'number' => '',
@@ -1233,21 +1233,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true) {
                             $is_commission_not_enabled = true;
                             $this->is_commission_enable = true;
-                            $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
+                            $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
                             $default_final_total = $default_final_total + $product_commission;
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
                             $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
                             $default_item_total = $default_item_total + $product_commission;
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
                                 if ($taxamt > 0) {
-                                    $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
+                                    $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $tax_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $default_item_total = $default_item_total + $tax_commission;
                                 }
                                 if ($shippingamt > 0) {
-                                    $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ec_site_owner_commission'], 2);
+                                    $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
                                     $default_final_total = $default_final_total + $shippingamt_commission;
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
@@ -1258,7 +1258,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $sub_total_commission = $product_commission;
                             }
                             $Item = array(
-                                'name' => $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'],
+                                'name' => $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'],
                                 'desc' => $line_item['name'],
                                 'amt' => $sub_total_commission,
                                 'number' => '',
@@ -2852,16 +2852,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             }
                         }
                         $this->map_item_with_account[$product_id]['multi_account_id'] = $value->ID;
-                        if (isset($microprocessing_array['ec_site_owner_commission'][0]) && !empty($microprocessing_array['ec_site_owner_commission'][0]) && $microprocessing_array['ec_site_owner_commission'][0] > 0) {
+                        if (isset($microprocessing_array['ppcp_site_owner_commission'][0]) && !empty($microprocessing_array['ppcp_site_owner_commission'][0]) && $microprocessing_array['ppcp_site_owner_commission'][0] > 0) {
                             $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                             $this->is_commission_enable = true;
-                            $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($microprocessing_array['ec_site_owner_commission_label'][0]) ? $microprocessing_array['ec_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                            $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $microprocessing_array['ec_site_owner_commission'][0];
+                            $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($microprocessing_array['ppcp_site_owner_commission_label'][0]) ? $microprocessing_array['ppcp_site_owner_commission_label'][0] : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                            $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $microprocessing_array['ppcp_site_owner_commission'][0];
                         } elseif ($this->global_ec_site_owner_commission > 0) {
                             $this->map_item_with_account[$product_id]['is_commission_enable'] = true;
                             $this->is_commission_enable = true;
-                            $this->map_item_with_account[$product_id]['ec_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
-                            $this->map_item_with_account[$product_id]['ec_site_owner_commission'] = $this->global_ec_site_owner_commission;
+                            $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'] = !empty($this->global_ec_site_owner_commission_label) ? $this->global_ec_site_owner_commission_label : __('Commission', 'paypal-for-woocommerce-multi-account-management');
+                            $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'] = $this->global_ec_site_owner_commission;
                         } else {
                             $this->map_item_with_account[$product_id]['is_commission_enable'] = false;
                         }
