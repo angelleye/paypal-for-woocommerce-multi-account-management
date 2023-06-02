@@ -1998,50 +1998,54 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public function angelleye_get_extra_fee_array($amount, $divided, $type) {
         $total = 0;
         $partition_array = array();
-        $partition = AngellEYE_Gateway_Paypal::number_format($amount / $divided);
-        for ($i = 1; $i <= $divided; $i++) {
-            $partition_array[$i] = $partition;
-            $total = $total + $partition;
-        }
-        $Difference = round($amount - $total, $this->decimals);
-        if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
-            $partition_array[$divided] = $partition_array[$divided] + $Difference;
-        }
-        if (!empty($this->map_item_with_account)) {
-            $loop = 1;
-            foreach ($this->map_item_with_account as $product_id => $item_with_account) {
-                switch ($type) {
-                    case "tax":
-                        if (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true && !empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
-                            $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['tax'], $this->decimals);
-                            unset($partition_array[$loop]);
-                            $loop = $loop + 1;
-                        } elseif (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
-                            $partition_array[$product_id] = round($item_with_account['tax'], $this->decimals);
-                        }
-                        break;
-                    case "shipping":
-                        if (!empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
-                            if (isset($item_with_account['shipping_cost'])) {
-                                $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['shipping_cost'], $this->decimals);
+        if($amount > 0 && $divided > 0) {
+            $partition = AngellEYE_Gateway_Paypal::number_format($amount / $divided);
+            for ($i = 1; $i <= $divided; $i++) {
+                $partition_array[$i] = $partition;
+                $total = $total + $partition;
+            }
+            $Difference = round($amount - $total, $this->decimals);
+            if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
+                $partition_array[$divided] = $partition_array[$divided] + $Difference;
+            }
+            if (!empty($this->map_item_with_account)) {
+                $loop = 1;
+                foreach ($this->map_item_with_account as $product_id => $item_with_account) {
+                    switch ($type) {
+                        case "tax":
+                            if (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true && !empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
+                                $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['tax'], $this->decimals);
                                 unset($partition_array[$loop]);
                                 $loop = $loop + 1;
-                            } else {
-                                $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                            } elseif (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
+                                $partition_array[$product_id] = round($item_with_account['tax'], $this->decimals);
                             }
-                        }
-                        break;
-                    case "discount":
-                        if (!empty($item_with_account['is_discountable']) && $item_with_account['is_discountable'] === true) {
-                            $partition_array[$product_id] = isset($item_with_account['discount']) ? $item_with_account['discount'] : $partition_array[$loop];
-                            unset($partition_array[$loop]);
-                            $loop = $loop + 1;
-                        }
-                        break;
+                            break;
+                        case "shipping":
+                            if (!empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
+                                if (isset($item_with_account['shipping_cost'])) {
+                                    $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['shipping_cost'], $this->decimals);
+                                    unset($partition_array[$loop]);
+                                    $loop = $loop + 1;
+                                } else {
+                                    $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                                }
+                            }
+                            break;
+                        case "discount":
+                            if (!empty($item_with_account['is_discountable']) && $item_with_account['is_discountable'] === true) {
+                                $partition_array[$product_id] = isset($item_with_account['discount']) ? $item_with_account['discount'] : $partition_array[$loop];
+                                unset($partition_array[$loop]);
+                                $loop = $loop + 1;
+                            }
+                            break;
+                    }
                 }
             }
+            return $partition_array;
+        } else {
+            return $partition_array;
         }
-        return $partition_array;
     }
 
     public function angelleye_is_multi_account_api_set($microprocessing_array, $gateways) {
