@@ -30,7 +30,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 == Changelog ==
 
 = 3.2.2 - 06.05.2023 =
-* Fix - Checks for clean array data before looping through it. ([PFWMA-294](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/114))
+* Fix - Compatibility - YITH Booking and Appointment for WooCommerce Premium. ([PFWMA-297](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/115))
 
 = 3.2.1 - 02.23.2023 =
 * Fix - Checks for clean array data before looping through it. ([PFWMA-294](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/114))
