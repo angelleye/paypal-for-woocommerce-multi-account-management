@@ -1998,8 +1998,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public function angelleye_get_extra_fee_array($amount, $divided, $type) {
         $total = 0;
         $partition_array = array();
-        if($amount > 0 && $divided > 0) {
-            $partition = AngellEYE_Gateway_Paypal::number_format($amount / $divided);
+            if($divided == 0) {
+                $partition = $amount;
+            } else {
+                $partition = AngellEYE_Gateway_Paypal::number_format($amount / $divided);
+            }
             for ($i = 1; $i <= $divided; $i++) {
                 $partition_array[$i] = $partition;
                 $total = $total + $partition;
@@ -2043,9 +2046,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                 }
             }
             return $partition_array;
-        } else {
-            return $partition_array;
-        }
+        
     }
 
     public function angelleye_is_multi_account_api_set($microprocessing_array, $gateways) {
