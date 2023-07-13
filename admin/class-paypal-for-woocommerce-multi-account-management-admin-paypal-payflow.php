@@ -393,7 +393,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                             $woo_shipping_zone = wc_get_shipping_zone( reset( $shipping_packages ) );
                                             $zone_id = $woo_shipping_zone->get_id();
                                             if ($zone_id != $mul_shipping_zone) {
-                                                $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                                unset($result[$key]);
+                                                unset($passed_rules);
                                                 continue;
                                             }
                                         }
@@ -405,6 +406,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                                 if (!empty($shipping_class) && $shipping_class != 'all') {
                                     if ($product_shipping_class != $shipping_class) {
                                         $cart_loop_not_pass = $cart_loop_not_pass + 1;
+                                        unset($result[$key]);
+                                        unset($passed_rules);
                                         continue;
                                     }
                                 }
