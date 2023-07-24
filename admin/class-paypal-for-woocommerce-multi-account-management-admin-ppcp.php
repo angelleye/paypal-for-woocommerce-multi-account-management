@@ -937,9 +937,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if ($multi_account_info['multi_account_id'] != 'default') {
                         if (isset($multi_account_info['merchant_id'])) {
                             $sellerpaypalaccountid = $multi_account_info['merchant_id'];
-                        } else {
-                            $sellerpaypalaccountid = $this->angelleye_get_merchant_id($this->map_item_with_account[$product_id]);
-                        }
+                        } 
                         $this->map_item_with_account[$product_id]['sellerpaypalaccountid'] = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_order($order, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']), $order);
@@ -1150,9 +1148,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     } else {
                         if (isset($multi_account_info['merchant_id'])) {
                             $sellerpaypalaccountid = $multi_account_info['merchant_id'];
-                        } else {
-                            $sellerpaypalaccountid = $this->angelleye_get_merchant_id($this->map_item_with_account[$product_id]);
-                        }
+                        } 
                         $default_pal_id = $sellerpaypalaccountid;
                         $this->map_item_with_account[$product_id]['sellerpaypalaccountid'] = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_order($order, $cart_item);
@@ -1230,9 +1226,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if ($multi_account_info['multi_account_id'] != 'default') {
                         if (isset($multi_account_info['merchant_id'])) {
                             $sellerpaypalaccountid = $multi_account_info['merchant_id'];
-                        } else {
-                            $sellerpaypalaccountid = $this->angelleye_get_merchant_id($this->map_item_with_account[$product_id]);
-                        }
+                        } 
                         $PaymentOrderItems = array();
                         $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
@@ -1434,9 +1428,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     } else {
                         if (isset($multi_account_info['merchant_id'])) {
                             $sellerpaypalaccountid = $multi_account_info['merchant_id'];
-                        } else {
-                            $sellerpaypalaccountid = $this->angelleye_get_merchant_id($this->map_item_with_account[$product_id]);
-                        }
+                        } 
                         $default_pal_id = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
@@ -1512,7 +1504,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($default_final_total > 0) {
             if (empty($default_pal_id)) {
                 $map_item_with_account_array['multi_account_id'] = 'default';
-                $default_pal_id = $this->angelleye_get_merchant_id($map_item_with_account_array);
+                $default_pal_id = $map_item_with_account_array;
+                // TEST need debug
             }
             $this->final_grand_total = $this->final_grand_total + $default_final_total;
             $new_default_payment = array(
@@ -1802,19 +1795,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return false;
     }
 
-    public function angelleye_get_merchant_id($map_item_with_account_array) {
-        if (!empty($map_item_with_account_array['multi_account_id'])) {
-            if ($map_item_with_account_array['multi_account_id'] == 'default') {
-                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-                }
-                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-                $merchant_id = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
-                return $merchant_id;
-            }
-        }
-    }
-
     public function angelleye_get_merchant_id_for_multi($account_id, $microprocessing_array) {
         if ($this->is_sandbox) {
             $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0];
@@ -1827,7 +1807,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
         }
         $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-        $merchant_id = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $client_id, $secret_id, $merchant_id = '');
+        $merchant_id = '';
+        // TEST  need debug
         if (!empty($merchant_id)) {
             if ($this->is_sandbox) {
                 update_post_meta($account_id, 'woocommerce_angelleye_ppcp_sandbox_merchant_id', $merchant_id);
@@ -2495,7 +2476,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_after_commition_remain_part_to_web_admin($old_purchase_units, $amount) {
         $map_item_with_account_array['multi_account_id'] = 'default';
-        $merchant_id = $this->angelleye_get_merchant_id($map_item_with_account_array);
+        $merchant_id = $map_item_with_account_array;
+        // TEST need debug
+        
         $is_api_set = true;
         $this->map_item_with_account['always'][$account_id] = array();
         $this->map_item_with_account['always'][$account_id]['multi_account_id'] = 'default';
@@ -2654,19 +2637,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (!empty($value['merchant_id'])) {
                             $merchant_id_list[$value['merchant_id']] = $value['merchant_id'];
                             if (isset($value['is_commission_enable']) && $value['is_commission_enable'] === true) {
-                                if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-                                    include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-                                }
-                                $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-                                $merchant_id = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
+                                $merchant_id = $this->merchant_id;
+                                // TEST need debug
                                 $merchant_id_list[$merchant_id] = $merchant_id;
                             }
                         } elseif (isset($value['multi_account_id']) && 'default' === $value['multi_account_id']) {
-                            if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-                                include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-                            }
-                            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-                            $merchant_id = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
+                            $merchant_id = $this->merchant_id;
+                            // TEST need debug
                             $merchant_id_list[$merchant_id] = $merchant_id;
                         }
                     }
@@ -2968,11 +2945,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($found_merchant_id != 'default') {
             $merchant_ids[$found_merchant_id] = $found_merchant_id;
         } else {
-            if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-                include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-            }
-            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-            $$merchant_id = $payment_request->angelleye_ppcp_get_paypal_user_info($this->is_sandbox, $this->client_id, $this->secret_id, $this->merchant_id);
+            // TEST need debug
+            $$merchant_id = $this->merchant_id;
             return $$merchant_id;
         }
         return $merchant_ids;
