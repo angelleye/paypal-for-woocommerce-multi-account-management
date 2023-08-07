@@ -1503,9 +1503,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
         if ($default_final_total > 0) {
             if (empty($default_pal_id)) {
-                $map_item_with_account_array['multi_account_id'] = 'default';
-                $default_pal_id = $map_item_with_account_array;
-                // TEST need debug
+                $default_pal_id = $this->merchant_id;
             }
             $this->final_grand_total = $this->final_grand_total + $default_final_total;
             $new_default_payment = array(
@@ -2475,16 +2473,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_after_commition_remain_part_to_web_admin($old_purchase_units, $amount) {
-        $map_item_with_account_array['multi_account_id'] = 'default';
-        $merchant_id = $map_item_with_account_array;
-        // TEST need debug
-        
+        $merchant_id = $this->merchant_id;
         $is_api_set = true;
-        $this->map_item_with_account['always'][$account_id] = array();
-        $this->map_item_with_account['always'][$account_id]['multi_account_id'] = 'default';
-        $this->map_item_with_account['always'][$account_id]['merchant_id'] = $merchant_id;
-        $this->map_item_with_account['always'][$account_id]['is_api_set'] = $is_api_set;
-        $this->map_item_with_account['always'][$account_id]['sellerpaypalaccountid'] = $merchant_id;
+        $this->map_item_with_account['always'][$merchant_id] = array();
+        $this->map_item_with_account['always'][$merchant_id]['multi_account_id'] = 'default';
+        $this->map_item_with_account['always'][$merchant_id]['merchant_id'] = $merchant_id;
+        $this->map_item_with_account['always'][$merchant_id]['is_api_set'] = $is_api_set;
+        $this->map_item_with_account['always'][$merchant_id]['sellerpaypalaccountid'] = $merchant_id;
         $cart_item_key = 'efault';
         $commission_amt = AngellEYE_Gateway_Paypal::number_format($amount, 2);
         $Payment = array(
@@ -2638,12 +2633,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $merchant_id_list[$value['merchant_id']] = $value['merchant_id'];
                             if (isset($value['is_commission_enable']) && $value['is_commission_enable'] === true) {
                                 $merchant_id = $this->merchant_id;
-                                // TEST need debug
                                 $merchant_id_list[$merchant_id] = $merchant_id;
                             }
                         } elseif (isset($value['multi_account_id']) && 'default' === $value['multi_account_id']) {
                             $merchant_id = $this->merchant_id;
-                            // TEST need debug
                             $merchant_id_list[$merchant_id] = $merchant_id;
                         }
                     }
@@ -2912,11 +2905,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if ($key != 'default' && false === get_post_status($key)) {
                         unset($ppcp_accounts[$key]);
                     } else {
-                        $found_merchant_id = $account['merchant_id'];
-
+                        $found_merchant_id = $account['multi_account_id'];
                         $account['is_used'] = 'yes';
                         $ppcp_accounts[$key] = $account;
-
                         update_option($option_key, $ppcp_accounts);
                         $found_account = true;
                         break;
@@ -2932,7 +2923,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if ($key != 'default' && false === get_post_status($key)) {
                         unset($ppcp_accounts[$key]);
                     } else {
-                        $found_merchant_id = $account['merchant_id'];
+                        $found_merchant_id = $account['multi_account_id'];
                         $account['is_used'] = 'yes';
                         $ppcp_accounts[$key] = $account;
                         update_option($option_key, $ppcp_accounts);
@@ -2945,7 +2936,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($found_merchant_id != 'default') {
             $merchant_ids[$found_merchant_id] = $found_merchant_id;
         } else {
-            // TEST need debug
             $$merchant_id = $this->merchant_id;
             return $$merchant_id;
         }
