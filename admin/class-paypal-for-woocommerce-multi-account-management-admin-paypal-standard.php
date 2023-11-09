@@ -398,10 +398,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard {
     }
 
     public function angelleye_paypal_multi_account_map_data($request, $order_id, $final_associate_account) {
+        if(!empty($order_id)) {
+            $order = wc_get_order($order_id);
+        }
         foreach ($final_associate_account as $key => $value) {
             if(!empty($value['email'])) {
                 $request['business'] = $value['email'];
-                update_post_meta($order_id, '_angelleye_multi_account_ec_parallel_data_map', $value);
+                $order->update_meta_data('_angelleye_multi_account_ec_parallel_data_map', $value);
+                $order->save_meta_data();
                 return $request;
             }
         }

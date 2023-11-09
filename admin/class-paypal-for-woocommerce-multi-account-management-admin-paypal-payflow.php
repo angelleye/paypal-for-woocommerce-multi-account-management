@@ -726,6 +726,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         if ($used_account == 'default') {
             return;
         }
+        if(!empty($order_id)) {
+            $order = wc_get_order($order_id);
+        }
         if (empty($used_account)) {
             $payflow_accounts = get_option($option_key);
             if (!empty($payflow_accounts)) {
@@ -738,7 +741,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             $is_account_found = true;
                             $payflow_accounts[$key] = $account;
                             $used_account = $account['multi_account_id'];
-                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            $order->update_meta_data('_multi_account_api_username_load_balancer', $used_account);
+                            $order->save_meta_data();
                             update_option($option_key, $payflow_accounts);
                             break;
                         }
@@ -756,7 +760,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             $account['is_used'] = 'yes';
                             $payflow_accounts[$key] = $account;
                             $used_account = $account['multi_account_id'];
-                            update_post_meta($order_id, '_multi_account_api_username_load_balancer', $used_account);
+                            $order->update_meta_data('_multi_account_api_username_load_balancer', $used_account);
+                            $order->save_meta_data();
                             update_option($option_key, $payflow_accounts);
                             break;
                         }
