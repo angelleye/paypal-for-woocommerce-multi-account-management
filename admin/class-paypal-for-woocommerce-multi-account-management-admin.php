@@ -1685,7 +1685,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function is_angelleye_multi_account_used($order_id) {
         if ($order_id > 0) {
-            $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
+            $order = wc_get_order($order_id);
+            $_multi_account_api_username = $order->get_meta('_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
             }
@@ -1703,7 +1704,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_get_multi_account_api_user_name($order_id) {
         if ($order_id > 0) {
-            $multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
+            $order = wc_get_order($order_id);
+            $multi_account_api_username = $order->get_meta('_multi_account_api_username', true);
             if (!empty($multi_account_api_username)) {
                 return $multi_account_api_username;
             }
@@ -1718,7 +1720,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_woocommerce_checkout_update_order_meta($order_id, $data) {
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
         if (!empty($multi_account_api_username)) {
-            update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
+            if(!empty($order_id)) {
+                $order = wc_get_order($order_id);
+            }
+            $order->update_meta_data('_multi_account_api_username', $multi_account_api_username);
+            $order->save_meta_data();
             unset(WC()->session->multi_account_api_username);
             WC()->session->get('multi_account_api_username', '');
             WC()->session->__unset('multi_account_api_username');
@@ -2299,7 +2305,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_woocommerce_payment_successful_result($order_id) {
         $multi_account_api_username = WC()->session->get('multi_account_api_username');
         if (!empty($multi_account_api_username)) {
-            update_post_meta($order_id, '_multi_account_api_username', $multi_account_api_username);
+            if(!empty($order_id)) {
+                $order = wc_get_order($order_id);
+            }
+            $order->update_meta_data('_multi_account_api_username', $multi_account_api_username);
+            $order->save_meta_data();
             unset(WC()->session->multi_account_api_username);
             WC()->session->get('multi_account_api_username', '');
             WC()->session->__unset('multi_account_api_username');
@@ -2476,7 +2486,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             $_multi_account_api_username = get_metadata('payment_token', $token_id, '_multi_account_api_username');
             if (!empty($_multi_account_api_username)) {
                 if (!class_exists('WooCommerce') || WC()->session == null) {
-                    update_post_meta($order_id, '_multi_account_api_username', $_multi_account_api_username);
+                    if(!empty($order_id)) {
+                        $order = wc_get_order($order_id);
+                        $order->update_meta_data('_multi_account_api_username', $_multi_account_api_username);
+                        $order->save_meta_data();
+                    }
                 } else {
                     WC()->session->set('multi_account_api_username', $_multi_account_api_username);
                 }

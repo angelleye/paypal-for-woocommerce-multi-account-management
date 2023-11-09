@@ -25,21 +25,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Hooks {
     {
         $order_id = $post->ID;
         $order = wc_get_order($order_id);
-
         $is_parallel_payment_used = apply_filters('own_angelleye_is_express_checkout_parallel_payment_not_used', true, $order_id);
         if ($is_parallel_payment_used) {
-            $load_payment_summary = get_post_meta($order_id, '_angelleye_multi_account_ec_payment_summary', true);
+            $load_payment_summary = $order->get_meta('_angelleye_multi_account_ec_payment_summary', true);
             if ($load_payment_summary) {
-
                 echo '<table class="wp-list-table widefat striped nomargin"><thead><tr><th>Account</th><th>Amount</th></tr></thead><tbody>';
-                $total_amount = '';
                 foreach ($load_payment_summary as $payment_summary) {
                     echo '<tr><td>'.$payment_summary['mac_identifier'].'</td><td>'.(get_woocommerce_currency_symbol($order->get_currency())). $payment_summary['amount'].'</td>';
                 }
                 echo '<tr class="top-border "><td><b>Total</b></td><td>'.(get_woocommerce_currency_symbol($order->get_currency())). $order->get_total().'</td>';
                 echo '</tbody></table>';
                 $this->angelleye_show_order_payment_metabox();
-
                 return;
             }
         }
