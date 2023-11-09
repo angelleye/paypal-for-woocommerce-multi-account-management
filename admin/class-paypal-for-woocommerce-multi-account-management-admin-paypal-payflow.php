@@ -48,7 +48,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
 
     public function is_angelleye_multi_account_used($order_id) {
         if ($order_id > 0) {
-            $_multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
+            $order = wc_get_order($order_id);
+            $_multi_account_api_username = $order->get_meta('_multi_account_api_username', true);
             if (!empty($_multi_account_api_username)) {
                 return true;
             }
@@ -66,7 +67,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
 
     public function angelleye_get_multi_account_api_user_name($order_id) {
         if ($order_id > 0) {
-            $multi_account_api_username = get_post_meta($order_id, '_multi_account_api_username', true);
+            $order = wc_get_order($order_id);
+            $multi_account_api_username = $order->get_meta('_multi_account_api_username', true);
             if (!empty($multi_account_api_username)) {
                 return $multi_account_api_username;
             }
@@ -162,7 +164,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
                             $custom_field_value = get_post_meta($value->ID, $field_key, true);
                             if (!empty($custom_field_value)) {
                                 if (!empty($order_id) && $order_id > 0) {
-                                    $field_order_value = get_post_meta($order_id, $field_key, true);
+                                    $order = wc_get_order($order_id);
+                                    $field_order_value = $order->get_meta($field_key, true);
                                     if (empty($field_order_value)) {
                                         $passed_rules['custom_fields'] = true;
                                     } elseif (!empty($field_order_value) && $field_order_value == $custom_field_value) {
@@ -716,18 +719,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow {
         if (!isset($gateways->testmode)) {
             return;
         }
+        if(!empty($order_id)) {
+            $order = wc_get_order($order_id);
+        }
         if ($gateways->testmode == true) {
             $option_key = 'angelleye_multi_payflow_payment_load_balancer_sandbox';
         } else {
             $option_key = 'angelleye_multi_payflow_payment_load_balancer';
         }
         $is_account_found = false;
-        $used_account = get_post_meta($order_id, '_multi_account_api_username_load_balancer', true);
+        $order = wc_get_order($order_id);
+        $used_account = $order->get_meta('_multi_account_api_username_load_balancer', true);
         if ($used_account == 'default') {
             return;
-        }
-        if(!empty($order_id)) {
-            $order = wc_get_order($order_id);
         }
         if (empty($used_account)) {
             $payflow_accounts = get_option($option_key);
