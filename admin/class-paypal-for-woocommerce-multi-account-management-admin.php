@@ -1445,11 +1445,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
                     $board_status_sandbox = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
                     $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
-                    if ($testmode === 'on' && $board_status_sandbox === '') {
+                    if ($sandbox && $board_status_sandbox === '') {
                         $this->send_paypal_seller_onboard_invitation_email($post_id);
                         wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                         exit();
-                    } elseif ($board_status_live === '') {
+                    } elseif ($sandbox === false && $board_status_live === '') {
                         $this->send_paypal_seller_onboard_invitation_email($post_id);
                         wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                         exit();
