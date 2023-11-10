@@ -248,7 +248,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $custom_field_value = get_post_meta($value->ID, $field_key, true);
                             if (!empty($custom_field_value)) {
                                 if (!empty($order_id) && $order_id > 0) {
-                                    $field_order_value = get_post_meta($order_id, $field_key, true);
+                                    $order = wc_get_order($order_id);
+                                    $field_order_value = $order->get_meta($field_key, true);
                                     if (empty($field_order_value)) {
                                         $passed_rules['custom_fields'] = true;
                                     } elseif (!empty($field_order_value) && $field_order_value == $custom_field_value) {
@@ -1775,7 +1776,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 }
             }
             if (!empty($order_id) && !empty($this->map_item_with_account) && $this->angelleye_is_multi_account_used($this->map_item_with_account)) {
-                update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $this->map_item_with_account);
+                $order = wc_get_order($order_id);
+                if($order) {
+                    $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $this->map_item_with_account);
+                    $order->save_meta_data();
+                }
             }
             return $patch_request;
         }
@@ -1979,7 +1984,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function own_angelleye_ppcp_order_data($paypal_response, $order_id) {
         $order = wc_get_order($order_id);
-        $ec_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+        $ec_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
         if (empty($ec_parallel_data_map)) {
             return false;
         }
@@ -2001,7 +2006,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
         }
         if (!empty($ec_parallel_data_map)) {
-            update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $ec_parallel_data_map);
+            $order = wc_get_order($order_id);
+            if($order) {
+                $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $ec_parallel_data_map);
+                $order->save_meta_data();
+            }
         }
     }
 
@@ -2024,40 +2033,49 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
-        global $post;
-        if ($feature === 'refunds' && $bool === true && $current->id === 'angelleye_ppcp') {
-            if (!empty($post->ID)) {
-                $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($post->ID, '_angelleye_multi_account_ppcp_parallel_data_map', true);
-                if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
-                    foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
-                        if (isset($value['multi_account_id']) && $value['multi_account_id'] == 'default') {
-                            return true;
-                        } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && $value['is_api_set'] === true)) {
-                            return true;
+        global $post, $theorder;
+        if ( $theorder instanceof WC_Order ) {
+            if ($feature === 'refunds' && $bool === true && $current->id === 'angelleye_ppcp') {
+                $order = $theorder;
+                if ($order) {
+                    $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
+                    if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
+                        foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
+                            if (isset($value['multi_account_id']) && $value['multi_account_id'] == 'default') {
+                                return true;
+                            } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && $value['is_api_set'] === true)) {
+                                return true;
+                            }
                         }
+                    } else {
+                        return $bool;
                     }
-                } else {
-                    return $bool;
                 }
             }
         }
+        
         return $bool;
     }
 
     public function own_angelleye_is_ppcp_parallel_payment_not_used($bool, $order_id) {
-        $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
-        if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
-            return false;
+        $order = wc_get_order($order_id);
+        if($order) {
+            $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
+            if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
+                return false;
+            }
+            return $bool;
         }
         return $bool;
     }
 
     public function own_angelleye_is_ppcp_parallel_payment_handle($bool, $order_id, $gateway) {
         try {
+            $order = wc_get_order($order_id);
             $processed_transaction_id = array();
             $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
             $refund_error_message_after = array();
-            $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+            $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                     if (!empty($value['product_id']) && isset($value['is_api_set']) && $value['is_api_set'] === false) {
@@ -2104,8 +2122,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         wc_delete_order_item($cart_item_key);
                     }
                 }
-                update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $angelleye_multi_account_ppcp_parallel_data_map);
-                update_post_meta($order_id, '_multi_account_refund_amount', $this->final_refund_amt);
+                $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $angelleye_multi_account_ppcp_parallel_data_map);
+                $order->update_meta_data('_multi_account_refund_amount', $this->final_refund_amt);
+                $order->save_meta_data();
                 return true;
             }
             return false;
@@ -2155,10 +2174,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function own_woocommerce_order_item_add_action_buttons($order) {
         $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
-        $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+        $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
         if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
             echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', MULTI_ACCOUNT_REFUND_NOTICE, MULTI_ACCOUNT_REFUND_NOTICE);
-            //echo "<br><span class='description'><span class='woocommerce-help-tip' data-tip=" . MULTI_ACCOUNT_REFUND_NOTICE . "></span>" . MULTI_ACCOUNT_REFUND_NOTICE . "</span>";
         }
     }
 
@@ -2183,7 +2201,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if (!empty($order_id)) {
             $order = wc_get_order($order_id);
             $payment_method = version_compare(WC_VERSION, '3.0', '<') ? $order->payment_method : $order->get_payment_method();
-            $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+            $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map) && $payment_method == 'angelleye_ppcp') {
                 $refund->set_amount($order->get_total());
                 $args['amount'] = $order->get_total();
@@ -2315,8 +2333,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $request['body']['purchase_units'][0]['payee']['merchant_id'] = $found_merchant_id;
                 }
                 if (!empty($order_id)) {
+                    $order = wc_get_order();
                     $angelleye_payment_load_balancer_account = WC()->session->get($session_key_account);
-                    update_post_meta($order_id, '_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
+                    if($order) {
+                        $order->update_meta_data('_angelleye_payment_load_balancer_account', $angelleye_payment_load_balancer_account);
+                        $order->save_meta_data();
+                    }
                 }
             }
         }
@@ -2324,7 +2346,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function own_angelleye_is_payment_load_balancer_not_used($bool, $order_id) {
-        $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
+        $order = wc_get_order($order_id);
+        $angelleye_payment_load_balancer_account = $order->get_meta('_angelleye_payment_load_balancer_account', true);
         if (!empty($angelleye_payment_load_balancer_account)) {
             return false;
         }
@@ -2333,12 +2356,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway) {
         try {
+            $order = wc_get_order($order_id);
             $processed_transaction_id = array();
             $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
-            $angelleye_payment_load_balancer_account = get_post_meta($order_id, '_angelleye_payment_load_balancer_account', true);
+            $angelleye_payment_load_balancer_account = $order->get_meta('_angelleye_payment_load_balancer_account', true);
             if (!empty($angelleye_payment_load_balancer_account)) {
                 if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
-                    $_transaction_id = get_post_meta($order_id, '_transaction_id', true);
+                    $_transaction_id = $order->get_transaction_id();
                     $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
                     $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
                     return true;
@@ -2550,9 +2574,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
         $refund_error_message_after = array();
         if (!empty($parent_order_id)) {
-            $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($parent_order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+            $parent_order = wc_get_order($parent_order_id);
+            if($parent_order) {
+                $angelleye_multi_account_ppcp_parallel_data_map = $parent_order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
+            }
         } else {
-            $angelleye_multi_account_ppcp_parallel_data_map = get_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', true);
+            $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
         }
         $order_item_array = $refund->get_item_qtys();
         if (!empty($order_item_array)) {
@@ -2608,8 +2635,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             }
                         }
                     }
-                    update_post_meta($order_id, '_angelleye_multi_account_ppcp_parallel_data_map', $angelleye_multi_account_ppcp_parallel_data_map);
-                    update_post_meta($order_id, '_multi_account_refund_amount', $this->final_refund_amt);
+                    $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $angelleye_multi_account_ppcp_parallel_data_map);
+                    $order->update_meta_data('_multi_account_refund_amount', $this->final_refund_amt);
+                    $order->save_meta_data();
                     return true;
                 }
             }
