@@ -1746,7 +1746,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'country_code' => $shipping_country,
                         );
                         if (!empty($shipping_address_request['address_line_1']) && !empty($shipping_address_request['country_code'])) {
-                            $angelleye_ppcp_is_shipping_added = angelleye_ppcp_get_session('angelleye_ppcp_is_shipping_added', false);
+                            $angelleye_ppcp_is_shipping_added = false;
+                            if(class_exists('AngellEye_Session_Manager')) {
+                                $angelleye_ppcp_is_shipping_added = AngellEye_Session_Manager::get('is_shipping_added', false);
+                            }
                             if ($angelleye_ppcp_is_shipping_added === 'yes') {
                                 $replace = 'replace';
                             } else {
