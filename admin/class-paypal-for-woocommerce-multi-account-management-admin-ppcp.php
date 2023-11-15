@@ -2033,7 +2033,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
-        global $post, $theorder;
+        global $theorder;
         if ( $theorder instanceof WC_Order ) {
             if ($feature === 'refunds' && $bool === true && $current->id === 'angelleye_ppcp') {
                 $order = $theorder;
@@ -2100,17 +2100,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         foreach ($value as $inner_key => $inner_value) {
                             $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
                             $processed_transaction_id[] = $inner_value['transaction_id'];
-                            if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
-                                $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
-                                $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['GROSSREFUNDAMT'] = $this->paypal_response['GROSSREFUNDAMT'];
+                            if (!empty($this->paypal_response['id'])) {
+                                $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
+                                $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
                             }
                         }
                     } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
                         $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                         $processed_transaction_id[] = $value['transaction_id'];
-                        if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
-                            $angelleye_multi_account_ppcp_parallel_data_map[$key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
-                            $angelleye_multi_account_ppcp_parallel_data_map[$key]['GROSSREFUNDAMT'] = $this->paypal_response['GROSSREFUNDAMT'];
+                        if (!empty($this->paypal_response['id'])) {
+                            $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
+                            $angelleye_multi_account_ppcp_parallel_data_map[$key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
                         } else {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['delete_refund_item'] = 'yes';
                         }
@@ -2618,17 +2618,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 foreach ($value as $inner_key => $inner_value) {
                                     $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
                                     $processed_transaction_id[] = $inner_value['transaction_id'];
-                                    if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
-                                        $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
-                                        $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['GROSSREFUNDAMT'] = $this->paypal_response['GROSSREFUNDAMT'];
+                                    if (!empty($this->paypal_response['id'])) {
+                                        $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
+                                        $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
                                     }
                                 }
                             } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
                                 $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                                 $processed_transaction_id[] = $value['transaction_id'];
-                                if (!empty($this->paypal_response['REFUNDTRANSACTIONID'])) {
-                                    $angelleye_multi_account_ppcp_parallel_data_map[$key]['REFUNDTRANSACTIONID'] = $this->paypal_response['REFUNDTRANSACTIONID'];
-                                    $angelleye_multi_account_ppcp_parallel_data_map[$key]['GROSSREFUNDAMT'] = $this->paypal_response['GROSSREFUNDAMT'];
+                                if (!empty($this->paypal_response['id'])) {
+                                    $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
+                                    $angelleye_multi_account_ppcp_parallel_data_map[$key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
                                 } else {
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['delete_refund_item'] = 'yes';
                                 }

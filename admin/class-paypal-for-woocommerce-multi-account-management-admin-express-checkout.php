@@ -2146,8 +2146,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
         return false;
     }
     
-    public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
-        global $post, $theorder;
+    public function own_woocommerce_payment_gateway_supports($bool, $feature, $current) {
+        global $theorder;
         if ( $theorder instanceof WC_Order ) {
             if ($feature === 'refunds' && $bool === true && $current->id === 'paypal_express') {
                 $order = $theorder;

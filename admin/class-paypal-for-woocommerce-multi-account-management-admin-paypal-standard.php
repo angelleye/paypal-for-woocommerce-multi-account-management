@@ -479,7 +479,7 @@ class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
     }
     
     public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
-        global $post, $theorder;
+        global $theorder;
         if ( $theorder instanceof WC_Order ) {
             if ($feature === 'refunds' && $bool === true && $current->id === 'paypal') {
                 $order = $theorder;
