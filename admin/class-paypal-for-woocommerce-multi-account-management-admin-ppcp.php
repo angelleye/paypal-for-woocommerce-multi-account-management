@@ -2085,7 +2085,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
                             }
                         }
-                    } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
+                    } elseif (isset ($value['transaction_id']) && !in_array($value['transaction_id'], $processed_transaction_id)) {
                         $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                         $processed_transaction_id[] = $value['transaction_id'];
                         if (!empty($this->paypal_response['id'])) {
@@ -2115,40 +2115,16 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
 
     public function angelleye_ppcp_load_paypal($value, $gateway, $order_id) {
         if (!empty($value['multi_account_id'])) {
-            if ($value['multi_account_id'] == 'default') {
-                if ($this->is_sandbox) {
-                    $client_id = $this->sandbox_client_id;
-                    $secret_id = $this->sandbox_secret_id;
-                    $testmode = true;
-                } else {
-                    $client_id = $this->live_client_id;
-                    $secret_id = $this->live_secret_id;
-                    $testmode = false;
-                }
-            } elseif ($value['is_api_set'] === true) {
-                $microprocessing_array = get_post_meta($value['multi_account_id']);
-                if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_testmode']) && $microprocessing_array['woocommerce_angelleye_ppcp_testmode'][0] == 'on') {
-                    $testmode = true;
-                } else {
-                    $testmode = false;
-                }
-                if ($testmode) {
-                    $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0];
-                    $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0];
-                } else {
-                    $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0];
-                    $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_secret'][0];
-                }
-            }
             if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
                 include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
             }
-            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-            if (!empty($client_id) && !empty($secret_id)) {
-                $payment_request->angelleye_ppcp_multi_account_refund_order($order_id, $value['transaction_id'], $testmode, $client_id, $secret_id);
+            if($this->is_sandbox) {
+                $testmode = true;
             } else {
-                $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value['transaction_id'], $testmode);
+                $testmode = false;
             }
+            $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
+            $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value['transaction_id'], $testmode);
         }
     }
 
