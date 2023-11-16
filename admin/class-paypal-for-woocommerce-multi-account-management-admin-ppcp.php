@@ -2073,27 +2073,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         try {
             $order = wc_get_order($order_id);
             $processed_transaction_id = array();
-            $refund_error_message_pre = __('We can not refund this order as the PayPal API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
-            $refund_error_message_after = array();
             $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
-            if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
-                foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
-                    if (!empty($value['product_id']) && isset($value['is_api_set']) && $value['is_api_set'] === false) {
-                        $product = wc_get_product($value['product_id']);
-                        $refund_error_message_after[] = $product->get_title();
-                    } elseif ($key === 'always') {
-                        foreach ($value as $inner_key => $inner_value) {
-                            if (!empty($inner_value['multi_account_id']) && isset($inner_value['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $inner_value['is_api_set'], $inner_value) === false) {
-                                $refund_error_message_after[] = __('Always trigger account API keys are missing! Please go to multi-account setup and add API key to process the refund', 'paypal-for-woocommerce-multi-account-management');
-                            }
-                        }
-                    }
-                }
-            }
-            if (!empty($refund_error_message_after)) {
-                $refund_error = $refund_error_message_pre . ' ' . implode(", ", $refund_error_message_after);
-                return new WP_Error('invalid_refund', $refund_error);
-            }
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                     if ($key === 'always') {
