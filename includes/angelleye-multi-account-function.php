@@ -183,3 +183,37 @@ function angelleye_get_checkout_custom_field_keys() {
     }
     return $woo_custome_fields;
 }
+
+if (!function_exists('angelleye_is_ppcp_third_party_enable')) {
+
+    function angelleye_is_ppcp_third_party_enable($sandbox) {
+        if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
+            include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
+        }
+        $settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
+        if ($sandbox) {
+            $sandbox_client_id = $settings->get('sandbox_client_id', '');
+            $sandbox_secret_id = $settings->get('sandbox_api_secret', '');
+            $sandbox_merchant_id = $settings->get('sandbox_merchant_id', '');
+            if (!empty($sandbox_client_id) && !empty($sandbox_secret_id)) {
+                return false;
+            } else if (!empty($sandbox_merchant_id)) {
+                return true;
+            } else {
+                return '';
+            }
+        } else {
+            $live_client_id = $settings->get('api_client_id', '');
+            $live_secret_id = $settings->get('api_secret', '');
+            $live_merchant_id = $settings->get('merchant_id', '');
+            if (!empty($live_client_id) && !empty($live_secret_id)) {
+                return false;
+            } else if (!empty($live_merchant_id)) {
+                return true;
+            } else {
+                return '';
+            }
+        }
+    }
+
+}
