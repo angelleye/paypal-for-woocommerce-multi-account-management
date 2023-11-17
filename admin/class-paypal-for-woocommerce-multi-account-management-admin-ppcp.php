@@ -2078,7 +2078,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                     if ($key === 'always') {
                         foreach ($value as $inner_key => $inner_value) {
-                            $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
+                            $this->paypal_response = $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
                             $processed_transaction_id[] = $inner_value['transaction_id'];
                             if (!empty($this->paypal_response['id'])) {
                                 $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
@@ -2086,7 +2086,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             }
                         }
                     } elseif (isset ($value['transaction_id']) && !in_array($value['transaction_id'], $processed_transaction_id)) {
-                        $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
+                        $this->paypal_response = $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
                         $processed_transaction_id[] = $value['transaction_id'];
                         if (!empty($this->paypal_response['id'])) {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
@@ -2094,12 +2094,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         } else {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['delete_refund_item'] = 'yes';
                         }
-                    }
-                }
-                $order = wc_get_order($order_id);
-                foreach ($order->get_refunds() as $refund) {
-                    foreach ($refund->get_items('line_item') as $cart_item_key => $refunded_item) {
-                        wc_delete_order_item($cart_item_key);
                     }
                 }
                 $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $angelleye_multi_account_ppcp_parallel_data_map);
@@ -2124,7 +2118,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $testmode = false;
             }
             $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-            $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value['transaction_id'], $testmode);
+            $this->paypal_response = $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value, $testmode);
+            return $this->paypal_response;
         }
     }
 
