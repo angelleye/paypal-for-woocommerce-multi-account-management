@@ -67,6 +67,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $client_id;
     public $secret_id;
     public $merchant_id;
+    public $global_ec_site_owner_commission;
+    public $sandbox_client_id;
+    public $sandbox_secret_id;
+    public $live_client_id;
+    public $live_secret_id;
+    public $sandbox_merchant_id;
+    public $live_merchant_id;
 
     /**
      * Initialize the class and set its properties.

@@ -33,6 +33,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public $gateway_key;
     public $message;
     public $settings;
+    public $global_ec_site_owner_commission;
+    public $email_message;
 
     /**
      * Initialize the class and set its properties.
