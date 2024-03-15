@@ -863,9 +863,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
             $order = new WC_Order($order_id);
             $cart_contents_total = $order->get_total();
         } else {
-            if (!defined('WOOCOMMERCE_CART')) {
-                define('WOOCOMMERCE_CART', true);
-            }
             WC()->cart->calculate_totals();
             WC()->cart->calculate_shipping();
             if (version_compare(WC_VERSION, '3.0', '<')) {
