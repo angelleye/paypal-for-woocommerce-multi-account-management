@@ -74,6 +74,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $live_secret_id;
     public $sandbox_merchant_id;
     public $live_merchant_id;
+    public $discount_amount;
 
     /**
      * Initialize the class and set its properties.
@@ -798,7 +799,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         } else {
             $this->taxamt = 0;
         }
-        if (WC()->cart->is_empty()) {
+        if (is_object($order)) {
             $this->shippingamt = round($order->get_shipping_total(), $this->decimals);
         } else {
             $this->shippingamt = round(WC()->cart->shipping_total, $this->decimals);
@@ -896,7 +897,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
             $this->shipping_array = $this->angelleye_get_extra_fee_array($pending_shipping_amount, $this->angelleye_needs_shipping, 'shipping');
         }
-        if (WC()->cart->is_empty()) {
+        if (is_object($order)) {
             $this->discount_amount = round($order->get_discount_total(), $this->decimals);
             if (isset($this->discount_amount) && $this->discount_amount > 0) {
                 $this->discount_array = $this->angelleye_get_extra_fee_array($this->discount_amount, $this->angelleye_is_discountable, 'discount');
@@ -1493,18 +1494,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 }
             }
         }
-        WC()->cart->calculate_fees();
-        foreach (WC()->cart->get_fees() as $cart_item_key => $fee_values) {
-            $fee_item = array(
-                'name' => html_entity_decode(wc_trim_string($fee_values->name ? $fee_values->name : __('Fee', 'paypal-for-woocommerce'), 127), ENT_NOQUOTES, 'UTF-8'),
-                'desc' => '',
-                'qty' => 1,
-                'amt' => AngellEYE_Gateway_Paypal::number_format($fee_values->amount),
-                'number' => ''
-            );
-            $default_new_payments_line_item[] = $fee_item;
-            $default_item_total += $fee_values->amount;
-            $default_final_total += $fee_values->amount;
+        if(!is_null(WC()->cart)) {
+            WC()->cart->calculate_fees();
+            foreach (WC()->cart->get_fees() as $cart_item_key => $fee_values) {
+                $fee_item = array(
+                    'name' => html_entity_decode(wc_trim_string($fee_values->name ? $fee_values->name : __('Fee', 'paypal-for-woocommerce'), 127), ENT_NOQUOTES, 'UTF-8'),
+                    'desc' => '',
+                    'qty' => 1,
+                    'amt' => AngellEYE_Gateway_Paypal::number_format($fee_values->amount),
+                    'number' => ''
+                );
+                $default_new_payments_line_item[] = $fee_item;
+                $default_item_total += $fee_values->amount;
+                $default_final_total += $fee_values->amount;
+            }
         }
         if ($default_final_total > 0) {
             if (empty($default_pal_id)) {
