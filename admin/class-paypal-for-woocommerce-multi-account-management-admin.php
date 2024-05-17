@@ -1089,7 +1089,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_multi_account_ui() {
         if (!empty($_GET['on_board_request_send'])) {
-            $this->email_message = __('PayPal Seller Onboarding email sent.', 'paypal-for-woocommerce-multi-account-management');
+            $this->email_message = __('An email invitation has been sent to the address provided.  Please instruct the PayPal account owner to check their email and follow the steps to onboard their account into the system.', 'paypal-for-woocommerce-multi-account-management');
         }
         if (!empty($_GET['success'])) {
             $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
