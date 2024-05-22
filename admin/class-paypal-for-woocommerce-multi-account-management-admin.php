@@ -1460,18 +1460,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
                 exit();
             } else {
-                if (angelleye_is_ppcp_third_party_enable($sandbox) === true && angelleye_is_ppcp_third_party_enable($sandbox) !== '') {
-                    if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox') === false) {
-                        update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', '');
-                    }
-                    if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live') === false) {
-                        update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
-                    }
-                    $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
-                } else {
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
+                if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox') === false) {
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', '');
                 }
+                if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live') === false) {
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
+                }
+                $this->send_paypal_seller_onboard_invitation_email($post_id);
+                wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
                 exit();
             }
         }
