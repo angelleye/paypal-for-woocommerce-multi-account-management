@@ -139,7 +139,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                         $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
                     }
                     if (empty($board_status)) {
-                        return __('Pending Seller Onboard', 'paypal-for-woocommerce-multi-account-management');
+                        return __('Invitation Sent (Pending)', 'paypal-for-woocommerce-multi-account-management');
                     } else {
                         return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
                     }
