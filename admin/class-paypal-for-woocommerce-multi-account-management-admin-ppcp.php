@@ -186,13 +186,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 )
             )
         );
-        if (angelleye_is_ppcp_third_party_enable($this->is_sandbox) === true && angelleye_is_ppcp_third_party_enable($this->is_sandbox) !== '') {
-            array_push($args['meta_query'], array(
-                'key' => ($this->is_sandbox) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
-                'value' => 'yes',
-                'compare' => '='
-            ));
-        }
+        array_push($args['meta_query'], array(
+            'key' => ($this->is_sandbox) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
+            'value' => 'yes',
+            'compare' => '='
+        ));
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
@@ -2682,13 +2680,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 )
             )
         );
-        if (angelleye_is_ppcp_third_party_enable($testmode) === true && angelleye_is_ppcp_third_party_enable($testmode) !== '') {
-            array_push($args['meta_query'], array(
-                'key' => ($testmode) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
-                'value' => 'yes',
-                'compare' => '='
-            ));
-        }
+        
+        array_push($args['meta_query'], array(
+            'key' => ($testmode) ? 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox' : 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live',
+            'value' => 'yes',
+            'compare' => '='
+        ));
+        
         $query = new WP_Query();
         $result = $query->query($args);
         $total_posts = $query->found_posts;
