@@ -918,7 +918,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $sub_total_commission = 0;
         $tax_commission = 0;
         $shippingamt_commission = 0;
-        $default_discount = 0;
         if (!empty($order_id)) {
             $order = wc_get_order($order_id);
             $this->final_order_grand_total = $order->get_total();
@@ -937,6 +936,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $product_id = $product->is_type('variation') ? $product->get_parent_id() : $product->get_id();
                 $item_total = 0;
                 $final_total = 0;
+                $discount_amt = 0;
                 if (array_key_exists($product_id, $this->map_item_with_account)) {
                     $multi_account_info = $this->map_item_with_account[$product_id];
                     if ($multi_account_info['multi_account_id'] != 'default') {
@@ -946,6 +946,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $this->map_item_with_account[$product_id]['sellerpaypalaccountid'] = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_order($order, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']), $order);
+                        if (!empty($this->discount_array[$product_id])) {
+                            $item_total = $item_total - $this->discount_array[$product_id];
+                        }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt, $order);
@@ -959,14 +962,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission, $order);
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission, $order);
                             $default_item_total = $default_item_total + $product_commission;
-                             if (!empty($this->discount_array[$product_id])) {
-                                $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
-                                $discount_commission = AngellEYE_Gateway_Paypal::number_format($discount / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
-                                $default_discount = $discount_commission;
-                                $default_final_total = $default_final_total - $discount_commission;
-                                $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $discount_commission);
-                                $discount = AngellEYE_Gateway_Paypal::number_format($discount - $discount_commission);
-                            }
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
                                 if ($taxamt > 0) {
                                     $tax_commission = AngellEYE_Gateway_Paypal::number_format($taxamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
@@ -995,7 +990,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             );
                             $default_new_payments_line_item[] = $Item;
                             if ($this->always_trigger_commission_total_percentage > 0) {
-                                $commision_item_total_raw = $item_total;
+                                if (!empty($this->discount_array[$product_id])) {
+                                    $commision_item_total_raw = AngellEYE_Gateway_Paypal::number_format($item_total + $this->discount_array[$product_id]);
+                                } else {
+                                    $commision_item_total_raw = $item_total;
+                                }
                                 $atc_item_total = $commision_item_total_raw + $sub_total_commission;
                                 $always_trigger_commission_item_total = AngellEYE_Gateway_Paypal::number_format($atc_item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
                                 $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $always_trigger_commission_item_total, 2);
@@ -1005,15 +1004,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             if ($item_total / $line_item['qty'] != AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order)) {
                                 $is_mismatch = true;
                             }
-                            
-                            $Item = array(
-                                'name' => $line_item['name'],
-                                'desc' => $line_item['desc'],
-                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order),
-                                'number' => $line_item['number'],
-                                'qty' => $line_item['qty']
-                            );
-                            array_push($PaymentOrderItems, $Item);
+                            if (!empty($this->discount_array[$product_id])) {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty'], $order),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                                $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
+                            } else {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                            }
                         } else {
                             if ($this->always_trigger_commission_total_percentage > 0) {
                                 $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
@@ -1032,26 +1042,30 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                                 }
-                                if (!empty($this->discount_array[$product_id])) {
-                                    $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
-                                    $discount_commission = AngellEYE_Gateway_Paypal::number_format($discount / 100 * $this->always_trigger_commission_accounts_line_items, 2);
-                                    $default_final_total = $default_final_total - $discount_commission;
-                                    $default_discount = $discount_commission;
-                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $discount_commission);
-                                    $discount = AngellEYE_Gateway_Paypal::number_format($discount - $discount_commission);
-                                }
                             }
                             if ($item_total / $line_item['qty'] != AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order)) {
                                 $is_mismatch = true;
                             }
-                            $Item = array(
-                                'name' => $line_item['name'],
-                                'desc' => $line_item['desc'],
-                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order),
-                                'number' => $line_item['number'],
-                                'qty' => $line_item['qty']
-                            );
-                            array_push($PaymentOrderItems, $Item);
+                            if (!empty($this->discount_array[$product_id])) {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty'], $order),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                                $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
+                            } else {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'], $order),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                            }
                         }
                         $custom_param = array();
                         if (isset($old_purchase_units['custom_id'])) {
@@ -1071,7 +1085,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             'reference_id' => $sellerpaypalaccountid,
                             'soft_descriptor' => isset($old_purchase_units['soft_descriptor']) ? $old_purchase_units['soft_descriptor'] : ''
                         );
-                        
                         if (is_email($sellerpaypalaccountid)) {
                             $Payment['payee'] = array('email_address' => $sellerpaypalaccountid);
                         } else {
@@ -1101,7 +1114,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total, $order);
                             $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt, $order);
                             $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt, $order);
-                            $Payment['discount'] = AngellEYE_Gateway_Paypal::number_format($discount, $order);
+                            if(isset($discount_amt) && $discount_amt > 0) {
+                                $Payment['discount'] = AngellEYE_Gateway_Paypal::number_format($discount_amt, $order);
+                            }
                             if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['items'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['items'] = array();
                             }
@@ -1137,6 +1152,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $this->map_item_with_account[$product_id]['sellerpaypalaccountid'] = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_order($order, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']), $order);
+                        if (!empty($this->discount_array[$product_id])) {
+                            $item_total = $item_total - $this->discount_array[$product_id];
+                        }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         if ($this->always_trigger_commission_total_percentage > 0) {
@@ -1154,25 +1172,31 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                             }
                         }
-                        $discount = 0;
                         if (!empty($this->discount_array[$product_id])) {
-                            $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
-                            $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $discount_commission);
+                            $Item = array(
+                                'name' => $line_item['name'],
+                                'desc' => $line_item['desc'],
+                                'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty']),
+                                'number' => $line_item['number'],
+                                'qty' => $line_item['qty']
+                            );
+                            array_push($default_new_payments_line_item, $Item); 
+                            $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
+                        } else {
+                            $Item = array(
+                                'name' => $line_item['name'],
+                                'desc' => $line_item['desc'],
+                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
+                                'number' => $line_item['number'],
+                                'qty' => $line_item['qty']
+                            );
+                            array_push($default_new_payments_line_item, $Item);
                         }
-                        $Item = array(
-                            'name' => $line_item['name'],
-                            'desc' => $line_item['desc'],
-                            'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
-                            'number' => $line_item['number'],
-                            'qty' => $line_item['qty']
-                        );
-                        array_push($default_new_payments_line_item, $Item);
                         $paymentrequestid_value = $cart_item_key . '-' . rand();
                         $default_shippingamt = $default_shippingamt + $shippingamt;
                         $default_taxamt = $default_taxamt + $taxamt;
-                        $default_final_total = $default_final_total + AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt - $discount, $order);
+                        $default_final_total = $default_final_total + AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt, $order);
                         $default_item_total = $default_item_total + $item_total;
-                        $default_discount = $default_discount + $discount;
                         $loop = $loop + 1;
                     }
                 }
@@ -1198,6 +1222,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $PaymentOrderItems = array();
                         $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
+                        if (!empty($this->discount_array[$product_id])) {
+                            $item_total = $item_total - $this->discount_array[$product_id];
+                        }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
@@ -1209,13 +1236,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $default_final_total = $default_final_total + $product_commission;
                             $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $product_commission);
                             $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $product_commission);
-                            if (!empty($this->discount_array[$product_id])) {
-                                $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
-                                $discount_commission = AngellEYE_Gateway_Paypal::number_format($discount / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
-                                $discount = AngellEYE_Gateway_Paypal::number_format($discount - $discount_commission);
-                                $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $discount);
-                                $default_discount = $discount_commission;
-                            }
                             $default_item_total = $default_item_total + $product_commission;
                             if ($this->global_ec_include_tax_shipping_in_commission == 'on') {
                                 if ($taxamt > 0) {
@@ -1224,7 +1244,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $tax_commission);
                                     $taxamt = AngellEYE_Gateway_Paypal::number_format($taxamt - $tax_commission);
                                     $default_item_total = $default_item_total + $tax_commission;
-                                    $default_discount = $discount_commission;
                                 }
                                 if ($shippingamt > 0) {
                                     $shippingamt_commission = AngellEYE_Gateway_Paypal::number_format($shippingamt / 100 * $this->map_item_with_account[$product_id]['ppcp_site_owner_commission'], 2);
@@ -1233,7 +1252,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
                                     $default_item_total = $default_item_total + $shippingamt_commission;
                                 }
-                                 
                                 $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission + $tax_commission + $shippingamt_commission);
                             } else {
                                 $sub_total_commission = $product_commission;
@@ -1247,7 +1265,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             );
                             $default_new_payments_line_item[] = $Item;
                             if ($this->always_trigger_commission_total_percentage > 0) {
-                                $commision_item_total_raw = $item_total;
+                                if (!empty($this->discount_array[$product_id])) {
+                                    $commision_item_total_raw = AngellEYE_Gateway_Paypal::number_format($item_total + $this->discount_array[$product_id]);
+                                } else {
+                                    $commision_item_total_raw = $item_total;
+                                }
                                 $atc_item_total = $commision_item_total_raw + $sub_total_commission;
                                 $always_trigger_commission_item_total = AngellEYE_Gateway_Paypal::number_format($atc_item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
                                 $item_total = AngellEYE_Gateway_Paypal::number_format($item_total - $always_trigger_commission_item_total, 2);
@@ -1257,14 +1279,26 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             if ($item_total / $line_item['qty'] != AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty'])) {
                                 $is_mismatch = true;
                             }
-                            $Item = array(
-                                'name' => $line_item['name'],
-                                'desc' => $line_item['desc'],
-                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
-                                'number' => $line_item['number'],
-                                'qty' => $line_item['qty']
-                            );
-                            array_push($PaymentOrderItems, $Item);
+                            if (!empty($this->discount_array[$product_id])) {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty']),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                                $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
+                            } else {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                            }
                         } else {
                             if ($this->always_trigger_commission_total_percentage > 0) {
                                 $product_commission = AngellEYE_Gateway_Paypal::number_format($item_total / 100 * $this->always_trigger_commission_total_percentage, 2);
@@ -1283,21 +1317,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt_commission);
                                     $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                                 }
-                                if (!empty($this->discount_array[$product_id])) {
-                                    $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
-                                    $discount_commission = AngellEYE_Gateway_Paypal::number_format($discount / 100 * $this->always_trigger_commission_total_percentage, 2);
-                                    $discount = AngellEYE_Gateway_Paypal::number_format($discount - $discount_commission);
-                                    $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $discount);
-                                } 
                             }
-                            $Item = array(
-                                'name' => $line_item['name'],
-                                'desc' => $line_item['desc'],
-                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
-                                'number' => $line_item['number'],
-                                'qty' => $line_item['qty']
-                            );
-                            array_push($PaymentOrderItems, $Item);
+                            if (!empty($this->discount_array[$product_id])) {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty']),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                                $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
+                            } else {
+                                $Item = array(
+                                    'name' => $line_item['name'],
+                                    'desc' => $line_item['desc'],
+                                    'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
+                                    'number' => $line_item['number'],
+                                    'qty' => $line_item['qty']
+                                );
+                                array_push($PaymentOrderItems, $Item);
+                            }
                         }
                         $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
@@ -1327,7 +1367,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 )
                             );
                         }
-                        
                         if (!empty($this->final_payment_request_data[$sellerpaypalaccountid]['amt'])) {
                             $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] = $this->final_payment_request_data[$sellerpaypalaccountid]['amt'] + $Payment['amt'];
                         } else {
@@ -1338,7 +1377,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             $Payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($item_total);
                             $Payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($shippingamt);
                             $Payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($taxamt);
-                            $Payment['discount'] = AngellEYE_Gateway_Paypal::number_format($discount);
+                            if(isset($discount_amt) && $discount_amt > 0) {
+                                $Payment['discount'] = AngellEYE_Gateway_Paypal::number_format($discount_amt, $order);
+                            }
                             if (empty($this->final_payment_request_data[$sellerpaypalaccountid]['items'])) {
                                 $this->final_payment_request_data[$sellerpaypalaccountid]['items'] = array();
                             }
@@ -1377,6 +1418,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $default_pal_id = $sellerpaypalaccountid;
                         $line_item = $this->angelleye_get_line_item_from_cart($product_id, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']));
+                        if (!empty($this->discount_array[$product_id])) {
+                            $item_total = $item_total - $this->discount_array[$product_id];
+                        }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         if ($this->always_trigger_commission_total_percentage > 0) {
@@ -1393,25 +1437,31 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
                                 $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] = $this->always_trigger_commission_accounts_line_items[$product_id]['commission_item_total'] + $shippingamt_commission;
                             }
-                            
                         }
-                        $discount = 0;
                         if (!empty($this->discount_array[$product_id])) {
-                            $discount = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
-                        } 
-                        $Item = array(
-                            'name' => $line_item['name'],
-                            'desc' => $line_item['desc'],
-                            'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
-                            'number' => $line_item['number'],
-                            'qty' => $line_item['qty']
-                        );
-                        array_push($default_new_payments_line_item, $Item);
+                            $Item = array(
+                                'name' => $line_item['name'],
+                                'desc' => $line_item['desc'],
+                                'amt' => AngellEYE_Gateway_Paypal::number_format(($item_total + $this->discount_array[$product_id] ) / $line_item['qty']),
+                                'number' => $line_item['number'],
+                                'qty' => $line_item['qty']
+                            );
+                            array_push($default_new_payments_line_item, $Item);
+                            $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
+                        } else {
+                            $Item = array(
+                                'name' => $line_item['name'],
+                                'desc' => $line_item['desc'],
+                                'amt' => AngellEYE_Gateway_Paypal::number_format($item_total / $line_item['qty']),
+                                'number' => $line_item['number'],
+                                'qty' => $line_item['qty']
+                            );
+                            array_push($default_new_payments_line_item, $Item);
+                        }
                         $default_taxamt = $default_taxamt + $taxamt;
-                        $default_final_total = $default_final_total + AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt - $discount);
+                        $default_final_total = $default_final_total + AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
                         $default_item_total = $default_item_total + $item_total;
                         $default_shippingamt = $default_shippingamt + $shippingamt;
-                        $default_discount = $default_discount + $discount;
                         $loop = $loop + 1;
                     }
                 }
@@ -1474,7 +1524,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $new_default_payment['items'] = $default_new_payments_line_item;
                     $new_default_payment['itemamt'] = AngellEYE_Gateway_Paypal::number_format($default_item_total);
                     $new_default_payment['shippingamt'] = AngellEYE_Gateway_Paypal::number_format($default_shippingamt);
-                    $new_default_payment['discount'] = AngellEYE_Gateway_Paypal::number_format($default_discount);
                     $new_default_payment['taxamt'] = AngellEYE_Gateway_Paypal::number_format($default_taxamt);
                     if (empty($this->final_payment_request_data[$default_pal_id]['items'])) {
                         $this->final_payment_request_data[$default_pal_id]['items'] = array();
@@ -1569,7 +1618,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     }
                     unset($new_payments[0]['shippingamt']);
                     unset($new_payments[0]['taxamt']);
-                    unset($new_payments[0]['discount']);
                 }
             }
         }
