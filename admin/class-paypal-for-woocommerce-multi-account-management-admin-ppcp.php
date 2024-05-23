@@ -947,7 +947,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $line_item = $this->angelleye_get_line_item_from_order($order, $cart_item);
                         $item_total = AngellEYE_Gateway_Paypal::number_format($item_total + ($line_item['amt'] * $line_item['qty']), $order);
                         if (!empty($this->discount_array[$product_id])) {
-                            $item_total = $item_total - $this->discount_array[$product_id];
+                            $item_total = $item_total + $this->discount_array[$product_id];
                         }
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
@@ -1012,6 +1012,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'number' => $line_item['number'],
                                     'qty' => $line_item['qty']
                                 );
+                                $item_total = $item_total + $this->discount_array[$product_id];
                                 array_push($PaymentOrderItems, $Item);
                                 $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
                             } else {
@@ -1054,6 +1055,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'number' => $line_item['number'],
                                     'qty' => $line_item['qty']
                                 );
+                                $item_total = $item_total + $this->discount_array[$product_id];
                                 array_push($PaymentOrderItems, $Item);
                                 $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id], $order) : '0.00';
                             } else {
@@ -1180,6 +1182,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 'number' => $line_item['number'],
                                 'qty' => $line_item['qty']
                             );
+                            $item_total = $item_total + $this->discount_array[$product_id];
                             array_push($default_new_payments_line_item, $Item); 
                             $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
                         } else {
@@ -1287,6 +1290,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'number' => $line_item['number'],
                                     'qty' => $line_item['qty']
                                 );
+                                $item_total = $item_total + $this->discount_array[$product_id];
                                 array_push($PaymentOrderItems, $Item);
                                 $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
                             } else {
@@ -1326,6 +1330,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'number' => $line_item['number'],
                                     'qty' => $line_item['qty']
                                 );
+                                $item_total = $item_total + $this->discount_array[$product_id];
                                 array_push($PaymentOrderItems, $Item);
                                 $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
                             } else {
@@ -1446,6 +1451,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 'number' => $line_item['number'],
                                 'qty' => $line_item['qty']
                             );
+                            $item_total = $item_total + $this->discount_array[$product_id];
                             array_push($default_new_payments_line_item, $Item);
                             $discount_amt = isset($this->discount_array[$product_id]) ? AngellEYE_Gateway_Paypal::number_format($this->discount_array[$product_id]) : '0.00';
                         } else {
