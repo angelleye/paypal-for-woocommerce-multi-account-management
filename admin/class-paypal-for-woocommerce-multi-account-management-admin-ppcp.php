@@ -93,6 +93,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $angelleye_smart_commission = get_option('angelleye_smart_commission', '');
         $this->global_ec_site_owner_commission = 0;
         $this->global_ec_site_owner_commission_label = '';
+        $this->always_trigger_commission_total_percentage = 0;
         if (isset($angelleye_smart_commission['enable']) && $angelleye_smart_commission['enable'] == 'on') {
             if (is_user_logged_in() && !empty($angelleye_smart_commission['role'])) {
                 $customer_id = get_current_user_id();
@@ -197,6 +198,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->angelleye_is_taxable = 0;
         $this->angelleye_needs_shipping = 0;
         $this->angelleye_is_discountable = 0;
+        
         if ($total_posts > 0) {
             foreach ($result as $key => $value) {
                 $passed_rules = array();
@@ -1024,6 +1026,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'qty' => $line_item['qty']
                                 );
                                 array_push($PaymentOrderItems, $Item);
+                                $discount_amt = 0;
                             }
                         } else {
                             if ($this->always_trigger_commission_total_percentage > 0) {
@@ -1067,6 +1070,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'qty' => $line_item['qty']
                                 );
                                 array_push($PaymentOrderItems, $Item);
+                                $discount_amt = 0;
                             }
                         }
                         $custom_param = array();
@@ -1194,6 +1198,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 'qty' => $line_item['qty']
                             );
                             array_push($default_new_payments_line_item, $Item);
+                            $discount_amt = 0;
                         }
                         $paymentrequestid_value = $cart_item_key . '-' . rand();
                         $default_shippingamt = $default_shippingamt + $shippingamt;
@@ -1302,6 +1307,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'qty' => $line_item['qty']
                                 );
                                 array_push($PaymentOrderItems, $Item);
+                                $discount_amt = 0;
                             }
                         } else {
                             if ($this->always_trigger_commission_total_percentage > 0) {
@@ -1342,6 +1348,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     'qty' => $line_item['qty']
                                 );
                                 array_push($PaymentOrderItems, $Item);
+                                $discount_amt = 0;
                             }
                         }
                         $this->final_grand_total = $this->final_grand_total + $final_total;
@@ -1413,8 +1420,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if ($final_total > 0) {
                             array_push($new_payments, $Payment);
                             $loop = $loop + 1;
-                        } else {
-                            unset($this->final_payment_request_data[$sellerpaypalaccountid]);
                         }
                     } else {
                         if (isset($multi_account_info['merchant_id'])) {
@@ -1463,6 +1468,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 'qty' => $line_item['qty']
                             );
                             array_push($default_new_payments_line_item, $Item);
+                            $discount_amt = 0;
                         }
                         $default_taxamt = $default_taxamt + $taxamt;
                         $default_final_total = $default_final_total + AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
