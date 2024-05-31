@@ -979,14 +979,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $shippingamt = AngellEYE_Gateway_Paypal::number_format($shippingamt - $shippingamt_commission);
                                     $default_item_total = $default_item_total + $shippingamt_commission;
                                 }
-                                $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission + $tax_commission + $shippingamt_commission);
+                                $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission + $tax_commission + $shippingamt_commission, $order);
                             } else {
-                                $sub_total_commission = $product_commission;
+                                $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission, $order);
                             }
                             $Item = array(
                                 'name' => $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'],
                                 'desc' => $line_item['name'],
-                                'amt' => $sub_total_commission,
+                                'amt' => AngellEYE_Gateway_Paypal::number_format($sub_total_commission,$order),
                                 'number' => '',
                                 'qty' => 1
                             );
@@ -1084,7 +1084,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         }
                         $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
-                            'amt' => $final_total,
+                            'amt' => AngellEYE_Gateway_Paypal::number_format($final_total,$order),
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => $custom_param,
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] . '-' . $cart_item_key : '',
@@ -1262,12 +1262,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 }
                                 $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission + $tax_commission + $shippingamt_commission);
                             } else {
-                                $sub_total_commission = $product_commission;
+                                $sub_total_commission = AngellEYE_Gateway_Paypal::number_format($product_commission);
                             }
                             $Item = array(
                                 'name' => $this->map_item_with_account[$product_id]['ppcp_site_owner_commission_label'],
                                 'desc' => $line_item['name'],
-                                'amt' => $sub_total_commission,
+                                'amt' => AngellEYE_Gateway_Paypal::number_format($sub_total_commission),
                                 'number' => '',
                                 'qty' => 1
                             );
@@ -1353,7 +1353,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         }
                         $this->final_grand_total = $this->final_grand_total + $final_total;
                         $Payment = array(
-                            'amt' => $final_total,
+                            'amt' => AngellEYE_Gateway_Paypal::number_format($final_total),
                             'currencycode' => isset($old_purchase_units['amount']['currency_code']) ? $old_purchase_units['amount']['currency_code'] : '',
                             'custom_id' => isset($old_purchase_units['custom_id']) ? $old_purchase_units['custom_id'] : '',
                             'invoice_id' => isset($old_purchase_units['invoice_id']) ? $old_purchase_units['invoice_id'] : '',
@@ -1624,7 +1624,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $new_payments[0]['items'][0] = array(
                             'name' => $item_details,
                             'desc' => '',
-                            'amt' => $new_payments[0]['amt'],
+                            'amt' => AngellEYE_Gateway_Paypal::number_format($new_payments[0]['amt']),
                             'qty' => 1
                         );
                     }
@@ -1639,13 +1639,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 foreach ($new_payments as $key_new_payments => $value_new_payments) {
                     $value_new_payments['amount'] = array(
                         'currency_code' => $old_purchase_units['amount']['currency_code'],
-                        'value' => $value_new_payments['amt'],
+                        'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['amt']),
                     );
                     if (!empty($value_new_payments['items'])) {
                         foreach ($value_new_payments['items'] as $key => $value) {
                             $value_new_payments['items'][$key]['unit_amount'] = array(
                                 'currency_code' => $old_purchase_units['amount']['currency_code'],
-                                'value' => $value['amt']
+                                'value' => AngellEYE_Gateway_Paypal::number_format($value['amt'])
                             );
                             $value_new_payments['items'][$key]['quantity'] = $value['qty'];
                             unset($value_new_payments['items'][$key]['amt']);
@@ -1656,28 +1656,28 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if (!empty($value_new_payments['itemamt'])) {
                         $value_new_payments['amount']['breakdown']['item_total'] = array(
                             'currency_code' => $old_purchase_units['amount']['currency_code'],
-                            'value' => $value_new_payments['itemamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['itemamt'])
                         );
                     }
                     unset($value_new_payments['itemamt']);
                     if (!empty($value_new_payments['shippingamt'])) {
                         $value_new_payments['amount']['breakdown']['shipping'] = array(
                             'currency_code' => $old_purchase_units['amount']['currency_code'],
-                            'value' => $value_new_payments['shippingamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['shippingamt'])
                         );
                     }
                     unset($value_new_payments['shippingamt']);
                     if (!empty($value_new_payments['taxamt'])) {
                         $value_new_payments['amount']['breakdown']['tax_total'] = array(
                             'currency_code' => $old_purchase_units['amount']['currency_code'],
-                            'value' => $value_new_payments['taxamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['taxamt'])
                         );
                     }
                     unset($value_new_payments['taxamt']);
                     if (!empty($value_new_payments['discount'])) {
                         $value_new_payments['amount']['breakdown']['discount'] = array(
                             'currency_code' => $old_purchase_units['amount']['currency_code'],
-                            'value' => $value_new_payments['discount']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['discount'])
                         );
                     }
                     unset($value_new_payments['discount']);
@@ -1695,27 +1695,27 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     if (!empty($value_new_payments['itemamt'])) {
                         $update_amount_request['item_total'] = array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $value_new_payments['itemamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['itemamt'])
                         );
                     }
                     if (!empty($value_new_payments['shippingamt'])) {
                         $update_amount_request['shipping'] = array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $value_new_payments['shippingamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['shippingamt'])
                         );
                     }
 
                     if (!empty($value_new_payments['taxamt'])) {
                         $update_amount_request['tax_total'] = array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $value_new_payments['taxamt']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['taxamt'])
                         );
                     }
 
                     if (!empty($value_new_payments['discount'])) {
                         $update_amount_request['discount'] = array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $value_new_payments['discount']
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['discount'])
                         );
                     }
 
@@ -1726,7 +1726,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         'value' =>
                         array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
-                            'value' => $value_new_payments['amt'],
+                            'value' => AngellEYE_Gateway_Paypal::number_format($value_new_payments['amt']),
                             'breakdown' => $update_amount_request
                         ),
                     );
