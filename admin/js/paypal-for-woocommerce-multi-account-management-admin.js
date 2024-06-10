@@ -150,7 +150,9 @@ jQuery('#woocommerce_paypal_express_always_trigger').change(function () {
         jQuery('.paypal_express_always_trigger_commission_field').show();
     } else {
         jQuery('.trigger_conditions_fields').show();
-        jQuery('.site_owner_commission_field').show();
+        if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_express') {
+            jQuery('.site_owner_commission_field').show();
+        }
         jQuery('.paypal_express_always_trigger_commission_field').hide();
         jQuery("#always_trigger_commission_microprocessing").prop('required', false);
         jQuery("#always_trigger_commission_item_label_microprocessing").prop('required', false);

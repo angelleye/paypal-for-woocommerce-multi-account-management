@@ -104,7 +104,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         <tbody class="angelleye_micro_account_body">';
         $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
-            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'angelleye_ppcp' => __('PayPal Complete Payments', ''));
+            $gateway_list = array('angelleye_ppcp' => __('PayPal Complete Payments', ''), 'paypal_express' => __('PayPal Express Checkout (deprecated)', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow) (deprecated)', ''));
         } else {
             //$gateway_list = array('paypal' => __('PayPal Standard', ''));
         }
@@ -274,9 +274,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         break;
                     case 'woocommerce_angelleye_ppcp_email_address':
                         if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email" readonly></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email" readonly></fieldset></td></tr>', __('Email Address', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         } else {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
+                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_email_address" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('Email Address', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         }
                         break;
                     case 'ppcp_site_owner_commission':
@@ -1966,7 +1966,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_multi_account_choose_payment_gateway() {
         $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
-            $gateway_list = array('paypal_express' => __('PayPal Express Checkout', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow)', ''), 'angelleye_ppcp' => __('PayPal Complete Payments', ''));
+            $gateway_list = array('angelleye_ppcp' => __('PayPal Complete Payments', ''), 'paypal_express' => __('PayPal Express Checkout (deprecated)', ''), 'paypal_pro_payflow' => __('PayPal Payments Pro 2.0 (PayFlow) (deprecated)', ''));
             $angelleye_hidden = '';
         } else {
             //$gateway_list = array('paypal' => __('PayPal Standard', ''));
@@ -1980,7 +1980,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 <select class="wc-enhanced-select angelleye_multi_account_choose_payment_gateway" name="angelleye_multi_account_choose_payment_gateway" <?php echo $angelleye_hidden; ?>>
                     <?php
                     foreach ($gateway_list as $key => $details) {
-                        echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
+                        if($key != 'angelleye_ppcp') {
+                            echo "\n\t<option disabled value='" . esc_attr($key) . "'>$details</option>";
+                        } else {
+                            echo "\n\t<option value='" . esc_attr($key) . "'>$details</option>";
+                        }
                     }
                     ?>
                 </select>
@@ -2230,6 +2234,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     <input type="hidden" name="woocommerce_paypal_express_api_condition_field" value="transaction_amount">
                     <select class="smart_forwarding_field" name="woocommerce_paypal_express_api_condition_sign"><option value="greaterthan"><?php echo __('Greater than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="lessthan"><?php echo __('Less than', 'paypal-for-woocommerce-multi-account-management'); ?></option><option value="equalto"><?php echo __('Equal to', 'paypal-for-woocommerce-multi-account-management'); ?></option></select>
                     <input class="input-text regular-input" name="woocommerce_paypal_express_api_condition_value" id="woocommerce_paypal_express_api_condition_value" type="number" min="0" step="0.01" value="0">
+                    <div class="angelleye_multi_account_angelleye_ppcp_field">
+                        <p class="description"><?php _e('Card Type', 'paypal-for-woocommerce-multi-account-management'); ?></p>
+                        <select class="wc-enhanced-select card_type" name="card_type" id="card_type">
+                            <option value=""><?php _e('All', 'paypal-for-woocommerce-multi-account-management'); ?></option>
+                            <?php
+                            $card_type = array('visa' => 'Visa', 'amex' => 'American Express', 'mastercard' => 'MasterCard', 'discover' => 'Discover', 'maestro' => 'Maestro/Switch');
+                            foreach ($card_type as $type => $card_name) {
+                                echo "\n\t<option value='" . esc_attr($type) . "'>$card_name</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
                     <div class="angelleye_multi_account_paypal_pro_payflow_field">
                         <p class="description"><?php _e('Card Type', 'paypal-for-woocommerce-multi-account-management'); ?></p>
                         <select class="wc-enhanced-select card_type" name="card_type" id="card_type">
@@ -2688,7 +2704,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
             <th scope="row" class="titledesc">
-                <label for="woocommerce_angelleye_ppcp_email_address"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                <label for="woocommerce_angelleye_ppcp_email_address"><?php echo __('Email Address', 'paypal-for-woocommerce-multi-account-management'); ?><?php echo wc_help_tip(__('This email address will receive an invitation to connect their PayPal account so that it can receive payments and process refunds from this website.'), 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
             <td class="forminp">
                 <fieldset>
