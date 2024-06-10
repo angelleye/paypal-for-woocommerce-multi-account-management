@@ -1142,6 +1142,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_list() {
+        if (!empty($_GET['on_board_request_send'])) {
+            $this->email_message = __('An email invitation has been sent to the address provided.  Please instruct the PayPal account owner to check their email and follow the steps to onboard their account into the system.', 'paypal-for-woocommerce-multi-account-management');
+        }
+        if (!empty($_GET['success'])) {
+            $this->message = __('Your settings have been saved.', 'paypal-for-woocommerce-multi-account-management');
+        }
+        if (!empty($_GET['deleted'])) {
+            $this->message = __('Account permanently deleted.', 'paypal-for-woocommerce-multi-account-management');
+        }
+        if (!empty($this->message)) {
+            echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
+        }
+        if (!empty($this->email_message)) {
+            echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->email_message) . '</strong></p></div>';
+        }
         $active_count = $this->angelleye_multi_account_get_count_active_vendor();
         $deactive_count = $this->angelleye_multi_account_get_count_deactive_vendor();
         if (class_exists('WCV_Vendors')) {
@@ -1427,14 +1442,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $board_status_live = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
                 if ($sandbox && $board_status_sandbox === '') {
                     $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
-                    exit();
+                    $current_url = remove_query_arg('section');
+                    wp_redirect(add_query_arg('on_board_request_send', 'true', $current_url));
+                    exit;
                 } elseif ($sandbox === false && $board_status_live === '') {
                     $this->send_paypal_seller_onboard_invitation_email($post_id);
-                    wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
-                    exit();
+                    $current_url = remove_query_arg('section');
+                    wp_redirect(add_query_arg('on_board_request_send', 'true', $current_url));
+                    exit;
                 }
-                wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'success' => true)));
+                $current_url = remove_query_arg('section');
+                wp_redirect(add_query_arg(array('success' => true)));
                 exit();
             } else {
                 if (metadata_exists('post', $post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox') === false) {
@@ -1444,8 +1462,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     update_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', '');
                 }
                 $this->send_paypal_seller_onboard_invitation_email($post_id);
-                wp_redirect(add_query_arg(array('action' => 'edit', 'ID' => $post_id, 'on_board_request_send' => true)));
-                exit();
+                $current_url = remove_query_arg('section');
+                wp_redirect(add_query_arg('on_board_request_send', 'true', $current_url));
+                exit;
             }
         }
     }
@@ -1738,7 +1757,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             'is_angelleye_payment_load_balancer_enable' => $angelleye_payment_load_balancer
                 )
         );
-
         $this->angelleye_multi_account_ui();
     }
 
@@ -2693,11 +2711,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         </tr>
         <tr valign="top" class="angelleye_multi_account_angelleye_ppcp_field">
             <th scope="row" class="titledesc">
-                <label for="woocommerce_angelleye_ppcp_sandbox_email_address"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                <label for="woocommerce_angelleye_ppcp_sandbox_email_address"><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?><?php echo wc_help_tip(__('This email address will receive an invitation to connect their PayPal account so that it can receive payments and process refunds from this website.'), 'paypal-for-woocommerce-multi-account-management'); ?></label>
             </th>
             <td class="forminp">
                 <fieldset>
-                    <legend class="screen-reader-text"><span><?php echo __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'); ?></span></legend>
                     <input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" placeholder="you@youremail.com" type="email">
                 </fieldset>
             </td>
