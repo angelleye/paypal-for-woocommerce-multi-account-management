@@ -21,6 +21,7 @@
  * Domain Path:       /languages
  * Requires at least: 5.0
  * Tested up to: 6.4.2
+ * Requires Plugins: woocommerce, paypal-for-woocommerce
  * WC requires at least: 3.0.0
  * WC tested up to: 8.4.0
  */

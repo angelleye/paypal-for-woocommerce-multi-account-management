@@ -124,6 +124,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-express-checkout.php';
         //require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-paypal-standard.php';
         require_once plugin_dir_path(dirname(__FILE__)) . '/template/sidebar-process.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'admin/class-paypal-for-woocommerce-multi-account-management-admin-ppcp.php';
 
         $this->loader = new Paypal_For_Woocommerce_Multi_Account_Management_Loader();
     }
@@ -170,12 +171,25 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('angelleye_set_multi_account', $plugin_admin, 'angelleye_set_multi_account', 10, 2);
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
-
         $order_summary = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Hooks($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('add_meta_boxes', $order_summary, 'setupMetaBoxes', 11, 3);
-
         $express_checkout = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout($this->get_plugin_name(), $this->get_version());
         $paypal_payflow = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Payflow($this->get_plugin_name(), $this->get_version());
+        $angelleye_ppcp = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP($this->get_plugin_name(), $this->get_version());
+        $this->loader->add_filter('angelleye_ppcp_merchant_id', $angelleye_ppcp, 'angelleye_ppcp_get_merchant_id', 10, 1);
+        $this->loader->add_filter('angelleye_ppcp_request_args', $angelleye_ppcp, 'angelleye_ppcp_request_multi_account', 10, 3);
+        $this->loader->add_action('angelleye_ppcp_order_data', $angelleye_ppcp, 'own_angelleye_ppcp_order_data', 10, 2);
+        $this->loader->add_filter('angelleye_is_ppcp_parallel_payment_not_used', $angelleye_ppcp, 'own_angelleye_is_ppcp_parallel_payment_not_used', 10, 2);
+        $this->loader->add_filter('angelleye_is_ppcp_parallel_payment_handle', $angelleye_ppcp, 'own_angelleye_is_ppcp_parallel_payment_handle', 10, 3);
+        $this->loader->add_action('woocommerce_order_item_add_action_buttons', $angelleye_ppcp, 'own_woocommerce_order_item_add_action_buttons', 10, 1);
+        $this->loader->add_action('woocommerce_order_refunded', $angelleye_ppcp, 'own_woocommerce_order_fully_refunded', 10, 2);
+        //$this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
+        $this->loader->add_action('woocommerce_create_refund', $angelleye_ppcp, 'own_woocommerce_create_refund', 10, 2);
+        $this->loader->add_filter('angelleye_multi_account_need_shipping', $angelleye_ppcp, 'own_angelleye_multi_account_need_shipping', 10, 3);
+        $this->loader->add_action( 'dokan_refund_approve_before_insert', $angelleye_ppcp, 'angelleye_multi_account_dokan_refund_approve', 10, 3 );
+        $this->loader->add_filter('angelleye_ppcp_is_account_ready_to_paid', $angelleye_ppcp, 'angelleye_ppcp_is_account_ready_to_paid', 10, 2);
+        $this->loader->add_filter('angelleye_ppcp_pfwma_is_api_set', $angelleye_ppcp, 'angelleye_is_multi_account_api_set', 10, 2);
+        $this->loader->add_filter('woocommerce_payment_gateway_supports', $angelleye_ppcp, 'own_woocommerce_ppcp_payment_gateway_supports', 99, 3);
         //$paypal = new Paypal_For_Woocommerce_Multi_Account_Management_Admin_PayPal_Standard($this->get_plugin_name(), $this->get_version());
         $this->loader->add_action('angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', $paypal_payflow, 'angelleye_paypal_for_woocommerce_multi_account_api_paypal_payflow', 11, 3);
         $this->loader->add_filter('angelleye_paypal_pro_payflow_amex_ca_usd', $paypal_payflow, 'angelleye_paypal_pro_payflow_amex_ca_usd', 10, 2);
@@ -221,6 +235,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             $load_balancer = new Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer($this->get_plugin_name(), $this->get_version());
             $this->loader->add_action( 'init', $load_balancer, 'angelleye_synce_express_checkout_account');
             $this->loader->add_action( 'init', $load_balancer, 'angelleye_synce_payflow_account');
+            $this->loader->add_action( 'init', $load_balancer, 'angelleye_synce_ppcp_account');
         }
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_not_used', $express_checkout, 'own_angelleye_is_payment_load_balancer_not_used', 12, 2);
         $this->loader->add_filter('angelleye_is_express_checkout_parallel_payment_handle', $express_checkout, 'own_angelleye_is_express_checkout_payment_load_balancer_handle', 12, 3);
@@ -229,6 +244,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('wp_ajax_angelleye_pfwma_get_products', $plugin_admin, 'angelleye_pfwma_get_products', 10);
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_categories', $plugin_admin, 'angelleye_pfwma_get_categories', 10, 1);
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_buyer_states', $plugin_admin, 'angelleye_pfwma_get_buyer_states', 10, 1);
+        
     }
 
     /**

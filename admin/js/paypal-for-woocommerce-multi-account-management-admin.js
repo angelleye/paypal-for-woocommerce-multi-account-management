@@ -8,6 +8,9 @@ jQuery('#woocommerce_paypal_express_testmode_microprocessing').change(function (
 jQuery('#woocommerce_paypal_testmode_microprocessing').change(function () {
     angelleye_multi_account_paypal_hide_show_field();
 }).change();
+jQuery('#woocommerce_angelleye_ppcp_testmode_microprocessing').change(function () {
+    angelleye_multi_account_angelleye_ppcp_hide_show_field();
+}).change();
 jQuery('#woocommerce_paypal_pro_payflow_testmode_microprocessing').change(function () {
     angelleye_multi_account_paypal_payfow_hide_show_field();
 }).change();
@@ -21,6 +24,17 @@ function angelleye_multi_account_paypal_express_hide_show_field() {
     } else {
         sandbox_ec.hide();
         production_ec.show();
+    }
+}
+function angelleye_multi_account_angelleye_ppcp_hide_show_field() {
+    var sandbox_pal = jQuery('#woocommerce_angelleye_ppcp_sandbox_email_address, #woocommerce_angelleye_ppcp_sandbox_client_id, #woocommerce_angelleye_ppcp_sandbox_secret').closest('tr');
+    var production_pal = jQuery('#woocommerce_angelleye_ppcp_email_address, #woocommerce_angelleye_ppcp_client_id, #woocommerce_angelleye_ppcp_secret').closest('tr');
+    if (jQuery('#woocommerce_angelleye_ppcp_testmode_microprocessing').is(':checked')) {
+        sandbox_pal.show();
+        production_pal.hide();
+    } else {
+        sandbox_pal.hide();
+        production_pal.show();
     }
 }
 function angelleye_multi_account_paypal_hide_show_field() {
@@ -51,14 +65,23 @@ function angelleye_multi_account_choose_payment_hide_show_field() {
         jQuery('.angelleye_multi_account_paypal_pro_payflow_field').show();
         jQuery('.angelleye_multi_account_paypal_express_field').hide();
         jQuery('.angelleye_multi_account_paypal_field').hide();
+        jQuery('.angelleye_multi_account_angelleye_ppcp_field').hide();
     } else if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_express') {
         jQuery('.angelleye_multi_account_paypal_express_field').show();
         jQuery('.angelleye_multi_account_paypal_pro_payflow_field').hide();
         jQuery('.angelleye_multi_account_paypal_field').hide();
-    } else {
+        jQuery('.angelleye_multi_account_angelleye_ppcp_field').hide();
+    } else if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal') {
         jQuery('.angelleye_multi_account_paypal_express_field').hide();
         jQuery('.angelleye_multi_account_paypal_pro_payflow_field').hide();
         jQuery('.angelleye_multi_account_paypal_field').show();
+        jQuery('.angelleye_multi_account_angelleye_ppcp_field').hide();
+    } else if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'angelleye_ppcp') {
+        jQuery('.angelleye_multi_account_paypal_express_field').hide();
+        jQuery('.angelleye_multi_account_paypal_pro_payflow_field').hide();
+        jQuery('.angelleye_multi_account_paypal_field').hide();
+        jQuery('.angelleye_multi_account_angelleye_ppcp_field').show();
+        jQuery('#woocommerce_angelleye_ppcp_always_trigger').change();
     }
 }
 
@@ -102,8 +125,10 @@ jQuery('.angelleye_multi_account_choose_payment_gateway').change(function () {
         angelleye_multi_account_paypal_payfow_hide_show_field();
     } else if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_express') {
         angelleye_multi_account_paypal_express_hide_show_field();
-    } else {
+    } else if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal') {
         angelleye_multi_account_paypal_hide_show_field();
+    } else if(jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'angelleye_ppcp') {
+        angelleye_multi_account_angelleye_ppcp_hide_show_field();
     }
 }).change();
 
@@ -122,17 +147,34 @@ jQuery('#woocommerce_paypal_express_always_trigger').change(function () {
         jQuery('.site_owner_commission_field').hide();
         jQuery("#always_trigger_commission_microprocessing").prop('required', true);
         jQuery("#always_trigger_commission_item_label_microprocessing").prop('required', true);
-
         jQuery('.paypal_express_always_trigger_commission_field').show();
     } else {
         jQuery('.trigger_conditions_fields').show();
-        jQuery('.site_owner_commission_field').show();
+        if (jQuery('.angelleye_multi_account_choose_payment_gateway').val() === 'paypal_express') {
+            jQuery('.site_owner_commission_field').show();
+        }
         jQuery('.paypal_express_always_trigger_commission_field').hide();
         jQuery("#always_trigger_commission_microprocessing").prop('required', false);
         jQuery("#always_trigger_commission_item_label_microprocessing").prop('required', false);
     }
 }).change();
 
+
+jQuery('#woocommerce_angelleye_ppcp_always_trigger').change(function () {
+    if (jQuery(this).is(':checked')) {
+        jQuery('.trigger_conditions_fields').hide();
+        jQuery('.ppcp_site_owner_commission_field').hide();
+        jQuery("#ppcp_always_trigger_commission").prop('required',true);
+        jQuery("#ppcp_always_trigger_commission_item_label").prop('required',true);
+        jQuery('.angelleye_ppcp_always_trigger_commission_field').show();
+    } else {
+        jQuery('.trigger_conditions_fields').show();
+        jQuery('.ppcp_site_owner_commission_field').show();
+        jQuery('.angelleye_ppcp_always_trigger_commission_field').hide();
+        jQuery("#ppcp_always_trigger_commission").prop('required',false);
+        jQuery("#ppcp_always_trigger_commission_item_label").prop('required',false);
+    }
+}).change();
 
 
 

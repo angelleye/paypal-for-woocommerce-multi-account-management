@@ -477,23 +477,29 @@ class WC_Gateway_Paypal_Multi_Account_Management extends WC_Gateway_Paypal {
         }
         return parent::can_refund_order($order);
     }
-
-    public function own_woocommerce_payment_gateway_supports($bool, $feature, $current) {
-        global $post;
-        if ($feature === 'refunds' && $bool === true && $current->id === 'paypal') {
-            if (!empty($post->ID)) {
-                $angelleye_multi_account_paypal_data_map = get_post_meta($post->ID, '_angelleye_multi_account_paypal_data_map', true);
-                if (!empty($angelleye_multi_account_paypal_data_map)) {
-                    if (!empty($angelleye_multi_account_paypal_data_map['is_api_set'] && apply_filters('angelleye_pfwma_is_api_set', $angelleye_multi_account_paypal_data_map['is_api_set'], $angelleye_multi_account_paypal_data_map) === true)) {
-                        return true;
+    
+    public function own_woocommerce_ppcp_payment_gateway_supports($bool, $feature, $current) {
+        global $theorder;
+        if ( $theorder instanceof WC_Order ) {
+            if ($feature === 'refunds' && $bool === true && $current->id === 'paypal') {
+                $order = $theorder;
+                if ($order) {
+                    $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_paypal_data_map', true);
+                    if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
+                        foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
+                            if (isset($value['multi_account_id']) && $value['multi_account_id'] == 'default') {
+                                return true;
+                            } elseif (isset($value['multi_account_id']) && $value['multi_account_id'] != 'default' && (!empty($value['is_api_set']) && $value['is_api_set'] === true)) {
+                                return true;
+                            }
+                        }
                     } else {
-                        return false;
+                        return $bool;
                     }
-                } else {
-                    return $bool;
                 }
             }
         }
+        
         return $bool;
     }
 
