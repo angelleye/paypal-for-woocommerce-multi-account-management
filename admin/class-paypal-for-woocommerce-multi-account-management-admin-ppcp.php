@@ -524,27 +524,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
                                 } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0])) {
                                     $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0];
-                                } else {
-                                    $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                                }
-                                if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                    $this->map_item_with_account[$product_id]['is_api_set'] = true;
-                                } else {
-                                    $this->map_item_with_account[$product_id]['is_api_set'] = false;
-                                }
+                                } 
                             } else {
                                 if (isset($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0])) {
                                     $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0];
                                 } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0])) {
                                     $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0];
-                                } else {
-                                    $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                                }
-                                if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                    $this->map_item_with_account[$product_id]['is_api_set'] = true;
-                                } else {
-                                    $this->map_item_with_account[$product_id]['is_api_set'] = false;
-                                }
+                                } 
                             }
                             $cart_loop_pass = $cart_loop_pass + 1;
                         }
@@ -672,26 +658,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                         $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0])) {
                                         $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0];
-                                    } else {
-                                        $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                                    }
-                                    if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                        $this->map_item_with_account[$product_id]['is_api_set'] = true;
-                                    } else {
-                                        $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                     }
                                 } else {
                                     if (isset($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0])) {
                                         $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0];
                                     } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0])) {
                                         $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0];
-                                    } else {
-                                        $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                                    }
-                                    if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                        $this->map_item_with_account[$product_id]['is_api_set'] = true;
-                                    } else {
-                                        $this->map_item_with_account[$product_id]['is_api_set'] = false;
                                     }
                                 }
                                 $cart_loop_pass = $cart_loop_pass + 1;
@@ -1819,32 +1791,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return false;
     }
 
-    public function angelleye_get_merchant_id_for_multi($account_id, $microprocessing_array) {
-        if ($this->is_sandbox) {
-            $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0];
-            $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0];
-        } else {
-            $client_id = $microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0];
-            $secret_id = $microprocessing_array['woocommerce_angelleye_ppcp_secret'][0];
-        }
-        if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
-            include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
-        }
-        $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-        $merchant_id = '';
-        // TEST  need debug
-        if (!empty($merchant_id)) {
-            if ($this->is_sandbox) {
-                update_post_meta($account_id, 'woocommerce_angelleye_ppcp_sandbox_merchant_id', $merchant_id);
-            } else {
-                update_post_meta($account_id, 'woocommerce_angelleye_ppcp_merchant_id', $merchant_id);
-            }
-            return $merchant_id;
-        } else {
-            return false;
-        }
-    }
-
     public function angelleye_get_line_item_from_cart($product_id, $values) {
         $amount = round($values['line_subtotal'] / $values['quantity'], $this->decimals);
         if (version_compare(WC_VERSION, '3.0', '<')) {
@@ -1985,19 +1931,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
         }
         return $partition_array;
-    }
-
-    public function angelleye_is_multi_account_api_set($microprocessing_array) {
-        if ($this->is_sandbox) {
-            if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_secret'][0])) {
-                return true;
-            }
-        } else {
-            if (!empty($microprocessing_array['woocommerce_angelleye_ppcp_client_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_secret'][0])) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public function own_angelleye_ppcp_order_data($paypal_response, $order_id) {
@@ -2394,26 +2327,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $merchant_id = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
             } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0])) {
                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0];
-            } else {
-                $merchant_id = $this->angelleye_get_merchant_id_for_multi($account_id, $microprocessing_array);
-            }
-            if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                $is_api_set = true;
-            } else {
-                $is_api_set = false;
             }
         } else {
             if (isset($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0])) {
                 $merchant_id = $microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0];
             } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0])) {
                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0];
-            } else {
-                $merchant_id = $this->angelleye_get_merchant_id_for_multi($account_id, $microprocessing_array);
-            }
-            if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                $is_api_set = true;
-            } else {
-                $is_api_set = false;
             }
         }
         $this->map_item_with_account['always'][$account_id] = array();
@@ -2853,26 +2772,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_merchant_id'][0];
                             } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0])) {
                                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_sandbox_email_address'][0];
-                            } else {
-                                $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                            }
-                            if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                //$this->map_item_with_account[$product_id]['is_api_set'] = true;
-                            } else {
-                                //$this->map_item_with_account[$product_id]['is_api_set'] = false;
-                            }
+                            } 
                         } else {
                             if (isset($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0])) {
                                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_merchant_id'][0];
                             } elseif (isset($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0]) && !empty($microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0])) {
                                 $this->map_item_with_account[$product_id]['merchant_id'] = $microprocessing_array['woocommerce_angelleye_ppcp_email_address'][0];
-                            } else {
-                                $this->map_item_with_account[$product_id]['merchant_id'] = $this->angelleye_get_merchant_id_for_multi($value->ID, $microprocessing_array);
-                            }
-                            if ($this->angelleye_is_multi_account_api_set($microprocessing_array)) {
-                                // $this->map_item_with_account[$product_id]['is_api_set'] = true;
-                            } else {
-                                // $this->map_item_with_account[$product_id]['is_api_set'] = false;
                             }
                         }
                         $cart_loop_pass = $cart_loop_pass + 1;
