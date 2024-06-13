@@ -1737,6 +1737,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function display_admin_notice() {
         if (!empty($this->message)) {
             echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
+            $this->message = '';
         }
     }
 
