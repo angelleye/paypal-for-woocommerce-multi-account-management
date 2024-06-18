@@ -360,6 +360,30 @@ jQuery('.create_all_vendor_rules').on('click', function (event) {
         return r;
     }
 });
+jQuery('.send_vendor_invitations').on('click', function (event) {
+    var r = confirm(pfwma_param.send_vendor_invitations_alert_message);
+    if (r == true) {
+        jQuery(".send_vendor_invitations").block({message: null, overlayCSS: {background: "#fff", opacity: .6}});
+        var data = {
+            'action': 'pfwma_send_vendor_invitations'
+        };
+        jQuery.post(ajaxurl, data, function (response) {
+            if ('failed' !== response)
+            {
+                var redirectUrl = response;
+                top.location.replace(redirectUrl);
+                return true;
+            } else
+            {
+                alert('Error updating records.');
+                return false;
+            }
+        });
+    } else {
+        event.preventDefault();
+        return r;
+    }
+});
 jQuery('.angelleye_add_new_smart_commission_role').on('click', function (event) {
     event.preventDefault();
     var $tableBody = jQuery('#angelleye_smart_commission_table').find("tbody"),

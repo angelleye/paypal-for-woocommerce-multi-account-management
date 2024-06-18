@@ -334,6 +334,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         update_post_meta($post_id, $key, $value);
                     }
                     update_post_meta($post_id, 'vendor_id', $vendor_id);
+                    $this->send_paypal_seller_onboard_invitation_email($post_id);
                     angelleye_pfwma_log('New vendor rule created for vendor id ' . $vendor_id);
                 }
             }
@@ -422,11 +423,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Vendor {
                         update_post_meta($post_id, $key, $value);
                     }
                     update_post_meta($post_id, 'vendor_id', $vendor_id);
+                    $this->send_paypal_seller_onboard_invitation_email($post_id);
                     angelleye_pfwma_log('New vendor rule created for vendor id ' . $vendor_id);
                 }
             }
         } catch (Exception $ex) {
             
+        }
+    }
+    
+    public function send_paypal_seller_onboard_invitation_email($post_id) {
+        $emails = WC()->mailer()->get_emails();
+        if (!empty($emails) && isset($emails['WC_Email_PayPal_Onboard_Seller_Invitation'])) {
+            $emails['WC_Email_PayPal_Onboard_Seller_Invitation']->trigger($post_id);
         }
     }
 }

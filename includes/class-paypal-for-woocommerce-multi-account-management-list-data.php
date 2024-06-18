@@ -147,7 +147,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
                 } else {
                     return __('Disabled', 'paypal-for-woocommerce-multi-account-management');
                 }
-
+            
+            case 'gateway':
+                $gateway = get_post_meta($item['ID'], 'angelleye_multi_account_choose_payment_gateway', true);
+                if($gateway !== 'angelleye_ppcp') {
+                    return __('Classic', 'paypal-for-woocommerce-multi-account-management');
+                } else {
+                    return __('PPCP', 'paypal-for-woocommerce-multi-account-management');
+                }
             default:
                 return print_r($item, true);
         }
@@ -193,6 +200,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends Paypal_F
             'trigger_condition' => __('Trigger Condition', 'paypal-for-woocommerce-multi-account-management'),
             'mode' => __('Sandbox/Live', 'paypal-for-woocommerce-multi-account-management'),
             'status' => __('Status', 'paypal-for-woocommerce-multi-account-management'),
+            'gateway' => __('Payment Gateway', 'paypal-for-woocommerce-multi-account-management'),
         );
         return $columns;
     }
