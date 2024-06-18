@@ -2904,8 +2904,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'meta_query' => [
                     [
                         'key' => 'angelleye_multi_account_choose_payment_gateway',
-                        'value' => 'angelleye_ppcp',
-                        'compare' => '!='
+                        'value' => 'paypal_express',
+                        'compare' => '='
                     ]
                 ]
             ];
@@ -3404,8 +3404,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'meta_query' => [
                     [
                         'key' => 'angelleye_multi_account_choose_payment_gateway',
-                        'value' => 'angelleye_ppcp',
-                        'compare' => '!='
+                        'value' => 'paypal_express',
+                        'compare' => '='
                     ]
                 ]
             ];
@@ -3427,7 +3427,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         if ($payment_gateway === 'paypal_express') {
                             $this->angelleye_paypal_express_to_ppcp_rule_migrate($post_id);
                         } elseif ($payment_gateway === 'paypal_pro_payflow') {
-
+                            // no way to migrate
                         }
                     }
                 } else {
@@ -3468,6 +3468,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'ec_site_owner_commission' => 'ppcp_site_owner_commission',
                 'ec_site_owner_commission_label' => 'ppcp_site_owner_commission_label'
             ];
+            
             $old_meta_data = get_post_meta($old_post_id);
             $new_meta_data = [];
             foreach ($old_meta_data as $key => $value) {
@@ -3493,7 +3494,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'post_title' => $post_title,
                 'post_content' => '',
             ]);
-            
             if (is_wp_error($new_post_id)) {
                 return;
             }
