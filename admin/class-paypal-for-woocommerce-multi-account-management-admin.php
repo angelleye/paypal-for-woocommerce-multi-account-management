@@ -1175,12 +1175,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'disable_all_vendor_rules_alert_message' => sprintf(__('This will disable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $active_count, $active_rule_text),
                 'enable_all_vendor_rules_alert_message' => sprintf(__('This will enable %s auto generated %s, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $deactive_count, $deactive_rule_text),
                 'create_all_vendor_rules_alert_message' => sprintf(__('This will Sync Existing Vendor Rules, Would you like to continue?', 'paypal-for-woocommerce-multi-account-management'), $will_create_total_rules, $total_rule_text),
-                'send_vendor_invitations_alert_message' => __('This action will convert classic rules into PayPal Complete Payments rules and send onboarding email invitations to vendors. Would you like to proceed?', 'paypal-for-woocommerce-multi-account-management')
+                'send_vendor_invitations_alert_message' => __('This action will create new PayPal Complete Payments rules from classic rules and send onboarding email invitations to vendors. Would you like to proceed?', 'paypal-for-woocommerce-multi-account-management')
                     )
             );
         } else {
             wp_localize_script('paypal-for-woocommerce-multi-account-management', 'pfwma_param', array(
-                'send_vendor_invitations_alert_message' => __('This action will convert classic rules into PayPal Complete Payments rules and send onboarding email invitations to vendors. Would you like to proceed?', 'paypal-for-woocommerce-multi-account-management')
+                'send_vendor_invitations_alert_message' => __('This action will create new PayPal Complete Payments rules from classic rules and send onboarding email invitations to vendors. Would you like to proceed?', 'paypal-for-woocommerce-multi-account-management')
             ));
         }
         ?>
