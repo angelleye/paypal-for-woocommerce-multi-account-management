@@ -758,13 +758,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             if (WC()->cart->is_empty()) {
                 $this->taxamt = round($order->get_shipping_tax(), $this->decimals);
                 $total_tax = $order->get_total_tax();
-                if (isset($total_tax) && $total_tax > 0) {
+                if (isset($this->taxamt) && $this->taxamt > 0) {
                     $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
                 }
             } else {
                 $this->taxamt = round(WC()->cart->get_shipping_tax() + WC()->cart->get_fee_tax(), $this->decimals);
                 $total_tax = WC()->cart->get_total_tax();
-                if (isset($total_tax) && $total_tax > 0) {
+                if (isset($this->taxamt) && $this->taxamt > 0) {
                     $this->tax_array = $this->angelleye_get_extra_fee_array($this->taxamt, $this->angelleye_needs_shipping, 'tax');
                 }
             }
