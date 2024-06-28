@@ -1098,7 +1098,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         } else {
                             $Payment['payee'] = array('merchant_id' => $sellerpaypalaccountid);
                         }
-                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                        if (!empty($old_purchase_units['shipping']['address']['address_line_1']) && !empty($old_purchase_units['shipping']['address']['country_code'])) {
                             $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
@@ -1370,7 +1370,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         } else {
                             $Payment['payee'] = array('merchant_id' => $sellerpaypalaccountid);
                         }
-                        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+                        if (!empty($old_purchase_units['shipping']['address']['address_line_1']) && !empty($old_purchase_units['shipping']['address']['country_code'])) {
                             $Payment['shipping'] = array(
                                 'name' => array(
                                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
@@ -1520,7 +1520,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             } else {
                 $new_default_payment['payee'] = array('merchant_id' => $default_pal_id);
             }
-            if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+            if (!empty($old_purchase_units['shipping']['address']['address_line_1']) && !empty($old_purchase_units['shipping']['address']['country_code'])) {
                 $new_default_payment['shipping'] = array(
                     'name' => array(
                         'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
@@ -2441,7 +2441,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         } else {
             $Payment['payee'] = array('merchant_id' => $merchant_id);
         }
-        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+        if (!empty($old_purchase_units['shipping']['address']['address_line_1']) && !empty($old_purchase_units['shipping']['address']['country_code'])) {
             $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
@@ -2494,7 +2494,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         } else {
             $Payment['payee'] = array('merchant_id' => $merchant_id);
         }
-        if (!empty($old_purchase_units['shipping']['address']['admin_area_1']) && !empty($old_purchase_units['shipping']['address']['admin_area_2'])) {
+        if (!empty($old_purchase_units['shipping']['address']['address_line_1']) && !empty($old_purchase_units['shipping']['address']['country_code'])) {
             $Payment['shipping'] = array(
                 'name' => array(
                     'full_name' => isset($old_purchase_units['shipping']['name']['full_name']) ? $old_purchase_units['shipping']['name']['full_name'] : ''
