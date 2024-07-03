@@ -1188,8 +1188,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             <br>
             <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
             <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
-            <?php if(!empty($classic_rules)) {
-                ?> <a class="page-title-action send_vendor_invitations"><?php echo __('Send Vendor Invitations', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php 
+            <?php if (!empty($classic_rules)) {
+                ?> <a class="page-title-action send_vendor_invitations"><?php echo __('Send Vendor Invitations', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
             if (isset($vendor_result->total_users) && $vendor_result->total_users > 0) {
                 ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
@@ -1221,6 +1221,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
                 $table->display();
                 echo '</form>';
+                
+                if ( $table->has_items() ) {
+                        $table->inline_edit();
+                }
+
             }
             ?> </div> <?php
         $this->angelleye_pfwma_display_marketing_sidebar();
@@ -2895,38 +2900,38 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         }
         return false;
     }
-    
+
     public function angelleye_get_classic_rules() {
         $args = [
-                'post_type' => 'microprocessing',
-                'post_status' => 'publish',
-                'fields' => 'ids',
-                'meta_query' => [
-                    [
-                        'key' => 'angelleye_multi_account_choose_payment_gateway',
-                        'value' => 'paypal_express',
-                        'compare' => '='
-                    ]
+            'post_type' => 'microprocessing',
+            'post_status' => 'publish',
+            'fields' => 'ids',
+            'meta_query' => [
+                [
+                    'key' => 'angelleye_multi_account_choose_payment_gateway',
+                    'value' => 'paypal_express',
+                    'compare' => '='
                 ]
-            ];
-            $query = new WP_Query($args);
-            if (!empty($query->found_posts) && $query->found_posts > 0) {
-                $post_ids = $query->posts;
-                $filtered_post_ids = array_filter($post_ids, function ($post_id) {
-                    $child_posts = get_posts([
-                        'post_type' => 'microprocessing',
-                        'post_parent' => $post_id,
-                        'fields' => 'ids',
-                        'posts_per_page' => 1
-                    ]);
-                    return empty($child_posts);
-                });
-                if(!empty($filtered_post_ids)) {
-                    return $filtered_post_ids;
-                } else {
-                    return array();
-                }
+            ]
+        ];
+        $query = new WP_Query($args);
+        if (!empty($query->found_posts) && $query->found_posts > 0) {
+            $post_ids = $query->posts;
+            $filtered_post_ids = array_filter($post_ids, function ($post_id) {
+                $child_posts = get_posts([
+                    'post_type' => 'microprocessing',
+                    'post_parent' => $post_id,
+                    'fields' => 'ids',
+                    'posts_per_page' => 1
+                ]);
+                return empty($child_posts);
+            });
+            if (!empty($filtered_post_ids)) {
+                return $filtered_post_ids;
+            } else {
+                return array();
             }
+        }
     }
 
     public function angelleye_multi_account_disable_active_vendor_account() {
@@ -3401,11 +3406,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'post_type' => 'microprocessing',
                 'post_status' => 'publish',
                 'fields' => 'ids',
+                'numberposts' => -1,
                 'meta_query' => [
                     [
                         'key' => 'angelleye_multi_account_choose_payment_gateway',
-                        'value' => 'paypal_express',
-                        'compare' => '='
+                        'value' => 'angelleye_ppcp',
+                        'compare' => '!='
                     ]
                 ]
             ];
@@ -3421,14 +3427,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     ]);
                     return empty($child_posts);
                 });
-                if(!empty($filtered_post_ids)) {
+                if (!empty($filtered_post_ids)) {
                     foreach ($filtered_post_ids as $post_id) {
                         $payment_gateway = get_post_meta($post_id, 'angelleye_multi_account_choose_payment_gateway', true);
                         if ($payment_gateway === 'paypal_express') {
                             $this->angelleye_paypal_express_to_ppcp_rule_migrate($post_id);
                         } elseif ($payment_gateway === 'paypal_pro_payflow') {
-                            // no way to migrate
+                            $this->angelleye_paypal_pro_payflow_to_ppcp_rule_migrate($post_id);
                         }
+                    }
+                    if (is_ajax()) {
+                        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management');
+                        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
+                        echo $redirect_url;
+                        exit();
                     }
                 } else {
                     if (is_ajax()) {
@@ -3438,7 +3450,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         exit();
                     }
                 }
-                
             } else {
                 echo 'No posts found.';
             }
@@ -3468,7 +3479,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'ec_site_owner_commission' => 'ppcp_site_owner_commission',
                 'ec_site_owner_commission_label' => 'ppcp_site_owner_commission_label'
             ];
-            
+
             $old_meta_data = get_post_meta($old_post_id);
             $new_meta_data = [];
             foreach ($old_meta_data as $key => $value) {
@@ -3485,7 +3496,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             } else {
                 $post_title = $old_meta_data['woocommerce_paypal_express_email'][0];
             }
-            if(empty($post_title)) {
+            if (empty($post_title)) {
                 return;
             }
             $new_post_id = wp_insert_post([
@@ -3506,12 +3517,59 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'post_parent' => $old_post_id,
             ]);
             $this->send_paypal_seller_onboard_invitation_email($new_post_id);
-            if (is_ajax()) {
-                $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management');
-                $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
-                echo $redirect_url;
-                exit();
+        } catch (Exception $ex) {
+            
+        }
+    }
+
+    public function angelleye_paypal_pro_payflow_to_ppcp_rule_migrate($old_post_id) {
+        try {
+            $meta_key_mapping = [
+                'woocommerce_paypal_pro_payflow_enable' => 'woocommerce_angelleye_ppcp_enable',
+                'woocommerce_paypal_pro_payflow_testmode' => 'woocommerce_angelleye_ppcp_testmode',
+                'woocommerce_paypal_pro_payflow_account_name' => 'woocommerce_angelleye_ppcp_account_name',
+                'ec_site_owner_commission' => 'ppcp_site_owner_commission',
+                'ec_site_owner_commission_label' => 'ppcp_site_owner_commission_label'
+            ];
+
+            $old_meta_data = get_post_meta($old_post_id);
+            $new_meta_data = [];
+            foreach ($old_meta_data as $key => $value) {
+                if (array_key_exists($key, $meta_key_mapping)) {
+                    $new_key = $meta_key_mapping[$key];
+                    $new_meta_data[$new_key] = maybe_unserialize($value[0]);
+                } else {
+                    $new_meta_data[$key] = maybe_unserialize($value[0]);
+                }
             }
+
+            if (!empty($old_meta_data['woocommerce_paypal_pro_payflow_account_name'][0])) {
+                $post_title = $old_meta_data['woocommerce_paypal_pro_payflow_account_name'][0];
+            } else {
+                $post_title = $old_meta_data['woocommerce_paypal_pro_payflow_api_paypal_partner'][0];
+            }
+            if (empty($post_title)) {
+                return;
+            }
+            $new_post_id = wp_insert_post([
+                'post_status' => 'draft',
+                'post_type' => 'microprocessing',
+                'post_title' => $post_title,
+                'post_content' => '',
+            ]);
+            if (is_wp_error($new_post_id)) {
+                return;
+            }
+            $new_meta_data['angelleye_multi_account_choose_payment_gateway'] = 'angelleye_ppcp';
+            $new_meta_data['woocommerce_angelleye_ppcp_sandbox_email_address'] = '';
+            $new_meta_data['woocommerce_angelleye_ppcp_email_address'] = '';
+            foreach ($new_meta_data as $key => $value) {
+                update_post_meta($new_post_id, $key, $value);
+            }
+            wp_update_post([
+                'ID' => $new_post_id,
+                'post_parent' => $old_post_id,
+            ]);
         } catch (Exception $ex) {
             
         }
