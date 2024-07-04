@@ -1203,6 +1203,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
                 $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
                 $table->prepare_items();
+                wp_enqueue_script('inline-edit-post');
                 if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
                     echo '<span class="subtitle">';
                     printf(
@@ -1221,11 +1222,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
                 $table->display();
                 echo '</form>';
-                
-                if ( $table->has_items() ) {
-                        $table->inline_edit();
-                }
 
+                if ($table->has_items()) {
+                    $table->inline_edit();
+                }
             }
             ?> </div> <?php
         $this->angelleye_pfwma_display_marketing_sidebar();
@@ -3570,6 +3570,24 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'ID' => $new_post_id,
                 'post_parent' => $old_post_id,
             ]);
+        } catch (Exception $ex) {
+            
+        }
+    }
+
+    public function angelleye_pfwma_quick_edit_custom_box($column_name, $post_type) {
+        try {
+            if ($column_name === 'api_user_name' && $post_type === 'microprocessing') : ?>
+            <fieldset class="inline-edit-col-left">
+                <legend class="inline-edit-legend" id="<?php echo 'quick'; ?>-edit-legend"><?php echo __('Quick Edit'); ?></legend>
+                <div class="inline-edit-col">
+                    <label>
+                        <span class="title"><?php _e('Email Address'); ?></span>
+                        <span class="input-text-wrap"><input class="input-text regular-input width460" name="woocommerce_angelleye_pfwma_paypal_email" value="" id="woocommerce_angelleye_pfwma_paypal_email" placeholder="you@youremail.com" type="email"></span>
+                    </label>
+                </div>
+            </fieldset>
+            <?php endif; 
         } catch (Exception $ex) {
             
         }

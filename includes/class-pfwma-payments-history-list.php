@@ -1,6 +1,10 @@
 <?php
 
-class PFWMA_Payments_History_List extends Paypal_For_Woocommerce_Multi_Account_Management_WP_List_Table {
+if (!class_exists('WP_List_Table')) {
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
+
+class PFWMA_Payments_History_List extends WP_List_Table {
 
     var $account_data = array();
     private string $listMode;

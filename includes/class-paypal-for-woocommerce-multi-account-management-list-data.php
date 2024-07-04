@@ -1,4 +1,7 @@
 <?php
+if (!class_exists('WP_List_Table')) {
+    require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
+}
 
 class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_Table {
 
@@ -13,11 +16,298 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
         ));
     }
 
+    function column_default($item, $column_name) {
+        switch ($column_name) {
+            case 'api_user_name':
+            case 'mode':
+                return $item[$column_name];
+            case 'trigger_condition':
+                $condition_field = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_field', true);
+                $condition_sign = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_sign', true);
+                $condition_value = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_value', true);
+                $condition_role = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user_role', true);
+                $condition_user = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user', true);
+
+                $product_ids = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_product_ids', true);
+
+                $role = '';
+                if ($condition_role) {
+                    if ($condition_role != 'all') {
+                        $role = '<p class="description">' . sprintf('When role is %s', $condition_role) . '</p>';
+                    }
+                }
+                $user_info = '';
+                if ($condition_user) {
+                    if ($condition_user != 'all') {
+                        $user = get_user_by('id', $condition_user);
+                        if (isset($user->ID) && !empty($user->ID)) {
+                            $user_string = sprintf(
+                                    esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'),
+                                    $user->display_name,
+                                    absint($user->ID),
+                                    $user->user_email
+                            );
+                            $user_info = '<p class="description">' . sprintf('When Author is %s', $user_string) . '</p>';
+                        }
+                    }
+                }
+                $other_condition = '';
+                $buyer_countries = get_post_meta($item['ID'], 'buyer_countries', true);
+                if ($buyer_countries) {
+                    if ($buyer_countries != 'all') {
+                        $other_condition = '<p class="description">' . sprintf('When Buyer country is %s', implode(',', $buyer_countries)) . '</p>';
+                    }
+                }
+                $buyer_states = get_post_meta($item['ID'], 'buyer_states', true);
+                if ($buyer_states) {
+                    if ($buyer_states != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Buyer state is %s', implode(',', $buyer_states)) . '</p>';
+                    }
+                }
+                $postcode = get_post_meta($item['ID'], 'postcode', true);
+                if (!empty($postcode)) {
+                    $other_condition .= '<p class="description">' . sprintf('When Buyer Postal/Zip Code %s', $postcode) . '</p>';
+                }
+                $store_countries = get_post_meta($item['ID'], 'store_countries', true);
+                if ($store_countries) {
+                    if ($store_countries != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Store country is %s', $store_countries) . '</p>';
+                    }
+                }
+                $currency_code = get_post_meta($item['ID'], 'currency_code', true);
+                if ($currency_code) {
+                    if ($currency_code != 'all') {
+                        $other_condition .= '<p class="description">' . sprintf('When Currency Code is %s', $currency_code) . '</p>';
+                    }
+                }
+
+                if ($condition_field == 'transaction_amount') {
+                    $field = __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management');
+                } else {
+                    $field = '';
+                }
+                if ($condition_sign == 'lessthan') {
+                    $sign = '<';
+                } else if ($condition_sign == 'greaterthan') {
+                    $sign = '>';
+                } else if ($condition_sign == 'equalto') {
+                    $sign = '=';
+                } else {
+                    $sign = '';
+                }
+
+                add_thickbox();
+                $product_text = '';
+                if (!empty($product_ids) && is_array($product_ids)) {
+                    $products = $product_ids;
+                    $product_text .= '<a href="#TB_inline?width=600&height=550&inlineId=modal-window-' . esc_attr($item['ID']) . '" class="thickbox" title="Products added in Trigger Condition">Products</a>';
+                    $product_text .= '<div id="modal-window-' . esc_attr($item['ID']) . '" style="display:none;">';
+                    if (!empty($products)) {
+                        foreach ($products as $product_id) {
+                            $product = wc_get_product($product_id);
+                            if (is_object($product)) {
+                                $product_text .= '<p><a href="' . $product->get_permalink() . '" target="_blank">' . wp_kses_post($product->get_formatted_name()) . "</a></p>";
+                            }
+                        }
+                    }
+                    $product_text .= "</div>";
+                }
+                if ($currency_code != 'all') {
+                    return "{$field} {$sign} " . wc_price($condition_value, array('currency' => $currency_code)) . " {$role}  {$user_info} {$other_condition} {$product_text}";
+                } else {
+                    return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$user_info} {$other_condition} {$product_text}";
+                }
+
+            case 'status':
+                $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
+                $status_pf = get_post_meta($item['ID'], 'woocommerce_paypal_pro_payflow_enable', true);
+                $status_pal = get_post_meta($item['ID'], 'woocommerce_paypal_enable', true);
+                $status_ppcp = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_enable', true);
+                if ($status == 'on') {
+                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                } else if ($status_pf == 'on') {
+                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                } else if ($status_pal == 'on') {
+                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                } else if ($status_ppcp == 'on') {
+                    $ppcp_testmode = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_testmode', true);
+                    if (!empty($ppcp_testmode) && $ppcp_testmode === 'on') {
+                        $sandbox = true;
+                    } else {
+                        $sandbox = false;
+                    }
+                    if ($sandbox) {
+                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
+                    } else {
+                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
+                    }
+                    if (empty($board_status)) {
+                        return __('Invitation Sent (Pending)', 'paypal-for-woocommerce-multi-account-management');
+                    } else {
+                        return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
+                    }
+                } else {
+                    return __('Disabled', 'paypal-for-woocommerce-multi-account-management');
+                }
+
+            case 'gateway':
+                $gateway = get_post_meta($item['ID'], 'angelleye_multi_account_choose_payment_gateway', true);
+                if ($gateway !== 'angelleye_ppcp') {
+                    return __('Classic', 'paypal-for-woocommerce-multi-account-management');
+                } else {
+                    return __('PPCP', 'paypal-for-woocommerce-multi-account-management');
+                }
+            default:
+                return print_r($item, true);
+        }
+    }
+
+    function _column_title($post, $classes, $data, $primary) {
+        echo '<td class="' . $classes . ' page-title" ', $data, '>';
+        echo $this->column_title($post);
+        echo $this->handle_row_actions($post, 'title', $primary);
+        echo '</td>';
+    }
+
+    public function single_row($post, $level = 0) {
+        $row = $post;
+        $post = get_post($post['ID']);
+        $GLOBALS['post'] = $post;
+        $global_post = get_post();
+
+        $post = get_post($post);
+        $this->current_level = $level;
+
+        $GLOBALS['post'] = $post;
+        setup_postdata($post);
+
+        $classes = 'iedit author-' . ( get_current_user_id() === (int) $post->post_author ? 'self' : 'other' );
+
+        $lock_holder = wp_check_post_lock($post->ID);
+
+        if ($lock_holder) {
+            $classes .= ' wp-locked';
+        }
+
+        if ($post->post_parent) {
+            $count = count(get_post_ancestors($post->ID));
+            $classes .= ' level-' . $count;
+        } else {
+            $classes .= ' level-0';
+        }
+        ?>
+        <tr id="post-<?php echo $post->ID; ?>" class="<?php echo implode(' ', get_post_class($classes, $post->ID)); ?>">
+            <?php $this->single_row_columns($row); ?>
+        </tr>
+        <?php
+        $GLOBALS['post'] = $global_post;
+    }
+
     public function inline_edit() {
+        global $mode;
+        $screen = $this->screen;
+        $screen->post_type = 'microprocessing';
+        $post = get_default_post_to_edit($screen->post_type);
+        $post_type_object = get_post_type_object($screen->post_type);
+        $taxonomy_names = get_object_taxonomies($screen->post_type);
+        $hierarchical_taxonomies = array();
+        $flat_taxonomies = array();
+        foreach ($taxonomy_names as $taxonomy_name) {
+            $taxonomy = get_taxonomy($taxonomy_name);
+            $show_in_quick_edit = $taxonomy->show_in_quick_edit;
+            if (!apply_filters('quick_edit_show_taxonomy', $show_in_quick_edit, $taxonomy_name, $screen->post_type)) {
+                continue;
+            }
+            if ($taxonomy->hierarchical) {
+                $hierarchical_taxonomies[] = $taxonomy;
+            } else {
+                $flat_taxonomies[] = $taxonomy;
+            }
+        }
+        $mode = 'excerpt';
+        $m = ( isset($mode) && 'excerpt' === $mode ) ? 'excerpt' : 'list';
+        $can_publish = true;
+        $core_columns = array(
+            'cb' => true,
+            'date' => true,
+            'title' => true,
+            'categories' => true,
+            'tags' => true,
+            'comments' => true,
+            'author' => true,
+        );
+        ?>
+        <form method="get">
+            <table style="display: none"><tbody id="inlineedit">
+                    <?php
+                    $hclass = count($hierarchical_taxonomies) ? 'post' : 'page';
+                    $inline_edit_classes = "inline-edit-row inline-edit-row-$hclass";
+                    $bulk_edit_classes = "bulk-edit-row bulk-edit-row-$hclass bulk-edit-{$screen->post_type}";
+                    $quick_edit_classes = "quick-edit-row quick-edit-row-$hclass inline-edit-{$screen->post_type}";
+                    $bulk = 0;
+                    while ($bulk < 2) :
+                        $classes = $inline_edit_classes . ' ';
+                        $classes .= $bulk ? $bulk_edit_classes : $quick_edit_classes;
+                        ?>
+                        <tr id="<?php echo $bulk ? 'bulk-edit' : 'inline-edit'; ?>" class="<?php echo $classes; ?>" style="display: none">
+                            <td colspan="<?php echo $this->get_column_count(); ?>" class="colspanchange">
+                                <div class="inline-edit-wrapper" role="region" aria-labelledby="<?php echo $bulk ? 'bulk' : 'quick'; ?>-edit-legend">
+                                    <?php
+                                    list( $columns ) = $this->get_column_info();
+                                    foreach ($columns as $column_name => $column_display_name) {
+                                        if (isset($core_columns[$column_name])) {
+                                            continue;
+                                        }
+                                        if ($bulk) {
+                                            // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
+                                        } else {
+                                            do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
+                                        }
+                                    }
+                                    ?>
+                                    <div class="submit inline-edit-save">
+                                        <?php if (!$bulk) : ?>
+                                            <?php wp_nonce_field('inlineeditnonce', '_inline_edit', false); ?>
+                                            <button type="button" class="button button-primary save"><?php _e('Update'); ?></button>
+                                        <?php else : ?>
+                                            <?php submit_button(__('Update'), 'primary', 'bulk_edit', false); ?>
+                                        <?php endif; ?>
+                                        <button type="button" class="button cancel"><?php _e('Cancel'); ?></button>
+                                        <?php if (!$bulk) : ?>
+                                            <span class="spinner"></span>
+                                        <?php endif; ?>
+                                        <input type="hidden" name="post_view" value="<?php echo esc_attr($m); ?>" />
+                                        <input type="hidden" name="screen" value="<?php echo esc_attr($screen->id); ?>" />
+                                        <?php if (!$bulk && !post_type_supports($screen->post_type, 'author')) : ?>
+                                            <input type="hidden" name="post_author" value="<?php echo esc_attr($post->post_author); ?>" />
+                                        <?php endif; ?>
+                                        <?php
+                                        wp_admin_notice(
+                                                '<p class="error"></p>',
+                                                array(
+                                                    'type' => 'error',
+                                                    'additional_classes' => array('notice-alt', 'inline', 'hidden'),
+                                                    'paragraph_wrap' => false,
+                                                )
+                                        );
+                                        ?>
+                                    </div>
+                                </div> <!-- end of .inline-edit-wrapper -->
+                            </td></tr>
+                        <?php
+                        ++$bulk;
+                    endwhile;
+                    ?>
+                </tbody></table>
+        </form>
+        <?php
+    }
+
+    public function inline_edit_backup() {
         global $mode;
 
         $screen = $this->screen;
-
+        $screen->post_type = 'microprocessing';
         $post = get_default_post_to_edit($screen->post_type);
         $post_type_object = get_post_type_object($screen->post_type);
 
@@ -49,9 +339,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                 $flat_taxonomies[] = $taxonomy;
             }
         }
-
+        $mode = 'excerpt';
         $m = ( isset($mode) && 'excerpt' === $mode ) ? 'excerpt' : 'list';
-        $can_publish = true;
+        $can_publish = current_user_can($post_type_object->cap->publish_posts);
         $core_columns = array(
             'cb' => true,
             'date' => true,
@@ -464,7 +754,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                              * @param string $column_name Name of the column to edit.
                                              * @param string $post_type   The post type slug.
                                              */
-                                            do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
+                                            // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
                                         } else {
 
                                             /**
@@ -476,7 +766,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                              * @param string $post_type   The post type slug, or current screen name if this is a taxonomy list table.
                                              * @param string $taxonomy    The taxonomy name, if any.
                                              */
-                                            do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
+                                            //do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
                                         }
                                     }
                                     ?>
@@ -525,153 +815,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
         <?php
     }
 
-    function column_default($item, $column_name) {
-        switch ($column_name) {
-            case 'api_user_name':
-            case 'mode':
-                return $item[$column_name];
-            case 'trigger_condition':
-                $condition_field = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_field', true);
-                $condition_sign = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_sign', true);
-                $condition_value = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_condition_value', true);
-                $condition_role = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user_role', true);
-                $condition_user = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_user', true);
-
-                $product_ids = get_post_meta($item['ID'], 'woocommerce_paypal_express_api_product_ids', true);
-
-                $role = '';
-                if ($condition_role) {
-                    if ($condition_role != 'all') {
-                        $role = '<p class="description">' . sprintf('When role is %s', $condition_role) . '</p>';
-                    }
-                }
-                $user_info = '';
-                if ($condition_user) {
-                    if ($condition_user != 'all') {
-                        $user = get_user_by('id', $condition_user);
-                        if (isset($user->ID) && !empty($user->ID)) {
-                            $user_string = sprintf(
-                                    esc_html__('%1$s (#%2$s   %3$s)', 'woocommerce'),
-                                    $user->display_name,
-                                    absint($user->ID),
-                                    $user->user_email
-                            );
-                            $user_info = '<p class="description">' . sprintf('When Author is %s', $user_string) . '</p>';
-                        }
-                    }
-                }
-                $other_condition = '';
-                $buyer_countries = get_post_meta($item['ID'], 'buyer_countries', true);
-                if ($buyer_countries) {
-                    if ($buyer_countries != 'all') {
-                        $other_condition = '<p class="description">' . sprintf('When Buyer country is %s', implode(',', $buyer_countries)) . '</p>';
-                    }
-                }
-                $buyer_states = get_post_meta($item['ID'], 'buyer_states', true);
-                if ($buyer_states) {
-                    if ($buyer_states != 'all') {
-                        $other_condition .= '<p class="description">' . sprintf('When Buyer state is %s', implode(',', $buyer_states)) . '</p>';
-                    }
-                }
-                $postcode = get_post_meta($item['ID'], 'postcode', true);
-                if (!empty($postcode)) {
-                    $other_condition .= '<p class="description">' . sprintf('When Buyer Postal/Zip Code %s', $postcode) . '</p>';
-                }
-                $store_countries = get_post_meta($item['ID'], 'store_countries', true);
-                if ($store_countries) {
-                    if ($store_countries != 'all') {
-                        $other_condition .= '<p class="description">' . sprintf('When Store country is %s', $store_countries) . '</p>';
-                    }
-                }
-                $currency_code = get_post_meta($item['ID'], 'currency_code', true);
-                if ($currency_code) {
-                    if ($currency_code != 'all') {
-                        $other_condition .= '<p class="description">' . sprintf('When Currency Code is %s', $currency_code) . '</p>';
-                    }
-                }
-
-                if ($condition_field == 'transaction_amount') {
-                    $field = __('Transaction Amount', 'paypal-for-woocommerce-multi-account-management');
-                } else {
-                    $field = '';
-                }
-                if ($condition_sign == 'lessthan') {
-                    $sign = '<';
-                } else if ($condition_sign == 'greaterthan') {
-                    $sign = '>';
-                } else if ($condition_sign == 'equalto') {
-                    $sign = '=';
-                } else {
-                    $sign = '';
-                }
-
-                add_thickbox();
-                $product_text = '';
-                if (!empty($product_ids) && is_array($product_ids)) {
-                    $products = $product_ids;
-                    $product_text .= '<a href="#TB_inline?width=600&height=550&inlineId=modal-window-' . esc_attr($item['ID']) . '" class="thickbox" title="Products added in Trigger Condition">Products</a>';
-                    $product_text .= '<div id="modal-window-' . esc_attr($item['ID']) . '" style="display:none;">';
-                    if (!empty($products)) {
-                        foreach ($products as $product_id) {
-                            $product = wc_get_product($product_id);
-                            if (is_object($product)) {
-                                $product_text .= '<p><a href="' . $product->get_permalink() . '" target="_blank">' . wp_kses_post($product->get_formatted_name()) . "</a></p>";
-                            }
-                        }
-                    }
-                    $product_text .= "</div>";
-                }
-                if ($currency_code != 'all') {
-                    return "{$field} {$sign} " . wc_price($condition_value, array('currency' => $currency_code)) . " {$role}  {$user_info} {$other_condition} {$product_text}";
-                } else {
-                    return "{$field} {$sign} " . wc_price($condition_value) . " {$role} {$user_info} {$other_condition} {$product_text}";
-                }
-
-            case 'status':
-                $status = get_post_meta($item['ID'], 'woocommerce_paypal_express_enable', true);
-                $status_pf = get_post_meta($item['ID'], 'woocommerce_paypal_pro_payflow_enable', true);
-                $status_pal = get_post_meta($item['ID'], 'woocommerce_paypal_enable', true);
-                $status_ppcp = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_enable', true);
-                if ($status == 'on') {
-                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
-                } else if ($status_pf == 'on') {
-                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
-                } else if ($status_pal == 'on') {
-                    return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
-                } else if ($status_ppcp == 'on') {
-                    $ppcp_testmode = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_testmode', true);
-                    if (!empty($ppcp_testmode) && $ppcp_testmode === 'on') {
-                        $sandbox = true;
-                    } else {
-                        $sandbox = false;
-                    }
-                    if ($sandbox) {
-                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox', true);
-                    } else {
-                        $board_status = get_post_meta($item['ID'], 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live', true);
-                    }
-                    if (empty($board_status)) {
-                        return __('Invitation Sent (Pending)', 'paypal-for-woocommerce-multi-account-management');
-                    } else {
-                        return __('Enabled', 'paypal-for-woocommerce-multi-account-management');
-                    }
-                } else {
-                    return __('Disabled', 'paypal-for-woocommerce-multi-account-management');
-                }
-
-            case 'gateway':
-                $gateway = get_post_meta($item['ID'], 'angelleye_multi_account_choose_payment_gateway', true);
-                if ($gateway !== 'angelleye_ppcp') {
-                    return __('Classic', 'paypal-for-woocommerce-multi-account-management');
-                } else {
-                    return __('PPCP', 'paypal-for-woocommerce-multi-account-management');
-                }
-            default:
-                return print_r($item, true);
+    protected function handle_row_actions($item, $column_name, $primary) {
+        if ($primary !== $column_name) {
+            return '';
         }
-    }
-
-    function column_title($item) {
+        $post = get_post($item['ID']);
+        $actions = array();
         $title = _draft_or_post_title();
         $edit_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'section' => 'add_edit_account', 'action' => 'edit', 'ID' => $item['ID']);
         $delete_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'action' => 'delete', 'ID' => $item['ID']);
@@ -681,7 +830,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
         );
         $trash_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'action' => 'trash', 'ID' => $item['ID']);
         $restore_params = array('page' => 'wc-settings', 'tab' => 'multi_account_management', 'action' => 'restore', 'ID' => $item['ID']);
-
         if ($this->isTrashedView()) {
             $actions = array(
                 'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
@@ -692,16 +840,64 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
             $actions = array(
                 'edit' => sprintf('<a href="%s">Edit</a>', esc_url(add_query_arg($edit_params, admin_url('admin.php')))),
                 'trash' => sprintf('<a href="%s">Trash</a>', esc_url(add_query_arg($trash_params, admin_url('admin.php')))),
-                'inline hide-if-no-js' => sprintf(
-                        '<button type="button" class="button-link editinline" aria-label="%s" aria-expanded="false">%s</button>',
-                        /* translators: %s: Post title. */
-                        esc_attr(sprintf(__('Quick edit &#8220;%s&#8221; inline'), $title)),
-                        __('Quick&nbsp;Edit')
-                )
             );
         }
-        return sprintf('%1$s <span style="color:silver">(id:%2$s)</span>%3$s', $item['title'], $item['ID'], $this->row_actions($actions)
-        );
+        $quick_edit_enabled = apply_filters('quick_edit_enabled_for_post_type', true, $post->post_type);
+        if ($quick_edit_enabled && 'wp_block' !== $post->post_type) {
+            $actions['inline hide-if-no-js'] = sprintf(
+                    '<button type="button" class="button-link editinline" aria-label="%s" aria-expanded="false">%s</button>',
+                    esc_attr(sprintf(__('Quick edit &#8220;%s&#8221; inline'), $title)),
+                    __('Quick&nbsp;Edit')
+            );
+        }
+        return $this->row_actions($actions);
+    }
+
+    public function column_title($post) {
+        global $mode;
+        $post = get_post($post['ID']);
+        $can_edit_post = current_user_can('edit_post', $post->ID);
+        if ($can_edit_post && 'trash' !== $post->post_status) {
+            $lock_holder = wp_check_post_lock($post->ID);
+            if ($lock_holder) {
+                $lock_holder = get_userdata($lock_holder);
+                $locked_avatar = get_avatar($lock_holder->ID, 18);
+                $locked_text = esc_html(sprintf(__('%s is currently editing'), $lock_holder->display_name));
+            } else {
+                $locked_avatar = '';
+                $locked_text = '';
+            }
+            echo '<div class="locked-info"><span class="locked-avatar">' . $locked_avatar . '</span> <span class="locked-text">' . $locked_text . "</span></div>\n";
+        }
+        $pad = '';
+        echo '<strong>';
+        $title = _draft_or_post_title($post);
+        if ($can_edit_post && 'trash' !== $post->post_status) {
+            printf(
+                    '<a class="row-title" href="%s" aria-label="%s">%s%s</a>',
+                    get_edit_post_link($post->ID),
+                    /* translators: %s: Post title. */
+                    esc_attr(sprintf(__('&#8220;%s&#8221; (Edit)'), $title)),
+                    $pad,
+                    $title
+            );
+        } else {
+            printf(
+                    '<span>%s%s</span>',
+                    $pad,
+                    $title
+            );
+        }
+        _post_states($post);
+
+        echo "</strong>\n";
+
+        /** This filter is documented in wp-admin/includes/class-wp-posts-list-table.php */
+        $quick_edit_enabled = apply_filters('quick_edit_enabled_for_post_type', true, $post->post_type);
+
+        if ($quick_edit_enabled) {
+            get_inline_data($post);
+        }
     }
 
     function column_cb($item) {
@@ -743,6 +939,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                 'edit' => __('Edit')
             );
         }
+        unset($actions['edit']);
         return $actions;
     }
 
