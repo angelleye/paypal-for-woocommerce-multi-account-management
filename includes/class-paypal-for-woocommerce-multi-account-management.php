@@ -246,6 +246,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_categories', $plugin_admin, 'angelleye_pfwma_get_categories', 10, 1);
         $this->loader->add_filter('wp_ajax_angelleye_pfwma_get_buyer_states', $plugin_admin, 'angelleye_pfwma_get_buyer_states', 10, 1);
         $this->loader->add_action('quick_edit_custom_box', $plugin_admin, 'angelleye_pfwma_quick_edit_custom_box', 10, 2);
+        $this->loader->add_action('admin_init', $plugin_admin, 'angelleye_pfwma_quick_edit_custom_box_inline_save', 1);
+        
         
     }
 

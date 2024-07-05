@@ -35,6 +35,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public $settings;
     public $global_ec_site_owner_commission;
     public $email_message;
+    public $migrated_count;
+    public $not_migrated_due_to_email_count;
 
     /**
      * Initialize the class and set its properties.
@@ -268,9 +270,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_account_name_microprocessing">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_account_name" value="%2$s" id="woocommerce_angelleye_ppcp_account_name_microprocessing" style="" placeholder="" type="text"></fieldset></td></tr>', __('Account Nickname', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_sandbox_email_address':
-                        if (!empty($microprocessing_value[0])) {
-                            echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" placeholder="you@youremail.com" type="email" readonly></fieldset></td></tr>', __('PayPal Email', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
-                        }
+                        echo sprintf('<tr valign="top"><th scope="row" class="titledesc"><label for="woocommerce_angelleye_ppcp_sandbox_email_address">%1$s</label></th><td class="forminp"><fieldset><input class="input-text regular-input width460" name="woocommerce_angelleye_ppcp_sandbox_email_address" value="%2$s" id="woocommerce_angelleye_ppcp_sandbox_email_address" style="" placeholder="you@youremail.com" type="email"></fieldset></td></tr>', __('Email Address', 'paypal-for-woocommerce-multi-account-management'), !empty($microprocessing_value[0]) ? $microprocessing_value[0] : '');
                         break;
                     case 'woocommerce_angelleye_ppcp_email_address':
                         if (!empty($microprocessing_value[0])) {
@@ -1186,49 +1186,48 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         ?>
         <div id="angelleye_paypal_marketing_table">
             <br>
-            <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
-            <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
-            <?php if (!empty($classic_rules)) {
-                ?> <a class="page-title-action send_vendor_invitations"><?php echo __('Send Vendor Invitations', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-            }
-            if (isset($vendor_result->total_users) && $vendor_result->total_users > 0) {
-                ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-            }
-            if (isset($active_count) && $active_count !== false) {
-                ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-            }
-            if (isset($deactive_count) && $deactive_count !== false) {
-                ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
-            }
-            if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
-                $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
-                $table->prepare_items();
-                wp_enqueue_script('inline-edit-post');
-                if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
-                    echo '<span class="subtitle">';
-                    printf(
-                            /* translators: %s: Search query. */
-                            __('Search results for: %s'),
-                            '<strong>' . $_REQUEST['s'] . '</strong>'
-                    );
-                    echo '</span>';
+            <div class="wrap">
+                <h1 class="wp-heading-inline"><?php echo __('Accounts', ''); ?></h1>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management&section=add_edit_account')); ?>" class="page-title-action"><?php echo __('Add New', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                <?php if (!empty($classic_rules)) {
+                    ?> <a class="page-title-action send_vendor_invitations"><?php echo __('Send Vendor Invitations', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
                 }
-
-                echo '<form id="account-filter" method="post">';
-                ?>
-                <input type="hidden" name="post_type" value="microprocessing" />
-                <?php
-                $table->search_box(__('Search Accounts'), 'link');
-
-                $table->display();
-                echo '</form>';
-
-                if ($table->has_items()) {
-                    $table->inline_edit();
+                if (isset($vendor_result->total_users) && $vendor_result->total_users > 0) {
+                    ?> <a class="page-title-action create_all_vendor_rules"><?php echo __('Sync Existing Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
                 }
-            }
-            ?> </div> <?php
-        $this->angelleye_pfwma_display_marketing_sidebar();
+                if (isset($active_count) && $active_count !== false) {
+                    ?> <a class="page-title-action disable_all_vendor_rules"><?php echo __('Disable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+                }
+                if (isset($deactive_count) && $deactive_count !== false) {
+                    ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
+                }
+                if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
+                    wp_enqueue_script('inline-edit-post');
+                    $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
+                    $table->prepare_items();
+                    if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
+                        echo '<span class="subtitle">';
+                        printf(
+                                /* translators: %s: Search query. */
+                                __('Search results for: %s'),
+                                '<strong>' . $_REQUEST['s'] . '</strong>'
+                        );
+                        echo '</span>';
+                    }
+                    ?>
+                    <form id="account-filter" method="post">
+                        <input type="hidden" name="post_type" value="microprocessing" />
+                        <?php
+                        $table->views();
+                        $table->search_box(__('Search Accounts'), 'link');
+                        $table->display();
+                        if ($table->has_items()) {
+                            $table->inline_edit();
+                        }
+                        ?></form><div id="ajax-response"></div><?php
+                        ?> </div> </div><?php
+            $this->angelleye_pfwma_display_marketing_sidebar();
+        }
     }
 
     public function angelleye_multi_account_total_payments() {
@@ -1421,6 +1420,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     'ID' => $_POST['is_edit'],
                     'post_title' => wp_strip_all_tags($_POST['woocommerce_angelleye_ppcp_account_name']),
                     'post_content' => '',
+                    'post_status' => 'publish',
                 );
                 wp_update_post($my_post);
                 $post_id = $_POST['is_edit'];
@@ -3436,15 +3436,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                             $this->angelleye_paypal_pro_payflow_to_ppcp_rule_migrate($post_id);
                         }
                     }
+                    $message = sprintf(
+                            __('Migration process completed successfully. Total accounts migrated: %d. Total accounts not migrated due to missing email addresses: %d. Please ensure that all classic accounts have valid email addresses to enable migration.', 'paypal-for-woocommerce-multi-account-management'),
+                            $this->migrated_count,
+                            $this->not_migrated_due_to_email_count
+                    );
                     if (is_ajax()) {
-                        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management');
-                        $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
-                        echo $redirect_url;
-                        exit();
-                    }
-                } else {
-                    if (is_ajax()) {
-                        $message = __('Action completed; ', 'paypal-for-woocommerce-multi-account-management');
                         $redirect_url = admin_url('admin.php?page=wc-settings&tab=multi_account_management&message=' . $message);
                         echo $redirect_url;
                         exit();
@@ -3497,6 +3494,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $post_title = $old_meta_data['woocommerce_paypal_express_email'][0];
             }
             if (empty($post_title)) {
+                $this->not_migrated_due_to_email_count = $this->not_migrated_due_to_email_count + 1;
                 return;
             }
             $new_post_id = wp_insert_post([
@@ -3517,6 +3515,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 'post_parent' => $old_post_id,
             ]);
             $this->send_paypal_seller_onboard_invitation_email($new_post_id);
+            $this->migrated_count = $this->migrated_count + 1;
         } catch (Exception $ex) {
             
         }
@@ -3577,19 +3576,58 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
 
     public function angelleye_pfwma_quick_edit_custom_box($column_name, $post_type) {
         try {
-            if ($column_name === 'api_user_name' && $post_type === 'microprocessing') : ?>
-            <fieldset class="inline-edit-col-left">
-                <legend class="inline-edit-legend" id="<?php echo 'quick'; ?>-edit-legend"><?php echo __('Quick Edit'); ?></legend>
-                <div class="inline-edit-col">
-                    <label>
-                        <span class="title"><?php _e('Email Address'); ?></span>
-                        <span class="input-text-wrap"><input class="input-text regular-input width460" name="woocommerce_angelleye_pfwma_paypal_email" value="" id="woocommerce_angelleye_pfwma_paypal_email" placeholder="you@youremail.com" type="email"></span>
-                    </label>
-                </div>
-            </fieldset>
-            <?php endif; 
+            if ($column_name === 'api_user_name' && $post_type === 'microprocessing') :
+                ?>
+                <fieldset class="inline-edit-col-left">
+                    <legend class="inline-edit-legend" id="<?php echo 'quick'; ?>-edit-legend"><?php echo __('Quick Edit'); ?></legend>
+                    <div class="inline-edit-col">
+                        <label>
+                            <span class="title"><?php _e('Email Address'); ?></span>
+                            <span class="input-text-wrap"><input class="input-text regular-input width460" name="woocommerce_angelleye_pfwma_paypal_email" value="" id="woocommerce_angelleye_pfwma_paypal_email" placeholder="you@youremail.com" type="email"></span>
+                        </label>
+                    </div>
+                </fieldset>
+            <?php
+            endif;
         } catch (Exception $ex) {
             
+        }
+    }
+    
+    public function angelleye_pfwma_quick_edit_custom_box_inline_save() {
+        try {
+            if ( isset($_POST['woocommerce_angelleye_pfwma_paypal_email']) && isset( $_POST['action'] ) && 'inline-save' === $_POST['action']) {
+                check_ajax_referer( 'inlineeditnonce', '_inline_edit' );
+                if ( ! isset( $_POST['post_ID'] ) || ! (int) $_POST['post_ID'] ) {
+                    wp_die();
+                }
+                $post_id = (int) $_POST['post_ID'];
+                $testmode = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_testmode', true);
+                if($testmode === 'on') {
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_sandbox_email_address', wc_clean($_POST['woocommerce_angelleye_pfwma_paypal_email']));
+                } else {
+                    update_post_meta($post_id, 'woocommerce_angelleye_ppcp_email_address', wc_clean($_POST['woocommerce_angelleye_pfwma_paypal_email']));
+                }
+                $post_data = array(
+                    'ID' => $post_id,
+                    'post_status' => 'publish',
+                );
+                wp_update_post($post_data);
+                $this->send_paypal_seller_onboard_invitation_email($post_id);
+                if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
+                    wp_enqueue_script('inline-edit-post');
+                    $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
+                    $post_data = get_post($post_id);
+                    $row_data = $table->prepare_item(array($post_data));
+                    if(isset($row_data[0])) {
+                        $row_data = $row_data[0];
+                    }
+                    $table->single_row( $row_data, 0 );
+                    wp_die();
+                }
+            }
+        } catch (Exception $ex) {
+
         }
     }
 }
