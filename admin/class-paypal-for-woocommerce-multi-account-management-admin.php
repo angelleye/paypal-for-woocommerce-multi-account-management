@@ -3605,8 +3605,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                 $testmode = get_post_meta($post_id, 'woocommerce_angelleye_ppcp_testmode', true);
                 if($testmode === 'on') {
                     update_post_meta($post_id, 'woocommerce_angelleye_ppcp_sandbox_email_address', wc_clean($_POST['woocommerce_angelleye_pfwma_paypal_email']));
+                    delete_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_sandbox');
                 } else {
                     update_post_meta($post_id, 'woocommerce_angelleye_ppcp_email_address', wc_clean($_POST['woocommerce_angelleye_pfwma_paypal_email']));
+                    delete_post_meta($post_id, 'woocommerce_angelleye_ppcp_multi_account_on_board_status_live');
                 }
                 $post_data = array(
                     'ID' => $post_id,

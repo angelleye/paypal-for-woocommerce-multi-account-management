@@ -206,7 +206,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
     }
 
     public function inline_edit() {
-        global $mode;
+        global $mode, $post;
         $screen = $this->screen;
         $screen->post_type = 'microprocessing';
         $post = get_default_post_to_edit($screen->post_type);
