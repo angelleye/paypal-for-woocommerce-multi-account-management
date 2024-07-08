@@ -1202,7 +1202,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                     ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
                 }
                 if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
-                    wp_enqueue_script('inline-edit-post');
+                    if(isset($_GET['filter_entity']) && 'need_email' === $_GET['filter_entity']) {
+                        wp_enqueue_script('inline-edit-post');
+                    }
                     $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
                     $table->prepare_items();
                     if (isset($_REQUEST['s']) && strlen($_REQUEST['s'])) {
@@ -1221,8 +1223,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                         $table->views();
                         $table->search_box(__('Search Accounts'), 'link');
                         $table->display();
-                        if ($table->has_items()) {
-                            $table->inline_edit();
+                        if(isset($_GET['filter_entity']) && 'need_email' === $_GET['filter_entity']) {
+                            if ($table->has_items()) {
+                                $table->inline_edit();
+                            }
                         }
                         ?></form><div id="ajax-response"></div><?php
                         ?> </div> </div><?php

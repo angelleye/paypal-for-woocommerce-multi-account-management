@@ -846,11 +846,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
         }
         $quick_edit_enabled = apply_filters('quick_edit_enabled_for_post_type', true, $post->post_type);
         if ($quick_edit_enabled && 'wp_block' !== $post->post_type) {
-            $actions['inline hide-if-no-js'] = sprintf(
-                    '<button type="button" class="button-link editinline" aria-label="%s" aria-expanded="false">%s</button>',
-                    esc_attr(sprintf(__('Quick edit &#8220;%s&#8221; inline'), $title)),
-                    __('Quick&nbsp;Edit')
-            );
+            if(isset($_GET['filter_entity']) && 'need_email' === $_GET['filter_entity']) {
+                $actions['inline hide-if-no-js'] = sprintf(
+                        '<button type="button" class="button-link editinline" aria-label="%s" aria-expanded="false">%s</button>',
+                        esc_attr(sprintf(__('Quick edit &#8220;%s&#8221; inline'), $title)),
+                        __('Quick&nbsp;Edit')
+                );
+            }
         }
         return $this->row_actions($actions);
     }
