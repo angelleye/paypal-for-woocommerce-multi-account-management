@@ -199,76 +199,76 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
         }
         ?>
         <tr id="post-<?php echo $post->ID; ?>" class="<?php echo implode(' ', get_post_class($classes, $post->ID)); ?>">
-        <?php $this->single_row_columns($row); ?>
+            <?php $this->single_row_columns($row); ?>
         </tr>
-            <?php
-            $GLOBALS['post'] = $global_post;
-        }
+        <?php
+        $GLOBALS['post'] = $global_post;
+    }
 
-        public function inline_edit() {
-            global $mode;
-            $screen = $this->screen;
-            $screen->post_type = 'microprocessing';
-            $post = get_default_post_to_edit($screen->post_type);
-            $post_type_object = get_post_type_object($screen->post_type);
-            $taxonomy_names = get_object_taxonomies($screen->post_type);
-            $hierarchical_taxonomies = array();
-            $flat_taxonomies = array();
-            foreach ($taxonomy_names as $taxonomy_name) {
-                $taxonomy = get_taxonomy($taxonomy_name);
-                $show_in_quick_edit = $taxonomy->show_in_quick_edit;
-                if (!apply_filters('quick_edit_show_taxonomy', $show_in_quick_edit, $taxonomy_name, $screen->post_type)) {
-                    continue;
-                }
-                if ($taxonomy->hierarchical) {
-                    $hierarchical_taxonomies[] = $taxonomy;
-                } else {
-                    $flat_taxonomies[] = $taxonomy;
-                }
+    public function inline_edit() {
+        global $mode;
+        $screen = $this->screen;
+        $screen->post_type = 'microprocessing';
+        $post = get_default_post_to_edit($screen->post_type);
+        $post_type_object = get_post_type_object($screen->post_type);
+        $taxonomy_names = get_object_taxonomies($screen->post_type);
+        $hierarchical_taxonomies = array();
+        $flat_taxonomies = array();
+        foreach ($taxonomy_names as $taxonomy_name) {
+            $taxonomy = get_taxonomy($taxonomy_name);
+            $show_in_quick_edit = $taxonomy->show_in_quick_edit;
+            if (!apply_filters('quick_edit_show_taxonomy', $show_in_quick_edit, $taxonomy_name, $screen->post_type)) {
+                continue;
             }
-            $mode = 'excerpt';
-            $m = ( isset($mode) && 'excerpt' === $mode ) ? 'excerpt' : 'list';
-            $can_publish = true;
-            $core_columns = array(
-                'cb' => true,
-                'date' => true,
-                'title' => true,
-                'categories' => true,
-                'tags' => true,
-                'comments' => true,
-                'author' => true,
-            );
-            ?>
+            if ($taxonomy->hierarchical) {
+                $hierarchical_taxonomies[] = $taxonomy;
+            } else {
+                $flat_taxonomies[] = $taxonomy;
+            }
+        }
+        $mode = 'excerpt';
+        $m = ( isset($mode) && 'excerpt' === $mode ) ? 'excerpt' : 'list';
+        $can_publish = true;
+        $core_columns = array(
+            'cb' => true,
+            'date' => true,
+            'title' => true,
+            'categories' => true,
+            'tags' => true,
+            'comments' => true,
+            'author' => true,
+        );
+        ?>
         <form method="get">
             <table style="display: none"><tbody id="inlineedit">
-        <?php
-        $hclass = count($hierarchical_taxonomies) ? 'post' : 'page';
-        $inline_edit_classes = "inline-edit-row inline-edit-row-$hclass";
-        $bulk_edit_classes = "bulk-edit-row bulk-edit-row-$hclass bulk-edit-{$screen->post_type}";
-        $quick_edit_classes = "quick-edit-row quick-edit-row-$hclass inline-edit-{$screen->post_type}";
-        $bulk = 0;
-        while ($bulk < 2) :
-            $classes = $inline_edit_classes . ' ';
-            $classes .= $bulk ? $bulk_edit_classes : $quick_edit_classes;
-            ?>
+                    <?php
+                    $hclass = count($hierarchical_taxonomies) ? 'post' : 'page';
+                    $inline_edit_classes = "inline-edit-row inline-edit-row-$hclass";
+                    $bulk_edit_classes = "bulk-edit-row bulk-edit-row-$hclass bulk-edit-{$screen->post_type}";
+                    $quick_edit_classes = "quick-edit-row quick-edit-row-$hclass inline-edit-{$screen->post_type}";
+                    $bulk = 0;
+                    while ($bulk < 2) :
+                        $classes = $inline_edit_classes . ' ';
+                        $classes .= $bulk ? $bulk_edit_classes : $quick_edit_classes;
+                        ?>
                         <tr id="<?php echo $bulk ? 'bulk-edit' : 'inline-edit'; ?>" class="<?php echo $classes; ?>" style="display: none">
                             <td colspan="<?php echo $this->get_column_count(); ?>" class="colspanchange">
                                 <div class="inline-edit-wrapper" role="region" aria-labelledby="<?php echo $bulk ? 'bulk' : 'quick'; ?>-edit-legend">
-            <?php
-            list( $columns ) = $this->get_column_info();
-            foreach ($columns as $column_name => $column_display_name) {
-                if (isset($core_columns[$column_name])) {
-                    continue;
-                }
-                if ($bulk) {
-                    // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
-                } else {
-                    do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
-                }
-            }
-            ?>
+                                    <?php
+                                    list( $columns ) = $this->get_column_info();
+                                    foreach ($columns as $column_name => $column_display_name) {
+                                        if (isset($core_columns[$column_name])) {
+                                            continue;
+                                        }
+                                        if ($bulk) {
+                                            // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
+                                        } else {
+                                            do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
+                                        }
+                                    }
+                                    ?>
                                     <div class="submit inline-edit-save">
-                                    <?php if (!$bulk) : ?>
+                                        <?php if (!$bulk) : ?>
                                             <?php wp_nonce_field('inlineeditnonce', '_inline_edit', false); ?>
                                             <button type="button" class="button button-primary save"><?php _e('Update'); ?></button>
                                         <?php else : ?>
@@ -280,7 +280,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                         <?php endif; ?>
                                         <input type="hidden" name="post_view" value="<?php echo esc_attr($m); ?>" />
                                         <input type="hidden" name="screen" value="<?php echo esc_attr($screen->id); ?>" />
-            <?php if (!$bulk && !post_type_supports($screen->post_type, 'author')) : ?>
+                                        <?php if (!$bulk && !post_type_supports($screen->post_type, 'author')) : ?>
                                             <input type="hidden" name="post_author" value="<?php echo esc_attr($post->post_author); ?>" />
                                         <?php endif; ?>
                                         <?php
@@ -296,10 +296,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                     </div>
                                 </div> <!-- end of .inline-edit-wrapper -->
                             </td></tr>
-            <?php
-            ++$bulk;
-        endwhile;
-        ?>
+                        <?php
+                        ++$bulk;
+                    endwhile;
+                    ?>
                 </tbody></table>
         </form>
         <?php
@@ -357,18 +357,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
 
         <form method="get">
             <table style="display: none"><tbody id="inlineedit">
-        <?php
-        $hclass = count($hierarchical_taxonomies) ? 'post' : 'page';
-        $inline_edit_classes = "inline-edit-row inline-edit-row-$hclass";
-        $bulk_edit_classes = "bulk-edit-row bulk-edit-row-$hclass bulk-edit-{$screen->post_type}";
-        $quick_edit_classes = "quick-edit-row quick-edit-row-$hclass inline-edit-{$screen->post_type}";
+                    <?php
+                    $hclass = count($hierarchical_taxonomies) ? 'post' : 'page';
+                    $inline_edit_classes = "inline-edit-row inline-edit-row-$hclass";
+                    $bulk_edit_classes = "bulk-edit-row bulk-edit-row-$hclass bulk-edit-{$screen->post_type}";
+                    $quick_edit_classes = "quick-edit-row quick-edit-row-$hclass inline-edit-{$screen->post_type}";
 
-        $bulk = 0;
+                    $bulk = 0;
 
-        while ($bulk < 2) :
-            $classes = $inline_edit_classes . ' ';
-            $classes .= $bulk ? $bulk_edit_classes : $quick_edit_classes;
-            ?>
+                    while ($bulk < 2) :
+                        $classes = $inline_edit_classes . ' ';
+                        $classes .= $bulk ? $bulk_edit_classes : $quick_edit_classes;
+                        ?>
                         <tr id="<?php echo $bulk ? 'bulk-edit' : 'inline-edit'; ?>" class="<?php echo $classes; ?>" style="display: none">
                             <td colspan="<?php echo $this->get_column_count(); ?>" class="colspanchange">
                                 <div class="inline-edit-wrapper" role="region" aria-labelledby="<?php echo $bulk ? 'bulk' : 'quick'; ?>-edit-legend">
@@ -376,7 +376,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                         <legend class="inline-edit-legend" id="<?php echo $bulk ? 'bulk' : 'quick'; ?>-edit-legend"><?php echo $bulk ? __('Bulk Edit') : __('Quick Edit'); ?></legend>
                                         <div class="inline-edit-col">
 
-            <?php if (post_type_supports($screen->post_type, 'title')) : ?>
+                                            <?php if (post_type_supports($screen->post_type, 'title')) : ?>
 
                                                 <?php if ($bulk) : ?>
 
@@ -384,21 +384,21 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                         <div id="bulk-titles"></div>
                                                     </div>
 
-                <?php else : // $bulk  ?>
+                                                <?php else : // $bulk  ?>
 
                                                     <label>
                                                         <span class="title"><?php _e('Title'); ?></span>
                                                         <span class="input-text-wrap"><input type="text" name="post_title" class="ptitle" value="" /></span>
                                                     </label>
 
-                    <?php if (is_post_type_viewable($screen->post_type)) : ?>
+                                                    <?php if (is_post_type_viewable($screen->post_type)) : ?>
 
                                                         <label>
                                                             <span class="title"><?php _e('Slug'); ?></span>
                                                             <span class="input-text-wrap"><input type="text" name="post_name" value="" autocomplete="off" spellcheck="false" /></span>
                                                         </label>
 
-                    <?php endif; // is_post_type_viewable()  ?>
+                                                    <?php endif; // is_post_type_viewable()  ?>
 
                                                 <?php endif; // $bulk ?>
 
@@ -407,10 +407,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                             <?php if (!$bulk) : ?>
                                                 <fieldset class="inline-edit-date">
                                                     <legend><span class="title"><?php _e('Date'); ?></span></legend>
-                <?php touch_time(1, 1, 0, 1); ?>
+                                                    <?php touch_time(1, 1, 0, 1); ?>
                                                 </fieldset>
                                                 <br class="clear" />
-            <?php endif; // $bulk  ?>
+                                            <?php endif; // $bulk  ?>
 
                                             <?php
                                             if (post_type_supports($screen->post_type, 'author')) {
@@ -474,10 +474,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     </label>
 
                                                     <span class="alignleft inline-edit-or">
-                <?php
-                /* translators: Between password field and private checkbox on post quick edit interface. */
-                _e('&ndash;OR&ndash;');
-                ?>
+                                                        <?php
+                                                        /* translators: Between password field and private checkbox on post quick edit interface. */
+                                                        _e('&ndash;OR&ndash;');
+                                                        ?>
                                                     </span>
                                                     <label class="alignleft inline-edit-private">
                                                         <input type="checkbox" name="keep_private" value="private" />
@@ -485,39 +485,39 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     </label>
                                                 </div>
 
-            <?php endif; ?>
+                                            <?php endif; ?>
 
                                         </div>
                                     </fieldset>
 
-            <?php if (count($hierarchical_taxonomies) && !$bulk) : ?>
+                                    <?php if (count($hierarchical_taxonomies) && !$bulk) : ?>
 
                                         <fieldset class="inline-edit-col-center inline-edit-categories">
                                             <div class="inline-edit-col">
 
-                <?php foreach ($hierarchical_taxonomies as $taxonomy) : ?>
+                                                <?php foreach ($hierarchical_taxonomies as $taxonomy) : ?>
 
                                                     <span class="title inline-edit-categories-label"><?php echo esc_html($taxonomy->labels->name); ?></span>
                                                     <input type="hidden" name="<?php echo ( 'category' === $taxonomy->name ) ? 'post_category[]' : 'tax_input[' . esc_attr($taxonomy->name) . '][]'; ?>" value="0" />
                                                     <ul class="cat-checklist <?php echo esc_attr($taxonomy->name); ?>-checklist">
-                    <?php wp_terms_checklist(0, array('taxonomy' => $taxonomy->name)); ?>
+                                                        <?php wp_terms_checklist(0, array('taxonomy' => $taxonomy->name)); ?>
                                                     </ul>
 
-                <?php endforeach; // $hierarchical_taxonomies as $taxonomy  ?>
+                                                <?php endforeach; // $hierarchical_taxonomies as $taxonomy  ?>
 
                                             </div>
                                         </fieldset>
 
-            <?php endif; // count( $hierarchical_taxonomies ) && ! $bulk  ?>
+                                    <?php endif; // count( $hierarchical_taxonomies ) && ! $bulk  ?>
 
                                     <fieldset class="inline-edit-col-right">
                                         <div class="inline-edit-col">
 
-            <?php
-            if (post_type_supports($screen->post_type, 'author') && $bulk) {
-                echo $authors_dropdown;
-            }
-            ?>
+                                            <?php
+                                            if (post_type_supports($screen->post_type, 'author') && $bulk) {
+                                                echo $authors_dropdown;
+                                            }
+                                            ?>
 
                                             <?php if (post_type_supports($screen->post_type, 'page-attributes')) : ?>
 
@@ -525,38 +525,38 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
 
                                                     <label>
                                                         <span class="title"><?php _e('Parent'); ?></span>
-                    <?php
-                    $dropdown_args = array(
-                        'post_type' => $post_type_object->name,
-                        'selected' => $post->post_parent,
-                        'name' => 'post_parent',
-                        'show_option_none' => __('Main Page (no parent)'),
-                        'option_none_value' => 0,
-                        'sort_column' => 'menu_order, post_title',
-                    );
+                                                        <?php
+                                                        $dropdown_args = array(
+                                                            'post_type' => $post_type_object->name,
+                                                            'selected' => $post->post_parent,
+                                                            'name' => 'post_parent',
+                                                            'show_option_none' => __('Main Page (no parent)'),
+                                                            'option_none_value' => 0,
+                                                            'sort_column' => 'menu_order, post_title',
+                                                        );
 
-                    if ($bulk) {
-                        $dropdown_args['show_option_no_change'] = __('&mdash; No Change &mdash;');
-                    }
+                                                        if ($bulk) {
+                                                            $dropdown_args['show_option_no_change'] = __('&mdash; No Change &mdash;');
+                                                        }
 
-                    /**
-                     * Filters the arguments used to generate the Quick Edit page-parent drop-down.
-                     *
-                     * @since 2.7.0
-                     * @since 5.6.0 The `$bulk` parameter was added.
-                     *
-                     * @see wp_dropdown_pages()
-                     *
-                     * @param array $dropdown_args An array of arguments passed to wp_dropdown_pages().
-                     * @param bool  $bulk          A flag to denote if it's a bulk action.
-                     */
-                    $dropdown_args = apply_filters('quick_edit_dropdown_pages_args', $dropdown_args, $bulk);
+                                                        /**
+                                                         * Filters the arguments used to generate the Quick Edit page-parent drop-down.
+                                                         *
+                                                         * @since 2.7.0
+                                                         * @since 5.6.0 The `$bulk` parameter was added.
+                                                         *
+                                                         * @see wp_dropdown_pages()
+                                                         *
+                                                         * @param array $dropdown_args An array of arguments passed to wp_dropdown_pages().
+                                                         * @param bool  $bulk          A flag to denote if it's a bulk action.
+                                                         */
+                                                        $dropdown_args = apply_filters('quick_edit_dropdown_pages_args', $dropdown_args, $bulk);
 
-                    wp_dropdown_pages($dropdown_args);
-                    ?>
+                                                        wp_dropdown_pages($dropdown_args);
+                                                        ?>
                                                     </label>
 
-                <?php endif; // hierarchical  ?>
+                                                <?php endif; // hierarchical  ?>
 
                                                 <?php if (!$bulk) : ?>
 
@@ -565,7 +565,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                         <span class="input-text-wrap"><input type="text" name="menu_order" class="inline-edit-menu-order-input" value="<?php echo $post->menu_order; ?>" /></span>
                                                     </label>
 
-                <?php endif; // ! $bulk  ?>
+                                                <?php endif; // ! $bulk  ?>
 
                                             <?php endif; // post_type_supports( ... 'page-attributes' ) ?>
 
@@ -574,7 +574,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                 <label>
                                                     <span class="title"><?php _e('Template'); ?></span>
                                                     <select name="page_template">
-                <?php if ($bulk) : ?>
+                                                        <?php if ($bulk) : ?>
                                                             <option value="-1"><?php _e('&mdash; No Change &mdash;'); ?></option>
                                                         <?php endif; // $bulk ?>
                                                         <?php
@@ -586,7 +586,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     </select>
                                                 </label>
 
-            <?php endif; ?>
+                                            <?php endif; ?>
 
                                             <?php if (count($flat_taxonomies) && !$bulk) : ?>
 
@@ -601,7 +601,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                             </label>
                                                             <p class="howto" id="inline-edit-<?php echo esc_attr($taxonomy->name); ?>-desc"><?php echo esc_html($taxonomy->labels->separate_items_with_commas); ?></p>
                                                         </div>
-                    <?php endif; // current_user_can( 'assign_terms' )  ?>
+                                                    <?php endif; // current_user_can( 'assign_terms' )  ?>
 
                                                 <?php endforeach; // $flat_taxonomies as $taxonomy ?>
 
@@ -613,7 +613,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
 
                                                     <div class="inline-edit-group wp-clearfix">
 
-                    <?php if (post_type_supports($screen->post_type, 'comments')) : ?>
+                                                        <?php if (post_type_supports($screen->post_type, 'comments')) : ?>
 
                                                             <label class="alignleft">
                                                                 <span class="title"><?php _e('Comments'); ?></span>
@@ -624,7 +624,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                                 </select>
                                                             </label>
 
-                    <?php endif; ?>
+                                                        <?php endif; ?>
 
                                                         <?php if (post_type_supports($screen->post_type, 'trackbacks')) : ?>
 
@@ -637,22 +637,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                                 </select>
                                                             </label>
 
-                    <?php endif; ?>
+                                                        <?php endif; ?>
 
                                                     </div>
 
-                <?php else : // $bulk  ?>
+                                                <?php else : // $bulk  ?>
 
                                                     <div class="inline-edit-group wp-clearfix">
 
-                    <?php if (post_type_supports($screen->post_type, 'comments')) : ?>
+                                                        <?php if (post_type_supports($screen->post_type, 'comments')) : ?>
 
                                                             <label class="alignleft">
                                                                 <input type="checkbox" name="comment_status" value="open" />
                                                                 <span class="checkbox-title"><?php _e('Allow Comments'); ?></span>
                                                             </label>
 
-                    <?php endif; ?>
+                                                        <?php endif; ?>
 
                                                         <?php if (post_type_supports($screen->post_type, 'trackbacks')) : ?>
 
@@ -661,11 +661,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                                 <span class="checkbox-title"><?php _e('Allow Pings'); ?></span>
                                                             </label>
 
-                    <?php endif; ?>
+                                                        <?php endif; ?>
 
                                                     </div>
 
-                <?php endif; // $bulk  ?>
+                                                <?php endif; // $bulk  ?>
 
                                             <?php endif; // post_type_supports( ... comments or pings ) ?>
 
@@ -674,14 +674,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                 <label class="inline-edit-status alignleft">
                                                     <span class="title"><?php _e('Status'); ?></span>
                                                     <select name="_status">
-            <?php if ($bulk) : ?>
+                                                        <?php if ($bulk) : ?>
                                                             <option value="-1"><?php _e('&mdash; No Change &mdash;'); ?></option>
                                                         <?php endif; // $bulk ?>
 
                                                         <?php if ($can_publish) : // Contributors only get "Unpublished" and "Pending Review". ?>
                                                             <option value="publish"><?php _e('Published'); ?></option>
                                                             <option value="future"><?php _e('Scheduled'); ?></option>
-                <?php if ($bulk) : ?>
+                                                            <?php if ($bulk) : ?>
                                                                 <option value="private"><?php _e('Private'); ?></option>
                                                             <?php endif; // $bulk ?>
                                                         <?php endif; ?>
@@ -691,7 +691,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     </select>
                                                 </label>
 
-            <?php if ('post' === $screen->post_type && $can_publish && current_user_can($post_type_object->cap->edit_others_posts)) : ?>
+                                                <?php if ('post' === $screen->post_type && $can_publish && current_user_can($post_type_object->cap->edit_others_posts)) : ?>
 
                                                     <?php if ($bulk) : ?>
 
@@ -704,20 +704,20 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                             </select>
                                                         </label>
 
-                <?php else : // $bulk  ?>
+                                                    <?php else : // $bulk  ?>
 
                                                         <label class="alignleft">
                                                             <input type="checkbox" name="sticky" value="sticky" />
                                                             <span class="checkbox-title"><?php _e('Make this post sticky'); ?></span>
                                                         </label>
 
-                <?php endif; // $bulk  ?>
+                                                    <?php endif; // $bulk  ?>
 
                                                 <?php endif; // 'post' && $can_publish && current_user_can( 'edit_others_posts' ) ?>
 
                                             </div>
 
-            <?php if ($bulk && current_theme_supports('post-formats') && post_type_supports($screen->post_type, 'post-formats')) : ?>
+                                            <?php if ($bulk && current_theme_supports('post-formats') && post_type_supports($screen->post_type, 'post-formats')) : ?>
                                                 <?php $post_formats = get_theme_support('post-formats'); ?>
 
                                                 <label class="alignleft">
@@ -725,7 +725,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     <select name="post_format">
                                                         <option value="-1"><?php _e('&mdash; No Change &mdash;'); ?></option>
                                                         <option value="0"><?php echo get_post_format_string('standard'); ?></option>
-                <?php if (is_array($post_formats[0])) : ?>
+                                                        <?php if (is_array($post_formats[0])) : ?>
                                                             <?php foreach ($post_formats[0] as $format) : ?>
                                                                 <option value="<?php echo esc_attr($format); ?>"><?php echo esc_html(get_post_format_string($format)); ?></option>
                                                             <?php endforeach; ?>
@@ -733,48 +733,48 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
                                                     </select>
                                                 </label>
 
-            <?php endif; ?>
+                                            <?php endif; ?>
 
                                         </div>
                                     </fieldset>
 
-            <?php
-            list( $columns ) = $this->get_column_info();
+                                    <?php
+                                    list( $columns ) = $this->get_column_info();
 
-            foreach ($columns as $column_name => $column_display_name) {
-                if (isset($core_columns[$column_name])) {
-                    continue;
-                }
+                                    foreach ($columns as $column_name => $column_display_name) {
+                                        if (isset($core_columns[$column_name])) {
+                                            continue;
+                                        }
 
-                if ($bulk) {
+                                        if ($bulk) {
 
-                    /**
-                     * Fires once for each column in Bulk Edit mode.
-                     *
-                     * @since 2.7.0
-                     *
-                     * @param string $column_name Name of the column to edit.
-                     * @param string $post_type   The post type slug.
-                     */
-                    // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
-                } else {
+                                            /**
+                                             * Fires once for each column in Bulk Edit mode.
+                                             *
+                                             * @since 2.7.0
+                                             *
+                                             * @param string $column_name Name of the column to edit.
+                                             * @param string $post_type   The post type slug.
+                                             */
+                                            // do_action('bulk_edit_custom_box', $column_name, $screen->post_type);
+                                        } else {
 
-                    /**
-                     * Fires once for each column in Quick Edit mode.
-                     *
-                     * @since 2.7.0
-                     *
-                     * @param string $column_name Name of the column to edit.
-                     * @param string $post_type   The post type slug, or current screen name if this is a taxonomy list table.
-                     * @param string $taxonomy    The taxonomy name, if any.
-                     */
-                    //do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
-                }
-            }
-            ?>
+                                            /**
+                                             * Fires once for each column in Quick Edit mode.
+                                             *
+                                             * @since 2.7.0
+                                             *
+                                             * @param string $column_name Name of the column to edit.
+                                             * @param string $post_type   The post type slug, or current screen name if this is a taxonomy list table.
+                                             * @param string $taxonomy    The taxonomy name, if any.
+                                             */
+                                            //do_action('quick_edit_custom_box', $column_name, $screen->post_type, '');
+                                        }
+                                    }
+                                    ?>
 
                                     <div class="submit inline-edit-save">
-            <?php if (!$bulk) : ?>
+                                        <?php if (!$bulk) : ?>
                                             <?php wp_nonce_field('inlineeditnonce', '_inline_edit', false); ?>
                                             <button type="button" class="button button-primary save"><?php _e('Update'); ?></button>
                                         <?php else : ?>
@@ -783,13 +783,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
 
                                         <button type="button" class="button cancel"><?php _e('Cancel'); ?></button>
 
-            <?php if (!$bulk) : ?>
+                                        <?php if (!$bulk) : ?>
                                             <span class="spinner"></span>
                                         <?php endif; ?>
 
                                         <input type="hidden" name="post_view" value="<?php echo esc_attr($m); ?>" />
                                         <input type="hidden" name="screen" value="<?php echo esc_attr($screen->id); ?>" />
-            <?php if (!$bulk && !post_type_supports($screen->post_type, 'author')) : ?>
+                                        <?php if (!$bulk && !post_type_supports($screen->post_type, 'author')) : ?>
                                             <input type="hidden" name="post_author" value="<?php echo esc_attr($post->post_author); ?>" />
                                         <?php endif; ?>
 
@@ -808,10 +808,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_List_Data extends WP_List_
 
                             </td></tr>
 
-            <?php
-            ++$bulk;
-        endwhile;
-        ?>
+                        <?php
+                        ++$bulk;
+                    endwhile;
+                    ?>
                 </tbody></table>
         </form>
         <?php
