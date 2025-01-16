@@ -1941,14 +1941,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public function angelleye_get_extra_fee_array($amount, $divided, $type) {
         $total = 0;
         $partition_array = array();
+
+        // Ensure $divided is valid to prevent division by zero - https://angelleye.atlassian.net/browse/PFW-1918
+        if ($divided <= 0) {
+            // Log an error, throw an exception, or handle the situation gracefully
+            error_log("Error in angelleye_get_extra_fee_array: Invalid value ($divided) for \$divided.");
+            return []; // Return an empty array or handle as appropriate
+        }
+
         $partition = AngellEYE_Gateway_Paypal::number_format($amount / $divided);
         for ($i = 1; $i <= $divided; $i++) {
             $partition_array[$i] = $partition;
-            $total = $total + $partition;
+            $total += $partition;
         }
         $Difference = round($amount - $total, $this->decimals);
         if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
-            $partition_array[$divided] = $partition_array[$divided] + $Difference;
+            $partition_array[$divided] += $Difference;
         }
         if (!empty($this->map_item_with_account)) {
             $loop = 1;
@@ -1958,7 +1966,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true && !empty($item_with_account['needs_shipping']) && $item_with_account['needs_shipping'] === true) {
                             $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['tax'], $this->decimals);
                             unset($partition_array[$loop]);
-                            $loop = $loop + 1;
+                            $loop++;
                         } elseif (!empty($item_with_account['is_taxable']) && $item_with_account['is_taxable'] === true) {
                             $partition_array[$product_id] = round($item_with_account['tax'], $this->decimals);
                         }
@@ -1968,17 +1976,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                             if (isset($item_with_account['shipping_cost'])) {
                                 $partition_array[$product_id] = round($partition_array[$loop] + $item_with_account['shipping_cost'], $this->decimals);
                                 unset($partition_array[$loop]);
-                                $loop = $loop + 1;
+                                $loop++;
                             } else {
-                                $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                                $partition_array[$product_id] = $item_with_account['shipping_cost'] ?? $partition_array[$loop];
                             }
                         }
                         break;
                     case "discount":
                         if (!empty($item_with_account['is_discountable']) && $item_with_account['is_discountable'] === true) {
-                            $partition_array[$product_id] = isset($item_with_account['discount']) ? $item_with_account['discount'] : $partition_array[$loop];
+                            $partition_array[$product_id] = $item_with_account['discount'] ?? $partition_array[$loop];
                             unset($partition_array[$loop]);
-                            $loop = $loop + 1;
+                            $loop++;
                         }
                         break;
                 }
