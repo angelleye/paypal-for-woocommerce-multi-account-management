@@ -2944,8 +2944,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         if ($found_merchant_id != 'default') {
             $merchant_ids[$found_merchant_id] = $found_merchant_id;
         } else {
-            $$merchant_id = $this->merchant_id;
-            return $$merchant_id;
+            return $this->merchant_id;
         }
         return $merchant_ids;
     }
