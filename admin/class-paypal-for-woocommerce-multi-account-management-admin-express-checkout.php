@@ -2714,6 +2714,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
 
     public function angelleye_is_account_ready_to_paid($bool, $email) {
         $gateway = angelleye_wc_gateway('paypal_express');
+        // Creates problem with express checkout configurations, If somebody tries to edit and update it creates a fatal error
+        if (!$gateway) {
+            return new WP_Error('invalid_account', __('The payment gateway for this order does not exist.', 'paypal-for-woocommerce'));
+        }
         $testmode = 'yes' === $gateway->get_option('testmode', 'yes');
         if ($testmode === true) {
             $PayPalConfig = array(
