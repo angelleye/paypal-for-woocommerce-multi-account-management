@@ -2663,7 +2663,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         global $user_ID;
         $current_user_roles = array();
         $gateways = $this->angelleye_wc_gateway();
-        $testmode = $this->angelleye_wc_gateway()->get_option('testmode', 'yes');
+        $testmode = $gateways->get_option('testmode', 'yes');
         if (is_user_logged_in()) {
             $user = new WP_User($user_ID);
             if (!empty($user->roles) && is_array($user->roles)) {
