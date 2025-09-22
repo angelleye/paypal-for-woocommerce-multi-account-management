@@ -306,9 +306,19 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     }
 
     public function display_plugin_admin_page() {
+        
+        $GLOBALS['hide_save_button'] = true;
+        
+        echo '</form>';
+
         wp_dequeue_style('woocommerce_admin_styles');
+        
+        echo '<style>.button-primary.woocommerce-save-button{display: none;}</style>';
+        
+        $section_class = !empty( $_GET['section'] ) ? $_GET['section']: '';
+        
+        echo '<div class="pfwma-wrap '.$section_class.'">';
         $this->display_plugin_admin_page_submenu();
-        echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
         $this->plugin_admin->display_admin_notice();
         $section = !empty($_GET['section']) ? $_GET['section'] : '';
         switch ($section) {
@@ -324,11 +334,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             default:
                 $this->plugin_admin->angelleye_multi_account_list();
         }
+        echo '</div>';
     }
 
     public function display_plugin_admin_page_submenu() {
         ?>
-        </form>
         <div class="wrap">
             <ul class="subsubsub">
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management')); ?>" class="<?php

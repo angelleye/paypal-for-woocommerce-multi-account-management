@@ -746,7 +746,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_multi_account_settings_fields() {
-        $GLOBALS['hide_save_button'] = true;
         $disable_trigger_account = 0;
         if (!empty($_POST['global_commission_microprocessing_save'])) {
             update_option('global_ec_site_owner_commission', wc_clean($_POST['global_ec_site_owner_commission']));

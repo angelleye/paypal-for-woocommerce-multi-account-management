@@ -196,3 +196,41 @@ td a.angelleye_smart_commission_delete {
         margin-left: 0px;
     }
 }
+
+.woocommerce_page_wc-settings-multi_account_management .wrap .submit{
+    float:left;
+}
+
+.woocommerce_page_wc-settings-multi_account_management .wrap.woocommerce{
+    background: #f0f0f1;
+}
+
+.woocommerce_page_wc-settings-multi_account_management .wrap .submit {
+    padding: 0 30px;background: #f0f0f1;
+}
+
+.woocommerce_page_wc-settings-multi_account_management #wpbody-content{
+    background: #f0f0f1 !important;
+}
+
+.pfwma-wrap #angelleye_paypal_marketing_table #account-filter {
+    margin-right: 1rem;
+}
+.pfwma-wrap {
+    padding: 0 30px;
+    background: #f0f0f1;
+}
+
+.pfwma-wrap ul.subsubsub li a {
+    box-shadow: unset !important;
+    overflow: unset !important; 
+}
+.pfwma-wrap.add_edit_account{
+    width:100%;
+    float:left;
+    overflow:hidden;
+}
+
+.pfwma-wrap #angelleye_paypal_marketing_table .wp-list-table {
+    border-right: 1px solid #c3c4c7;
+}
