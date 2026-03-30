@@ -141,8 +141,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     private function set_locale() {
 
         $plugin_i18n = new Paypal_For_Woocommerce_Multi_Account_Management_i18n();
-
-        $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
+        if (did_action('init')) {
+            $plugin_i18n->load_plugin_textdomain();
+        } else {
+            $this->loader->add_action('init', $plugin_i18n, 'load_plugin_textdomain');
+        }
     }
 
     /**

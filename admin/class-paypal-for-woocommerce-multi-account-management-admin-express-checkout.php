@@ -2334,7 +2334,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
     public function own_woocommerce_order_item_add_action_buttons($order) {
         $angelleye_multi_account_ec_parallel_data_map = $order->get_meta('_angelleye_multi_account_ec_parallel_data_map', true);
         if (!empty($angelleye_multi_account_ec_parallel_data_map)) {
-            echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', MULTI_ACCOUNT_REFUND_NOTICE, MULTI_ACCOUNT_REFUND_NOTICE);
+            $refund_notice = angelleye_pfwma_get_multi_account_refund_notice();
+            echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', $refund_notice, $refund_notice);
         }
     }
 

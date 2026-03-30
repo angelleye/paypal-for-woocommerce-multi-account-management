@@ -10,6 +10,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
     private $plugin_name;
     private $version;
     public $testmode;
+    public $settings;
+    public $is_sandbox;
 
     public function __construct($plugin_name, $version) {
         $this->plugin_name = $plugin_name;

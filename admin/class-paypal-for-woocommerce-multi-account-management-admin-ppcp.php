@@ -124,6 +124,29 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         } else {
             $this->decimals = 2;
         }
+        // Avoid triggering PPCP translation defaults before init.
+        $this->bootstrap_ppcp_settings_from_options();
+        if (did_action('init')) {
+            $this->bootstrap_ppcp_settings_from_gateway();
+        } else {
+            add_action('init', array($this, 'bootstrap_ppcp_settings_from_gateway'), 1);
+        }
+    }
+
+    public function bootstrap_ppcp_settings_from_options() {
+        $this->settings = get_option('woocommerce_angelleye_ppcp_settings', array());
+        $this->is_sandbox = isset($this->settings['testmode']) && 'yes' === $this->settings['testmode'];
+        $this->invoice_prefix = !empty($this->settings['invoice_prefix']) ? $this->settings['invoice_prefix'] : 'WC-PPCP';
+        $this->sandbox_client_id = isset($this->settings['sandbox_client_id']) ? $this->settings['sandbox_client_id'] : '';
+        $this->sandbox_secret_id = isset($this->settings['sandbox_api_secret']) ? $this->settings['sandbox_api_secret'] : '';
+        $this->live_client_id = isset($this->settings['api_client_id']) ? $this->settings['api_client_id'] : '';
+        $this->live_secret_id = isset($this->settings['api_secret']) ? $this->settings['api_secret'] : '';
+        $this->sandbox_merchant_id = isset($this->settings['sandbox_merchant_id']) ? $this->settings['sandbox_merchant_id'] : '';
+        $this->live_merchant_id = isset($this->settings['live_merchant_id']) ? $this->settings['live_merchant_id'] : '';
+        $this->bootstrap_ppcp_settings_set_runtime_credentials();
+    }
+
+    public function bootstrap_ppcp_settings_from_gateway() {
         if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
             include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
         }
@@ -136,6 +159,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->live_secret_id = $this->settings->get('api_secret', '');
         $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
         $this->live_merchant_id = $this->settings->get('live_merchant_id', '');
+        $this->bootstrap_ppcp_settings_set_runtime_credentials();
+    }
+
+    private function bootstrap_ppcp_settings_set_runtime_credentials() {
         if ($this->is_sandbox) {
             $this->client_id = $this->sandbox_client_id;
             $this->secret_id = $this->sandbox_secret_id;
@@ -2153,7 +2180,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $order_id = version_compare(WC_VERSION, '3.0', '<') ? $order->id : $order->get_id();
         $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
         if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
-            echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', MULTI_ACCOUNT_REFUND_NOTICE, MULTI_ACCOUNT_REFUND_NOTICE);
+            $refund_notice = angelleye_pfwma_get_multi_account_refund_notice();
+            echo sprintf('<br><span class="description"><span class="woocommerce-help-tip" data-tip="%s"></span>%s</span>', $refund_notice, $refund_notice);
         }
     }
 
