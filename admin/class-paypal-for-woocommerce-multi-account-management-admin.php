@@ -2423,12 +2423,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     public function angelleye_paypal_for_woocommerce_multi_account_display_push_notification() {
         global $current_user;
         $user_id = $current_user->ID;
-        if (false === ( $response = get_transient('angelleye_multi_account_push_notification_result') )) {
-            $response = $this->angelleye_get_push_notifications();
-            if (is_object($response)) {
-                set_transient('angelleye_multi_account_push_notification_result', $response, 12 * HOUR_IN_SECONDS);
-            }
-        }
+        $response = $this->angelleye_get_push_notifications();
         if (is_object($response)) {
             foreach ($response->data as $key => $response_data) {
                 if (!get_user_meta($user_id, $response_data->id)) {
@@ -2439,31 +2434,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
     }
 
     public function angelleye_get_push_notifications() {
-        $args = array(
-            'plugin_name' => 'paypal-for-woocommerce-multi-account-management',
-        );
-        $api_url = PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL . '?Wordpress_Plugin_Notification_Sender';
-        $api_url .= '&action=angelleye_get_plugin_notification';
-        $request = wp_remote_post($api_url, array(
-            'method' => 'POST',
-            'timeout' => 45,
-            'redirection' => 5,
-            'httpversion' => '1.0',
-            'blocking' => true,
-            'headers' => array('user-agent' => 'AngellEYE'),
-            'body' => $args,
-            'cookies' => array(),
-            'sslverify' => false
-        ));
-        if (is_wp_error($request) or wp_remote_retrieve_response_code($request) != 200) {
-            return false;
-        }
-        if ($request != '') {
-            $response = json_decode(wp_remote_retrieve_body($request));
-        } else {
-            $response = false;
-        }
-        return $response;
+        return AngellEYE_Utility::angelleye_get_push_notifications('paypal-for-woocommerce-multi-account-management');
     }
 
     public function angelleye_display_push_notification($response_data) {
