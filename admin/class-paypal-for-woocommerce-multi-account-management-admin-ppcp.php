@@ -126,15 +126,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
         // Avoid triggering PPCP translation defaults before init.
         $this->bootstrap_ppcp_settings_from_options();
-        if (did_action('init')) {
-            $this->bootstrap_ppcp_settings_from_gateway();
-        } else {
-            add_action('init', array($this, 'bootstrap_ppcp_settings_from_gateway'), 1);
-        }
     }
 
     public function bootstrap_ppcp_settings_from_options() {
-        $this->settings = get_option('woocommerce_angelleye_ppcp_settings', array());
+        if (function_exists('angelleye_pfw_get_ppcp_settings')) {
+            $this->settings = angelleye_pfw_get_ppcp_settings();
+        } else {
+            $this->settings = get_option('woocommerce_angelleye_ppcp_settings', array());
+        }
         $this->is_sandbox = isset($this->settings['testmode']) && 'yes' === $this->settings['testmode'];
         $this->invoice_prefix = !empty($this->settings['invoice_prefix']) ? $this->settings['invoice_prefix'] : 'WC-PPCP';
         $this->sandbox_client_id = isset($this->settings['sandbox_client_id']) ? $this->settings['sandbox_client_id'] : '';
@@ -143,22 +142,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $this->live_secret_id = isset($this->settings['api_secret']) ? $this->settings['api_secret'] : '';
         $this->sandbox_merchant_id = isset($this->settings['sandbox_merchant_id']) ? $this->settings['sandbox_merchant_id'] : '';
         $this->live_merchant_id = isset($this->settings['live_merchant_id']) ? $this->settings['live_merchant_id'] : '';
-        $this->bootstrap_ppcp_settings_set_runtime_credentials();
-    }
-
-    public function bootstrap_ppcp_settings_from_gateway() {
-        if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
-            include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
-        }
-        $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
-        $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
-        $this->invoice_prefix = $this->settings->get('invoice_prefix', 'WC-PPCP');
-        $this->sandbox_client_id = $this->settings->get('sandbox_client_id', '');
-        $this->sandbox_secret_id = $this->settings->get('sandbox_api_secret', '');
-        $this->live_client_id = $this->settings->get('api_client_id', '');
-        $this->live_secret_id = $this->settings->get('api_secret', '');
-        $this->sandbox_merchant_id = $this->settings->get('sandbox_merchant_id', '');
-        $this->live_merchant_id = $this->settings->get('live_merchant_id', '');
         $this->bootstrap_ppcp_settings_set_runtime_credentials();
     }
 

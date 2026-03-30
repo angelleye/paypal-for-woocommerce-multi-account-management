@@ -205,11 +205,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Payment_Load_Balancer {
     }
 
     public function angelleye_synce_ppcp_account() {
-        if (!class_exists('WC_Gateway_PPCP_AngellEYE_Settings')) {
-            include_once PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-wc-gateway-ppcp-angelleye-settings.php';
+        if (function_exists('angelleye_pfw_get_ppcp_settings')) {
+            $this->settings = angelleye_pfw_get_ppcp_settings();
+            $this->is_sandbox = 'yes' === angelleye_pfw_get_ppcp_settings('testmode', 'no');
+        } else {
+            $this->settings = get_option('woocommerce_angelleye_ppcp_settings', array());
+            $this->is_sandbox = isset($this->settings['testmode']) && 'yes' === $this->settings['testmode'];
         }
-        $this->settings = WC_Gateway_PPCP_AngellEYE_Settings::instance();
-        $this->is_sandbox = 'yes' === $this->settings->get('testmode', 'no');
         if ($this->is_sandbox) {
             $environment = 'on';
             $option_key = 'angelleye_multi_ppcp_payment_load_balancer_sandbox';
