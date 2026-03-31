@@ -8,33 +8,49 @@
     width: 460px;
 }
 .angelleye_multi_account_left {
-    max-width: 60%;
-    float: left;
-    width: 688px;
+    max-width: 100%;
+    width: auto;
+    flex: 1 1 680px;
+    min-width: 0;
+}
+.angelleye_multi_account_left .form-table {
+    width: 100%;
 }
 
 .angelleye_multi_account_right {
-    max-width: 475px;
-    float: left;
+    max-width: 420px;
     padding: 10px;
     border: 1px solid #d1c6c6;
     border-radius: 15px;
     display: block;
-    margin-top: 0px;
-    margin-left: 10px;
-    width: 37%;
+    margin-top: 0;
+    margin-left: 0;
+    width: 100%;
+    flex: 1 1 320px;
 }
 .angelleye_multi_global_commission_right {
-    max-width: 475px;
-    float: left;
+    max-width: 420px;
     padding: 10px;
     border: 1px solid #d1c6c6;
     border-radius: 15px;
     display: block;
-    margin-top: 0px;
+    margin-top: 0;
     margin-left: 10px;
-    width: 37%;
+    width: 100%;
+    flex: 1 1 320px;
     margin-bottom: 20px;
+}
+.angelleye_multi_account_layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+}
+.angelleye_pfwma_admin_shell .angelleye_multi_account_global_setting {
+    width: 100%;
+}
+.angelleye_pfwma_admin_content {
+    width: 100%;
 }
 .angelleye_multi_global_commission_right label.commission {
     width: 215px;
@@ -155,8 +171,8 @@ select.smart_forwarding_field {
     text-overflow: ellipsis;
 }
 
-#angelleye_paypal_marketing_table table.fixed {
-    border-right: none;
+#angelleye_paypal_marketing_table {
+    padding-right: 20px !important;
 }
 fieldset.pfwma_section_ui {
     border: 1px solid #d1c6c6;
@@ -181,10 +197,13 @@ td a.angelleye_smart_commission_delete {
 }
 
 @media screen and (max-width: 782px) {
+    .angelleye_multi_account_layout {
+        gap: 12px;
+    }
     .angelleye_multi_account_left {
         max-width: 100% !important;
         width: 100%;
-
+        flex-basis: 100%;
     } 
     .micro_account_fields {
         max-width: 100% !important;
@@ -192,7 +211,8 @@ td a.angelleye_smart_commission_delete {
     }
     .angelleye_multi_account_right {
         max-width: 100% !important;
-        width: 95%;
+        width: 100%;
+        flex-basis: 100%;
         margin-left: 0px;
     }
 }

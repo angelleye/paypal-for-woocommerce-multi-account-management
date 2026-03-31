@@ -141,8 +141,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     private function set_locale() {
 
         $plugin_i18n = new Paypal_For_Woocommerce_Multi_Account_Management_i18n();
-
-        $this->loader->add_action('plugins_loaded', $plugin_i18n, 'load_plugin_textdomain');
+        if (did_action('init')) {
+            $plugin_i18n->load_plugin_textdomain();
+        } else {
+            $this->loader->add_action('init', $plugin_i18n, 'load_plugin_textdomain');
+        }
     }
 
     /**
@@ -306,10 +309,11 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
     }
 
     public function display_plugin_admin_page() {
-        wp_dequeue_style('woocommerce_admin_styles');
-        $this->display_plugin_admin_page_submenu();
-        echo '<style> .button-primary.woocommerce-save-button { display: none; } </style>';
+        echo '<div class="angelleye_pfwma_admin_shell">';
+        echo '<div class="angelleye_pfwma_admin_content">';
+        echo '<style>.woocommerce-save-button { display: none !important; }</style>';
         $this->plugin_admin->display_admin_notice();
+        $this->display_plugin_admin_page_submenu();
         $section = !empty($_GET['section']) ? $_GET['section'] : '';
         switch ($section) {
             case 'add_edit_account':
@@ -324,12 +328,12 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
             default:
                 $this->plugin_admin->angelleye_multi_account_list();
         }
+        echo '</div></div>';
     }
 
     public function display_plugin_admin_page_submenu() {
         ?>
-        </form>
-        <div class="wrap">
+        <div class="wrap angelleye_pfwma_admin_nav">
             <ul class="subsubsub">
                 <li><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=multi_account_management')); ?>" class="<?php
                     if (empty($_GET['section'])) {
@@ -353,11 +357,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
                     ?>"><?php echo __('Account Payments Log', 'angelleye-paypal-shipment-tracking-woocommerce'); ?></a>  </li>
             </ul>
             <br class="clear">
-            <?php
-            if (!empty($this->message)) {
-                echo '<div id="message" class="updated inline is-dismissible"><p><strong>' . esc_html($this->message) . '</strong></p></div>';
-            }
-            ?>
         </div>
         <?php
     }

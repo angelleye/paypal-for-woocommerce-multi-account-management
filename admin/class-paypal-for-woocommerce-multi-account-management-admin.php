@@ -100,7 +100,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $selected_role = '';
         $ec_site_owner_commission = 0;
         $microprocessing = get_post_meta($_GET['ID']);
-        echo '<br/><div class="angelleye_multi_account_left"><form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data"><table class="form-table">
+        echo '<br/><div class="angelleye_multi_account_layout"><div class="angelleye_multi_account_left"><form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data"><table class="form-table">
         <tbody class="angelleye_micro_account_body">';
         $gateway_list = array();
         if (class_exists('AngellEYE_Gateway_Paypal')) {
@@ -743,6 +743,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                 </tr>', $_GET['ID'], __('Save Changes', 'paypal-for-woocommerce-multi-account-management'), __('Cancel', 'paypal-for-woocommerce-multi-account-management'), wp_nonce_field('microprocessing_save'));
         echo '</tbody></table></form></div>';
         $this->angelleye_multi_account_tooltip_box();
+        echo '</div>';
     }
 
     public function angelleye_multi_account_settings_fields() {
@@ -1041,7 +1042,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             </div>
         </div>
         <?php
-        $this->angelleye_pfwma_display_marketing_sidebar();
     }
 
     public function angelleye_multi_account_tooltip_box() {
@@ -1098,34 +1098,36 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         if (empty($_GET['action'])) {
             ?>
             <br/>
-            <div class="angelleye_multi_account_left">
-                <form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data">
-                    <table class="form-table" id="micro_account_fields" >
-                        <tbody class="angelleye_micro_account_body">
-                            <?php echo $this->angelleye_multi_account_choose_payment_gateway(); ?>
-                            <?php echo $this->angelleye_multi_account_api_field_ui() ?>
-                            <?php echo $this->angelleye_multi_account_paypal_pro_payflow_api_field_ui(); ?>
-                            <?php echo $this->angelleye_multi_account_api_paypal_field_ui(); ?>
-                            <?php echo $this->angelleye_multi_account_api_angelleye_ppcp_field_ui(); ?>
-                            <?php
-                            $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
-                            if ($angelleye_payment_load_balancer == '') {
-                                echo $this->angelleye_multi_account_condition_ui();
-                            }
-                            ?>
-                            <tr valign="top">
-                                <td scope="row" class="titledesc">
-                                    <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
-                                    <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
-                                    <?php wp_nonce_field('microprocessing_save'); ?>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </form>
+            <div class="angelleye_multi_account_layout">
+                <div class="angelleye_multi_account_left">
+                    <form method="post" id="angelleye_multi_account" action="" enctype="multipart/form-data">
+                        <table class="form-table" id="micro_account_fields" >
+                            <tbody class="angelleye_micro_account_body">
+                                <?php echo $this->angelleye_multi_account_choose_payment_gateway(); ?>
+                                <?php echo $this->angelleye_multi_account_api_field_ui() ?>
+                                <?php echo $this->angelleye_multi_account_paypal_pro_payflow_api_field_ui(); ?>
+                                <?php echo $this->angelleye_multi_account_api_paypal_field_ui(); ?>
+                                <?php echo $this->angelleye_multi_account_api_angelleye_ppcp_field_ui(); ?>
+                                <?php
+                                $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
+                                if ($angelleye_payment_load_balancer == '') {
+                                    echo $this->angelleye_multi_account_condition_ui();
+                                }
+                                ?>
+                                <tr valign="top">
+                                    <td scope="row" class="titledesc">
+                                        <input id="microprocessing_save" name="microprocessing_save" class="button-primary" type="submit" value="<?php esc_attr_e('Save Changes', 'paypal-for-woocommerce-multi-account-management'); ?>" />
+                                        <a href="?page=wc-settings&tab=multi_account_management" class="button-primary button"><?php esc_attr_e('Cancel', 'paypal-for-woocommerce-multi-account-management'); ?></a>
+                                        <?php wp_nonce_field('microprocessing_save'); ?>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <?php $this->angelleye_multi_account_tooltip_box(); ?>
             </div>
             <?php
-            $this->angelleye_multi_account_tooltip_box();
         } elseif (!empty($_GET['action']) && $_GET['action'] == 'edit') {
             $this->angelleye_display_multi_account_list();
         }
@@ -1193,6 +1195,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             if (isset($deactive_count) && $deactive_count !== false) {
                 ?> <a class="page-title-action enable_all_vendor_rules"><?php echo __('Enable All Auto-generated Vendor Rules', 'paypal-for-woocommerce-multi-account-management'); ?></a> <?php
             }
+            echo '<div></div>';
             if (class_exists('Paypal_For_Woocommerce_Multi_Account_Management_List_Data')) {
                 $table = new Paypal_For_Woocommerce_Multi_Account_Management_List_Data();
                 $table->prepare_items();
@@ -1225,6 +1228,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         <div id="angelleye_paypal_marketing_table">
         <br>
         <h1 class="wp-heading-inline"><?php echo __('PayPal Payment Distribution Report', ''); ?></h1>
+        <?php echo '<div></div>'; ?>
         <?php
         if (class_exists('PFWMA_Payments_History_List')) {
             $table = new PFWMA_Payments_History_List();

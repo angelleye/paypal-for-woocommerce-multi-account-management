@@ -51,8 +51,10 @@ if (!defined('PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL')) {
     define('PAYPAL_FOR_WOOCOMMERCE_PUSH_NOTIFICATION_WEB_URL', 'https://www.angelleye.com/');
 }
 
-if (!defined('MULTI_ACCOUNT_REFUND_NOTICE')) {
-    define('MULTI_ACCOUNT_REFUND_NOTICE', __('Partial refunds are not available for parallel payments orders.', 'paypal-for-woocommerce-multi-account-management'));
+if (!function_exists('angelleye_pfwma_get_multi_account_refund_notice')) {
+    function angelleye_pfwma_get_multi_account_refund_notice() {
+        return __('Partial refunds are not available for parallel payments orders.', 'paypal-for-woocommerce-multi-account-management');
+    }
 }
 
 
