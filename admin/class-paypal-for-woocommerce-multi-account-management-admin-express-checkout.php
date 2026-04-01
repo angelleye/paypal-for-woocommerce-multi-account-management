@@ -1986,7 +1986,9 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_Express_Checkout {
                                 unset($partition_array[$loop]);
                                 $loop = $loop + 1;
                             } else {
-                                $partition_array[$product_id] = isset($item_with_account['shipping_cost']) ? $item_with_account['shipping_cost'] : $partition_array[$loop];
+                                $partition_array[$product_id] = $partition_array[$loop];
+                                unset($partition_array[$loop]);
+                                $loop = $loop + 1;
                             }
                         }
                         break;
