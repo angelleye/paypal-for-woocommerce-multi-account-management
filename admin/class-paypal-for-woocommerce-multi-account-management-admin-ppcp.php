@@ -1624,28 +1624,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             if (abs($Difference) > 0.000001 && 0.0 !== (float) $Difference) {
                 if (isset($new_payments[0]['amt']) && $new_payments[0]['amt'] > 1) {
                     $new_payments[0]['amt'] = $new_payments[0]['amt'] + $Difference;
-                    $item_names = array();
-                    if (!empty($new_payments[0]['items'])) {
-                        $first_line_item = $new_payments[0]['items'];
-                    }
-                    if (!empty($first_line_item)) {
-                        unset($new_payments[0]['items']);
-                        $new_payments[0]['items'] = array();
-                        $new_payments[0]['itemamt'] = $new_payments[0]['amt'];
-                        foreach ($first_line_item as $key => $value) {
-                            $item_names[] = $value['name'] . ' x ' . $value['qty'];
+                    if (isset($new_payments[0]['taxamt']) && $new_payments[0]['taxamt'] > 1) {
+                        $new_payments[0]['taxamt'] = $new_payments[0]['taxamt'] + $Difference;
+                    } elseif (isset($new_payments[0]['shippingamt']) && $new_payments[0]['shippingamt'] > 1) {
+                        $new_payments[0]['shippingamt'] = $new_payments[0]['shippingamt'] + $Difference;
+                    } else {
+                        $item_names = array();
+                        if (!empty($new_payments[0]['items'])) {
+                            $first_line_item = $new_payments[0]['items'];
                         }
-                        $item_details = implode(', ', $item_names);
-                        $item_details = html_entity_decode(wc_trim_string($item_details ? wp_strip_all_tags($item_details) : __('Item', 'paypal-for-woocommerce-multi-account-management'), 127), ENT_NOQUOTES, 'UTF-8');
-                        $new_payments[0]['items'][0] = array(
-                            'name' => $item_details,
-                            'desc' => '',
-                            'amt' => AngellEYE_Gateway_Paypal::number_format($new_payments[0]['amt']),
-                            'qty' => 1
-                        );
+                        if (!empty($first_line_item)) {
+                            unset($new_payments[0]['items']);
+                            $new_payments[0]['items'] = array();
+                            $new_payments[0]['itemamt'] = $new_payments[0]['amt'];
+                            foreach ($first_line_item as $key => $value) {
+                                $item_names[] = $value['name'] . ' x ' . $value['qty'];
+                            }
+                            $item_details = implode(', ', $item_names);
+                            $item_details = html_entity_decode(wc_trim_string($item_details ? wp_strip_all_tags($item_details) : __('Item', 'paypal-for-woocommerce-multi-account-management'), 127), ENT_NOQUOTES, 'UTF-8');
+                            $new_payments[0]['items'][0] = array(
+                                'name' => $item_details,
+                                'desc' => '',
+                                'amt' => AngellEYE_Gateway_Paypal::number_format($new_payments[0]['amt']),
+                                'qty' => 1
+                            );
+                        }
+                        unset($new_payments[0]['shippingamt']);
+                        unset($new_payments[0]['taxamt']);
                     }
-                    unset($new_payments[0]['shippingamt']);
-                    unset($new_payments[0]['taxamt']);
                 }
             }
         }
@@ -1708,6 +1714,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $old_wc = version_compare(WC_VERSION, '3.0', '<');
             if (!empty($new_payments)) {
                 foreach ($new_payments as $key_new_payments => $value_new_payments) {
+                    $update_amount_request = array();
                     if (!empty($value_new_payments['itemamt'])) {
                         $update_amount_request['item_total'] = array(
                             'currency_code' => angelleye_ppcp_get_currency($order_id),
