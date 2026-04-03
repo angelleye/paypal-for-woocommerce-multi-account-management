@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 5.0
-Tested up to: 6.5.5
-Stable tag: 4.0.4
+Tested up to: 6.9.4
+Stable tag: 4.1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,6 +28,12 @@ If you are selling both high priced and low priced products on your site, you ma
 This plugin allows you to configure multiple accounts and provide rules for when to use each account based on order data.
 
 == Changelog ==
+
+= 4.1.0 - 04.03.2026 =
+* Fix - Resolves shipping amount not being captured in PPCP multi-account payments. ([#129](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/129))
+* Fix - Resolves rounding adjustment that unconditionally removed shipping/tax from the PayPal amount breakdown in PPCP. ([#128](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/128))
+* Fix - Resolves admin tab layout consistency, notices order, and WooCommerce settings UI regressions. ([#127](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/127))
+* Tweak - Uses PayPal for WooCommerce notification function to optimize fetch and reduce duplicate logic. ([#126](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/126))
 
 = 4.0.4 - 09.17.2025 =
 * Fix - Resolves compatibility issue with WC-Bookings. ([PFWMA-321/322](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/124))
