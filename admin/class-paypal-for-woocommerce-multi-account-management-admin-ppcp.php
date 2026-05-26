@@ -1651,6 +1651,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         }
                         unset($new_payments[0]['shippingamt']);
                         unset($new_payments[0]['taxamt']);
+                        unset($new_payments[0]['discount']);
                     }
                 }
             }
