@@ -208,22 +208,7 @@ jQuery(function () {
     jQuery('[id^=angelleye_notification]').each(function (i) {
         jQuery('[id="' + this.id + '"]').slice(1).remove();
     });
-    var el_notice = jQuery(".angelleye-notice");
-    el_notice.fadeIn(750);
-    jQuery(".angelleye-notice-dismiss").click(function (e) {
-        e.preventDefault();
-        jQuery(this).parent().parent(".angelleye-notice").fadeOut(600, function () {
-            jQuery(this).parent().parent(".angelleye-notice").remove();
-        });
-        notify_wordpress(jQuery(this).data("msg"));
-    });
-    function notify_wordpress(message) {
-        var param = {
-            action: 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice',
-            data: message
-        };
-        jQuery.post(ajaxurl, param);
-    }
+    jQuery(".angelleye-notice").fadeIn(750);
 });
 jQuery(document).off('click', '#angelleye-updater-notice .notice-dismiss').on('click', '#angelleye-updater-notice .notice-dismiss', function (event) {
     var r = confirm("If you do not install the Updater plugin you will not receive automated updates for Angell EYE products going forward!");
