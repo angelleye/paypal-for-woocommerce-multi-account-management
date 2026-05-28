@@ -2424,48 +2424,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         return null;
     }
 
-    public function angelleye_paypal_for_woocommerce_multi_account_display_push_notification() {
-        global $current_user;
-        $user_id = $current_user->ID;
-        $response = $this->angelleye_get_push_notifications();
-        if (is_object($response)) {
-            foreach ($response->data as $key => $response_data) {
-                if (!get_user_meta($user_id, $response_data->id)) {
-                    $this->angelleye_display_push_notification($response_data);
-                }
-            }
-        }
-    }
-
-    public function angelleye_get_push_notifications() {
-        return AngellEYE_Utility::angelleye_get_push_notifications('paypal-for-woocommerce-multi-account-management');
-    }
-
-    public function angelleye_display_push_notification($response_data) {
-        echo '<div class="notice notice-success angelleye-notice" style="display:none;" id="' . $response_data->id . '">'
-        . '<div class="angelleye-notice-logo-push"><span> <img src="' . $response_data->ans_company_logo . '"> </span></div>'
-        . '<div class="angelleye-notice-message">'
-        . '<h3>' . $response_data->ans_message_title . '</h3>'
-        . '<div class="angelleye-notice-message-inner">'
-        . '<p>' . $response_data->ans_message_description . '</p>'
-        . '<div class="angelleye-notice-action"><a target="_blank" href="' . $response_data->ans_button_url . '" class="button button-primary">' . $response_data->ans_button_label . '</a></div>'
-        . '</div>'
-        . '</div>'
-        . '<div class="angelleye-notice-cta">'
-        . '<button class="angelleye-notice-dismiss angelleye-dismiss-welcome" data-msg="' . $response_data->id . '">Dismiss</button>'
-        . '</div>'
-        . '</div>';
-    }
-
-    public function angelleye_paypal_for_woocommerce_multi_account_adismiss_notice() {
-        global $current_user;
-        $user_id = $current_user->ID;
-        if (!empty($_POST['action']) && $_POST['action'] == 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice') {
-            add_user_meta($user_id, wc_clean($_POST['data']), 'true', true);
-            wp_send_json_success();
-        }
-    }
-
     public function angelleye_set_multi_account($token_id, $order_id) {
         if (!empty($token_id)) {
             $_multi_account_api_username = get_metadata('payment_token', $token_id, '_multi_account_api_username');

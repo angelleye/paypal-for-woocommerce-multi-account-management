@@ -170,3 +170,13 @@ add_action( 'before_woocommerce_init', function() {
 		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 	}
 } );
+
+require_once plugin_dir_path(__FILE__) . 'includes/notifications/class-angelleye-push-notifications.php';
+add_action('plugins_loaded', function () {
+    if (!is_admin() || !class_exists('AngellEYE_Push_Notifications')) {
+        return;
+    }
+    (new AngellEYE_Push_Notifications(array(
+        'plugin_slug' => 'paypal-for-woocommerce-multi-account-management',
+    )))->register();
+}, 25);

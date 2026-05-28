@@ -169,8 +169,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_action('woocommerce_cart_emptied', $plugin_admin, 'remove_session_data', 9999);
         $this->loader->add_action('wp_ajax_angelleye_pfwma_get_product_tags', $plugin_admin, 'angelleye_pfwma_get_product_tags', 10);
         $this->loader->add_action('wp_ajax_angelleye_pfwma_get_products', $plugin_admin, 'angelleye_pfwma_get_products', 10);
-        $this->loader->add_action('wp_ajax_angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_adismiss_notice', 10);
-        $this->loader->add_action('admin_notices', $plugin_admin, 'angelleye_paypal_for_woocommerce_multi_account_display_push_notification', 10);
         $this->loader->add_action('angelleye_set_multi_account', $plugin_admin, 'angelleye_set_multi_account', 10, 2);
         $this->loader->add_filter('set-screen-option', $plugin_admin, 'angelleye_set_screen_option', 10, 3);
         $this->loader->add_action('load-settings_page_paypal-for-woocommerce', $plugin_admin, 'angelleye_add_screen_option', 10);
