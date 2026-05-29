@@ -29,6 +29,10 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 == Changelog ==
 
+= 4.1.1 - 05.29.2026 =
+* Fix - Resolved a PayPal "AMOUNT_MISMATCH" error that could occur on parallel-payment orders when a large coupon left a small cart total with no shipping or tax on the first purchase unit. ([#130](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/130))
+* Tweak - Switched admin push notifications to the shared AngellEYE notifications component used across the AngellEYE plugin family for consistency and easier maintenance. ([#131](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/131))
+
 = 4.1.0 - 04.03.2026 =
 * Fix - Resolves shipping amount not being captured in PPCP multi-account payments. ([#129](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/129))
 * Fix - Resolves rounding adjustment that unconditionally removed shipping/tax from the PayPal amount breakdown in PPCP. ([#128](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/128))
