@@ -2992,10 +2992,34 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     public function angelleye_get_product_ids() {
-        global $post;
+        global $post, $wp;
         $product_ids = array();
         if (is_product()) {
             $product_ids[] = $post->ID;
+        }
+        // On the order-pay page the cart is empty, so the merchant-id list must be
+        // derived from the order being paid. Otherwise angelleye_get_list_merchant_ids()
+        // returns false, the SDK loads without the order's payee(s), and PayPal returns
+        // a "Payee(s) passed in transaction does not match expected merchant id" error.
+        if (function_exists('is_checkout_pay_page') && is_checkout_pay_page()) {
+            $order_id = 0;
+            if (!empty($wp->query_vars['order-pay'])) {
+                $order_id = absint($wp->query_vars['order-pay']);
+            } elseif (!empty($_GET['order-pay'])) {
+                $order_id = absint(wp_unslash($_GET['order-pay']));
+            }
+            if ($order_id > 0) {
+                $order = wc_get_order($order_id);
+                if ($order instanceof WC_Order) {
+                    foreach ($order->get_items() as $item) {
+                        $item_product_id = $item->get_product_id();
+                        if (!empty($item_product_id)) {
+                            $product_ids[] = $item_product_id;
+                        }
+                    }
+                    return $product_ids;
+                }
+            }
         }
         if (is_null(WC()->cart)) {
             return $product_ids;
