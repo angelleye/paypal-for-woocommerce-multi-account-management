@@ -3,8 +3,8 @@ Contributors: (angelleye)
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SG9SQU2GBXJNA
 Tags: paypal, woocommerce, express checkout, micro payments, micro processing, micropayments, microprocessing
 Requires at least: 5.0
-Tested up to: 6.9.4
-Stable tag: 4.1.0
+Tested up to: 7.0
+Stable tag: 4.1.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -28,6 +28,9 @@ If you are selling both high priced and low priced products on your site, you ma
 This plugin allows you to configure multiple accounts and provide rules for when to use each account based on order data.
 
 == Changelog ==
+
+= 4.1.2 - 07.08.2026 =
+* Enhancement - In marketplace manager mode, the full (100%) shipping amount is now sent to the site owner. ([#134](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/134))
 
 = 4.1.1 - 05.29.2026 =
 * Fix - Resolved a PayPal "AMOUNT_MISMATCH" error that could occur on parallel-payment orders when a large coupon left a small cart total with no shipping or tax on the first purchase unit. ([#130](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/130))
