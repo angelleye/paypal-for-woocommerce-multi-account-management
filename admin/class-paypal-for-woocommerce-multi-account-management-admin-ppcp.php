@@ -53,6 +53,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     public $global_ppcp_site_owner_commission;
     public $global_ec_site_owner_commission_label;
     public $global_ec_include_tax_shipping_in_commission;
+    public $global_ec_full_shipping_to_owner;
     public $final_payment_request_data;
     public $final_paypal_request;
     public $not_divided_shipping_cost;
@@ -118,6 +119,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             $this->global_ec_site_owner_commission_label = get_option('global_ec_site_owner_commission_label', '');
         }
         $this->global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
+        $this->global_ec_full_shipping_to_owner = get_option('global_ec_full_shipping_to_owner', '');
         $is_zdp_currency = in_array(get_woocommerce_currency(), $this->zdp_currencies);
         if ($is_zdp_currency) {
             $this->decimals = 0;
@@ -966,6 +968,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt, $order);
+                        // When "100% shipping to site owner" is enabled, move the full
+                        // per-item shipping from the seller account to the default/owner
+                        // account. Done before the commission block so it applies even
+                        // when no commission is set and so shipping isn't double-counted
+                        // by the include-tax-shipping-in-commission logic below.
+                        if ($this->global_ec_full_shipping_to_owner == 'on' && $shippingamt > 0) {
+                            $default_final_total = $default_final_total + $shippingamt;
+                            $default_shippingamt = $default_shippingamt + $shippingamt;
+                            $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt, $order);
+                            $shippingamt = 0;
+                        }
                         $is_commission_not_enabled = false;
                         $PaymentOrderItems = array();
                         if (isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true) {
@@ -1251,6 +1264,14 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         $shippingamt = isset($this->shipping_array[$product_id]) ? $this->shipping_array[$product_id] : '0.00';
                         $taxamt = isset($this->tax_array[$product_id]) ? $this->tax_array[$product_id] : '0.00';
                         $final_total = AngellEYE_Gateway_Paypal::number_format($item_total + $shippingamt + $taxamt);
+                        // See the order-based path above: move 100% of the per-item
+                        // shipping to the default/owner account when the option is on.
+                        if ($this->global_ec_full_shipping_to_owner == 'on' && $shippingamt > 0) {
+                            $default_final_total = $default_final_total + $shippingamt;
+                            $default_shippingamt = $default_shippingamt + $shippingamt;
+                            $final_total = AngellEYE_Gateway_Paypal::number_format($final_total - $shippingamt);
+                            $shippingamt = 0;
+                        }
                         $is_commission_not_enabled = false;
                         if (isset($this->map_item_with_account[$product_id]['is_commission_enable']) && $this->map_item_with_account[$product_id]['is_commission_enable'] == true) {
                             $is_commission_not_enabled = true;

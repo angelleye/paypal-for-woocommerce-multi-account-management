@@ -754,6 +754,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
             update_option('global_ec_site_owner_commission_label', wc_clean($_POST['global_ec_site_owner_commission_label']));
             $ec_include_tax_shipping_in_commission = !empty($_POST['global_ec_include_tax_shipping_in_commission']) ? $_POST['global_ec_include_tax_shipping_in_commission'] : '';
             update_option('global_ec_include_tax_shipping_in_commission', wc_clean($ec_include_tax_shipping_in_commission));
+            $ec_full_shipping_to_owner = !empty($_POST['global_ec_full_shipping_to_owner']) ? $_POST['global_ec_full_shipping_to_owner'] : '';
+            update_option('global_ec_full_shipping_to_owner', wc_clean($ec_full_shipping_to_owner));
             if (isset($_POST['global_automatic_rule_creation_enable'])) {
                 update_option('global_automatic_rule_creation_enable', wc_clean($_POST['global_automatic_rule_creation_enable']));
                 update_option('global_automatic_rule_creation_testmode', wc_clean($_POST['global_automatic_rule_creation_testmode']));
@@ -799,6 +801,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
         $angelleye_payment_load_balancer = get_option('angelleye_payment_load_balancer', '');
         $angelleye_smart_commission = get_option('angelleye_smart_commission', '');
         $global_ec_include_tax_shipping_in_commission = get_option('global_ec_include_tax_shipping_in_commission', '');
+        $global_ec_full_shipping_to_owner = get_option('global_ec_full_shipping_to_owner', '');
         ?>
         <div id="angelleye_paypal_marketing_table">
             <div class="angelleye_multi_account_global_setting">
@@ -832,6 +835,22 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin {
                                     </label>
                                     <p class="description">
                                         <?php echo __('', 'paypal-for-woocommerce'); ?>
+                                    </p>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr class="global_ec_full_shipping_to_owner_tr">
+                            <th scope="row" class="titledesc">
+                                <label for="global_ec_full_shipping_to_owner" class="commission"><?php echo __('Enable/Disable', 'paypal-for-woocommerce-multi-account-management'); ?></label>
+                            </th>
+                            <td class="forminp">
+                                <fieldset>
+                                    <label for="global_ec_full_shipping_to_owner">
+                                        <input class="global_ec_full_shipping_to_owner" type="checkbox" name="global_ec_full_shipping_to_owner" id="global_ec_full_shipping_to_owner" <?php echo ($global_ec_full_shipping_to_owner == 'on') ? 'checked' : '' ?>>
+                                        <?php echo __('Send 100% of the shipping amount to the marketplace manager (site owner)', 'paypal-for-woocommerce-multi-account-management'); ?>
+                                    </label>
+                                    <p class="description">
+                                        <?php echo __('When enabled, the full shipping cost of each routed item is paid to the site owner instead of the seller account. This is applied in addition to any product commission, and works even when no commission is set.', 'paypal-for-woocommerce-multi-account-management'); ?>
                                     </p>
                                 </fieldset>
                             </td>
