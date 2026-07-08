@@ -31,6 +31,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 
 = 4.1.2 - 07.08.2026 =
 * Enhancement - In marketplace manager mode, the full (100%) shipping amount is now sent to the site owner. ([#134](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/134))
+* Fix - Resolved a "Payee(s) passed in transaction does not match expected merchant id" PayPal error on the WooCommerce order-pay page for multi-payee orders, by deriving the SDK merchant IDs from the order's line items when the cart is empty. ([#136](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/136))
 
 = 4.1.1 - 05.29.2026 =
 * Fix - Resolved a PayPal "AMOUNT_MISMATCH" error that could occur on parallel-payment orders when a large coupon left a small cart total with no shipping or tax on the first purchase unit. ([#130](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/130))
