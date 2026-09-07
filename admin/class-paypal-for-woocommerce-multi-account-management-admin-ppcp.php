@@ -2532,7 +2532,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway) {
+    public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway, $amount = null, $reason = '') {
         try {
             $order = wc_get_order($order_id);
             $processed_transaction_id = array();
@@ -2542,7 +2542,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
                     $_transaction_id = $order->get_transaction_id();
                     $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
-                    $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
+                    $refund_amount = $this->angelleye_ppcp_get_requested_refund_amount($order, $amount);
+                    $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id, $refund_amount, $reason);
                     return true;
                 } else {
                     return new WP_Error('invalid_refund', $refund_error_message_pre);
