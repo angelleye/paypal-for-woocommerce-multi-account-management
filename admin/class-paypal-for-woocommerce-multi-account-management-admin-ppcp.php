@@ -2293,13 +2293,6 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
     }
 
     /**
-     * Decide how much of the outstanding refund this capture should absorb.
-     *
-     * Returns null to refund the capture in full (legacy behaviour, only when the
-     * requested amount is unknown), a positive float to refund partially, or false
-     * when this capture should be skipped because the refund is already satisfied.
-     */
-    /**
      * Amount Dokan asked us to refund, or null when it cannot be determined.
      */
     public function angelleye_ppcp_get_dokan_refund_amount($refund, $vendor_refund = null) {
@@ -2319,6 +2312,40 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return null;
     }
 
+    /**
+     * Reason Dokan recorded for the refund, or an empty string when there is none.
+     */
+    public function angelleye_ppcp_get_dokan_refund_reason($refund, $args = array(), $vendor_refund = null) {
+        foreach (array($refund, $vendor_refund) as $source) {
+            if (!is_object($source)) {
+                continue;
+            }
+            foreach (array('get_refund_reason', 'get_reason') as $method) {
+                if (method_exists($source, $method)) {
+                    $refund_reason = (string) $source->{$method}();
+                    if ($refund_reason !== '') {
+                        return $refund_reason;
+                    }
+                }
+            }
+        }
+        if (is_array($args)) {
+            foreach (array('refund_reason', 'reason') as $key) {
+                if (!empty($args[$key]) && is_string($args[$key])) {
+                    return $args[$key];
+                }
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Decide how much of the outstanding refund this capture should absorb.
+     *
+     * Returns null to refund the capture in full (legacy behaviour, only when the
+     * requested amount is unknown), a positive float to refund partially, or false
+     * when this capture should be skipped because the refund is already satisfied.
+     */
     public function angelleye_ppcp_allocate_refund_amount($value, $remaining_refund, $refundable_amount) {
         if ($remaining_refund === null) {
             return null;
@@ -2789,6 +2816,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         $order_item_array = $refund->get_item_qtys();
         $this->final_refund_amt = 0;
         $remaining_refund = $this->angelleye_ppcp_get_dokan_refund_amount($refund, $vendor_refund);
+        $refund_reason = $this->angelleye_ppcp_get_dokan_refund_reason($refund, $args, $vendor_refund);
         $refundable_amount = $this->angelleye_ppcp_get_refundable_amount_by_transaction($order, (array) $angelleye_multi_account_ppcp_parallel_data_map);
         if (!empty($order_item_array)) {
             foreach ($order_item_array as $order_item_id_key => $order_item_id_value) {
@@ -2802,7 +2830,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                     if ($refund_amount === false) {
                                         continue;
                                     }
-                                    $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id, $refund_amount);
+                                    $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id, $refund_amount, $refund_reason);
                                     $processed_transaction_id[] = $inner_value['transaction_id'];
                                     if (!empty($this->paypal_response['id'])) {
                                         $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
@@ -2818,7 +2846,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                                 if ($refund_amount === false) {
                                     continue;
                                 }
-                                $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id, $refund_amount);
+                                $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id, $refund_amount, $refund_reason);
                                 $processed_transaction_id[] = $value['transaction_id'];
                                 if (!empty($this->paypal_response['id'])) {
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
