@@ -2136,28 +2136,47 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_ppcp_parallel_payment_handle($bool, $order_id, $gateway) {
+    public function own_angelleye_is_ppcp_parallel_payment_handle($bool, $order_id, $gateway, $amount = null, $reason = '') {
         try {
             $order = wc_get_order($order_id);
             $processed_transaction_id = array();
             $angelleye_multi_account_ppcp_parallel_data_map = $order->get_meta('_angelleye_multi_account_ppcp_parallel_data_map', true);
             if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
+                $this->final_refund_amt = 0;
+                $remaining_refund = $this->angelleye_ppcp_get_requested_refund_amount($order, $amount);
+                $refundable_amount = $this->angelleye_ppcp_get_refundable_amount_by_transaction($order, $angelleye_multi_account_ppcp_parallel_data_map);
                 foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
                     if ($key === 'always') {
                         foreach ($value as $inner_key => $inner_value) {
-                            $this->paypal_response = $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
+                            $refund_amount = $this->angelleye_ppcp_allocate_refund_amount($inner_value, $remaining_refund, $refundable_amount);
+                            if ($refund_amount === false) {
+                                continue;
+                            }
+                            $this->paypal_response = $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id, $refund_amount, $reason);
                             $processed_transaction_id[] = $inner_value['transaction_id'];
                             if (!empty($this->paypal_response['id'])) {
                                 $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
                                 $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                $this->final_refund_amt += (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                if ($remaining_refund !== null) {
+                                    $remaining_refund -= (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                }
                             }
                         }
                     } elseif (isset($value['transaction_id']) && !in_array($value['transaction_id'], $processed_transaction_id)) {
-                        $this->paypal_response = $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
+                        $refund_amount = $this->angelleye_ppcp_allocate_refund_amount($value, $remaining_refund, $refundable_amount);
+                        if ($refund_amount === false) {
+                            continue;
+                        }
+                        $this->paypal_response = $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id, $refund_amount, $reason);
                         $processed_transaction_id[] = $value['transaction_id'];
                         if (!empty($this->paypal_response['id'])) {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                            $this->final_refund_amt += (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                            if ($remaining_refund !== null) {
+                                $remaining_refund -= (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                            }
                         } else {
                             $angelleye_multi_account_ppcp_parallel_data_map[$key]['delete_refund_item'] = 'yes';
                         }
@@ -2174,7 +2193,174 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         }
     }
 
-    public function angelleye_ppcp_load_paypal($value, $gateway, $order_id) {
+    /**
+     * Resolve the amount WooCommerce actually asked us to refund.
+     *
+     * Returns null only when no amount can be determined, which keeps the historic
+     * "refund the whole capture" behaviour for callers that never supplied one.
+     */
+    public function angelleye_ppcp_get_requested_refund_amount($order, $amount = null) {
+        $requested_amount = null;
+        if (!empty($amount) && (float) $amount > 0) {
+            $requested_amount = (float) $amount;
+        } elseif (isset($_POST['refund_amount'])) {
+            $posted_amount = (float) wc_format_decimal(sanitize_text_field(wp_unslash($_POST['refund_amount'])), wc_get_price_decimals());
+            if ($posted_amount > 0) {
+                $requested_amount = $posted_amount;
+            }
+        }
+        if ($requested_amount === null && is_a($order, 'WC_Order')) {
+            $refunds = $order->get_refunds();
+            if (!empty($refunds)) {
+                $latest_refund = reset($refunds);
+                $latest_refund_amount = (float) $latest_refund->get_amount();
+                if ($latest_refund_amount > 0) {
+                    $requested_amount = $latest_refund_amount;
+                }
+            }
+        }
+        if ($requested_amount === null || $this->angelleye_ppcp_is_full_refund($order, $requested_amount)) {
+            return null;
+        }
+        return $requested_amount;
+    }
+
+    /**
+     * Whether this refund settles the order in full.
+     *
+     * A full refund keeps the historic amount-less request so PayPal refunds each
+     * capture in its entirety. That stays correct on split orders, where shipping and
+     * fees are not attributable to any single capture and an explicit per-capture
+     * amount would under-refund.
+     */
+    public function angelleye_ppcp_is_full_refund($order, $requested_amount) {
+        if (!is_a($order, 'WC_Order')) {
+            return false;
+        }
+        $order_total = (float) wc_format_decimal($order->get_total(), wc_get_price_decimals());
+        if ($order_total <= 0) {
+            return false;
+        }
+        // WooCommerce saves the refund before calling the gateway, so this already
+        // includes the refund being processed.
+        $total_refunded = (float) wc_format_decimal($order->get_total_refunded(), wc_get_price_decimals());
+        if ($total_refunded <= 0) {
+            $total_refunded = $requested_amount;
+        }
+        return ($total_refunded + 0.0001) >= $order_total;
+    }
+
+    /**
+     * Amount still refundable against each capture in the parallel data map,
+     * keyed by PayPal capture id.
+     */
+    public function angelleye_ppcp_get_refundable_amount_by_transaction($order, $angelleye_multi_account_ppcp_parallel_data_map) {
+        $refundable_amount = array();
+        if (!is_a($order, 'WC_Order')) {
+            return $refundable_amount;
+        }
+        foreach ($order->get_items(array('line_item', 'tax', 'shipping', 'fee', 'coupon')) as $item) {
+            $transaction_id = $item->get_meta('_transaction_id', true);
+            if (empty($transaction_id)) {
+                continue;
+            }
+            if (!isset($refundable_amount[$transaction_id])) {
+                $refundable_amount[$transaction_id] = 0;
+            }
+            $refundable_amount[$transaction_id] += (float) $order->get_line_total($item, true, false);
+        }
+        foreach ($angelleye_multi_account_ppcp_parallel_data_map as $key => $value) {
+            if (!is_array($value)) {
+                continue;
+            }
+            $entries = ($key === 'always') ? $value : array($value);
+            foreach ($entries as $entry) {
+                if (!is_array($entry) || empty($entry['transaction_id']) || empty($entry['gross_amount'])) {
+                    continue;
+                }
+                if (isset($refundable_amount[$entry['transaction_id']])) {
+                    $refundable_amount[$entry['transaction_id']] -= (float) $entry['gross_amount'];
+                }
+            }
+        }
+        // With a single capture there is nothing to split, and per-item totals exclude
+        // shipping and fees, so capping there would under-refund. Let the one capture
+        // absorb the whole amount and let PayPal reject anything genuinely too large.
+        if (count($refundable_amount) < 2) {
+            return array();
+        }
+        return $refundable_amount;
+    }
+
+    /**
+     * Amount Dokan asked us to refund, or null when it cannot be determined.
+     */
+    public function angelleye_ppcp_get_dokan_refund_amount($refund, $vendor_refund = null) {
+        foreach (array($refund, $vendor_refund) as $source) {
+            if (!is_object($source)) {
+                continue;
+            }
+            foreach (array('get_refund_amount', 'get_amount') as $method) {
+                if (method_exists($source, $method)) {
+                    $refund_amount = (float) $source->{$method}();
+                    if ($refund_amount > 0) {
+                        return $refund_amount;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reason Dokan recorded for the refund, or an empty string when there is none.
+     */
+    public function angelleye_ppcp_get_dokan_refund_reason($refund, $args = array(), $vendor_refund = null) {
+        foreach (array($refund, $vendor_refund) as $source) {
+            if (!is_object($source)) {
+                continue;
+            }
+            foreach (array('get_refund_reason', 'get_reason') as $method) {
+                if (method_exists($source, $method)) {
+                    $refund_reason = (string) $source->{$method}();
+                    if ($refund_reason !== '') {
+                        return $refund_reason;
+                    }
+                }
+            }
+        }
+        if (is_array($args)) {
+            foreach (array('refund_reason', 'reason') as $key) {
+                if (!empty($args[$key]) && is_string($args[$key])) {
+                    return $args[$key];
+                }
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Decide how much of the outstanding refund this capture should absorb.
+     *
+     * Returns null to refund the capture in full (legacy behaviour, only when the
+     * requested amount is unknown), a positive float to refund partially, or false
+     * when this capture should be skipped because the refund is already satisfied.
+     */
+    public function angelleye_ppcp_allocate_refund_amount($value, $remaining_refund, $refundable_amount) {
+        if ($remaining_refund === null) {
+            return null;
+        }
+        if ($remaining_refund <= 0) {
+            return false;
+        }
+        $transaction_id = is_array($value) && isset($value['transaction_id']) ? $value['transaction_id'] : '';
+        if (!empty($transaction_id) && isset($refundable_amount[$transaction_id]) && $refundable_amount[$transaction_id] > 0) {
+            return min($remaining_refund, $refundable_amount[$transaction_id]);
+        }
+        return $remaining_refund;
+    }
+
+    public function angelleye_ppcp_load_paypal($value, $gateway, $order_id, $amount = null, $reason = '') {
         if (!empty($value['multi_account_id'])) {
             if (!class_exists('AngellEYE_PayPal_PPCP_Payment')) {
                 include_once ( PAYPAL_FOR_WOOCOMMERCE_PLUGIN_DIR . '/ppcp-gateway/class-angelleye-paypal-ppcp-payment.php');
@@ -2185,7 +2371,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 $testmode = false;
             }
             $payment_request = AngellEYE_PayPal_PPCP_Payment::instance();
-            $this->paypal_response = $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value, $testmode);
+            $this->paypal_response = $payment_request->angelleye_ppcp_multi_account_refund_order_third_party($order_id, $value, $testmode, $amount, $reason);
             return $this->paypal_response;
         }
     }
@@ -2373,7 +2559,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
         return $bool;
     }
 
-    public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway) {
+    public function own_angelleye_is_ppcp_payment_load_balancer_handle($bool, $order_id, $gateway, $amount = null, $reason = '') {
         try {
             $order = wc_get_order($order_id);
             $processed_transaction_id = array();
@@ -2383,7 +2569,8 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                 if (!empty($angelleye_payment_load_balancer_account['is_api_set']) && apply_filters('angelleye_ppcp_pfwma_is_api_set', $angelleye_payment_load_balancer_account['is_api_set'], $angelleye_payment_load_balancer_account) === true) {
                     $_transaction_id = $order->get_transaction_id();
                     $angelleye_payment_load_balancer_account['transaction_id'] = $_transaction_id;
-                    $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id);
+                    $refund_amount = $this->angelleye_ppcp_get_requested_refund_amount($order, $amount);
+                    $this->angelleye_ppcp_load_paypal($angelleye_payment_load_balancer_account, $gateway, $order_id, $refund_amount, $reason);
                     return true;
                 } else {
                     return new WP_Error('invalid_refund', $refund_error_message_pre);
@@ -2627,6 +2814,10 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             return new WP_Error('invalid_refund', $refund_error);
         }
         $order_item_array = $refund->get_item_qtys();
+        $this->final_refund_amt = 0;
+        $remaining_refund = $this->angelleye_ppcp_get_dokan_refund_amount($refund, $vendor_refund);
+        $refund_reason = $this->angelleye_ppcp_get_dokan_refund_reason($refund, $args, $vendor_refund);
+        $refundable_amount = $this->angelleye_ppcp_get_refundable_amount_by_transaction($order, (array) $angelleye_multi_account_ppcp_parallel_data_map);
         if (!empty($order_item_array)) {
             foreach ($order_item_array as $order_item_id_key => $order_item_id_value) {
                 if (!empty($angelleye_multi_account_ppcp_parallel_data_map)) {
@@ -2635,19 +2826,35 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                         if (isset($value['product_id']) && $product_id == $value['product_id']) {
                             if ($key === 'always') {
                                 foreach ($value as $inner_key => $inner_value) {
-                                    $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id);
+                                    $refund_amount = $this->angelleye_ppcp_allocate_refund_amount($inner_value, $remaining_refund, $refundable_amount);
+                                    if ($refund_amount === false) {
+                                        continue;
+                                    }
+                                    $this->angelleye_ppcp_load_paypal($inner_value, $gateway, $order_id, $refund_amount, $refund_reason);
                                     $processed_transaction_id[] = $inner_value['transaction_id'];
                                     if (!empty($this->paypal_response['id'])) {
                                         $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['id'] = $this->paypal_response['id'];
                                         $angelleye_multi_account_ppcp_parallel_data_map[$key][$inner_key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                        $this->final_refund_amt += (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                        if ($remaining_refund !== null) {
+                                            $remaining_refund -= (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                        }
                                     }
                                 }
                             } elseif (!in_array($value['transaction_id'], $processed_transaction_id)) {
-                                $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id);
+                                $refund_amount = $this->angelleye_ppcp_allocate_refund_amount($value, $remaining_refund, $refundable_amount);
+                                if ($refund_amount === false) {
+                                    continue;
+                                }
+                                $this->angelleye_ppcp_load_paypal($value, $gateway, $order_id, $refund_amount, $refund_reason);
                                 $processed_transaction_id[] = $value['transaction_id'];
                                 if (!empty($this->paypal_response['id'])) {
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['id'] = $this->paypal_response['id'];
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['gross_amount'] = $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                    $this->final_refund_amt += (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                    if ($remaining_refund !== null) {
+                                        $remaining_refund -= (float) $this->paypal_response['seller_payable_breakdown']['gross_amount']['value'];
+                                    }
                                 } else {
                                     $angelleye_multi_account_ppcp_parallel_data_map[$key]['delete_refund_item'] = 'yes';
                                 }

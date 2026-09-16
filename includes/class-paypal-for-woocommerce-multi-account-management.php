@@ -181,7 +181,7 @@ class Paypal_For_Woocommerce_Multi_Account_Management {
         $this->loader->add_filter('angelleye_ppcp_request_args', $angelleye_ppcp, 'angelleye_ppcp_request_multi_account', 10, 3);
         $this->loader->add_action('angelleye_ppcp_order_data', $angelleye_ppcp, 'own_angelleye_ppcp_order_data', 10, 2);
         $this->loader->add_filter('angelleye_is_ppcp_parallel_payment_not_used', $angelleye_ppcp, 'own_angelleye_is_ppcp_parallel_payment_not_used', 10, 2);
-        $this->loader->add_filter('angelleye_is_ppcp_parallel_payment_handle', $angelleye_ppcp, 'own_angelleye_is_ppcp_parallel_payment_handle', 10, 3);
+        $this->loader->add_filter('angelleye_is_ppcp_parallel_payment_handle', $angelleye_ppcp, 'own_angelleye_is_ppcp_parallel_payment_handle', 10, 5);
         $this->loader->add_action('woocommerce_order_item_add_action_buttons', $angelleye_ppcp, 'own_woocommerce_order_item_add_action_buttons', 10, 1);
         $this->loader->add_action('woocommerce_order_refunded', $angelleye_ppcp, 'own_woocommerce_order_fully_refunded', 10, 2);
         //$this->loader->add_filter('woocommerce_paypal_args', $paypal, 'angelleye_woocommerce_paypal_args', 10, 2);
