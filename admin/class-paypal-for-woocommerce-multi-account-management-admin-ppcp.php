@@ -1678,6 +1678,18 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
             }
         }
 
+        if (empty($new_payments) && class_exists('AngellEYE_PayPal_PPCP_Log')) {
+            // No payee could be resolved for this cart: every item mapped to an
+            // account that dropped out of the rules, or the amounts collapsed to
+            // zero (a coupon that cancels the item totals, for example). The
+            // request then falls back to the single default purchase unit below,
+            // which is a legitimate outcome but worth a line, because until it is
+            // logged the fallback is invisible in the API log.
+            AngellEYE_PayPal_PPCP_Log::instance()->log(
+                    sprintf('Multi-account: no parallel payee resolved for %s; using the single default purchase unit.%s', $action, $order_id ? ' Order: ' . $order_id : ''), 'warning'
+            );
+        }
+
         if ($action === 'create_order') {
             if (!empty($new_payments)) {
                 foreach ($new_payments as $key_new_payments => $value_new_payments) {
@@ -1728,7 +1740,17 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $request['body']['purchase_units'][$key_new_payments] = $value_new_payments;
                 }
             } else {
-                $request['body']['purchase_units'] = $old_purchase_units;
+                // Put the original single unit back exactly as it arrived. It has
+                // to go back as a LIST: purchase_units is a JSON array, so
+                // assigning the bare unit makes json_encode emit an object, which
+                // the API rejects with "Invalid request data". The PayPal order is
+                // then never created and the WooCommerce order the checkout just
+                // created is left in pending payment until the stock hold cancels
+                // it. The guard mirrors the lift at the top of this method: when
+                // index 0 was never taken out, the request is left untouched.
+                if (!empty($old_purchase_units)) {
+                    $request['body']['purchase_units'] = array($old_purchase_units);
+                }
             }
         } elseif ($action === 'update_order') {
             $patch_request = array();
@@ -1838,6 +1860,13 @@ class Paypal_For_Woocommerce_Multi_Account_Management_Admin_PPCP {
                     $order->update_meta_data('_angelleye_multi_account_ppcp_parallel_data_map', $this->map_item_with_account);
                     $order->save_meta_data();
                 }
+            }
+            // $patch_request is only built when a split was computed, so without
+            // this the same no-payee case above returns an empty array and the
+            // caller PATCHes the PayPal order with an empty body. Hand back the
+            // untouched request instead and leave the order as PayPal has it.
+            if (empty($patch_request)) {
+                return $request;
             }
             return $patch_request;
         }
