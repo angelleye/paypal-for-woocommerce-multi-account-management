@@ -30,7 +30,7 @@ This plugin allows you to configure multiple accounts and provide rules for when
 == Changelog ==
 
 = 4.1.2.1 - 09.18.2026 =
-* Fix - Resolved orders being rejected with "Invalid request data" and left in pending payment when no parallel payee applied to the cart, such as when a coupon cancels the item totals. The single default purchase unit is now sent in the format PayPal expects, and the fallback is recorded in the API log.
+* Fix - Resolved orders being rejected with "Invalid request data" and left in pending payment when no parallel payee applied to the cart, such as when a coupon cancels the item totals. The single default purchase unit is now sent in the format PayPal expects, and the fallback is recorded in the API log. ([#142](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/142))
 
 = 4.1.2 - 07.08.2026 =
 * Enhancement - In marketplace manager mode, the full (100%) shipping amount is now sent to the site owner. ([#134](https://github.com/angelleye/paypal-for-woocommerce-multi-account-management/pull/134))
